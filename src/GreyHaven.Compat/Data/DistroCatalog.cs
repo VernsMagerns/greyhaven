@@ -34,6 +34,9 @@ public sealed class DistroCatalog
             if (d.Editions.Count(e => e.SelectWhen is null) != 1)
                 throw new InvalidDataException($"distros.yaml: '{d.Id}' must have exactly one default edition (without selectWhen).");
         }
+        foreach (var (id, k) in Kernels)
+            if (k.BuiltinClassAliasesFrom is not null && !Kernels.ContainsKey(k.BuiltinClassAliasesFrom))
+                throw new InvalidDataException($"distros.yaml: kernel '{id}' borrows from unknown kernel '{k.BuiltinClassAliasesFrom}'.");
         if (Distros.Select(d => d.Id).Distinct().Count() != Distros.Count)
             throw new InvalidDataException("distros.yaml: duplicate distro ids.");
     }
@@ -50,6 +53,11 @@ public sealed class KernelInfo
     /// <summary>Set when the index was built from a near-identical kernel; explains why.</summary>
     public string? Approximation { get; set; }
     public List<string> Packages { get; set; } = [];
+    /// <summary>
+    /// For kernels that don't record aliases for built-in drivers: borrow the class-wide alias
+    /// patterns of this kernel's built-in modules from the named (newer) kernel's index.
+    /// </summary>
+    public string? BuiltinClassAliasesFrom { get; set; }
 }
 
 public sealed class DriverPackageSet

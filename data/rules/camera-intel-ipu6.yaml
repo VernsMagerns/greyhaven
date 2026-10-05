@@ -1,0 +1,12 @@
+rules:
+  - id: intel-ipu6-camera
+    title: Intel IPU6 built-in camera
+    match:
+      ids: [pci:8086:9a19, pci:8086:9a39, pci:8086:465d, pci:8086:462e, pci:8086:a75d, pci:8086:7d19]
+    confidence: medium
+    ratings:
+      - rating: partial
+        explanation: This laptop's camera uses Intel's IPU6 camera system rather than a standard USB webcam. Linux {kernelSeries} has a driver for the IPU6 itself, but the camera only works if its image sensor is also supported and extra camera software is set up. On many laptops the camera doesn't work, or works only in some apps.
+    sources:
+      - title: Linux kernel docs - Intel IPU6 input system driver
+        url: https://docs.kernel.org/admin-guide/media/ipu6-isys.html

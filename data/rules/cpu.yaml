@@ -1,0 +1,47 @@
+rules:
+  - id: x86-64-cpu
+    title: 64-bit Intel or AMD processor
+    match: { cpu: { architecture: x64, vendors: [GenuineIntel, AuthenticAMD] } }
+    confidence: high
+    ratings:
+      - rating: worksOutOfTheBox
+        explanation: "{distro} supports 64-bit Intel and AMD processors."
+    sources:
+      - title: Linux Mint download (64-bit)
+        url: https://www.linuxmint.com/download.php
+      - title: Ubuntu Desktop download
+        url: https://ubuntu.com/download/desktop
+
+  - id: x86-32-windows
+    title: 32-bit Windows
+    match: { cpu: { architecture: x86 } }
+    confidence: low
+    ratings:
+      - rating: unknown
+        explanation: This PC runs 32-bit Windows, so GreyHaven can't tell whether the processor is 64-bit. {distro} needs a 64-bit processor.
+    sources:
+      - title: Linux Mint download (64-bit only)
+        url: https://www.linuxmint.com/download.php
+
+  - id: arm64-cpu
+    title: ARM processor (e.g. Snapdragon)
+    match: { cpu: { architecture: arm64 } }
+    confidence: medium
+    ratings:
+      - when: { distros: [ubuntu] }
+        rating: partial
+        confidence: low
+        explanation: Ubuntu's ARM64 download supports some Snapdragon X laptops, but how well depends on the exact model, and things like graphics acceleration, audio and battery life may be limited. GreyHaven can't check your model.
+      - when: { distros: [pop-os] }
+        rating: unsupported
+        explanation: Pop!_OS's ARM download is for ARM computers supported by Tow-Boot, not Windows ARM laptops like this one.
+      - rating: unsupported
+        confidence: high
+        explanation: "{distro} is only available for 64-bit Intel and AMD PCs, not ARM processors like this one."
+    sources:
+      - title: Canonical - Ubuntu on ARM, summer '26 update
+        url: https://discourse.ubuntu.com/t/ubuntu-on-arm-summer-26-update/84872
+      - title: Pop!_OS download
+        url: https://system76.com/pop/download
+      - title: Linux Mint download
+        url: https://www.linuxmint.com/download.php

@@ -69,6 +69,16 @@ internal static class DebReader
         return aliases;
     }
 
+    /// <summary>Module names listed in <c>modules.builtin</c> (drivers compiled into the kernel), e.g. "xhci_pci".</summary>
+    public static HashSet<string> ReadBuiltinModuleNames(string debPath)
+    {
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var (_, data) in ReadFiles(debPath, "/modules.builtin"))
+            foreach (var line in Encoding.UTF8.GetString(data).Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                names.Add(Path.GetFileName(line.Trim()).Split('.')[0].Replace('-', '_'));
+        return names;
+    }
+
     /// <summary>Returns the contents of every file in the package whose path ends with <paramref name="suffix"/>.</summary>
     public static List<(string Path, byte[] Data)> ReadFiles(string debPath, string suffix)
     {

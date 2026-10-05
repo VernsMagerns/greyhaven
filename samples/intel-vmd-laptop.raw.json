@@ -203,9 +203,9 @@
       "pnpClass": "Camera",
       "service": "ov01a10",
       "hardwareIds": [
-        "ACPI\\VEN_OVTI&DEV_01A1",
-        "ACPI\\OVTI01A1",
-        "*OVTI01A1"
+        "ACPI\\VEN_OVTI&DEV_01A0",
+        "ACPI\\OVTI01A0",
+        "*OVTI01A0"
       ],
       "compatibleIds": [],
       "configManagerErrorCode": 0,

@@ -1,0 +1,27 @@
+# Things GreyHaven can't judge from Windows. Each one is listed in the report with what to
+# test from a live USB. Licensed CC-BY-4.0 (see LICENSE).
+
+caveats:
+  - id: sleep
+    title: Sleep and wake
+    appliesWhen: { always: true }
+    why: Whether a PC sleeps and wakes properly depends on firmware details that can't be checked from Windows.
+    test: In the live USB session, choose Suspend from the power menu (or close the lid), wait a minute, then wake the PC. Check that the screen, keyboard, touchpad, Wi-Fi and sound all come back.
+
+  - id: hybridGraphics
+    title: Switching between two graphics chips
+    appliesWhen: { minGpus: 2 }
+    why: This PC has two graphics chips. How Linux switches between them depends on how the laptop is wired, which Windows doesn't reveal.
+    test: In the live USB session, connect an external monitor if you use one, play a video, and check the system settings show both graphics chips. After installing, test a game or 3D app on the faster chip.
+
+  - id: battery
+    title: Battery life
+    appliesWhen: { formFactor: laptop }
+    why: Battery life on Linux depends on power-saving settings and firmware, and is often somewhat shorter than on Windows. It can't be measured from Windows.
+    test: In the live USB session, unplug the charger, browse for 15 minutes and note how fast the battery percentage drops. A live USB uses more power than an installed system, so treat this as a rough guide.
+
+  - id: fingerprint
+    title: Fingerprint reader
+    appliesWhen: { category: fingerprintReader }
+    why: Even supported fingerprint readers depend on the exact sensor firmware, and enrolling a fingerprint can't be tested from Windows.
+    test: After installing, open Settings and look for fingerprint login (in Ubuntu, "Users"; in Linux Mint, "Users and Groups" or the fingerprint tool). Try enrolling a finger.

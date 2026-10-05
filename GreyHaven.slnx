@@ -3,7 +3,7 @@
     <Project Path="src/GreyHaven.Cli/GreyHaven.Cli.csproj" />
     <Project Path="src/GreyHaven.Compat/GreyHaven.Compat.csproj" />
     <Project Path="src/GreyHaven.Core/GreyHaven.Core.csproj" />
-    <Project Path="src/GreyHaven.Rating/GreyHaven.Rating.csproj" />
+    <Project Path="src/GreyHaven.Ratings/GreyHaven.Ratings.csproj" />
     <Project Path="src/GreyHaven.Scan.Windows/GreyHaven.Scan.Windows.csproj" />
   </Folder>
   <Folder Name="/tests/">

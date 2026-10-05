@@ -1,0 +1,26 @@
+rules:
+  - id: intel-vmd-controller
+    title: Intel VMD storage controller
+    match:
+      # VMD controller IDs from the Linux kernel's drivers/pci/controller/vmd.c.
+      ids: [pci:8086:201d, pci:8086:28c0, pci:8086:467f, pci:8086:4c3d, pci:8086:7d0b, pci:8086:9a0b, pci:8086:a77f, pci:8086:ad0b, pci:8086:b60b, pci:8086:b06f]
+    confidence: medium
+    ratings:
+      - rating: partial
+        explanation: Your storage is in Intel VMD/RST mode. Linux has a VMD driver, so your SSD usually shows up, but Intel's RST features don't work on Linux and installers can have trouble in this mode. Ubuntu's documentation recommends switching the firmware setting to AHCI before installing - the pre-switch checklist explains how to do that without breaking Windows.
+    sources:
+      - title: Ubuntu Desktop docs - Intel RST during Ubuntu installation
+        url: https://documentation.ubuntu.com/desktop/en/latest/reference/intel-rst-during-ubuntu-installation/
+      - title: Linux kernel - Intel VMD driver (vmd.c)
+        url: https://github.com/torvalds/linux/blob/master/drivers/pci/controller/vmd.c
+
+  - id: intel-raid-mode
+    title: Intel storage controller in RAID mode
+    match: { vendor: "pci:8086", classCode: "0104" }
+    confidence: medium
+    ratings:
+      - rating: partial
+        explanation: Your storage controller is in Intel RST RAID mode. Linux may see the disks, but the installer often can't use them in this mode. Ubuntu's documentation says to switch the firmware setting to AHCI first - the pre-switch checklist explains how to do that without breaking Windows.
+    sources:
+      - title: Ubuntu Desktop docs - Intel RST during Ubuntu installation
+        url: https://documentation.ubuntu.com/desktop/en/latest/reference/intel-rst-during-ubuntu-installation/

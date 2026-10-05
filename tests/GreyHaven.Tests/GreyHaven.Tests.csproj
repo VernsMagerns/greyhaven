@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="6.0.4" />
+    <PackageReference Include="Microsoft.Extensions.TimeProvider.Testing" Version="10.10.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.4" />
@@ -13,8 +14,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\GreyHaven.Core\GreyHaven.Core.csproj" />
+    <ProjectReference Include="..\..\src\GreyHaven.Compat\GreyHaven.Compat.csproj" />
+    <ProjectReference Include="..\..\src\GreyHaven.Ratings\GreyHaven.Ratings.csproj" />
+    <ProjectReference Include="..\..\tools\GreyHaven.IndexBuilder\GreyHaven.IndexBuilder.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\data\**\*" Link="data\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\samples\*.json" Link="samples\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Fixtures\**\*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

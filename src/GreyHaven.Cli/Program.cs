@@ -1,7 +1,10 @@
 using GreyHaven.Cli;
+using GreyHaven.Compat;
+using GreyHaven.Compat.Online;
 using GreyHaven.Core;
 using GreyHaven.Core.Scanning;
 using GreyHaven.Core.Serialization;
+using GreyHaven.Ratings;
 using GreyHaven.Scan.Windows;
 
 return await CliApp.RunAsync(args);
@@ -17,6 +20,7 @@ namespace GreyHaven.Cli
               greyhaven scan                   Scan this PC (Windows only, no admin needed)
               greyhaven scan --sample <name>   Use a bundled sample profile instead of real hardware
               greyhaven scan --raw <file>      Replay a raw snapshot saved with --dump-raw
+              greyhaven rate [scan options]    Scan, then rate every part for Mint, Ubuntu and Pop!_OS
               greyhaven samples                List bundled sample profiles
 
             Options for scan:
@@ -25,8 +29,14 @@ namespace GreyHaven.Cli
               --dump-raw <file>   (live scan) Save the unprocessed scan data for bug reports
               --samples-dir <dir> Look for samples in this directory
 
+            Options for rate:
+              --offline           Don't query linux-hardware.org (built-in data only)
+              --distro <id>       Show details for one distro only (mint, ubuntu, pop-os)
+              --json              Print the full report as JSON
+              --data <dir>        Use compatibility data from this directory
+
             Privacy: scans read device IDs and settings only - never serial numbers,
-            user names, host names or MAC addresses.
+            user names, host names or MAC addresses. Online lookups send device IDs only.
             """;
 
         public static async Task<int> RunAsync(string[] args)
@@ -48,6 +58,7 @@ namespace GreyHaven.Cli
                 return args[0] switch
                 {
                     "scan" => await ScanAsync(opts),
+                    "rate" => await RateAsync(opts),
                     "samples" => ListSamples(opts),
                     _ => Fail($"Unknown command '{args[0]}'.\n\n{Usage}"),
                 };
@@ -59,6 +70,35 @@ namespace GreyHaven.Cli
         }
 
         private static async Task<int> ScanAsync(Options opts)
+        {
+            var profile = await (await CreateScannerAsync(opts)).ScanAsync();
+            var json = GreyHavenJson.Serialize(profile);
+            if (opts.Out is not null) await File.WriteAllTextAsync(opts.Out, json);
+            Console.WriteLine(opts.Json ? json : ProfileTextFormatter.Format(profile));
+            return 0;
+        }
+
+        private static async Task<int> RateAsync(Options opts)
+        {
+            var profile = await (await CreateScannerAsync(opts)).ScanAsync();
+            var data = CompatibilityData.Load(opts.DataDir);
+
+            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
+            http.DefaultRequestHeaders.UserAgent.ParseAdd($"GreyHaven/{GreyHavenInfo.Version}");
+            var community = new LinuxHardwareDbClient(http, LinuxHardwareDbClient.DefaultCacheDirectory);
+            var engine = new RatingEngine(data, community);
+
+            if (!opts.Offline && !opts.Json)
+                Console.Error.WriteLine("Checking linux-hardware.org for devices GreyHaven doesn't know (one request every 10 seconds; use --offline to skip)...");
+            var report = await engine.RateAsync(profile, new RatingOptions { UseOnlineLookups = !opts.Offline });
+
+            var json = GreyHavenJson.Serialize(report);
+            if (opts.Out is not null) await File.WriteAllTextAsync(opts.Out, json);
+            Console.WriteLine(opts.Json ? json : ReportTextFormatter.Format(report, opts.Distro));
+            return 0;
+        }
+
+        private static async Task<IHardwareScanner> CreateScannerAsync(Options opts)
         {
             IHardwareScanner scanner;
             if (opts.Sample is not null)
@@ -92,12 +132,7 @@ namespace GreyHaven.Cli
                     "  greyhaven scan --sample intel-laptop\n" +
                     "Run 'greyhaven samples' to list them.");
             }
-
-            var profile = await scanner.ScanAsync();
-            var json = GreyHavenJson.Serialize(profile);
-            if (opts.Out is not null) await File.WriteAllTextAsync(opts.Out, json);
-            Console.WriteLine(opts.Json ? json : ProfileTextFormatter.Format(profile));
-            return 0;
+            return scanner;
         }
 
         private static int ListSamples(Options opts)
@@ -117,12 +152,14 @@ namespace GreyHaven.Cli
 
     internal sealed class CliException(string message) : Exception(message);
 
-    internal sealed record Options(string? Sample, string? Raw, bool Json, string? Out, string? DumpRaw, string? SamplesDir)
+    internal sealed record Options(string? Sample, string? Raw, bool Json, string? Out, string? DumpRaw, string? SamplesDir,
+        bool Offline = false, string? Distro = null, string? DataDir = null)
     {
         public static Options Parse(string[] args)
         {
-            string? sample = null, raw = null, @out = null, dumpRaw = null, samplesDir = null;
+            string? sample = null, raw = null, @out = null, dumpRaw = null, samplesDir = null, distro = null, dataDir = null;
             var json = false;
+            var offline = false;
             for (var i = 0; i < args.Length; i++)
             {
                 string Value() => i + 1 < args.Length ? args[++i] : throw new CliException($"{args[i]} needs a value.");
@@ -134,12 +171,15 @@ namespace GreyHaven.Cli
                     case "--out": @out = Value(); break;
                     case "--dump-raw": dumpRaw = Value(); break;
                     case "--samples-dir": samplesDir = Value(); break;
+                    case "--offline": offline = true; break;
+                    case "--distro": distro = Value(); break;
+                    case "--data": dataDir = Value(); break;
                     default: throw new CliException($"Unknown option '{args[i]}'.");
                 }
             }
             if (sample is not null && raw is not null) throw new CliException("Use either --sample or --raw, not both.");
             if (dumpRaw is not null && (sample is not null || raw is not null)) throw new CliException("--dump-raw only applies to a live scan.");
-            return new Options(sample, raw, json, @out, dumpRaw, samplesDir);
+            return new Options(sample, raw, json, @out, dumpRaw, samplesDir, offline, distro, dataDir);
         }
     }
 }

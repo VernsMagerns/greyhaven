@@ -34,3 +34,15 @@ greyhaven.exe scan --dump-raw greyhaven-raw.json
 - [ ] **S1.8** Open `greyhaven-raw.json` and confirm it contains no serial numbers, your
       user name, your PC's name or MAC addresses. Send it to the project if anything looked
       wrong in S1.2–S1.7; it can be replayed on Linux with `greyhaven scan --raw <file>`.
+
+## Milestone 2: Lookup and ratings
+
+Nothing here needs Windows: rating runs on the scan result and is tested on Linux with the
+sample profiles. While you're doing the S1 checks, it's worth also running:
+
+```powershell
+greyhaven.exe rate
+```
+
+- [ ] **S2.1** (Optional, same session) Skim the report. Does anything look obviously wrong
+      for hardware you know works or doesn't work on Linux? Note it; it becomes a rule or a fix.

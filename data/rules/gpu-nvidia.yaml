@@ -1,0 +1,46 @@
+rules:
+  - id: nvidia-gpu
+    title: NVIDIA graphics
+    match: { vendor: "pci:10de", classCode: "03" }
+    confidence: high
+    ratings:
+      - when: { preinstalledDriver: nvidia }
+        rating: worksOutOfTheBox
+        explanation: The {edition} of {distro} comes with NVIDIA's own graphics driver already installed, so this card is ready for gaming and 3D straight after installing.
+      - when: { distros: [mint], onlyDriverPackages: "nvidia-driver-470*" }
+        rating: partial
+        confidence: medium
+        explanation: This older NVIDIA card is only supported by NVIDIA's legacy 470 driver. The Linux Mint 22.3 release notes say that driver is no longer supported by NVIDIA and has problems with the kernel Mint ships, so you may be limited to the basic open-source driver (slow 3D, no gaming).
+      - when: { driverPackage: "nvidia-driver-*" }
+        rating: worksWithExtraDriver
+        explanation: Linux's built-in open-source driver (nouveau) will show a picture, but for good performance and gaming you need NVIDIA's own driver. {distro} offers it ({driverPackages}) and installs it with {driverTool}.
+      - rating: partial
+        confidence: medium
+        explanation: None of the NVIDIA driver packages in {distro} list this card, so only the basic open-source driver (nouveau) is available. Expect a working desktop but slow 3D and no gaming.
+    fix:
+      driver: NVIDIA proprietary driver
+      secureBoot: mokMayBeRequired
+      needsInternet: true
+      steps:
+        mint:
+          - Open the menu and start "Driver Manager".
+          - Select the NVIDIA driver marked "recommended" and click "Apply Changes".
+          - Restart when it finishes.
+        ubuntu:
+          - Open "Software & Updates" and go to the "Additional Drivers" tab.
+          - Select the NVIDIA driver marked "recommended" and click "Apply Changes".
+          - Restart when it finishes.
+        pop-os:
+          - Easiest option - install from Pop!_OS's NVIDIA ISO, which already includes the driver.
+          - If you installed from the Intel/AMD ISO, run the command below and restart.
+      commands:
+        mint: [sudo ubuntu-drivers install]
+        ubuntu: [sudo ubuntu-drivers install]
+        pop-os: [sudo apt install system76-driver-nvidia]
+    sources:
+      - title: Ubuntu Server docs - NVIDIA drivers installation
+        url: https://documentation.ubuntu.com/server/how-to/graphics/install-nvidia-drivers/
+      - title: Linux Mint 22.3 release notes
+        url: https://www.linuxmint.com/rel_zena_cinnamon.php
+      - title: System76 - Install the System76 driver
+        url: https://system76.com/support/articles/system76-driver/

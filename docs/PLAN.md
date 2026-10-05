@@ -31,8 +31,10 @@ confirmed by the maintainer on 2026-10-04.
 2. **Per-distro kernel alias index**, built in CI from each distro's current kernel
    package (`modules.alias`). Answers "does this distro's kernel ship a driver that
    claims this ID?". Ratings resting only on this are **medium** confidence.
-3. **Supplements**: `pci.ids` / `usb.ids` (names only), libfprint supported-device list,
-   linux-firmware manifest.
+3. **Supplements**: driver package "Modaliases" from each distro's package index (how
+   NVIDIA drivers declare supported GPUs), and libfprint's supported/unsupported reader lists
+   from each distro's libfprint package. (Implemented in milestone 2. `pci.ids`/`usb.ids` and
+   linux-firmware were not needed so far.)
 4. **LHDB** as an optional, rate-limited (≥10 s between requests), long-cached supplement
    that degrades gracefully when unreachable. Always linked as a source when used.
 
@@ -117,13 +119,18 @@ confidence (high/medium/low).
 
 ### Summary score
 
+Full definition: [docs/scoring.md](scoring.md). In short:
+
 - Points: out of the box 100, extra driver 80, partial 40, unsupported 0.
   Unknown is excluded from the average but lowers a displayed **coverage** figure.
-- Weights: critical ×3 (storage, GPU, Ethernet, and Wi-Fi on laptops or machines without
-  wired Ethernet); important ×1.5 (audio, Bluetooth, touchpad, webcam); other ×1.
-- Caps: any unsupported critical → max 40. Any unknown critical → max 70, labelled "incomplete".
+- Weights: critical ×3 (CPU, GPU, storage, the primary network adapter); important ×1.5
+  (audio, Bluetooth, touchpad, webcam, USB, secondary network); other ×1. Chipset parts and
+  external input devices are shown but not scored.
+- Caps: any unsupported critical → max 40; unknown critical → max 70 ("incomplete");
+  partial critical → max 79. The lowest applicable cap wins and its reason is shown.
 - Bands: Great ≥90, Good ≥70, Fair ≥50, Poor <50.
-- Computed per distro; the best is recommended (ties → fewer "extra driver" steps).
+- Computed per distro, rated against the kernel on the distro's install ISO. Recommendation
+  order: score, fewer extra-driver steps, fewer system changes (e.g. Secure Boot off), rank.
 
 ### Distros (decided)
 

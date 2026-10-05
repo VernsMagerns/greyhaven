@@ -55,6 +55,19 @@ if (command is "kernels" or "all")
             headers[$"source-{i + 1}"] = $"{kernel.Packages[i]} sha256:{sha}";
             entries.AddRange(DebReader.ReadAliases(path, Console.WriteLine));
         }
+        if (kernel.BuiltinClassAliasesFrom is { } refId)
+        {
+            // Kernels before ~7.0 don't record aliases for built-in drivers. Borrow only the
+            // class-wide patterns (never device-specific IDs) of this kernel's built-in modules
+            // from a newer kernel's index. See distros.yaml.
+            var refIndex = AliasIndex.Load(Path.Combine(dataDir, catalog.Kernels[refId].Index));
+            var builtin = kernel.Packages.Select(u => DebReader.ReadBuiltinModuleNames(Path.Combine(cacheDir, CacheName(u)))).SelectMany(x => x).ToHashSet();
+            var borrowed = refIndex.Entries.Where(e => !e.IsDeviceSpecific && builtin.Contains(e.Target)).ToList();
+            entries.AddRange(borrowed);
+            headers["builtin-class-aliases-from"] = $"{refId} ({borrowed.Count} class-wide patterns for {borrowed.Select(b => b.Target).Distinct().Count()} built-in modules)";
+            Console.WriteLine($"  borrowed {borrowed.Count} class-wide built-in aliases from {refId}");
+        }
+
         var outPath = Path.Combine(dataDir, kernel.Index);
         AliasIndex.Write(outPath, headers, entries);
         Console.WriteLine($"  wrote {Path.GetRelativePath(dataDir, outPath)} ({new FileInfo(outPath).Length / 1024} KiB)");
@@ -113,10 +126,12 @@ if (command is "fingerprint" or "all")
 
 return 0;
 
+static string CacheName(string url) =>
+    Convert.ToHexStringLower(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(url)))[..16] + "-" + Path.GetFileName(new Uri(url).AbsolutePath);
+
 async Task<(string Path, string Sha256)> Download(string url, bool refresh = false)
 {
-    var name = Convert.ToHexStringLower(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(url)))[..16] + "-" + Path.GetFileName(new Uri(url).AbsolutePath);
-    var path = Path.Combine(cacheDir, name);
+    var path = Path.Combine(cacheDir, CacheName(url));
     if (refresh || !File.Exists(path))
     {
         Console.WriteLine($"  downloading {url}");

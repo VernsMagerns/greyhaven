@@ -24,6 +24,10 @@ kernels:
     version: 6.14.0-37-generic
     series: "6.14"
     index: indexes/mint-6.14.0-37.idx.gz
+    # Kernels before ~7.0 don't record aliases for built-in drivers (e.g. xhci_pci), so the
+    # class-wide patterns of this kernel's built-in modules are borrowed from 7.0. Device-specific
+    # IDs are never borrowed.
+    builtinClassAliasesFrom: ubuntu-7.0.0-30
     verifiedFrom: Linux Mint 22.3 Cinnamon ISO casper/filesystem.manifest
     packages:
       - https://launchpad.net/ubuntu/+archive/primary/+files/linux-modules-6.14.0-37-generic_6.14.0-37.37~24.04.1_amd64.deb
@@ -33,6 +37,10 @@ kernels:
     version: 6.16.3-76061603-generic
     series: "6.16"
     index: indexes/pop-6.16.3.idx.gz
+    # Kernels before ~7.0 don't record aliases for built-in drivers (e.g. xhci_pci), so the
+    # class-wide patterns of this kernel's built-in modules are borrowed from 7.0. Device-specific
+    # IDs are never borrowed.
+    builtinClassAliasesFrom: ubuntu-7.0.0-30
     verifiedFrom: Pop!_OS 24.04 Intel/AMD ISO build 20 casper manifest
     approximation: >-
       Pop!_OS no longer publishes this exact kernel package. The index is built from Ubuntu's

@@ -6,9 +6,12 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\GreyHaven.Core\GreyHaven.Core.csproj" />
+    <ProjectReference Include="..\GreyHaven.Compat\GreyHaven.Compat.csproj" />
+    <ProjectReference Include="..\GreyHaven.Ratings\GreyHaven.Ratings.csproj" />
     <ProjectReference Include="..\GreyHaven.Scan.Windows\GreyHaven.Scan.Windows.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\data\**\*" Link="data\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\samples\*.json" Link="samples\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,35 @@
+rules:
+  - id: broadcom-wl-wifi
+    title: Broadcom Wi-Fi that needs the "wl" driver
+    match:
+      # BCM43142, BCM4352, BCM4360 (PCI IDs from the Debian wiki).
+      ids: [pci:14e4:4365, pci:14e4:43b1, pci:14e4:43a0, pci:14e4:4360]
+      # 14e4:4365 with subsystem 14e4:4365 is a different chip (BCM4365, 802.11ac) handled by brcmfmac.
+      excludeIds: [pci:14e4:4365:14e4:4365]
+    confidence: high
+    ratings:
+      - rating: worksWithExtraDriver
+        explanation: Linux has no built-in driver for this Broadcom Wi-Fi chip. Broadcom's own "wl" driver works once it's installed, but it isn't on the install USB, so you'll need another way online first - a network cable, or USB tethering from your phone.
+    fix:
+      driver: Broadcom STA ("wl")
+      secureBoot: mokRequired
+      needsInternet: true
+      steps:
+        mint:
+          - Connect to the internet with a network cable or USB tethering from your phone.
+          - Open "Driver Manager", select the Broadcom driver and click "Apply Changes".
+          - Restart.
+        ubuntu:
+          - Connect to the internet with a network cable or USB tethering from your phone.
+          - Open "Software & Updates", go to "Additional Drivers", select the Broadcom driver and click "Apply Changes".
+          - Restart.
+        pop-os:
+          - Connect to the internet with a network cable or USB tethering from your phone.
+          - Run the commands below and restart.
+      commands:
+        ubuntu: [sudo apt update, sudo apt install broadcom-sta-dkms]
+        mint: [sudo apt update, sudo apt install bcmwl-kernel-source]
+        pop-os: [sudo apt update, sudo apt install bcmwl-kernel-source]
+    sources:
+      - title: Debian wiki - wl (Broadcom STA driver and supported PCI IDs)
+        url: https://wiki.debian.org/wl

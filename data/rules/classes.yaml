@@ -1,0 +1,68 @@
+# Class rules apply to a whole kind of device. They rank below device-specific kernel data,
+# so a specific driver match always wins over these.
+rules:
+  - id: pci-bridge
+    title: PCI bridge
+    match: { category: chipset, classCode: "06" }
+    confidence: medium
+    ratings:
+      - rating: worksOutOfTheBox
+        explanation: This is part of the PC's internal wiring (a PCI bridge). Linux handles it automatically without a separate driver.
+    sources:
+      - title: Linux kernel docs - PCI support library
+        url: https://docs.kernel.org/driver-api/pci/pci.html
+
+  - id: hd-audio-codec-generic
+    title: Sound chip without a specific driver
+    match: { category: audioCodec }
+    confidence: medium
+    ratings:
+      - rating: partial
+        explanation: No driver in {distro}'s kernel lists this exact sound chip, so Linux will use its generic HD Audio driver. That usually gives working speakers and headphones, but extras like mute lights, some microphones or speaker tuning may not work.
+    sources:
+      - title: Linux kernel docs - More notes on HD-Audio driver
+        url: https://docs.kernel.org/sound/hd-audio/notes.html
+
+  - id: hd-audio-hdmi-generic
+    title: HDMI/DisplayPort audio without a specific driver
+    match: { category: displayAudio }
+    confidence: medium
+    ratings:
+      - rating: partial
+        explanation: No driver in {distro}'s kernel lists this exact HDMI audio device, so Linux will use its generic HD Audio support. Sound over HDMI or DisplayPort usually works but isn't guaranteed.
+    sources:
+      - title: Linux kernel docs - More notes on HD-Audio driver
+        url: https://docs.kernel.org/sound/hd-audio/notes.html
+
+  - id: hid-touchpad
+    title: Precision touchpad (HID)
+    match: { category: touchpad, bus: hid }
+    confidence: medium
+    ratings:
+      - rating: worksOutOfTheBox
+        explanation: Windows Precision Touchpads use the standard HID multitouch protocol, which Linux supports with its hid-multitouch driver, including scrolling and gestures.
+    sources:
+      - title: Linux kernel - hid-multitouch driver
+        url: https://github.com/torvalds/linux/blob/master/drivers/hid/hid-multitouch.c
+
+  - id: ps2-touchpad
+    title: PS/2 touchpad
+    match: { category: touchpad, bus: acpi }
+    confidence: medium
+    ratings:
+      - rating: worksOutOfTheBox
+        explanation: This touchpad uses the older PS/2 connection. Linux's psmouse driver supports Synaptics, Elantech and ALPS touchpads like this one.
+    sources:
+      - title: Linux kernel - psmouse driver
+        url: https://github.com/torvalds/linux/blob/master/drivers/input/mouse/psmouse-base.c
+
+  - id: hid-touchscreen
+    title: Touchscreen (HID)
+    match: { category: touchscreen, bus: hid }
+    confidence: medium
+    ratings:
+      - rating: worksOutOfTheBox
+        explanation: Windows touchscreens use the standard HID multitouch protocol, which Linux supports with its hid-multitouch driver.
+    sources:
+      - title: Linux kernel - hid-multitouch driver
+        url: https://github.com/torvalds/linux/blob/master/drivers/hid/hid-multitouch.c

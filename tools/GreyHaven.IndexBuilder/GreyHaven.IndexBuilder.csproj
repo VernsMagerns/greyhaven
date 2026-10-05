@@ -5,6 +5,9 @@
     <RootNamespace>GreyHaven.IndexBuilder</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="GreyHaven.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\src\GreyHaven.Compat\GreyHaven.Compat.csproj" />
   </ItemGroup>
   <ItemGroup>

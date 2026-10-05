@@ -44,9 +44,13 @@ jobs:
           # The replayed raw dump must produce the same profile as the live scan.
           & $exe scan --raw ci-raw.json --json | Out-Null
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          # Rate the VM's hardware with the bundled data (offline, so CI never hits linux-hardware.org).
+          & $exe rate --raw ci-raw.json --offline --out ci-report.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
         with:
           name: windows-vm-scan
           path: |
             ci-raw.json
             ci-profile.json
+            ci-report.json

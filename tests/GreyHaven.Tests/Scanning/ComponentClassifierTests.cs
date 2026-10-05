@@ -86,7 +86,7 @@ public class ComponentClassifierTests
     [Theory]
     [InlineData(@"ACPI\SYN1E5A", "Mouse", ComponentCategory.Touchpad)]
     [InlineData(@"ACPI\VEN_QCOM&DEV_0C36", "Display", ComponentCategory.Gpu)]
-    [InlineData(@"ACPI\OVTI01A1", "Camera", ComponentCategory.Webcam)]
+    [InlineData(@"ACPI\OVTI01A0", "Camera", ComponentCategory.Webcam)]
     public void Acpi_devices_of_interest(string hw, string pnpClass, ComponentCategory expected)
     {
         Assert.Equal(expected, Classify(pnpClass, [hw]));

@@ -62,6 +62,7 @@ public sealed class AliasIndex
     private readonly Dictionary<string, List<AliasEntry>> _byPrefix;
 
     public AliasIndexInfo Info { get; }
+    public IEnumerable<AliasEntry> Entries => _byPrefix.Values.SelectMany(v => v);
     public int Count { get; }
 
     private AliasIndex(AliasIndexInfo info, IEnumerable<AliasEntry> entries)

@@ -1,0 +1,44 @@
+# How to interpret specific kernel modules and driver packages when they match a device.
+# Licensed CC-BY-4.0 (see LICENSE).
+#
+# role:
+#   driver (default)  the module provides the device's function
+#   bus               the module binds the device but provides no function by itself
+#   ignore            the match is irrelevant to whether the device works
+# confidence: how much a match on this module alone tells us (default: medium)
+
+modules:
+  bcma:
+    role: bus
+    note: Broadcom's internal bus driver. It attaches to some Broadcom Wi-Fi chips but does not provide Wi-Fi by itself.
+  ssb:
+    role: bus
+    note: Sonics Silicon Backplane bus driver used by older Broadcom chips; does not provide Wi-Fi by itself.
+  nvidiafb:
+    role: ignore
+    note: Legacy framebuffer driver for very old NVIDIA cards; not used by desktop distros.
+  i2c_nvidia_gpu:
+    role: ignore
+    note: Drives the USB-C controller on some NVIDIA cards, not the GPU.
+  usbcore:
+    role: ignore
+    note: Core USB hub support.
+
+  # Standard class drivers: a match means the device follows a well-supported standard.
+  ahci: { confidence: high }
+  nvme: { confidence: high }
+  xhci_pci: { confidence: high }
+  ehci_pci: { confidence: high }
+  ohci_pci: { confidence: high }
+  uhci_hcd: { confidence: high }
+  snd_hda_intel: { confidence: high }
+  usbhid: { confidence: high }
+  hid_generic: { confidence: high }
+  sdhci_pci: { confidence: high }
+  thunderbolt: { confidence: high }
+
+ignorePackages:
+  - oem-*
+  - hwe-*-meta
+  - virtualbox-*
+  - open-vm-tools*
