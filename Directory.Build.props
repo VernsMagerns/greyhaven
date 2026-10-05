@@ -7,6 +7,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <!-- CA1416: Windows-only APIs must be guarded or marked [SupportedOSPlatform("windows")]. -->
     <WarningsAsErrors>$(WarningsAsErrors);CA1416</WarningsAsErrors>
+    <Version>0.1.0</Version>
     <Authors>GreyHaven contributors</Authors>
     <Product>GreyHaven</Product>
     <Copyright>Copyright (c) GreyHaven contributors</Copyright>
