@@ -1,0 +1,176 @@
+# Distros GreyHaven rates. Licensed CC-BY-4.0 (see data/LICENSE).
+#
+# Adding a distro or edition is a data change: add a kernel under `kernels`, an entry under
+# `distros`, then run the index builder (see tools/GreyHaven.IndexBuilder/README.md).
+#
+# Ratings use the kernel on the official install ISO, because that's what the live USB and
+# the installer run (e.g. Wi-Fi during installation). `updatesKernel` is what the system moves
+# to after installing updates; GreyHaven uses it to tell users when updating would help.
+#
+# Last verified: 2026-10-05.
+
+schemaVersion: 1
+
+kernels:
+  ubuntu-7.0.0-30:
+    version: 7.0.0-30-generic
+    series: "7.0"
+    index: indexes/ubuntu-7.0.0-30.idx.gz
+    verifiedFrom: Ubuntu 26.04.1 desktop ISO manifest (releases.ubuntu.com/26.04/ubuntu-26.04.1-desktop-amd64.manifest)
+    packages:
+      - http://archive.ubuntu.com/ubuntu/pool/main/l/linux/linux-modules-7.0.0-30-generic_7.0.0-30.30_amd64.deb
+
+  mint-6.14.0-37:
+    version: 6.14.0-37-generic
+    series: "6.14"
+    index: indexes/mint-6.14.0-37.idx.gz
+    verifiedFrom: Linux Mint 22.3 Cinnamon ISO casper/filesystem.manifest
+    packages:
+      - https://launchpad.net/ubuntu/+archive/primary/+files/linux-modules-6.14.0-37-generic_6.14.0-37.37~24.04.1_amd64.deb
+      - https://launchpad.net/ubuntu/+archive/primary/+files/linux-modules-extra-6.14.0-37-generic_6.14.0-37.37~24.04.1_amd64.deb
+
+  pop-6.16.3:
+    version: 6.16.3-76061603-generic
+    series: "6.16"
+    index: indexes/pop-6.16.3.idx.gz
+    verifiedFrom: Pop!_OS 24.04 Intel/AMD ISO build 20 casper manifest
+    approximation: >-
+      Pop!_OS no longer publishes this exact kernel package. The index is built from Ubuntu's
+      mainline build of the same upstream release (6.16.3, same build date), which has the same
+      device ID tables apart from System76's small patch set.
+    packages:
+      - https://kernel.ubuntu.com/mainline/v6.16.3/amd64/linux-modules-6.16.3-061603-generic_6.16.3-061603.202508231538_amd64.deb
+
+  pop-7.0.11:
+    version: 7.0.11-76070011-generic
+    series: "7.0"
+    index: indexes/pop-7.0.11.idx.gz
+    verifiedFrom: Pop!_OS 24.04 NVIDIA ISO build 28 casper manifest
+    approximation: >-
+      Pop!_OS no longer publishes this exact kernel package. The index is built from Ubuntu's
+      mainline build of the same upstream release (7.0.11, same build date).
+    packages:
+      - https://kernel.ubuntu.com/mainline/v7.0.11/amd64/linux-modules-7.0.11-070011-generic_7.0.11-070011.202606011647_amd64.deb
+
+  pop-7.1.5:
+    version: 7.1.5-76070105-generic
+    series: "7.1"
+    index: indexes/pop-7.1.5.idx.gz
+    verifiedFrom: Pop!_OS 24.04 release repository (apt.pop-os.org/release, noble), 2026-09-27
+    packages:
+      - http://apt.pop-os.org/release/pool/noble/linux/38a419fc95c5eae36afa2f13e459a7fc4f4a68f5/linux-modules-7.1.5-76070105-generic_7.1.5-76070105.202607241434~1787955023~24.04~38a419f_amd64.deb
+
+# Driver packages (e.g. NVIDIA) declare the device IDs they support in their package index
+# "Modaliases" field. ubuntu-drivers and Mint's Driver Manager use the same data.
+driverPackageSets:
+  ubuntu-26.04:
+    index: indexes/packages-ubuntu-26.04.idx.gz
+    packageIndexes:
+      - http://archive.ubuntu.com/ubuntu/dists/resolute/main/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/resolute/restricted/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/resolute/multiverse/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/resolute-updates/main/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/resolute-updates/restricted/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/resolute-updates/multiverse/binary-amd64/Packages.gz
+  ubuntu-24.04:
+    index: indexes/packages-ubuntu-24.04.idx.gz
+    packageIndexes:
+      - http://archive.ubuntu.com/ubuntu/dists/noble/main/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/noble/restricted/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/noble/multiverse/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/noble-updates/main/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/noble-updates/restricted/binary-amd64/Packages.gz
+      - http://archive.ubuntu.com/ubuntu/dists/noble-updates/multiverse/binary-amd64/Packages.gz
+  pop-24.04:
+    index: indexes/packages-pop-24.04.idx.gz
+    packageIndexes:
+      - http://apt.pop-os.org/release/dists/noble/main/binary-amd64/Packages.gz
+
+# Fingerprint reader support comes from libfprint (userspace), not the kernel. Its udev hwdb
+# lists supported USB IDs by driver, plus known unsupported devices.
+fingerprintSets:
+  libfprint-1.95.1:
+    version: 1.95.1
+    index: indexes/libfprint-1.95.1.idx.gz
+    package: http://archive.ubuntu.com/ubuntu/pool/main/libf/libfprint/libfprint-2-2_1.95.1+tod1-0ubuntu1_amd64.deb
+  libfprint-1.94.7:
+    version: 1.94.7
+    index: indexes/libfprint-1.94.7.idx.gz
+    package: http://archive.ubuntu.com/ubuntu/pool/main/libf/libfprint/libfprint-2-2_1.94.7+tod1-0ubuntu5~24.04.8_amd64.deb
+
+distros:
+  - id: mint
+    name: Linux Mint
+    edition: Cinnamon
+    version: "22.3"
+    base: Ubuntu 24.04 LTS
+    website: https://linuxmint.com
+    tieBreakRank: 1
+    audience: Its desktop looks and works much like Windows, which makes it a gentle first step for people new to Linux.
+    driverTool: Driver Manager
+    driverPackageSet: ubuntu-24.04
+    fingerprintSet: libfprint-1.94.7
+    secureBoot:
+      supported: true
+      note: Linux Mint installs with Secure Boot on. If an extra driver is installed, you may be asked to set a Secure Boot (MOK) password and confirm it on the blue "Enroll MOK" screen after restarting.
+    editions:
+      - id: cinnamon
+        name: Cinnamon
+        isoKernel: mint-6.14.0-37
+    updatesKernel: mint-6.14.0-37
+    sources:
+      - title: Linux Mint 22.3 release notes
+        url: https://www.linuxmint.com/rel_zena_cinnamon.php
+
+  - id: ubuntu
+    name: Ubuntu
+    edition: Desktop
+    version: 26.04.1 LTS
+    base: Ubuntu 26.04 LTS
+    website: https://ubuntu.com/desktop
+    tieBreakRank: 2
+    audience: It is the most widely used Linux desktop, so most guides and troubleshooting answers online are written for it.
+    driverTool: Software & Updates, "Additional Drivers" tab
+    driverPackageSet: ubuntu-26.04
+    fingerprintSet: libfprint-1.95.1
+    secureBoot:
+      supported: true
+      note: Ubuntu installs with Secure Boot on. If you tick "Install third-party software", the installer may ask for a Secure Boot (MOK) password that you confirm on the blue "Enroll MOK" screen after restarting.
+    editions:
+      - id: desktop
+        name: Desktop
+        isoKernel: ubuntu-7.0.0-30
+    updatesKernel: ubuntu-7.0.0-30
+    sources:
+      - title: Ubuntu 26.04.1 desktop ISO manifest
+        url: https://releases.ubuntu.com/26.04/ubuntu-26.04.1-desktop-amd64.manifest
+
+  - id: pop-os
+    name: Pop!_OS
+    edition: COSMIC
+    version: "24.04"
+    base: Ubuntu 24.04 LTS
+    website: https://system76.com/pop
+    tieBreakRank: 3
+    audience: It offers a separate download with NVIDIA drivers already installed and a keyboard-friendly tiling desktop, which suits gamers and developers.
+    driverTool: the NVIDIA ISO, or the system76-driver packages
+    driverPackageSet: pop-24.04
+    fingerprintSet: libfprint-1.94.7
+    secureBoot:
+      supported: false
+      note: Pop!_OS does not support Secure Boot. System76 says "Secure boot must be disabled before installing Pop!_OS."
+    editions:
+      - id: intel
+        name: Intel/AMD ISO
+        isoKernel: pop-6.16.3
+      - id: nvidia
+        name: NVIDIA ISO
+        isoKernel: pop-7.0.11
+        selectWhen: nvidiaGpu
+        preinstalledDrivers: [nvidia]
+    updatesKernel: pop-7.1.5
+    sources:
+      - title: System76 - Install Pop!_OS
+        url: https://system76.com/support/articles/install-pop/
+      - title: Pop!_OS ISO build API
+        url: https://api.pop-os.org/builds/24.04/intel

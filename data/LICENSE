@@ -1,0 +1,19 @@
+GreyHaven compatibility data
+============================
+
+Curated data in this directory (distros.yaml, rules/, modules.yaml, caveats.yaml and any
+other hand-written files) is licensed under the Creative Commons Attribution 4.0
+International License (CC-BY-4.0): https://creativecommons.org/licenses/by/4.0/
+
+Attribution: "GreyHaven contributors".
+
+Generated indexes (indexes/*.idx.gz) are machine-extracted lists of hardware IDs. Each
+file's header records exactly where it came from (package URL and SHA-256):
+
+- indexes/<distro-kernel>.idx.gz: device ID tables from Linux kernel modules (GPL-2.0)
+  as shipped in each distribution's kernel package.
+- indexes/packages-*.idx.gz: the "Modaliases" fields of distribution package indexes.
+- indexes/libfprint-*.idx.gz: libfprint's udev hwdb (LGPL-2.1-or-later).
+
+Hardware ID lists are factual data. They are redistributed here with attribution to
+their upstream projects, and GreyHaven makes no additional claim over them.

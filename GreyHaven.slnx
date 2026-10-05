@@ -1,10 +1,15 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/GreyHaven.Cli/GreyHaven.Cli.csproj" />
+    <Project Path="src/GreyHaven.Compat/GreyHaven.Compat.csproj" />
     <Project Path="src/GreyHaven.Core/GreyHaven.Core.csproj" />
+    <Project Path="src/GreyHaven.Rating/GreyHaven.Rating.csproj" />
     <Project Path="src/GreyHaven.Scan.Windows/GreyHaven.Scan.Windows.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/GreyHaven.Tests/GreyHaven.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/GreyHaven.IndexBuilder/GreyHaven.IndexBuilder.csproj" />
   </Folder>
 </Solution>

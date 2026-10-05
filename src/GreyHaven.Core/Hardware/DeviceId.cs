@@ -25,7 +25,9 @@ public sealed record DeviceId(
     string? SubDevice = null,
     /// <summary>PCI class code as 4 or 6 hex digits, e.g. "0280" or "028000".</summary>
     string? ClassCode = null,
-    string? Revision = null)
+    string? Revision = null,
+    /// <summary>USB interface class/subclass/protocol as 6 hex digits, e.g. "e00101" (Bluetooth), "0e0100" (video).</summary>
+    string? InterfaceClass = null)
 {
     /// <summary>"8086:2723" (or the ACPI ID for ACPI devices).</summary>
     public string VendorDevice => Bus == DeviceBus.Acpi ? Vendor : $"{Vendor}:{Device}";

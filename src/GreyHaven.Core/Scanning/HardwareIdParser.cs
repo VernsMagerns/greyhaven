@@ -27,7 +27,7 @@ public static partial class HardwareIdParser
     [GeneratedRegex(@"^USB\\VID_(?<v>[0-9A-F]{4})&PID_(?<d>[0-9A-F]{4})(?:&REV_(?<r>[0-9A-F]{4}))?", RegexOptions.IgnoreCase)]
     private static partial Regex UsbRegex();
 
-    [GeneratedRegex(@"^USB\\Class_(?<c>[0-9A-F]{2})", RegexOptions.IgnoreCase)]
+    [GeneratedRegex(@"^USB\\Class_(?<c>[0-9A-F]{2})(?:&SubClass_(?<s>[0-9A-F]{2})(?:&Prot_(?<p>[0-9A-F]{2}))?)?", RegexOptions.IgnoreCase)]
     private static partial Regex UsbClassRegex();
 
     [GeneratedRegex(@"^HDAUDIO\\FUNC_(?<f>[0-9A-F]{2})&VEN_(?<v>[0-9A-F]{4})&DEV_(?<d>[0-9A-F]{4})(?:&SUBSYS_(?<sv>[0-9A-F]{4})(?<sd>[0-9A-F]{4}))?(?:&REV_(?<r>[0-9A-F]{4}))?", RegexOptions.IgnoreCase)]
@@ -49,6 +49,7 @@ public static partial class HardwareIdParser
         if (parsed.Count == 0) return null;
 
         var first = parsed[0];
+        if (first.Bus == DeviceBus.Usb) return first with { InterfaceClass = FindUsbClassTriple(compatibleIds) };
         if (first.Bus != DeviceBus.Pci) return first;
 
         // Windows lists the most specific PCI ID (with SUBSYS and REV) first, but don't rely
@@ -112,6 +113,21 @@ public static partial class HardwareIdParser
         {
             var m = UsbClassRegex().Match(id.Trim());
             if (m.Success) return m.Groups["c"].Value.ToLowerInvariant();
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// Returns the most specific USB interface class triple (class, subclass, protocol), e.g. "e00101",
+    /// or null if the compatible IDs don't include all three parts.
+    /// </summary>
+    public static string? FindUsbClassTriple(IEnumerable<string> ids)
+    {
+        foreach (var id in ids)
+        {
+            var m = UsbClassRegex().Match(id.Trim());
+            if (m.Success && m.Groups["s"].Success && m.Groups["p"].Success)
+                return (m.Groups["c"].Value + m.Groups["s"].Value + m.Groups["p"].Value).ToLowerInvariant();
         }
         return null;
     }
