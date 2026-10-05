@@ -1,0 +1,395 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-01T12:00:00Z",
+  "description": "2012-era Intel laptop booting in legacy BIOS mode with a Broadcom BCM43142 Wi-Fi card (needs the proprietary wl driver) and a PS/2 Synaptics touchpad. Windows 10 Home.",
+  "system": {
+    "firmwareType": 1,
+    "hiberbootEnabled": 1,
+    "hibernateEnabled": 1,
+    "bitLockerProtection": 2,
+    "windowsProductName": "Windows 10 Home",
+    "windowsDisplayVersion": "22H2",
+    "windowsCurrentBuild": "19045",
+    "windowsUbr": 4894,
+    "windowsEditionId": "Core",
+    "nativeMachine": 34404,
+    "chassisTypes": [
+      10
+    ],
+    "hasBattery": true,
+    "systemManufacturer": "Example PC Co.",
+    "systemModel": "Laptop 15 (2012)"
+  },
+  "processors": [
+    {
+      "name": "Intel(R) Core(TM) i5-3210M CPU @ 2.50GHz",
+      "manufacturer": "GenuineIntel",
+      "caption": "Intel64 Family 6 Model 58 Stepping 9",
+      "numberOfCores": 2,
+      "numberOfLogicalProcessors": 4
+    }
+  ],
+  "devices": [
+    {
+      "name": "Intel(R) HD Graphics 4000",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "Display",
+      "service": "igfx",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_0166&SUBSYS_15071043&REV_09",
+        "PCI\\VEN_8086&DEV_0166&SUBSYS_15071043",
+        "PCI\\VEN_8086&DEV_0166&CC_030000",
+        "PCI\\VEN_8086&DEV_0166&CC_0300"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_0166&REV_09",
+        "PCI\\VEN_8086&DEV_0166",
+        "PCI\\VEN_8086&CC_030000",
+        "PCI\\VEN_8086&CC_0300",
+        "PCI\\VEN_8086",
+        "PCI\\CC_030000",
+        "PCI\\CC_0300"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Broadcom 802.11n Network Adapter",
+      "manufacturer": "Broadcom",
+      "pnpClass": "Net",
+      "service": "BCMWL63a",
+      "hardwareIds": [
+        "PCI\\VEN_14E4&DEV_4365&SUBSYS_85D11043&REV_01",
+        "PCI\\VEN_14E4&DEV_4365&SUBSYS_85D11043",
+        "PCI\\VEN_14E4&DEV_4365&CC_028000",
+        "PCI\\VEN_14E4&DEV_4365&CC_0280"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_14E4&DEV_4365&REV_01",
+        "PCI\\VEN_14E4&DEV_4365",
+        "PCI\\VEN_14E4&CC_028000",
+        "PCI\\VEN_14E4&CC_0280",
+        "PCI\\VEN_14E4",
+        "PCI\\CC_028000",
+        "PCI\\CC_0280"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Broadcom BCM43142 Bluetooth 4.0",
+      "manufacturer": "Broadcom",
+      "pnpClass": "Bluetooth",
+      "service": "BTHUSB",
+      "hardwareIds": [
+        "USB\\VID_0A5C&PID_216C&REV_0001",
+        "USB\\VID_0A5C&PID_216C"
+      ],
+      "compatibleIds": [
+        "USB\\Class_e0&SubClass_01&Prot_01",
+        "USB\\Class_e0&SubClass_01",
+        "USB\\Class_e0"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Realtek PCIe GBE Family Controller",
+      "manufacturer": "Realtek",
+      "pnpClass": "Net",
+      "service": "rt640x64",
+      "hardwareIds": [
+        "PCI\\VEN_10EC&DEV_8168&SUBSYS_11F51043&REV_07",
+        "PCI\\VEN_10EC&DEV_8168&SUBSYS_11F51043",
+        "PCI\\VEN_10EC&DEV_8168&CC_020000",
+        "PCI\\VEN_10EC&DEV_8168&CC_0200"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10EC&DEV_8168&REV_07",
+        "PCI\\VEN_10EC&DEV_8168",
+        "PCI\\VEN_10EC&CC_020000",
+        "PCI\\VEN_10EC&CC_0200",
+        "PCI\\VEN_10EC",
+        "PCI\\CC_020000",
+        "PCI\\CC_0200"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard SATA AHCI Controller",
+      "manufacturer": "Standard SATA AHCI Controller",
+      "pnpClass": "HDC",
+      "service": "storahci",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_1E03&SUBSYS_15071043&REV_04",
+        "PCI\\VEN_8086&DEV_1E03&SUBSYS_15071043",
+        "PCI\\VEN_8086&DEV_1E03&CC_010601",
+        "PCI\\VEN_8086&DEV_1E03&CC_0106"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_1E03&REV_04",
+        "PCI\\VEN_8086&DEV_1E03",
+        "PCI\\VEN_8086&CC_010601",
+        "PCI\\VEN_8086&CC_0106",
+        "PCI\\VEN_8086",
+        "PCI\\CC_010601",
+        "PCI\\CC_0106"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "High Definition Audio Controller",
+      "manufacturer": "Microsoft",
+      "pnpClass": "MEDIA",
+      "service": "HDAudBus",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_1E20&SUBSYS_15071043&REV_04",
+        "PCI\\VEN_8086&DEV_1E20&SUBSYS_15071043",
+        "PCI\\VEN_8086&DEV_1E20&CC_040300",
+        "PCI\\VEN_8086&DEV_1E20&CC_0403"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_1E20&REV_04",
+        "PCI\\VEN_8086&DEV_1E20",
+        "PCI\\VEN_8086&CC_040300",
+        "PCI\\VEN_8086&CC_0403",
+        "PCI\\VEN_8086",
+        "PCI\\CC_040300",
+        "PCI\\CC_0403"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Realtek High Definition Audio",
+      "manufacturer": "Realtek",
+      "pnpClass": "MEDIA",
+      "service": "IntcAzAudAddService",
+      "hardwareIds": [
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0269&SUBSYS_10431507&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0269&SUBSYS_10431507"
+      ],
+      "compatibleIds": [
+        "HDAUDIO\\FUNC_01&CTLR_VEN_8086&CTLR_DEV_1E20&VEN_10EC&DEV_0269&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0269",
+        "HDAUDIO\\FUNC_01"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) Display Audio",
+      "manufacturer": "Intel(R) Corporation",
+      "pnpClass": "MEDIA",
+      "service": "IntcDAud",
+      "hardwareIds": [
+        "HDAUDIO\\FUNC_01&VEN_8086&DEV_2806&SUBSYS_80860101&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_8086&DEV_2806&SUBSYS_80860101"
+      ],
+      "compatibleIds": [
+        "HDAUDIO\\FUNC_01&CTLR_VEN_8086&CTLR_DEV_1E20&VEN_8086&DEV_2806&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_8086&DEV_2806",
+        "HDAUDIO\\FUNC_01"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Realtek PCIE CardReader",
+      "manufacturer": "Realtek Semiconduct Corp.",
+      "pnpClass": "MTD",
+      "service": "RTSPER",
+      "hardwareIds": [
+        "PCI\\VEN_10EC&DEV_5289&SUBSYS_15071043&REV_01",
+        "PCI\\VEN_10EC&DEV_5289&SUBSYS_15071043",
+        "PCI\\VEN_10EC&DEV_5289&CC_ff0000",
+        "PCI\\VEN_10EC&DEV_5289&CC_ff00"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10EC&DEV_5289&REV_01",
+        "PCI\\VEN_10EC&DEV_5289",
+        "PCI\\VEN_10EC&CC_ff0000",
+        "PCI\\VEN_10EC&CC_ff00",
+        "PCI\\VEN_10EC",
+        "PCI\\CC_ff0000",
+        "PCI\\CC_ff00"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) USB 3.0 eXtensible Host Controller - 1.0 (Microsoft)",
+      "manufacturer": "Generic USB xHCI Host Controller",
+      "pnpClass": "USB",
+      "service": "USBXHCI",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_1E31&SUBSYS_15071043&REV_04",
+        "PCI\\VEN_8086&DEV_1E31&SUBSYS_15071043",
+        "PCI\\VEN_8086&DEV_1E31&CC_0c0330",
+        "PCI\\VEN_8086&DEV_1E31&CC_0c03"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_1E31&REV_04",
+        "PCI\\VEN_8086&DEV_1E31",
+        "PCI\\VEN_8086&CC_0c0330",
+        "PCI\\VEN_8086&CC_0c03",
+        "PCI\\VEN_8086",
+        "PCI\\CC_0c0330",
+        "PCI\\CC_0c03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) 7 Series/C216 Chipset Family USB Enhanced Host Controller - 1E2D",
+      "manufacturer": "Intel",
+      "pnpClass": "USB",
+      "service": "usbehci",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_1E2D&SUBSYS_15071043&REV_04",
+        "PCI\\VEN_8086&DEV_1E2D&SUBSYS_15071043",
+        "PCI\\VEN_8086&DEV_1E2D&CC_0c0320",
+        "PCI\\VEN_8086&DEV_1E2D&CC_0c03"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_1E2D&REV_04",
+        "PCI\\VEN_8086&DEV_1E2D",
+        "PCI\\VEN_8086&CC_0c0320",
+        "PCI\\VEN_8086&CC_0c03",
+        "PCI\\VEN_8086",
+        "PCI\\CC_0c0320",
+        "PCI\\CC_0c03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB2.0 HD UVC WebCam",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Camera",
+      "service": "usbvideo",
+      "hardwareIds": [
+        "USB\\VID_13D3&PID_5165&REV_0001&MI_00",
+        "USB\\VID_13D3&PID_5165&MI_00"
+      ],
+      "compatibleIds": [
+        "USB\\Class_0e&SubClass_01&Prot_01",
+        "USB\\Class_0e&SubClass_01",
+        "USB\\Class_0e"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Synaptics SMBus TouchPad",
+      "manufacturer": "Synaptics",
+      "pnpClass": "Mouse",
+      "service": "SynTP",
+      "hardwareIds": [
+        "ACPI\\SYN1E5A",
+        "*SYN1E5A"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) 7 Series/C216 Chipset Family SMBus Host Controller - 1E22",
+      "manufacturer": "Intel",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_1E22&SUBSYS_15071043&REV_04",
+        "PCI\\VEN_8086&DEV_1E22&SUBSYS_15071043",
+        "PCI\\VEN_8086&DEV_1E22&CC_0c0500",
+        "PCI\\VEN_8086&DEV_1E22&CC_0c05"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_1E22&REV_04",
+        "PCI\\VEN_8086&DEV_1E22",
+        "PCI\\VEN_8086&CC_0c0500",
+        "PCI\\VEN_8086&CC_0c05",
+        "PCI\\VEN_8086",
+        "PCI\\CC_0c0500",
+        "PCI\\CC_0c05"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "ACPI Fixed Feature Button",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\FixedButton",
+        "*FixedButton"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft AC Adapter",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Battery",
+      "hardwareIds": [
+        "ACPI\\ACPI0003",
+        "*ACPI0003"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard PS/2 Keyboard",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Keyboard",
+      "service": "i8042prt",
+      "hardwareIds": [
+        "ACPI\\PNP0303",
+        "*PNP0303"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Root Hub (USB 3.0)",
+      "manufacturer": "Microsoft",
+      "pnpClass": "USB",
+      "service": "USBHUB3",
+      "hardwareIds": [
+        "USB\\ROOT_HUB30&VID8086&PIDA0ED&REV0020",
+        "USB\\ROOT_HUB30"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft Basic Render Driver",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "service": "BasicRender",
+      "hardwareIds": [
+        "ROOT\\BasicRender"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Generic software device",
+      "manufacturer": "Microsoft",
+      "pnpClass": "SoftwareDevice",
+      "hardwareIds": [
+        "SWD\\GenericRaw",
+        "SWD\\Generic"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    }
+  ]
+}

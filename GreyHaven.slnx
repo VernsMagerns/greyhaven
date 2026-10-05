@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GreyHaven.Cli/GreyHaven.Cli.csproj" />
+    <Project Path="src/GreyHaven.Core/GreyHaven.Core.csproj" />
+    <Project Path="src/GreyHaven.Scan.Windows/GreyHaven.Scan.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GreyHaven.Tests/GreyHaven.Tests.csproj" />
+  </Folder>
+</Solution>

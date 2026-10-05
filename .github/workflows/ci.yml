@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet build -c Release
+      - run: dotnet test -c Release --no-build --logger "console;verbosity=normal"
+
+  # Runs the real WMI/registry scanner on a Windows VM. A VM is not real hardware, and
+  # GitHub's runners run as administrator, so this does NOT prove non-admin behaviour or
+  # real-device accuracy. It does prove the scanner runs end to end on Windows, and the
+  # output is downloadable from the workflow run for inspection.
+  windows-live-scan:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Live scan and replay
+        shell: pwsh
+        run: |
+          dotnet build src/GreyHaven.Cli -c Release
+          $exe = "src/GreyHaven.Cli/bin/Release/net10.0/greyhaven.exe"
+          & $exe scan --dump-raw ci-raw.json --out ci-profile.json
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          # The replayed raw dump must produce the same profile as the live scan.
+          & $exe scan --raw ci-raw.json --json | Out-Null
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-vm-scan
+          path: |
+            ci-raw.json
+            ci-profile.json

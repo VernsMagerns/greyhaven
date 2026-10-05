@@ -1,0 +1,479 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-01T12:00:00Z",
+  "description": "AMD Ryzen gaming desktop with an NVIDIA RTX 3070, Realtek 2.5GbE, Intel AX200 Wi-Fi, Secure Boot on, Windows 10. Exercises NVIDIA driver and MOK advice.",
+  "system": {
+    "firmwareType": 2,
+    "secureBootEnabled": 1,
+    "hiberbootEnabled": 1,
+    "hibernateEnabled": 1,
+    "bitLockerProtection": 2,
+    "windowsProductName": "Windows 10 Pro",
+    "windowsDisplayVersion": "22H2",
+    "windowsCurrentBuild": "19045",
+    "windowsUbr": 4894,
+    "windowsEditionId": "Professional",
+    "nativeMachine": 34404,
+    "chassisTypes": [
+      3
+    ],
+    "hasBattery": false,
+    "systemManufacturer": "System manufacturer",
+    "systemModel": "System Product Name"
+  },
+  "processors": [
+    {
+      "name": "AMD Ryzen 7 5800X 8-Core Processor",
+      "manufacturer": "AuthenticAMD",
+      "caption": "AMD64 Family 25 Model 33 Stepping 0",
+      "numberOfCores": 8,
+      "numberOfLogicalProcessors": 16
+    }
+  ],
+  "devices": [
+    {
+      "name": "NVIDIA GeForce RTX 3070",
+      "manufacturer": "NVIDIA",
+      "pnpClass": "Display",
+      "service": "nvlddmkm",
+      "hardwareIds": [
+        "PCI\\VEN_10DE&DEV_2484&SUBSYS_39071462&REV_a1",
+        "PCI\\VEN_10DE&DEV_2484&SUBSYS_39071462",
+        "PCI\\VEN_10DE&DEV_2484&CC_030000",
+        "PCI\\VEN_10DE&DEV_2484&CC_0300"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10DE&DEV_2484&REV_a1",
+        "PCI\\VEN_10DE&DEV_2484",
+        "PCI\\VEN_10DE&CC_030000",
+        "PCI\\VEN_10DE&CC_0300",
+        "PCI\\VEN_10DE",
+        "PCI\\CC_030000",
+        "PCI\\CC_0300"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "High Definition Audio Controller",
+      "manufacturer": "Microsoft",
+      "pnpClass": "MEDIA",
+      "service": "HDAudBus",
+      "hardwareIds": [
+        "PCI\\VEN_10DE&DEV_228B&SUBSYS_39071462&REV_a1",
+        "PCI\\VEN_10DE&DEV_228B&SUBSYS_39071462",
+        "PCI\\VEN_10DE&DEV_228B&CC_040300",
+        "PCI\\VEN_10DE&DEV_228B&CC_0403"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10DE&DEV_228B&REV_a1",
+        "PCI\\VEN_10DE&DEV_228B",
+        "PCI\\VEN_10DE&CC_040300",
+        "PCI\\VEN_10DE&CC_0403",
+        "PCI\\VEN_10DE",
+        "PCI\\CC_040300",
+        "PCI\\CC_0403"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "NVIDIA High Definition Audio",
+      "manufacturer": "NVIDIA",
+      "pnpClass": "MEDIA",
+      "service": "NVHDA",
+      "hardwareIds": [
+        "HDAUDIO\\FUNC_01&VEN_10DE&DEV_009A&SUBSYS_14623907&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_10DE&DEV_009A&SUBSYS_14623907"
+      ],
+      "compatibleIds": [
+        "HDAUDIO\\FUNC_01&CTLR_VEN_10DE&CTLR_DEV_228B&VEN_10DE&DEV_009A&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_10DE&DEV_009A",
+        "HDAUDIO\\FUNC_01"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "High Definition Audio Controller",
+      "manufacturer": "Microsoft",
+      "pnpClass": "MEDIA",
+      "service": "HDAudBus",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1487&SUBSYS_CC341462&REV_00",
+        "PCI\\VEN_1022&DEV_1487&SUBSYS_CC341462",
+        "PCI\\VEN_1022&DEV_1487&CC_040300",
+        "PCI\\VEN_1022&DEV_1487&CC_0403"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1487&REV_00",
+        "PCI\\VEN_1022&DEV_1487",
+        "PCI\\VEN_1022&CC_040300",
+        "PCI\\VEN_1022&CC_0403",
+        "PCI\\VEN_1022",
+        "PCI\\CC_040300",
+        "PCI\\CC_0403"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Realtek High Definition Audio",
+      "manufacturer": "Realtek",
+      "pnpClass": "MEDIA",
+      "service": "IntcAzAudAddService",
+      "hardwareIds": [
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_1220&SUBSYS_1462CC34&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_1220&SUBSYS_1462CC34"
+      ],
+      "compatibleIds": [
+        "HDAUDIO\\FUNC_01&CTLR_VEN_1022&CTLR_DEV_1487&VEN_10EC&DEV_1220&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_1220",
+        "HDAUDIO\\FUNC_01"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Realtek Gaming 2.5GbE Family Controller",
+      "manufacturer": "Realtek",
+      "pnpClass": "Net",
+      "service": "rt25cx21x64",
+      "hardwareIds": [
+        "PCI\\VEN_10EC&DEV_8125&SUBSYS_7C561462&REV_05",
+        "PCI\\VEN_10EC&DEV_8125&SUBSYS_7C561462",
+        "PCI\\VEN_10EC&DEV_8125&CC_020000",
+        "PCI\\VEN_10EC&DEV_8125&CC_0200"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10EC&DEV_8125&REV_05",
+        "PCI\\VEN_10EC&DEV_8125",
+        "PCI\\VEN_10EC&CC_020000",
+        "PCI\\VEN_10EC&CC_0200",
+        "PCI\\VEN_10EC",
+        "PCI\\CC_020000",
+        "PCI\\CC_0200"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) Wi-Fi 6 AX200 160MHz",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "Net",
+      "service": "Netwtw08",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_2723&SUBSYS_00848086&REV_1a",
+        "PCI\\VEN_8086&DEV_2723&SUBSYS_00848086",
+        "PCI\\VEN_8086&DEV_2723&CC_028000",
+        "PCI\\VEN_8086&DEV_2723&CC_0280"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_2723&REV_1a",
+        "PCI\\VEN_8086&DEV_2723",
+        "PCI\\VEN_8086&CC_028000",
+        "PCI\\VEN_8086&CC_0280",
+        "PCI\\VEN_8086",
+        "PCI\\CC_028000",
+        "PCI\\CC_0280"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) Wireless Bluetooth(R)",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "Bluetooth",
+      "service": "BTHUSB",
+      "hardwareIds": [
+        "USB\\VID_8087&PID_0029&REV_0001",
+        "USB\\VID_8087&PID_0029"
+      ],
+      "compatibleIds": [
+        "USB\\Class_e0&SubClass_01&Prot_01",
+        "USB\\Class_e0&SubClass_01",
+        "USB\\Class_e0"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard SATA AHCI Controller",
+      "manufacturer": "Standard SATA AHCI Controller",
+      "pnpClass": "HDC",
+      "service": "storahci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_7901&SUBSYS_7C561462&REV_51",
+        "PCI\\VEN_1022&DEV_7901&SUBSYS_7C561462",
+        "PCI\\VEN_1022&DEV_7901&CC_010601",
+        "PCI\\VEN_1022&DEV_7901&CC_0106"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_7901&REV_51",
+        "PCI\\VEN_1022&DEV_7901",
+        "PCI\\VEN_1022&CC_010601",
+        "PCI\\VEN_1022&CC_0106",
+        "PCI\\VEN_1022",
+        "PCI\\CC_010601",
+        "PCI\\CC_0106"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard NVM Express Controller",
+      "manufacturer": "Standard NVM Express Controller",
+      "pnpClass": "SCSIAdapter",
+      "service": "stornvme",
+      "hardwareIds": [
+        "PCI\\VEN_144D&DEV_A80A&SUBSYS_A801144D&REV_00",
+        "PCI\\VEN_144D&DEV_A80A&SUBSYS_A801144D",
+        "PCI\\VEN_144D&DEV_A80A&CC_010802",
+        "PCI\\VEN_144D&DEV_A80A&CC_0108"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_144D&DEV_A80A&REV_00",
+        "PCI\\VEN_144D&DEV_A80A",
+        "PCI\\VEN_144D&CC_010802",
+        "PCI\\VEN_144D&CC_0108",
+        "PCI\\VEN_144D",
+        "PCI\\CC_010802",
+        "PCI\\CC_0108"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD USB 3.10 eXtensible Host Controller - 1.10 (Microsoft)",
+      "manufacturer": "Generic USB xHCI Host Controller",
+      "pnpClass": "USB",
+      "service": "USBXHCI",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_149C&SUBSYS_7C561462&REV_00",
+        "PCI\\VEN_1022&DEV_149C&SUBSYS_7C561462",
+        "PCI\\VEN_1022&DEV_149C&CC_0c0330",
+        "PCI\\VEN_1022&DEV_149C&CC_0c03"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_149C&REV_00",
+        "PCI\\VEN_1022&DEV_149C",
+        "PCI\\VEN_1022&CC_0c0330",
+        "PCI\\VEN_1022&CC_0c03",
+        "PCI\\VEN_1022",
+        "PCI\\CC_0c0330",
+        "PCI\\CC_0c03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD USB 3.10 eXtensible Host Controller - 1.10 (Microsoft)",
+      "manufacturer": "Generic USB xHCI Host Controller",
+      "pnpClass": "USB",
+      "service": "USBXHCI",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_43EE&SUBSYS_11421B21&REV_00",
+        "PCI\\VEN_1022&DEV_43EE&SUBSYS_11421B21",
+        "PCI\\VEN_1022&DEV_43EE&CC_0c0330",
+        "PCI\\VEN_1022&DEV_43EE&CC_0c03"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_43EE&REV_00",
+        "PCI\\VEN_1022&DEV_43EE",
+        "PCI\\VEN_1022&CC_0c0330",
+        "PCI\\VEN_1022&CC_0c03",
+        "PCI\\VEN_1022",
+        "PCI\\CC_0c0330",
+        "PCI\\CC_0c03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1480&SUBSYS_7C561462&REV_00",
+        "PCI\\VEN_1022&DEV_1480&SUBSYS_7C561462",
+        "PCI\\VEN_1022&DEV_1480&CC_060000",
+        "PCI\\VEN_1022&DEV_1480&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1480&REV_00",
+        "PCI\\VEN_1022&DEV_1480",
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD SMBus",
+      "manufacturer": "Advanced Micro Devices, Inc",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_790B&SUBSYS_7C561462&REV_61",
+        "PCI\\VEN_1022&DEV_790B&SUBSYS_7C561462",
+        "PCI\\VEN_1022&DEV_790B&CC_0c0500",
+        "PCI\\VEN_1022&DEV_790B&CC_0c05"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_790B&REV_61",
+        "PCI\\VEN_1022&DEV_790B",
+        "PCI\\VEN_1022&CC_0c0500",
+        "PCI\\VEN_1022&CC_0c05",
+        "PCI\\VEN_1022",
+        "PCI\\CC_0c0500",
+        "PCI\\CC_0c05"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HD Pro Webcam C920",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Camera",
+      "service": "usbvideo",
+      "hardwareIds": [
+        "USB\\VID_046D&PID_082D&REV_0011&MI_00",
+        "USB\\VID_046D&PID_082D&MI_00"
+      ],
+      "compatibleIds": [
+        "USB\\Class_0e&SubClass_01&Prot_01",
+        "USB\\Class_0e&SubClass_01",
+        "USB\\Class_0e"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HD Pro Webcam C920 microphone",
+      "manufacturer": "(Generic USB Audio)",
+      "pnpClass": "MEDIA",
+      "service": "usbaudio",
+      "hardwareIds": [
+        "USB\\VID_046D&PID_082D&REV_0011&MI_02",
+        "USB\\VID_046D&PID_082D&MI_02"
+      ],
+      "compatibleIds": [
+        "USB\\Class_01&SubClass_01&Prot_01",
+        "USB\\Class_01&SubClass_01",
+        "USB\\Class_01"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Composite Device",
+      "manufacturer": "(Standard USB Host Controller)",
+      "pnpClass": "USB",
+      "service": "usbccgp",
+      "hardwareIds": [
+        "USB\\VID_046D&PID_082D&REV_0011",
+        "USB\\VID_046D&PID_082D"
+      ],
+      "compatibleIds": [
+        "USB\\DevClass_00&SubClass_00&Prot_00",
+        "USB\\DevClass_00",
+        "USB\\COMPOSITE"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Input Device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "HidUsb",
+      "hardwareIds": [
+        "USB\\VID_046D&PID_C33F&REV_0001&MI_00",
+        "USB\\VID_046D&PID_C33F&MI_00"
+      ],
+      "compatibleIds": [
+        "USB\\Class_03&SubClass_01&Prot_01",
+        "USB\\Class_03&SubClass_01",
+        "USB\\Class_03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "ACPI Fixed Feature Button",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\FixedButton",
+        "*FixedButton"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft AC Adapter",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Battery",
+      "hardwareIds": [
+        "ACPI\\ACPI0003",
+        "*ACPI0003"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard PS/2 Keyboard",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Keyboard",
+      "service": "i8042prt",
+      "hardwareIds": [
+        "ACPI\\PNP0303",
+        "*PNP0303"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Root Hub (USB 3.0)",
+      "manufacturer": "Microsoft",
+      "pnpClass": "USB",
+      "service": "USBHUB3",
+      "hardwareIds": [
+        "USB\\ROOT_HUB30&VID8086&PIDA0ED&REV0020",
+        "USB\\ROOT_HUB30"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft Basic Render Driver",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "service": "BasicRender",
+      "hardwareIds": [
+        "ROOT\\BasicRender"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Generic software device",
+      "manufacturer": "Microsoft",
+      "pnpClass": "SoftwareDevice",
+      "hardwareIds": [
+        "SWD\\GenericRaw",
+        "SWD\\Generic"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    }
+  ]
+}

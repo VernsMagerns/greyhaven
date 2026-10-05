@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-01T12:00:00Z",
+  "description": "Snapdragon X Elite (ARM64) laptop running Windows 11 24H2. Many components are ACPI-enumerated; ACPI IDs in this sample are illustrative. Exercises the ARM warning.",
+  "system": {
+    "firmwareType": 2,
+    "secureBootEnabled": 1,
+    "hiberbootEnabled": 1,
+    "hibernateEnabled": 1,
+    "bitLockerProtection": 1,
+    "windowsProductName": "Windows 10 Home",
+    "windowsDisplayVersion": "24H2",
+    "windowsCurrentBuild": "26100",
+    "windowsUbr": 1742,
+    "windowsEditionId": "Core",
+    "nativeMachine": 43620,
+    "chassisTypes": [
+      9
+    ],
+    "hasBattery": true,
+    "systemManufacturer": "Example PC Co.",
+    "systemModel": "Laptop 14 (Snapdragon X)"
+  },
+  "processors": [
+    {
+      "name": "Snapdragon(R) X Elite - X1E78100 - Qualcomm(R) Oryon(TM) CPU",
+      "manufacturer": "Qualcomm Technologies Inc",
+      "caption": "ARMv8 (64-bit) Family 8 Model 1 Revision 201",
+      "numberOfCores": 12,
+      "numberOfLogicalProcessors": 12
+    }
+  ],
+  "devices": [
+    {
+      "name": "Qualcomm(R) Adreno(TM) X1-85 GPU",
+      "manufacturer": "Qualcomm",
+      "pnpClass": "Display",
+      "service": "qcdx8380",
+      "hardwareIds": [
+        "ACPI\\VEN_QCOM&DEV_0C36",
+        "ACPI\\QCOM0C36",
+        "*QCOM0C36"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Qualcomm FastConnect 7800 Wi-Fi 7 High Band Simultaneous (HBS) Network Adapter",
+      "manufacturer": "Qualcomm",
+      "pnpClass": "Net",
+      "service": "qcwlan8380",
+      "hardwareIds": [
+        "PCI\\VEN_17CB&DEV_1107&SUBSYS_110717CB&REV_01",
+        "PCI\\VEN_17CB&DEV_1107&SUBSYS_110717CB",
+        "PCI\\VEN_17CB&DEV_1107&CC_028000",
+        "PCI\\VEN_17CB&DEV_1107&CC_0280"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_17CB&DEV_1107&REV_01",
+        "PCI\\VEN_17CB&DEV_1107",
+        "PCI\\VEN_17CB&CC_028000",
+        "PCI\\VEN_17CB&CC_0280",
+        "PCI\\VEN_17CB",
+        "PCI\\CC_028000",
+        "PCI\\CC_0280"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Qualcomm(R) FastConnect(TM) 7800 Bluetooth Adapter",
+      "manufacturer": "Qualcomm",
+      "pnpClass": "Bluetooth",
+      "service": "QcBtUart",
+      "hardwareIds": [
+        "ACPI\\VEN_QCOM&DEV_0C1A",
+        "ACPI\\QCOM0C1A",
+        "*QCOM0C1A"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Qualcomm(R) Aqstic(TM) Audio Adapter Device",
+      "manufacturer": "Qualcomm",
+      "pnpClass": "MEDIA",
+      "service": "qcaudio",
+      "hardwareIds": [
+        "ACPI\\VEN_QCOM&DEV_0C2D",
+        "ACPI\\QCOM0C2D",
+        "*QCOM0C2D"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Qualcomm(R) Spectra(TM) 695 ISP Camera",
+      "manufacturer": "Qualcomm",
+      "pnpClass": "Camera",
+      "service": "qccamisp",
+      "hardwareIds": [
+        "ACPI\\VEN_QCOM&DEV_0C55",
+        "ACPI\\QCOM0C55",
+        "*QCOM0C55"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard NVM Express Controller",
+      "manufacturer": "Standard NVM Express Controller",
+      "pnpClass": "SCSIAdapter",
+      "service": "stornvme",
+      "hardwareIds": [
+        "PCI\\VEN_1E0F&DEV_0013&SUBSYS_00011E0F&REV_01",
+        "PCI\\VEN_1E0F&DEV_0013&SUBSYS_00011E0F",
+        "PCI\\VEN_1E0F&DEV_0013&CC_010802",
+        "PCI\\VEN_1E0F&DEV_0013&CC_0108"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1E0F&DEV_0013&REV_01",
+        "PCI\\VEN_1E0F&DEV_0013",
+        "PCI\\VEN_1E0F&CC_010802",
+        "PCI\\VEN_1E0F&CC_0108",
+        "PCI\\VEN_1E0F",
+        "PCI\\CC_010802",
+        "PCI\\CC_0108"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant touch pad",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "mshidkmdf",
+      "hardwareIds": [
+        "HID\\VEN_04F3&DEV_3282&Col02",
+        "HID\\VEN_04F3&DEV_3282&REV_0001&Col02"
+      ],
+      "compatibleIds": [
+        "HID_DEVICE_UP:000D_U:0005"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant touch screen",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "mshidkmdf",
+      "hardwareIds": [
+        "HID\\VEN_04F3&DEV_2F2A&Col01",
+        "HID\\VEN_04F3&DEV_2F2A&REV_0001&Col01"
+      ],
+      "compatibleIds": [
+        "HID_DEVICE_UP:000D_U:0004"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "ACPI Fixed Feature Button",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\FixedButton",
+        "*FixedButton"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft AC Adapter",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Battery",
+      "hardwareIds": [
+        "ACPI\\ACPI0003",
+        "*ACPI0003"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard PS/2 Keyboard",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Keyboard",
+      "service": "i8042prt",
+      "hardwareIds": [
+        "ACPI\\PNP0303",
+        "*PNP0303"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Root Hub (USB 3.0)",
+      "manufacturer": "Microsoft",
+      "pnpClass": "USB",
+      "service": "USBHUB3",
+      "hardwareIds": [
+        "USB\\ROOT_HUB30&VID8086&PIDA0ED&REV0020",
+        "USB\\ROOT_HUB30"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft Basic Render Driver",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "service": "BasicRender",
+      "hardwareIds": [
+        "ROOT\\BasicRender"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Generic software device",
+      "manufacturer": "Microsoft",
+      "pnpClass": "SoftwareDevice",
+      "hardwareIds": [
+        "SWD\\GenericRaw",
+        "SWD\\Generic"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    }
+  ]
+}

@@ -1,0 +1,409 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-01T12:00:00Z",
+  "description": "12th-gen Intel laptop with storage in Intel VMD/RST mode, an Intel IPU6 MIPI camera and a Goodix fingerprint reader with no Windows driver. Windows 11 Home with device encryption waiting for activation. Exercises the AHCI checklist and camera warnings.",
+  "system": {
+    "firmwareType": 2,
+    "secureBootEnabled": 1,
+    "hiberbootEnabled": 1,
+    "hibernateEnabled": 1,
+    "bitLockerProtection": 8,
+    "windowsProductName": "Windows 10 Home",
+    "windowsDisplayVersion": "23H2",
+    "windowsCurrentBuild": "22631",
+    "windowsUbr": 4169,
+    "windowsEditionId": "Core",
+    "nativeMachine": 34404,
+    "chassisTypes": [
+      10
+    ],
+    "hasBattery": true,
+    "systemManufacturer": "Example PC Co.",
+    "systemModel": "Laptop 14 (Intel 12th gen)"
+  },
+  "processors": [
+    {
+      "name": "12th Gen Intel(R) Core(TM) i7-1260P",
+      "manufacturer": "GenuineIntel",
+      "caption": "Intel64 Family 6 Model 154 Stepping 3",
+      "numberOfCores": 12,
+      "numberOfLogicalProcessors": 16
+    }
+  ],
+  "devices": [
+    {
+      "name": "Intel(R) Iris(R) Xe Graphics",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "Display",
+      "service": "igfxn",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_46A6&SUBSYS_8A7F103C&REV_0c",
+        "PCI\\VEN_8086&DEV_46A6&SUBSYS_8A7F103C",
+        "PCI\\VEN_8086&DEV_46A6&CC_030000",
+        "PCI\\VEN_8086&DEV_46A6&CC_0300"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_46A6&REV_0c",
+        "PCI\\VEN_8086&DEV_46A6",
+        "PCI\\VEN_8086&CC_030000",
+        "PCI\\VEN_8086&CC_0300",
+        "PCI\\VEN_8086",
+        "PCI\\CC_030000",
+        "PCI\\CC_0300"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel RST VMD Controller 467F",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "SCSIAdapter",
+      "service": "iaStorVD",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_467F&SUBSYS_8A7F103C&REV_00",
+        "PCI\\VEN_8086&DEV_467F&SUBSYS_8A7F103C",
+        "PCI\\VEN_8086&DEV_467F&CC_010400",
+        "PCI\\VEN_8086&DEV_467F&CC_0104"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_467F&REV_00",
+        "PCI\\VEN_8086&DEV_467F",
+        "PCI\\VEN_8086&CC_010400",
+        "PCI\\VEN_8086&CC_0104",
+        "PCI\\VEN_8086",
+        "PCI\\CC_010400",
+        "PCI\\CC_0104"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) Wi-Fi 6E AX211 160MHz",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "Net",
+      "service": "Netwtw10",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_51F0&SUBSYS_00908086&REV_01",
+        "PCI\\VEN_8086&DEV_51F0&SUBSYS_00908086",
+        "PCI\\VEN_8086&DEV_51F0&CC_028000",
+        "PCI\\VEN_8086&DEV_51F0&CC_0280"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_51F0&REV_01",
+        "PCI\\VEN_8086&DEV_51F0",
+        "PCI\\VEN_8086&CC_028000",
+        "PCI\\VEN_8086&CC_0280",
+        "PCI\\VEN_8086",
+        "PCI\\CC_028000",
+        "PCI\\CC_0280"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) Wireless Bluetooth(R)",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "Bluetooth",
+      "service": "BTHUSB",
+      "hardwareIds": [
+        "USB\\VID_8087&PID_0033&REV_0001",
+        "USB\\VID_8087&PID_0033"
+      ],
+      "compatibleIds": [
+        "USB\\Class_e0&SubClass_01&Prot_01",
+        "USB\\Class_e0&SubClass_01",
+        "USB\\Class_e0"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) Smart Sound Technology BUS",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "System",
+      "service": "IntcAudioBus",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_51C8&SUBSYS_8A7F103C&REV_01",
+        "PCI\\VEN_8086&DEV_51C8&SUBSYS_8A7F103C",
+        "PCI\\VEN_8086&DEV_51C8&CC_040100",
+        "PCI\\VEN_8086&DEV_51C8&CC_0401"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_51C8&REV_01",
+        "PCI\\VEN_8086&DEV_51C8",
+        "PCI\\VEN_8086&CC_040100",
+        "PCI\\VEN_8086&CC_0401",
+        "PCI\\VEN_8086",
+        "PCI\\CC_040100",
+        "PCI\\CC_0401"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Realtek(R) Audio",
+      "manufacturer": "Realtek",
+      "pnpClass": "MEDIA",
+      "service": "RTKVHD64",
+      "hardwareIds": [
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0245&SUBSYS_103C8A7F&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0245&SUBSYS_103C8A7F"
+      ],
+      "compatibleIds": [
+        "HDAUDIO\\FUNC_01&CTLR_VEN_8086&CTLR_DEV_51C8&VEN_10EC&DEV_0245&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0245",
+        "HDAUDIO\\FUNC_01"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) Display Audio",
+      "manufacturer": "Intel(R) Corporation",
+      "pnpClass": "MEDIA",
+      "service": "IntcDAud",
+      "hardwareIds": [
+        "HDAUDIO\\FUNC_01&VEN_8086&DEV_2816&SUBSYS_80860101&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_8086&DEV_2816&SUBSYS_80860101"
+      ],
+      "compatibleIds": [
+        "HDAUDIO\\FUNC_01&CTLR_VEN_8086&CTLR_DEV_51C8&VEN_8086&DEV_2816&REV_1000",
+        "HDAUDIO\\FUNC_01&VEN_8086&DEV_2816",
+        "HDAUDIO\\FUNC_01"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) AVStream Camera",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "System",
+      "service": "iacamera64",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_465D&SUBSYS_8A7F103C&REV_02",
+        "PCI\\VEN_8086&DEV_465D&SUBSYS_8A7F103C",
+        "PCI\\VEN_8086&DEV_465D&CC_048000",
+        "PCI\\VEN_8086&DEV_465D&CC_0480"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_465D&REV_02",
+        "PCI\\VEN_8086&DEV_465D",
+        "PCI\\VEN_8086&CC_048000",
+        "PCI\\VEN_8086&CC_0480",
+        "PCI\\VEN_8086",
+        "PCI\\CC_048000",
+        "PCI\\CC_0480"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "OV01A10 Camera Sensor",
+      "manufacturer": "OmniVision",
+      "pnpClass": "Camera",
+      "service": "ov01a10",
+      "hardwareIds": [
+        "ACPI\\VEN_OVTI&DEV_01A1",
+        "ACPI\\OVTI01A1",
+        "*OVTI01A1"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Unknown USB Device",
+      "hardwareIds": [
+        "USB\\VID_27C6&PID_633C&REV_0001",
+        "USB\\VID_27C6&PID_633C"
+      ],
+      "compatibleIds": [
+        "USB\\DevClass_00&SubClass_00&Prot_00",
+        "USB\\DevClass_00",
+        "USB\\COMPOSITE"
+      ],
+      "configManagerErrorCode": 28,
+      "present": true
+    },
+    {
+      "name": "HID-compliant touch pad",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "mshidkmdf",
+      "hardwareIds": [
+        "HID\\VEN_06CB&DEV_CE7E&Col02",
+        "HID\\VEN_06CB&DEV_CE7E&REV_0001&Col02"
+      ],
+      "compatibleIds": [
+        "HID_DEVICE_UP:000D_U:0005"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) USB 3.10 eXtensible Host Controller - 1.20 (Microsoft)",
+      "manufacturer": "Generic USB xHCI Host Controller",
+      "pnpClass": "USB",
+      "service": "USBXHCI",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_51ED&SUBSYS_8A7F103C&REV_01",
+        "PCI\\VEN_8086&DEV_51ED&SUBSYS_8A7F103C",
+        "PCI\\VEN_8086&DEV_51ED&CC_0c0330",
+        "PCI\\VEN_8086&DEV_51ED&CC_0c03"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_51ED&REV_01",
+        "PCI\\VEN_8086&DEV_51ED",
+        "PCI\\VEN_8086&CC_0c0330",
+        "PCI\\VEN_8086&CC_0c03",
+        "PCI\\VEN_8086",
+        "PCI\\CC_0c0330",
+        "PCI\\CC_0c03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) USB4 Host Router",
+      "manufacturer": "Intel Corporation",
+      "pnpClass": "System",
+      "service": "TbtHostController",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_463E&SUBSYS_8A7F103C&REV_02",
+        "PCI\\VEN_8086&DEV_463E&SUBSYS_8A7F103C",
+        "PCI\\VEN_8086&DEV_463E&CC_0c0340",
+        "PCI\\VEN_8086&DEV_463E&CC_0c03"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_463E&REV_02",
+        "PCI\\VEN_8086&DEV_463E",
+        "PCI\\VEN_8086&CC_0c0340",
+        "PCI\\VEN_8086&CC_0c03",
+        "PCI\\VEN_8086",
+        "PCI\\CC_0c0340",
+        "PCI\\CC_0c03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) Management Engine Interface #1",
+      "manufacturer": "Intel",
+      "pnpClass": "System",
+      "service": "MEIx64",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_51E0&SUBSYS_8A7F103C&REV_01",
+        "PCI\\VEN_8086&DEV_51E0&SUBSYS_8A7F103C",
+        "PCI\\VEN_8086&DEV_51E0&CC_078000",
+        "PCI\\VEN_8086&DEV_51E0&CC_0780"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_51E0&REV_01",
+        "PCI\\VEN_8086&DEV_51E0",
+        "PCI\\VEN_8086&CC_078000",
+        "PCI\\VEN_8086&CC_0780",
+        "PCI\\VEN_8086",
+        "PCI\\CC_078000",
+        "PCI\\CC_0780"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Intel(R) Host Bridge/DRAM Registers - 4621",
+      "manufacturer": "Intel",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_8086&DEV_4621&SUBSYS_8A7F103C&REV_02",
+        "PCI\\VEN_8086&DEV_4621&SUBSYS_8A7F103C",
+        "PCI\\VEN_8086&DEV_4621&CC_060000",
+        "PCI\\VEN_8086&DEV_4621&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_8086&DEV_4621&REV_02",
+        "PCI\\VEN_8086&DEV_4621",
+        "PCI\\VEN_8086&CC_060000",
+        "PCI\\VEN_8086&CC_0600",
+        "PCI\\VEN_8086",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "ACPI Fixed Feature Button",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\FixedButton",
+        "*FixedButton"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft AC Adapter",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Battery",
+      "hardwareIds": [
+        "ACPI\\ACPI0003",
+        "*ACPI0003"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard PS/2 Keyboard",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Keyboard",
+      "service": "i8042prt",
+      "hardwareIds": [
+        "ACPI\\PNP0303",
+        "*PNP0303"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Root Hub (USB 3.0)",
+      "manufacturer": "Microsoft",
+      "pnpClass": "USB",
+      "service": "USBHUB3",
+      "hardwareIds": [
+        "USB\\ROOT_HUB30&VID8086&PIDA0ED&REV0020",
+        "USB\\ROOT_HUB30"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft Basic Render Driver",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "service": "BasicRender",
+      "hardwareIds": [
+        "ROOT\\BasicRender"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Generic software device",
+      "manufacturer": "Microsoft",
+      "pnpClass": "SoftwareDevice",
+      "hardwareIds": [
+        "SWD\\GenericRaw",
+        "SWD\\Generic"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    }
+  ]
+}
