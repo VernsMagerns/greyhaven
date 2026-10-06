@@ -13,6 +13,8 @@ Guidance for Claude Code when working in this repository.
 - **Git identity:** commits are authored as `Kyler Verney <280451244+VernsMagerns@users.noreply.github.com>`. Do not
   use any other email address anywhere in the project (docs, README, license, package
   metadata, CI config).
+- **Dates:** write dates in docs and data in the maintainer's local time, US Pacific
+  (America/Los_Angeles), not UTC. Tool timestamps are often UTC; convert them first.
 
 ## Project
 

@@ -27,7 +27,8 @@ catalog.Validate();
 Directory.CreateDirectory(cacheDir);
 
 using var http = GreyHaven.Compat.Online.GreyHavenHttp.Create(TimeSpan.FromMinutes(20));
-var generated = DateTime.UtcNow.ToString("yyyy-MM-dd");
+// Dates are the maintainer's local date (US Pacific), not UTC, so they match the docs.
+var generated = TimeZoneInfo.ConvertTime(DateTimeOffset.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("America/Los_Angeles")).ToString("yyyy-MM-dd");
 
 if (command is "kernels" or "all")
 {

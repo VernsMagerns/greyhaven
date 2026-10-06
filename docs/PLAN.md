@@ -131,12 +131,12 @@ Full definition: [docs/scoring.md](scoring.md). In short:
 - Bands: Great ≥90, Good ≥70, Fair ≥50, Poor <50.
 - Computed per distro, rated against the kernel on the distro's install ISO. Recommendation
   order: score, fewer extra-driver steps, fewer system changes (e.g. Secure Boot off), rank.
-- **(decided 2026-10-06)** When the best distro needs Secure Boot off, the user chooses an
+- **(decided 2026-10-05)** When the best distro needs Secure Boot off, the user chooses an
   Easy path (Ubuntu, keeps Secure Boot on; default) or an Advanced path (best distro, with a
   Secure Boot notice and the PC maker's how-to guide). The chosen path drives fixes, the
   checklist, the default ISO and exports. Secure Boot changes are instructions-only.
-- **(decided 2026-10-06)** Ratings based on approximate data are capped at medium confidence.
-- **(decided 2026-10-06)** The data build date is shown everywhere; a notice appears when it's
+- **(decided 2026-10-05)** Ratings based on approximate data are capped at medium confidence.
+- **(decided 2026-10-05)** The data build date is shown everywhere; a notice appears when it's
   over 90 days old or a newer distro release exists. A weekly Action opens an issue for new releases.
 
 ### Distros (decided)
@@ -174,7 +174,7 @@ structured so more editions can be added as data, not code.
 
 ## 5. Milestones
 
-UI rule (decided 2026-10-06): no "eyebrow" labels (small all-caps kicker text above
+UI rule (decided 2026-10-05): no "eyebrow" labels (small all-caps kicker text above
 headings); lead with the heading.
 
 
