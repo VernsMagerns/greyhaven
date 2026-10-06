@@ -40,8 +40,8 @@ public class ReportExportTests
         if (format != ReportFormat.Json)
         {
             Assert.DoesNotContain("!!", text);
-            Assert.Contains("Test with a live USB before installing", text);
-            Assert.Contains("Essential", text);
+            Assert.Contains("Your steps to Linux", text);
+            Assert.Contains("s parts on ", text); // "Your PC's parts on" (the apostrophe is encoded in HTML)
         }
     }
 
@@ -71,8 +71,8 @@ public class ReportExportTests
     {
         var r = (await Rate("nvidia-desktop")).WithPath(PathKind.Advanced);
         var md = ReportExporter.Render(r, ReportFormat.Markdown);
-        Assert.Contains("How each part works on Pop!\\_OS", md);
-        Assert.Contains("Download Pop!\\_OS 24.04 (NVIDIA ISO)", md);
+        Assert.Contains("Your PC's parts on Pop!\\_OS", md);
+        Assert.Contains("Pick the NVIDIA ISO", md);
         Assert.Contains("turn Secure Boot off first", md);
         Assert.Contains("System76 - Live Disk Creation", md);
     }
@@ -103,7 +103,7 @@ public class ReportExportTests
         Assert.Contains("<caption>", html);
         Assert.Contains("type=\"checkbox\"", html);
         // Rating symbols are hidden from screen readers; the words carry the meaning.
-        Assert.Contains("<span aria-hidden=\"true\">✓</span> Works out of the box", html);
+        Assert.Contains("<span aria-hidden=\"true\">✓</span> Works right away", html);
     }
 
     [Fact]

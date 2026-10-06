@@ -15,7 +15,8 @@ public sealed record RatingTag(Rating Rating) : Inline;
 /// <summary>A terminal command inside running text.</summary>
 public sealed record Code(string Value) : Inline;
 
-public enum CalloutKind { Info, Warning }
+/// <summary>Info: a calm note. Warning: needs care. Tip: "What could go wrong?". Danger: data will be erased.</summary>
+public enum CalloutKind { Info, Warning, Tip, Danger }
 
 public abstract record Block;
 public sealed record Heading(int Level, string Text) : Block;
@@ -30,6 +31,14 @@ public sealed record CommandBlock(IReadOnlyList<string> Lines) : Block;
 public sealed record Table(string Caption, IReadOnlyList<string> Headers, IReadOnlyList<IReadOnlyList<IReadOnlyList<Inline>>> Rows) : Block;
 /// <summary>Collapsed in HTML; a labelled section in Markdown.</summary>
 public sealed record Details(string Summary, IReadOnlyList<Block> Content) : Block;
+/// <summary>One step of a picture-by-picture guide: a picture and a single sentence.</summary>
+public sealed record PictureStep(string Text, string PictureCaption, string? PictureId = null);
+/// <summary>A picture-by-picture guide. Pictures not drawn yet show a captioned placeholder.</summary>
+public sealed record PictureGuide(IReadOnlyList<PictureStep> Steps) : Block;
+/// <summary>The results headline with the score beside it.</summary>
+public sealed record ScoreHeadline(string Title, string? Suggestion, string Summary, int Score) : Block;
+/// <summary>A big, single fact to spot at a glance, e.g. the startup menu key "F11".</summary>
+public sealed record KeyFact(string Label, string Value) : Block;
 
 public sealed record ReportDocument(string Title, IReadOnlyList<Block> Blocks);
 

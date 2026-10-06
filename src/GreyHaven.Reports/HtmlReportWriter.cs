@@ -1,35 +1,41 @@
 using System.Net;
+using System.Reflection;
 using System.Text;
 using GreyHaven.Core.Hardware;
 
 namespace GreyHaven.Reports;
 
 /// <summary>
-/// Renders a <see cref="ReportDocument"/> as one self-contained HTML file: no scripts, no
-/// external files, light and dark themes, print-friendly, with real headings, captioned tables
-/// and checkboxes for the live-USB checks.
+/// Renders a <see cref="ReportDocument"/> as one self-contained HTML file in the "Market Day"
+/// look: no scripts, no external files (the brand fonts are embedded), light and dark themes,
+/// Windows contrast themes, print-friendly, with real headings, captioned tables, collapsible
+/// details and checkboxes for the steps.
 /// </summary>
 public static class HtmlReportWriter
 {
     /// <summary>
-    /// The app's colours (GreyHaven.Presentation's Palette, which tests hold to WCAG AA), so
-    /// exports look like the app. A test keeps these in step with the palette.
+    /// The app's colours (GreyHaven.Presentation's Palette, "Market Day", which tests hold to
+    /// WCAG AA), so exports look like the app. A test keeps these in step with the palette.
+    /// "page" is the card colour (the reading surface); "paper" is the app's page background.
     /// </summary>
     public static readonly IReadOnlyDictionary<string, (string Light, string Dark)> Colours = new Dictionary<string, (string, string)>
     {
-        ["page"] = ("#FFFFFF", "#2B2B2B"),
-        ["text"] = ("#1A1A1A", "#FFFFFF"),
-        ["text-secondary"] = ("#595959", "#C8C8C8"),
-        ["border"] = ("#8A8A8A", "#8A8A8A"),
-        ["accent"] = ("#005FB8", "#60CDFF"),
-        ["works"] = ("#0E6E0E", "#6CCB5F"),
-        ["extra"] = ("#005FB8", "#60CDFF"),
-        ["partial"] = ("#8A5000", "#FCE100"),
-        ["unsupported"] = ("#B3261E", "#FF99A4"),
-        ["unknown"] = ("#595959", "#C8C8C8"),
-        ["notice-info"] = ("#E6F0FA", "#1F3347"),
-        ["notice-warning"] = ("#FFF4CE", "#433519"),
-        ["command"] = ("#F0F0F0", "#1C1C1C"),
+        ["page"] = ("#FFFFFF", "#18212B"),
+        ["paper"] = ("#F3EDE0", "#0D1218"),
+        ["text"] = ("#1F1B16", "#F3EFE7"),
+        ["text-secondary"] = ("#52473B", "#B8C3CE"),
+        ["border"] = ("#1F1B16", "#8C9BAB"),
+        ["accent"] = ("#B2361A", "#FF9065"),
+        ["on-accent"] = ("#FFFFFF", "#0D1218"),
+        ["works"] = ("#2B6630", "#8FD69B"),
+        ["extra"] = ("#0D5986", "#8DCBF5"),
+        ["partial"] = ("#845000", "#FFCF5C"),
+        ["unsupported"] = ("#9E1C20", "#FF9F95"),
+        ["unknown"] = ("#52473B", "#B8C3CE"),
+        ["notice-info"] = ("#E1EDD8", "#1B2B2A"),
+        ["notice-warning"] = ("#FFE08A", "#2D2616"),
+        ["command"] = ("#EEE6D5", "#111820"),
+        ["shadow"] = ("#1F1B16", "#05080B"),
     };
 
     public static string Write(ReportDocument doc)
@@ -42,7 +48,7 @@ public static class HtmlReportWriter
         sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
         sb.AppendLine("<meta name=\"color-scheme\" content=\"light dark\">");
         sb.AppendLine($"<title>{E(doc.Title)}</title>");
-        sb.AppendLine("<style>").Append(Css()).AppendLine("</style>");
+        sb.AppendLine("<style>").Append(Fonts.Value).Append(Css()).AppendLine("</style>");
         sb.AppendLine("</head>");
         sb.AppendLine("<body>");
         sb.AppendLine("<main>");
@@ -64,7 +70,24 @@ public static class HtmlReportWriter
                 sb.AppendLine($"<p>{Inlines(p.Content)}</p>");
                 break;
             case Callout c:
-                sb.AppendLine($"<aside class=\"callout {(c.Kind == CalloutKind.Warning ? "warning" : "info")}\"><p><strong>{E(c.Title)}:</strong> {Inlines(c.Content)}</p></aside>");
+                var kind = c.Kind.ToString().ToLowerInvariant();
+                sb.AppendLine($"<aside class=\"callout {kind}\"><p><strong>{E(c.Title)}</strong></p><p>{Inlines(c.Content)}</p></aside>");
+                break;
+            case ScoreHeadline h:
+                sb.AppendLine("<section class=\"headline\"><div>");
+                sb.AppendLine($"<h2>{E(h.Title)}</h2>");
+                if (h.Suggestion is not null) sb.AppendLine($"<p class=\"suggest\">{E(h.Suggestion)}</p>");
+                sb.AppendLine($"<p>{E(h.Summary)}</p></div>");
+                sb.AppendLine($"<div class=\"score\" role=\"img\" aria-label=\"Score: {h.Score} out of 100\"><span class=\"num\">{h.Score}</span><span>out of 100</span></div></section>");
+                break;
+            case KeyFact k:
+                sb.AppendLine($"<div class=\"keyfact\"><p>{E(k.Label)}</p><p class=\"key\">{E(k.Value)}</p></div>");
+                break;
+            case PictureGuide g:
+                sb.AppendLine("<ol class=\"pictures\">");
+                foreach (var s in g.Steps)
+                    sb.AppendLine($"<li><figure><div class=\"frame\" role=\"img\" aria-label=\"Picture coming soon: {E(s.PictureCaption)}\"><span>Picture coming soon:<br>{E(s.PictureCaption)}</span></div></figure><p>{E(s.Text)}</p></li>");
+                sb.AppendLine("</ol>");
                 break;
             case ListBlock l when l.Kind == ListKind.Checkboxes:
                 sb.AppendLine("<ul class=\"checks\">");
@@ -98,9 +121,9 @@ public static class HtmlReportWriter
                 sb.AppendLine("</tbody></table></div>");
                 break;
             case Details d:
-                sb.AppendLine($"<details><summary>{E(d.Summary)}</summary>");
+                sb.AppendLine($"<details><summary>{E(d.Summary)}</summary><div class=\"more\">");
                 foreach (var inner in d.Content) WriteBlock(sb, inner);
-                sb.AppendLine("</details>");
+                sb.AppendLine("</div></details>");
                 break;
         }
     }
@@ -114,7 +137,7 @@ public static class HtmlReportWriter
         Link l when IsWebUrl(l.Url) => $"<a href=\"{E(l.Url)}\">{E(l.Label)}</a>",
         Link l => E(l.Label),
         // The symbol is decorative: the words carry the meaning for screen readers.
-        RatingTag r => $"<span class=\"rating {RatingSymbols.CssClass(r.Rating)}\"><span aria-hidden=\"true\">{RatingSymbols.Of(r.Rating)}</span> {E(Labels.Of(r.Rating))}</span>",
+        RatingTag r => $"<span class=\"rating {RatingSymbols.CssClass(r.Rating)}\"><span aria-hidden=\"true\">{RatingSymbols.Of(r.Rating)}</span> {E(PlainWords.Rating(r.Rating))}</span>",
         Code c => $"<code>{E(c.Value)}</code>",
         _ => "",
     };
@@ -125,47 +148,79 @@ public static class HtmlReportWriter
 
     private static string E(string s) => WebUtility.HtmlEncode(s);
 
+    /// <summary>The brand fonts (SIL OFL 1.1), embedded so the file stays self-contained and works offline.</summary>
+    private static readonly Lazy<string> Fonts = new(() =>
+    {
+        var asm = typeof(HtmlReportWriter).Assembly;
+        string Face(string family, string file, int weight)
+        {
+            using var stream = asm.GetManifestResourceStream($"Fonts.{file}");
+            if (stream is null) return "";
+            using var ms = new MemoryStream();
+            stream.CopyTo(ms);
+            return $"@font-face{{font-family:\"{family}\";font-weight:{weight};font-display:swap;src:url(data:font/ttf;base64,{Convert.ToBase64String(ms.ToArray())}) format(\"truetype\")}}\n";
+        }
+        return Face("Rubik", "Rubik-Bold.ttf", 700) + Face("Lexend", "Lexend-Regular.ttf", 400) + Face("Lexend", "Lexend-SemiBold.ttf", 600);
+    });
+
     private static string Css()
     {
-        string Vars(Func<(string Light, string Dark), string> pick) =>
-            string.Concat(Colours.Select(c => $"--{c.Key}:{pick(c.Value)};"));
+        string Vars(Func<(string Light, string Dark), string> pick) => string.Concat(Colours.Select(c => $"--{c.Key}:{pick(c.Value)};"));
         var light = ":root{" + Vars(c => c.Light) + "}";
         var dark = ":root{" + Vars(c => c.Dark) + "}";
         return
             light + "\n" +
             "@media (prefers-color-scheme: dark){" + dark + "}\n" +
-            "@media print{" + light + " details{display:block} details>summary{list-style:none} a::after{content:\" (\" attr(href) \")\";font-size:.85em;word-break:break-all}}\n" +
+            "@media print{" + light + " details{display:block} details>summary{list-style:none} .more{border:0;padding:0} a::after{content:\" (\" attr(href) \")\";font-size:.85em;word-break:break-all} .card,section.headline,details,.callout{box-shadow:none} h3{break-after:avoid}}\n" +
             """
             *{box-sizing:border-box}
-            body{margin:0;background:var(--page);color:var(--text);font:16px/1.55 "Segoe UI",system-ui,-apple-system,sans-serif}
-            main{max-width:52rem;margin:0 auto;padding:1.5rem 1rem 3rem}
-            h1{font-size:2rem;margin:.5rem 0}
-            h2{font-size:1.5rem;margin:2.2rem 0 .6rem;padding-top:.6rem;border-top:1px solid var(--border)}
+            body{margin:0;background:var(--paper);color:var(--text);font:16px/1.6 Lexend,"Segoe UI",system-ui,sans-serif}
+            main{max-width:52rem;margin:1.5rem auto 3rem;padding:1.5rem 1.25rem;background:var(--page);border:2.5px solid var(--border);border-radius:12px;box-shadow:4px 4px 0 var(--shadow)}
+            h1,h2,h3,h4{font-family:Rubik,"Segoe UI",system-ui,sans-serif;font-weight:700;line-height:1.25}
+            h1{font-size:2rem;margin:.25rem 0 .5rem}
+            h2{font-size:1.5rem;margin:2.2rem 0 .6rem}
             h3{font-size:1.2rem;margin:1.6rem 0 .4rem}
-            h4{font-size:1.05rem;margin:1.4rem 0 .3rem}
+            h4{font-size:1.05rem;margin:1.2rem 0 .3rem}
+            p{margin:.4rem 0}
             a{color:var(--accent)}
-            a:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-            .callout{border:1px solid var(--border);border-radius:6px;padding:.1rem 1rem;margin:1rem 0}
-            .callout.info{background:var(--notice-info)}
+            a:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--text);outline-offset:2px}
+            section.headline{display:grid;grid-template-columns:1fr auto;gap:1rem;align-items:center;border:2.5px solid var(--border);border-radius:12px;padding:1rem 1.25rem;margin:1rem 0;box-shadow:4px 4px 0 var(--shadow)}
+            section.headline h2{margin:0}
+            .suggest{font-size:1.2rem}
+            .score{display:grid;place-items:center;text-align:center;width:7rem;height:7rem;border-radius:50%;background:var(--accent);color:var(--on-accent);border:2.5px solid var(--border);font-size:.85rem;line-height:1.1}
+            .score .num{font-family:Rubik,sans-serif;font-size:2.6rem;font-weight:700;align-self:end}
+            .callout{border:2.5px solid var(--border);border-radius:12px;padding:.4rem 1rem;margin:1rem 0;box-shadow:4px 4px 0 var(--shadow)}
+            .callout.info,.callout.tip{background:var(--notice-info)}
             .callout.warning{background:var(--notice-warning)}
+            .callout.danger{background:var(--notice-warning);border-width:4px}
             .rating{font-weight:600;white-space:nowrap}
             .rating.works{color:var(--works)}.rating.extra{color:var(--extra)}.rating.partial{color:var(--partial)}
             .rating.unsupported{color:var(--unsupported)}.rating.unknown{color:var(--unknown)}
+            .keyfact{text-align:center;border:2.5px solid var(--border);border-radius:12px;padding:.5rem;margin:1rem 0}
+            .keyfact .key{font-family:Rubik,sans-serif;font-size:2.4rem;font-weight:700;margin:0}
+            ol.pictures{display:grid;grid-template-columns:repeat(auto-fill,minmax(13rem,1fr));gap:1rem;padding:0;list-style:none;counter-reset:pic}
+            ol.pictures li{counter-increment:pic}
+            ol.pictures li>p{font-weight:600}
+            ol.pictures li>p::before{content:counter(pic) ". ";font-family:Rubik,sans-serif}
+            ol.pictures figure{margin:0}
+            .frame{display:grid;place-items:center;text-align:center;min-height:7.5rem;padding:.5rem;background:var(--command);border:2px dashed var(--border);border-radius:12px;color:var(--text-secondary);font-size:.85rem}
             .table-wrap{overflow-x:auto}
             table{border-collapse:collapse;width:100%;margin:.5rem 0 1rem}
             caption{text-align:left;color:var(--text-secondary);padding:.3rem 0}
             th,td{border:1px solid var(--border);padding:.4rem .6rem;text-align:left;vertical-align:top}
             thead th{font-weight:600}
             tbody th{font-weight:400}
-            pre.command{background:var(--command);border:1px solid var(--border);border-radius:6px;padding:.7rem 1rem;overflow-x:auto}
+            pre.command{background:var(--command);border:1px solid var(--border);border-radius:8px;padding:.7rem 1rem;overflow-x:auto}
             code{font-family:Consolas,"Cascadia Mono",ui-monospace,monospace}
             ul.checks{list-style:none;padding-left:0}
             ul.checks li{margin:.5rem 0}
             ul.checks label{display:flex;gap:.6rem;align-items:flex-start}
-            ul.checks input{width:1.1rem;height:1.1rem;margin-top:.25rem;flex:none}
-            details{margin:.5rem 0 1rem}
-            summary{cursor:pointer;color:var(--accent)}
-            @media (forced-colors: active){.rating,.callout{forced-color-adjust:auto}}
+            ul.checks input{width:1.2rem;height:1.2rem;margin-top:.3rem;flex:none;accent-color:var(--accent)}
+            details{margin:.6rem 0 1rem}
+            summary{cursor:pointer;color:var(--accent);font-weight:600}
+            .more{margin-top:.5rem;padding-left:1rem;border-left:3px solid var(--border)}
+            @media (max-width:40rem){section.headline{grid-template-columns:1fr}main{margin:0;border-radius:0}}
+            @media (forced-colors: active){.rating,.callout,.score{forced-color-adjust:auto}.score{border:2px solid CanvasText}main,section.headline,.callout{box-shadow:none}}
 
             """;
     }

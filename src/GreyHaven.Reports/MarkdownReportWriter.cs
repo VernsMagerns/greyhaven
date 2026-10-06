@@ -24,7 +24,20 @@ public static class MarkdownReportWriter
                 sb.AppendLine(Inlines(p.Content)).AppendLine();
                 break;
             case Callout c:
-                sb.AppendLine($"> **{(c.Kind == CalloutKind.Warning ? "⚠︎ " : "")}{Escape(c.Title)}:** {Inlines(c.Content)}").AppendLine();
+                var mark = c.Kind switch { CalloutKind.Warning or CalloutKind.Danger => "⚠\uFE0E ", _ => "" };
+                sb.AppendLine($"> **{mark}{Escape(c.Title)}:** {Inlines(c.Content)}").AppendLine();
+                break;
+            case ScoreHeadline h:
+                sb.AppendLine($"## {Escape(h.Title)}").AppendLine();
+                sb.AppendLine(string.Join(" ", new[] { $"**{h.Score} out of 100.**", h.Suggestion is null ? null : Escape(h.Suggestion), Escape(h.Summary) }.Where(x => x is not null))).AppendLine();
+                break;
+            case KeyFact k:
+                sb.AppendLine($"{Escape(k.Label)}: **{Escape(k.Value)}**").AppendLine();
+                break;
+            case PictureGuide g:
+                for (var i = 0; i < g.Steps.Count; i++)
+                    sb.AppendLine($"{i + 1}. {Escape(g.Steps[i].Text)} *(Picture: {Escape(g.Steps[i].PictureCaption)})*");
+                sb.AppendLine();
                 break;
             case ListBlock l:
                 for (var i = 0; i < l.Items.Count; i++)
@@ -66,7 +79,7 @@ public static class MarkdownReportWriter
         Strong s => $"**{Escape(s.Value.TrimEnd())}**{(s.Value.EndsWith(' ') ? " " : "")}",
         Link l when HtmlReportWriter.IsWebUrl(l.Url) => $"[{Escape(l.Label)}](<{l.Url}>)",
         Link l => Escape(l.Label),
-        RatingTag r => $"{RatingSymbols.Of(r.Rating)} {Labels.Of(r.Rating)}",
+        RatingTag r => $"{RatingSymbols.Of(r.Rating)} {PlainWords.Rating(r.Rating)}",
         Code c => $"`{c.Value.Replace("`", "")}`",
         _ => "",
     };

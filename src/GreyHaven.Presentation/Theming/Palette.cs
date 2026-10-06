@@ -57,43 +57,47 @@ public sealed record Palette(
     Rgb Unknown,
     Rgb NoticeInfo,
     Rgb NoticeWarning,
-    Rgb CommandBackground)
+    Rgb CommandBackground,
+    /// <summary>Hard "sticker" shadow under cards and buttons. Decorative; not used for text.</summary>
+    Rgb Shadow)
 {
-    /// <summary>Matches Windows 11 light-mode Fluent colours, darkened where needed for AA contrast.</summary>
+    /// <summary>"Market Day" light (chosen 2026-10-06): paper cream, tomato accent, ink outlines. WCAG AA.</summary>
     public static readonly Palette Light = new(
-        Page: Rgb.Parse("#F3F3F3"),
+        Page: Rgb.Parse("#F3EDE0"),
         Card: Rgb.Parse("#FFFFFF"),
-        CardBorder: Rgb.Parse("#8A8A8A"),
-        Text: Rgb.Parse("#1A1A1A"),
-        TextSecondary: Rgb.Parse("#595959"),
-        Accent: Rgb.Parse("#005FB8"),
+        CardBorder: Rgb.Parse("#1F1B16"),
+        Text: Rgb.Parse("#1F1B16"),
+        TextSecondary: Rgb.Parse("#52473B"),
+        Accent: Rgb.Parse("#B2361A"),
         OnAccent: Rgb.Parse("#FFFFFF"),
-        Works: Rgb.Parse("#0E6E0E"),
-        ExtraStep: Rgb.Parse("#005FB8"),
-        Partial: Rgb.Parse("#8A5000"),
-        Unsupported: Rgb.Parse("#B3261E"),
-        Unknown: Rgb.Parse("#595959"),
-        NoticeInfo: Rgb.Parse("#E6F0FA"),
-        NoticeWarning: Rgb.Parse("#FFF4CE"),
-        CommandBackground: Rgb.Parse("#F0F0F0"));
+        Works: Rgb.Parse("#2B6630"),
+        ExtraStep: Rgb.Parse("#0D5986"),
+        Partial: Rgb.Parse("#845000"),
+        Unsupported: Rgb.Parse("#9E1C20"),
+        Unknown: Rgb.Parse("#52473B"),
+        NoticeInfo: Rgb.Parse("#E1EDD8"),
+        NoticeWarning: Rgb.Parse("#FFE08A"),
+        CommandBackground: Rgb.Parse("#EEE6D5"),
+        Shadow: Rgb.Parse("#1F1B16"));
 
-    /// <summary>Matches Windows 11 dark-mode Fluent colours.</summary>
+    /// <summary>"Market Day" dark: built up from a near-black slate (Page is the darkest surface). WCAG AA.</summary>
     public static readonly Palette Dark = new(
-        Page: Rgb.Parse("#202020"),
-        Card: Rgb.Parse("#2B2B2B"),
-        CardBorder: Rgb.Parse("#8A8A8A"),
-        Text: Rgb.Parse("#FFFFFF"),
-        TextSecondary: Rgb.Parse("#C8C8C8"),
-        Accent: Rgb.Parse("#60CDFF"),
-        OnAccent: Rgb.Parse("#000000"),
-        Works: Rgb.Parse("#6CCB5F"),
-        ExtraStep: Rgb.Parse("#60CDFF"),
-        Partial: Rgb.Parse("#FCE100"),
-        Unsupported: Rgb.Parse("#FF99A4"),
-        Unknown: Rgb.Parse("#C8C8C8"),
-        NoticeInfo: Rgb.Parse("#1F3347"),
-        NoticeWarning: Rgb.Parse("#433519"),
-        CommandBackground: Rgb.Parse("#1C1C1C"));
+        Page: Rgb.Parse("#0D1218"),
+        Card: Rgb.Parse("#18212B"),
+        CardBorder: Rgb.Parse("#8C9BAB"),
+        Text: Rgb.Parse("#F3EFE7"),
+        TextSecondary: Rgb.Parse("#B8C3CE"),
+        Accent: Rgb.Parse("#FF9065"),
+        OnAccent: Rgb.Parse("#0D1218"),
+        Works: Rgb.Parse("#8FD69B"),
+        ExtraStep: Rgb.Parse("#8DCBF5"),
+        Partial: Rgb.Parse("#FFCF5C"),
+        Unsupported: Rgb.Parse("#FF9F95"),
+        Unknown: Rgb.Parse("#B8C3CE"),
+        NoticeInfo: Rgb.Parse("#1B2B2A"),
+        NoticeWarning: Rgb.Parse("#2D2616"),
+        CommandBackground: Rgb.Parse("#111820"),
+        Shadow: Rgb.Parse("#05080B"));
 
     /// <summary>Text colours that appear on the surfaces, for contrast checks and theming.</summary>
     public IEnumerable<(string Name, Rgb Colour)> TextColours =>
@@ -119,5 +123,5 @@ public sealed record Palette(
 
     /// <summary>All named colours, for building the WPF resource dictionary ("GH.&lt;Name&gt;").</summary>
     public IEnumerable<(string Name, Rgb Colour)> All =>
-        TextColours.Concat(Surfaces).Concat([(nameof(CardBorder), CardBorder), (nameof(OnAccent), OnAccent)]);
+        TextColours.Concat(Surfaces).Concat([(nameof(CardBorder), CardBorder), (nameof(OnAccent), OnAccent), (nameof(Shadow), Shadow)]);
 }

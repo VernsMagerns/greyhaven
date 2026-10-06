@@ -7,29 +7,28 @@ using static GreyHaven.Reports.Doc;
 namespace GreyHaven.Reports;
 
 /// <summary>
-/// Turns a <see cref="CompatibilityReport"/> into the shareable report: the same content the
-/// app shows, for the path the user chose, plus the live-USB test guide.
+/// Turns a <see cref="CompatibilityReport"/> into the shareable report, in the same plain words
+/// and order as the app: headline and score, the version of Linux to use, the parts that need
+/// attention, the step-by-step walkthrough (for printing or a phone while the PC restarts), and
+/// the details one level down.
 /// </summary>
 public static class ReportBuilder
 {
     private static readonly CultureInfo En = CultureInfo.InvariantCulture;
 
-    /// <param name="distroId">Show details for this distro instead of the chosen path's.</param>
+    /// <param name="distroId">Show part details for this distro instead of the chosen path's.</param>
     public static ReportDocument Build(CompatibilityReport r, string? distroId = null)
     {
         var distro = DetailDistro(r, distroId);
         var blocks = new List<Block>();
 
-        Header(r, blocks);
-        Recommendation(r, blocks);
-        Compare(r, blocks);
+        Header(r, distro, blocks);
+        YourLinux(r, blocks);
         Parts(r, distro, blocks);
-        // No recommendation (e.g. an ARM PC): the downloads wouldn't suit this PC, so no guide.
-        var guide = distroId is null && r.SelectedDistroId is null ? null : r.LiveUsbGuides.FirstOrDefault(g => g.DistroId == distro.DistroId);
-        LiveUsb(r, guide, blocks);
+        Steps(r, blocks);
+        Compare(r, blocks);
         YourPc(r.Profile, blocks);
-        Notes(r, blocks);
-        Footer(blocks);
+        Footer(r, blocks);
 
         return new ReportDocument("GreyHaven report", blocks);
     }
@@ -43,129 +42,160 @@ public static class ReportBuilder
             ?? throw new ArgumentException($"Unknown distro '{id}'. Choose one of: {string.Join(", ", r.Distros.Select(d => d.DistroId))}.", nameof(distroId));
     }
 
+    public static string ShortName(CompatibilityReport r, string distroId) =>
+        PlainWords.ShortName(r.LiveUsbGuides.FirstOrDefault(g => g.DistroId == distroId)?.DistroName ?? distroId);
+
     // ---- Sections -------------------------------------------------------------------------
 
-    private static void Header(CompatibilityReport r, List<Block> b)
+    private static void Header(CompatibilityReport r, DistroSummary distro, List<Block> b)
     {
         b.Add(new Heading(1, "GreyHaven report"));
-        var created = r.GeneratedAt.ToString("d MMMM yyyy, h:mm tt", En);
-        b.Add(P($"Created {created} with GreyHaven {GreyHavenInfo.Version}. Hardware data from {r.Data.BuiltOn.ToString("d MMMM yyyy", En)}."));
-
+        b.Add(P($"Made on {r.GeneratedAt.ToString("d MMMM yyyy", En)} with GreyHaven {GreyHavenInfo.Version}."));
         if (r.Profile.Source.StartsWith("sample:", StringComparison.Ordinal))
-            b.Add(new Callout(CalloutKind.Info, "Demo report", Line($"This report is for a sample PC (\"{r.Profile.Source["sample:".Length..]}\"), not a real scan. {r.Profile.Description}".TrimEnd())));
+            b.Add(new Callout(CalloutKind.Info, "Demo", Line("This is a sample PC, not a real scan.")));
         if (r.Data.Notice is { } stale)
             b.Add(new Callout(CalloutKind.Warning, "Check for a GreyHaven update", Line(stale)));
-        foreach (var note in r.ContextNotes)
-            b.Add(new Callout(CalloutKind.Info, "About Windows 10", [new Text(note.Text + " "), new Text("Source: "), SourceLink(note.Source)]));
+
+        var hasPath = r.Recommendation.Paths.Count > 0;
+        b.Add(new ScoreHeadline(
+            hasPath ? PlainWords.Headline(distro.Score.Score) : "We can't suggest a version of Linux yet",
+            hasPath && r.SelectedDistroId is { } chosen ? $"We suggest {ShortName(r, chosen)}." : null,
+            PlainWords.PartsSummary(r.Components.Select(c => c.For(distro.DistroId).Rating).ToList()),
+            distro.Score.Score));
+        if (r.Profile.System.IsArm)
+            b.Add(new Callout(CalloutKind.Warning, "ARM chip", Line("This PC has an ARM chip. Linux support for these PCs is still limited.")));
+        if (r.ContextNotes.FirstOrDefault() is { } why)
+            b.Add(new Details("Why switch now?",
+            [
+                P("Microsoft stopped supporting Windows 10 in October 2025. Security updates now need a special sign-up. Those updates end in October 2027."),
+                P(SourceLink(why.Source)),
+            ]));
     }
 
-    private static void Recommendation(CompatibilityReport r, List<Block> b)
+    private static void YourLinux(CompatibilityReport r, List<Block> b)
     {
-        b.Add(new Heading(2, "What GreyHaven recommends"));
-        b.Add(P(r.Recommendation.Paragraph));
-
         var paths = r.Recommendation.Paths;
-        if (paths.Count > 1 && r.SelectedRecommendation is { } chosen)
-            b.Add(P(new Text("This report follows the path you chose: "), new Strong(chosen.Title), new Text(".")));
-
-        foreach (var path in paths)
+        if (paths.Count == 0) return;
+        b.Add(new Heading(2, "Your version of Linux"));
+        if (paths.Count > 1) b.Add(P(PlainWords.Distro + " Two fit this PC well."));
+        foreach (var p in paths)
         {
-            var chosenMark = paths.Count > 1 && path.Kind == r.SelectedPath ? " (your choice)" : "";
-            if (paths.Count > 1) b.Add(new Heading(3, path.Title + chosenMark));
-            if (paths.Count > 1) b.Add(P(path.Paragraph));
-            b.Add(P(new Strong("You'll download: "), new Text(WithEdition(DistroName(r, path.DistroId), path.EditionName) + ".")));
-            if (path.SecureBootNotice is { } notice)
-                b.Add(new Callout(CalloutKind.Warning, "Secure Boot", Line(notice)));
-            if (path.SecureBootGuide is { } g)
-                b.Add(P([new Strong("How to turn off Secure Boot: "), .. GuideInlines(g)]));
+            var chosen = p.Kind == r.SelectedPath;
+            var name = ShortName(r, p.DistroId);
+            var tag = p.Kind == PathKind.Easy ? "Easiest" : "Best fit";
+            b.Add(new Heading(3, paths.Count > 1 ? $"{name}: {tag}{(chosen ? " (your choice)" : "")}" : name));
+            foreach (var line in PathLines(r, p)) b.Add(P(line));
+            var more = new List<Block> { P(p.Paragraph) };
+            if (p.SecureBootNotice is not null) more.Add(P(new Strong("About Secure Boot. "), new Text($"{PlainWords.SecureBoot} {p.SecureBootNotice}")));
+            if (p.SecureBootGuide is { } g)
+                more.Add(P(new Text("How to turn off Secure Boot: "),
+                    g.Url is not null ? new Link(g.Title, g.Url) : new Text($"{g.Title} ({g.LocalPath} in the GreyHaven folder)"),
+                    new Text(g.MatchedBy == "motherboard" ? " (from your motherboard's maker)." : ".")));
+            more.Add(P(new Strong("You'll get: "), new Text(YoullGet(r, p))));
+            b.Add(new Details("Show more", more));
         }
     }
 
-    private static IEnumerable<Inline> GuideInlines(GuideLink g)
+    /// <summary>One or two short lines per path, as on the app's choice cards.</summary>
+    public static IReadOnlyList<string> PathLines(CompatibilityReport r, RecommendationPath p)
     {
-        var basis = g.MatchedBy == "motherboard" ? " (chosen from your motherboard's maker)" : "";
-        if (g.Url is not null) yield return new Link(g.Title, g.Url);
-        else yield return new Text(g.Title);
-        if (basis.Length > 0) yield return new Text(basis);
-        if (g.LocalPath is not null)
-            yield return new Text($". A copy comes with GreyHaven: {g.LocalPath.Replace('/', '\\')} in the GreyHaven folder.");
+        var secureBootOff = p.Requirements.Contains(PreSwitchRequirement.TurnOffSecureBoot);
+        var lines = new List<string>();
+        if (p.Kind == PathKind.Advanced)
+        {
+            var easy = r.Recommendation.Get(PathKind.Easy);
+            var better = easy is null ? [] : BetterOn(r, p.DistroId, easy.DistroId);
+            lines.Add(better.Count > 0 ? $"Your {Join(better)} {(better.Count == 1 ? "works" : "work")} right away." : "The best match for this PC's parts.");
+        }
+        else
+        {
+            if (!secureBootOff) lines.Add("Nothing to change on your PC first.");
+            var extra = r.Components.Where(c => c.For(p.DistroId).Rating == Rating.WorksWithExtraDriver)
+                .Select(c => PlainWords.Noun(c.Component.Category)).Distinct().ToList();
+            if (extra.Count > 0) lines.Add($"Your {Join(extra)} {(extra.Count == 1 ? "needs" : "need")} one extra step after you install.");
+        }
+        if (secureBootOff) lines.Add("First, you turn off Secure Boot in your PC's startup settings.");
+        return lines;
     }
 
-    private static void Compare(CompatibilityReport r, List<Block> b)
+    /// <summary>"The Pop!_OS installer file made for NVIDIA graphics (about 4 GB). GreyHaven will put it on a USB stick for you."</summary>
+    public static string YoullGet(CompatibilityReport r, RecommendationPath p)
     {
-        b.Add(new Heading(2, "Compare distros"));
-        var rows = r.Distros.Select(d =>
-        {
-            var s = d.Score;
-            var score = $"{s.Score} out of 100 ({s.Band.ToString().ToLowerInvariant()})" + (s.Incomplete ? ", incomplete" : "");
-            var notes = new List<string>();
-            if (s.CapReason is not null) notes.Add(s.CapReason);
-            notes.AddRange(d.Notes);
-            return Cells(
-                Line(d.DisplayName + (d.DistroId == r.SelectedDistroId ? " (your choice)" : "")),
-                Line(score),
-                Line($"{(s.Coverage * 100).ToString("0", En)}%"),
-                Line(s.ExtraDriverCount == 0 ? "None" : s.ExtraDriverCount.ToString(En)),
-                Line(d.Edition),
-                Line(notes.Count == 0 ? "" : string.Join(" ", notes)));
-        }).ToList();
-        b.Add(new Table("Scores for each distro on this PC", ["Distro", "Score", "Parts checked", "Extra steps", "Download", "Notes"], rows));
+        var guide = r.LiveUsbGuides.FirstOrDefault(g => g.DistroId == p.DistroId);
+        var which = p.EditionId == "nvidia" ? " made for NVIDIA graphics" : "";
+        var size = guide?.InstallerBytes is { } bytes ? $" ({PlainWords.AboutGb(bytes)})" : "";
+        return $"The {ShortName(r, p.DistroId)} installer file{which}{size}. GreyHaven will put it on a USB stick for you.";
     }
+
+    private static List<string> BetterOn(CompatibilityReport r, string a, string b)
+    {
+        static int Rank(Rating x) => x switch
+        {
+            Rating.WorksOutOfTheBox => 0, Rating.WorksWithExtraDriver => 1, Rating.Partial => 2, Rating.Unknown => 3, _ => 4,
+        };
+        return r.Components.Where(c => Rank(c.For(a).Rating) < Rank(c.For(b).Rating))
+            .Select(c => PlainWords.Noun(c.Component.Category)).Distinct().ToList();
+    }
+
+    private static string Join(IReadOnlyList<string> items) =>
+        items.Count < 2 ? string.Concat(items) : $"{string.Join(", ", items.Take(items.Count - 1))} and {items[^1]}";
 
     private static void Parts(CompatibilityReport r, DistroSummary distro, List<Block> b)
     {
         var id = distro.DistroId;
-        b.Add(new Heading(2, $"How each part works on {distro.DisplayName}"));
-        b.Add(P("Parts labelled \"Essential\" are ones the PC can't be used properly without, and they count most toward the score. \"Important\" parts are ones you'd notice if they didn't work. Other parts count least."));
+        var name = ShortName(r, id);
+        b.Add(new Heading(2, $"Your PC's parts on {name}"));
 
         var ordered = r.Components.OrderBy(c => c.Importance).ThenBy(c => c.Component.Category).ToList();
         var attention = ordered.Where(c => c.For(id).Rating != Rating.WorksOutOfTheBox).ToList();
         var fine = ordered.Where(c => c.For(id).Rating == Rating.WorksOutOfTheBox).ToList();
 
-        if (attention.Count > 0)
+        foreach (var c in attention)
         {
-            b.Add(new Heading(3, "Needs your attention"));
-            foreach (var c in attention) PartDetails(r, c, id, b);
+            var rating = c.For(id);
+            b.Add(new Heading(3, PartName(c)));
+            var line = new List<Inline> { new RatingTag(rating.Rating) };
+            if (c.Importance != Importance.Minor) line.Add(new Text($" · {Labels.Of(c.Importance)} part"));
+            b.Add(new Paragraph(line));
+            b.Add(P(PlainWords.Summary(rating, name)));
+            b.Add(new Details("Show more", PartMore(c, rating)));
         }
 
         if (fine.Count > 0)
-        {
-            b.Add(new Heading(3, "Works out of the box"));
-            b.Add(new Table($"Parts that work out of the box on {distro.DisplayName}", ["Part", "Importance", "Rating"],
-                fine.Select(c => Cells(Line(PartName(c)), Line(Labels.Of(c.Importance)), [new RatingTag(Rating.WorksOutOfTheBox)])).ToList()));
-            b.Add(new Details("Sources and technical details for these parts", fine.SelectMany(c => TechnicalBlocks(c, c.For(id), withHeading: true)).ToList()));
-        }
+            b.Add(new Details($"{(attention.Count == 0 ? "All " : "")}{fine.Count} {(fine.Count == 1 ? "part works" : "parts work")} right away. Show them",
+            [
+                new Table($"Parts that work right away on {name}", ["Part", "Rating"],
+                    fine.Select(c => Cells(Line(PartName(c)), [new RatingTag(Rating.WorksOutOfTheBox)])).ToList()),
+                .. fine.SelectMany(c => TechnicalBlocks(c, c.For(id), withHeading: true)),
+            ]));
 
-        b.Add(new Heading(3, "Every part on every distro"));
-        b.Add(new Table("How each part works on each distro", ["Part", "Importance", .. r.Distros.Select(d => d.DisplayName)],
-            ordered.Select(c => (IReadOnlyList<IReadOnlyList<Inline>>)[Line(PartName(c)), Line(Labels.Of(c.Importance)), .. r.Distros.Select(d => (IReadOnlyList<Inline>)[new RatingTag(c.For(d.DistroId).Rating)])]).ToList()));
+        if (r.Caveats.Count > 0)
+            b.Add(new Details($"{r.Caveats.Count} {(r.Caveats.Count == 1 ? "thing" : "things")} to test before you install",
+            [
+                P($"We can't check {(r.Caveats.Count == 1 ? "this" : "these")} from Windows. Test {(r.Caveats.Count == 1 ? "it" : "them")} by trying Linux from a USB stick first (step 7 below)."),
+                .. r.Caveats.Select(cv => P(new Strong(cv.Title + ". "), new Text(cv.WhatToTest))),
+            ]));
     }
 
-    private static void PartDetails(CompatibilityReport r, RatedComponent c, string distroId, List<Block> b)
+    private static List<Block> PartMore(RatedComponent c, ComponentRating rating)
     {
-        var rating = c.For(distroId);
-        b.Add(new Heading(4, PartName(c)));
-        b.Add(P(new RatingTag(rating.Rating), new Text($" · {Labels.Of(c.Importance)} part")));
-        b.Add(P(rating.Explanation));
-        if (rating.ApproximationNote is not null) b.Add(P("Approximate data: " + rating.ApproximationNote));
-
+        var more = new List<Block> { P(rating.Explanation) };
+        if (rating.ApproximationNote is not null) more.Add(P("Approximate data: " + rating.ApproximationNote));
         if (rating.Fix is { } fix)
         {
-            b.Add(P(new Strong($"What to do: {fix.Driver}")));
-            if (fix.Steps.Count > 0) b.Add(new ListBlock(ListKind.Numbered, fix.Steps.Select(s => Line(s)).ToList()));
+            more.Add(P(new Strong($"How to fix it: {fix.Driver}")));
+            if (fix.Steps.Count > 0) more.Add(new ListBlock(ListKind.Numbered, fix.Steps.Select(s => Line(s)).ToList()));
             if (fix.Commands.Count > 0)
             {
-                b.Add(P(fix.Steps.Count > 0 ? "Or type this in a terminal:" : "Type this in a terminal:"));
-                b.Add(new CommandBlock(fix.Commands));
+                more.Add(P(fix.Steps.Count > 0 ? "Or type this in a terminal:" : "Type this in a terminal:"));
+                more.Add(new CommandBlock(fix.Commands));
             }
-            if (fix.Note is not null) b.Add(P(fix.Note));
-            if (fix.SecureBootAdvice is not null) b.Add(new Callout(CalloutKind.Info, "Secure Boot", Line(fix.SecureBootAdvice)));
-            if (fix.NeedsInternet) b.Add(P("This step needs an internet connection."));
+            if (fix.Note is not null) more.Add(P(fix.Note));
+            if (fix.SecureBootAdvice is not null) more.Add(new Callout(CalloutKind.Info, "Secure Boot", Line(fix.SecureBootAdvice)));
+            if (fix.NeedsInternet) more.Add(P("This step needs an internet connection."));
         }
-
-        var tests = r.Caveats.Where(cv => c.CaveatIds.Contains(cv.Id)).Select(cv => cv.Title).ToList();
-        if (tests.Count > 0) b.Add(P($"Test with a live USB: {string.Join(", ", tests)}."));
-        b.Add(new Details("Sources and technical details", TechnicalBlocks(c, rating, withHeading: false).ToList()));
+        more.AddRange(TechnicalBlocks(c, rating, withHeading: false));
+        return more;
     }
 
     private static IEnumerable<Block> TechnicalBlocks(RatedComponent c, ComponentRating rating, bool withHeading)
@@ -188,76 +218,63 @@ public static class ReportBuilder
         yield return P(string.Join(" · ", facts));
     }
 
-    private static void LiveUsb(CompatibilityReport r, LiveUsbGuide? g, List<Block> b)
+    private static void Steps(CompatibilityReport r, List<Block> b)
     {
-        b.Add(new Heading(2, "Test with a live USB before installing"));
-        if (g is null)
+        var steps = WalkthroughBuilder.Build(r);
+        if (steps.Count == 0) return;
+        b.Add(new Heading(2, "Your steps to Linux"));
+        b.Add(P("Keep this page on your phone, or print it, while your PC restarts."));
+        for (var i = 0; i < steps.Count; i++)
         {
-            b.Add(P("GreyHaven can't recommend a distro for this PC, so there's no live-USB guide."));
-            return;
+            var s = steps[i];
+            b.Add(new Heading(3, $"Step {i + 1} of {steps.Count}: {s.Title}"));
+            b.AddRange(s.Body);
+            foreach (var o in s.Options)
+            {
+                b.Add(new Heading(4, $"If you choose: {o.Title}"));
+                foreach (var line in o.Lines) b.Add(P(line));
+                if (o.ConfirmText is not null) b.Add(new ListBlock(ListKind.Checkboxes, [Line(o.ConfirmText)]));
+                b.AddRange(o.Steps);
+            }
+            if (s.Tip is not null) b.Add(new Callout(CalloutKind.Tip, "What could go wrong?", Line(s.Tip)));
         }
-        b.Add(P($"A live USB runs {g.DistroName} from a USB stick without installing anything or changing your files. It's the best way to check the things GreyHaven can't see from Windows. It takes about 30 minutes, plus the download."));
+    }
 
-        b.Add(new Heading(3, "1. Make the USB stick"));
-        var make = new List<Inline> { new Text($"Download {WithEdition(g.DistroName, g.EditionName)}") };
-        if (g.Website is not null) { make.Add(new Text(" from ")); make.Add(new Link(g.Website, g.Website)); }
-        make.Add(new Text(". Write it to a USB stick of 8 GB or larger; everything on the stick will be erased."));
-        if (g.MakeUsbGuide is { } mk) { make.Add(new Text(" Step-by-step: ")); make.Add(SourceLink(mk)); make.Add(new Text(".")); }
-        b.Add(new Paragraph(make));
-        b.Add(P("A later version of GreyHaven will download, check and write the USB stick for you."));
-
-        if (g.BeforeYouStart.Count > 0)
+    private static void Compare(CompatibilityReport r, List<Block> b)
+    {
+        b.Add(new Heading(2, "Compare versions of Linux"));
+        var rows = r.Distros.Select(d =>
         {
-            b.Add(new Heading(3, "2. Before you start"));
-            b.Add(new ListBlock(ListKind.Bullets, g.BeforeYouStart.Select(s => Line(s)).ToList()));
-        }
+            var s = d.Score;
+            var notes = new List<string>();
+            if (s.CapReason is not null) notes.Add(s.CapReason);
+            notes.AddRange(d.Notes);
+            return Cells(
+                Line(d.DisplayName + (d.DistroId == r.SelectedDistroId ? " (your pick)" : "")),
+                Line($"{s.Score} out of 100{(s.Incomplete ? ", incomplete" : "")}"),
+                Line(s.ExtraDriverCount == 0 ? "None" : s.ExtraDriverCount.ToString(En)),
+                Line(notes.Count == 0 ? "" : string.Join(" ", notes)));
+        }).ToList();
+        b.Add(new Table("Scores for each version of Linux on this PC", ["Version of Linux", "Score", "Extra steps", "Notes"], rows));
 
-        var n = g.BeforeYouStart.Count > 0 ? 3 : 2;
-        b.Add(new Heading(3, $"{n}. Start the live session"));
-        var settingsPath = r.Profile.System.Windows.IsWindows11
-            ? "Settings > System > Recovery"
-            : "Settings > Update & Security > Recovery";
-        var start = new List<IReadOnlyList<Inline>>
-        {
-            Line("Plug the USB stick into the PC."),
-            Line($"In Windows, open {settingsPath}. Next to \"Advanced startup\", choose \"Restart now\"."),
-            Line("When the blue menu appears, choose \"Use a device\", then your USB stick. (Or restart and press your PC's boot menu key while it starts, often F12, F11, F10, F8 or Esc.)"),
-            Line($"When {g.DistroName} asks, choose to try it without installing."),
-        };
-        b.Add(new ListBlock(ListKind.Numbered, start));
-        if (g.TryItGuide is { } tryIt) b.Add(P(new Text("More detail: "), SourceLink(tryIt), new Text(".")));
-
-        b.Add(new Heading(3, $"{n + 1}. Check these"));
-        b.Add(new ListBlock(ListKind.Checkboxes, g.Checks.Select(c => (IReadOnlyList<Inline>)[new Strong(c.Title + ": "), new Text(c.Test)]).ToList()));
-        if (g.ExpectedInLiveSession.Count > 0)
-            b.Add(new ListBlock(ListKind.Bullets, g.ExpectedInLiveSession.Select(s => Line(s)).ToList()));
-
-        if (g.ShareCommands.Count > 0)
-        {
-            b.Add(new Heading(3, $"{n + 2}. Optional: share your results"));
-            var share = new List<Inline> { new Text("Help other people (and GreyHaven's data) by sharing a hardware report from the live session. Open a terminal and type:") };
-            b.Add(new Paragraph(share));
-            b.Add(new CommandBlock(g.ShareCommands));
-            var note = new List<Inline>();
-            if (g.ShareNote is not null) note.Add(new Text(g.ShareNote + " "));
-            if (g.ShareSource is { } src) { note.Add(new Text("More about it: ")); note.Add(SourceLink(src)); note.Add(new Text(".")); }
-            if (note.Count > 0) b.Add(new Paragraph(note));
-        }
-
-        b.Add(new Heading(3, "Going back to Windows"));
-        b.Add(P("Shut down from the live session's power menu, remove the USB stick and start the PC as usual. Nothing was installed. If you turned Secure Boot off and decide not to switch, you can turn it back on."));
+        var ordered = r.Components.OrderBy(c => c.Importance).ThenBy(c => c.Component.Category).ToList();
+        b.Add(new Details("Every part on every version",
+        [
+            new Table("How each part works on each version of Linux", ["Part", .. r.Distros.Select(d => ShortName(r, d.DistroId))],
+                ordered.Select(c => (IReadOnlyList<IReadOnlyList<Inline>>)[Line(PartName(c)), .. r.Distros.Select(d => (IReadOnlyList<Inline>)[new RatingTag(c.For(d.DistroId).Rating)])]).ToList()),
+        ]));
     }
 
     private static void YourPc(HardwareProfile p, List<Block> b)
     {
         var s = p.System;
-        b.Add(new Heading(2, "Your PC"));
         var rows = new List<(string, string?)>
         {
             ("PC", string.Join(" ", new[] { s.SystemManufacturer, s.SystemModel }.Where(x => x is not null))),
             ("Motherboard", s.BoardManufacturer),
             ("Type", Labels.Of(s.FormFactor)),
             ("Windows", s.Windows.FriendlyName),
+            ("Free space on the Windows drive", s.SystemDriveFreeBytes is { } f && s.SystemDriveTotalBytes is { } t ? $"{f / 1073741824} GB of {t / 1073741824} GB" : null),
             ("Processor type", Labels.Of(s.Architecture)),
             ("Boot mode", Labels.Of(s.Firmware)),
             ("Secure Boot", Labels.Of(s.SecureBoot)),
@@ -265,23 +282,22 @@ public static class ReportBuilder
             ("Fast Startup", Labels.Of(s.FastStartup)),
             ("BitLocker", Labels.Of(s.BitLocker)),
         };
-        b.Add(new Table("This PC's settings that matter for Linux", ["Setting", "Value"],
-            rows.Where(x => !string.IsNullOrEmpty(x.Item2)).Select(x => Cells(Line(x.Item1), Line(x.Item2!))).ToList()));
+        b.Add(new Details("Your PC's settings",
+        [
+            new Table("This PC's settings that matter for Linux", ["Setting", "Value"],
+                rows.Where(x => !string.IsNullOrEmpty(x.Item2)).Select(x => Cells(Line(x.Item1), Line(x.Item2!))).ToList()),
+        ]));
     }
 
-    private static void Notes(CompatibilityReport r, List<Block> b)
-    {
-        var notes = r.Profile.Warnings.Concat(r.DataNotes).ToList();
-        if (notes.Count == 0) return;
-        b.Add(new Heading(2, "Notes"));
-        b.Add(new ListBlock(ListKind.Bullets, notes.Select(n => Line(n)).ToList()));
-    }
-
-    private static void Footer(List<Block> b)
+    private static void Footer(CompatibilityReport r, List<Block> b)
     {
         b.Add(new Heading(2, "About this report"));
-        b.Add(P("This report contains device IDs and Windows settings only. It has no serial numbers, user names, PC name or network (MAC) addresses, so it's safe to share when asking for help."));
-        var made = new List<Inline> { new Text("Made with GreyHaven, which checks how well a PC will work on Linux.") };
+        var offline = r.DataNotes.Any(n => n.Contains("turned off", StringComparison.Ordinal));
+        b.Add(P($"Checked with GreyHaven's built-in data from {r.Data.BuiltOn.ToString("d MMMM yyyy", En)}.{(offline ? " The online check was off." : "")}"));
+        var other = r.Profile.Warnings.Concat(r.DataNotes.Where(n => !n.Contains("turned off", StringComparison.Ordinal))).ToList();
+        if (other.Count > 0) b.Add(new ListBlock(ListKind.Bullets, other.Select(n => Line(n)).ToList()));
+        b.Add(P("This report has part ID numbers and Windows settings only. It has no serial numbers, names or network addresses, so it's safe to share when asking for help."));
+        var made = new List<Inline> { new Text("Made with GreyHaven, which checks how well a PC will work with Linux.") };
         if (GreyHavenInfo.CanLinkToRepository)
         {
             made.Add(new Text(" "));
@@ -290,18 +306,9 @@ public static class ReportBuilder
         b.Add(new Paragraph(made));
     }
 
-    // ---- Helpers --------------------------------------------------------------------------
-
     private static string PartName(RatedComponent c)
     {
         var name = c.Component.Count > 1 ? $"{c.DisplayName} (×{c.Component.Count})" : c.DisplayName;
         return $"{Labels.Of(c.Component.Category)}: {name}";
     }
-
-    /// <summary>"Ubuntu 26.04.1 LTS Desktop" stays as is; "Pop!_OS 24.04 COSMIC" + "NVIDIA ISO" becomes "Pop!_OS 24.04 COSMIC (NVIDIA ISO)".</summary>
-    private static string WithEdition(string name, string edition) =>
-        name.EndsWith(edition, StringComparison.Ordinal) ? name : $"{name} ({edition})";
-
-    private static string DistroName(CompatibilityReport r, string distroId) =>
-        r.Distros.FirstOrDefault(d => d.DistroId == distroId)?.DisplayName ?? distroId;
 }

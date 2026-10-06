@@ -16,5 +16,8 @@
     <None Include="..\..\data\**\*" Link="data\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\docs\secure-boot.md" Link="docs\secure-boot.md" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\samples\*.json" Link="samples\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Brand fonts: Rubik (headings) and Lexend (text), SIL Open Font License 1.1. -->
+    <Resource Include="..\..\assets\fonts\*.ttf" Link="Fonts\%(Filename)%(Extension)" />
+    <None Include="..\..\assets\fonts\*.txt" Link="Fonts\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
