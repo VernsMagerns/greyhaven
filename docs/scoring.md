@@ -94,15 +94,15 @@ Then caps apply. The lowest applicable cap wins, and its reason is always shown:
 
 | Condition | Score capped at | Why |
 |---|---|---|
-| Any **critical** component is *unsupported* | **40** | One essential part not working should clearly drag the score down. |
-| Any **critical** component is *unknown* | **70**, marked *incomplete* | Can't call a PC "great" without knowing its essentials. |
-| Any **critical** component is *partial* | **79** | A partly working essential part rules out "great". |
+| Any **essential** part is *unsupported* | **40** | One essential part not working should clearly drag the score down. |
+| Any **essential** part is *unknown* | **70**, marked *incomplete* | Can't call a PC "great" without knowing its essentials. |
+| Any **essential** part is *partial* | **79** | A partly working essential part rules out "great". |
 
 Bands: **Great** 90–100, **Good** 70–89, **Fair** 50–69, **Poor** below 50.
 
 ### Worked example
 
-A desktop where the graphics card needs a driver (critical, 80), sound is partial
+A desktop where the graphics card needs a driver (essential, 80), sound is partial
 (important, 40) and the card reader works (minor, 100):
 
 ```
