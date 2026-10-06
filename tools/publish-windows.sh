@@ -11,15 +11,16 @@ commit=$(git rev-parse --short HEAD 2>/dev/null || echo unknown)
 cat > "$out/START-HERE.txt" <<TXT
 GreyHaven test build ($commit, built $(TZ=America/Los_Angeles date +%Y-%m-%d))
 
-Nothing to install. Run these from this folder (Shift + right-click in the folder,
-"Open in Terminal" or "Open PowerShell window here"):
+Nothing to install. Open a terminal in this folder (Windows 11: right-click an empty space,
+"Open in Terminal"; Windows 10: Shift + right-click, "Open PowerShell window here"), then:
 
-  app\GreyHaven.exe --sample nvidia-desktop    the app in demo mode (no scan)
-  app\GreyHaven.exe                            the app, scanning this PC
-  cli\greyhaven.exe scan --dump-raw greyhaven-raw.json
-                                               scan, and save the raw data to bring back
+  .\app\GreyHaven.exe --sample nvidia-desktop    the app in demo mode (no scan)
+  .\app\GreyHaven.exe                            the app, scanning this PC
+  .\cli\greyhaven.exe scan --dump-raw greyhaven-raw.json
+                                                 scan, and save the raw data to bring back
+                                                 (saved in this folder)
 
-Step-by-step instructions: docs/windows-results.md in the GreyHaven repository.
+Step-by-step instructions and the results form: docs/windows-results.md in the repository.
 TXT
 echo
 echo "Copy the '$out' folder to the Windows PC, then run:"

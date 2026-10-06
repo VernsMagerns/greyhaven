@@ -43,8 +43,8 @@ dotnet run --project src/GreyHaven.Cli -- rate --sample intel-vmd-laptop --offli
 ```
 
 The Windows app is in `src/GreyHaven.App` (WPF). It builds on Linux but runs only on Windows.
-`./tools/publish-windows.sh` produces self-contained copies of the app and CLI to try on a
-Windows PC without installing anything. `GreyHaven.exe --sample nvidia-desktop` runs the app
+Every push builds self-contained copies of the app and CLI, downloadable from the GitHub
+Actions run as **greyhaven-windows**; `./tools/publish-windows.sh` builds the same locally. `GreyHaven.exe --sample nvidia-desktop` runs the app
 in demo mode on a sample PC.
 
 On Windows, `greyhaven scan` scans the real PC. Use `--dump-raw <file>` to save the
@@ -69,6 +69,8 @@ unprocessed scan data; it can be replayed anywhere with `greyhaven scan --raw <f
 | `docs/scoring.md` | How ratings and the summary score are calculated |
 | `docs/secure-boot.md` | General guide to turning Secure Boot off and back on |
 | `docs/windows-validation.md` | Checks that need a real Windows PC |
+| `docs/windows-results.md` | Step-by-step Windows test session and results form |
+| `tools/release-check.sh` | Fails if a placeholder (e.g. the GitHub repo name) would ship |
 
 ## License
 

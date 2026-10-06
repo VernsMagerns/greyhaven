@@ -11,15 +11,13 @@ so they can be done in as few sessions as possible.
 
 # Session 1
 
-## Before you start (on the Linux machine)
+## Before you start
 
-```sh
-./tools/publish-windows.sh
-```
-
-Copy the `artifacts/windows` folder to the Windows PC (USB stick or network share). Nothing
-needs installing; the apps run from the folder. Use a **normal (non-administrator)** account
-or PowerShell window throughout.
+Step-by-step setup and a results form to fill in are in
+[windows-results.md](windows-results.md). In short: download the **greyhaven-windows** build
+from the latest GitHub Actions run (or, as a backup, run `./tools/publish-windows.sh` on Linux
+and copy `artifacts/windows` across on a USB stick). Nothing needs installing; the apps run
+from the folder. Use a **normal (non-administrator)** account or PowerShell window throughout.
 
 If you can, test on both **Windows 10 and Windows 11**; if only one is available, note which.
 
@@ -72,12 +70,17 @@ Look and feel
       under each part's "Technical details".
 - [ ] **U4** Recommendation paths (demo mode): "Easy: Ubuntu" is selected by default.
       Choosing "Advanced: Pop!_OS" changes the score, the parts list and "You'll download",
-      and shows the Secure Boot notice. Its guide link opens GreyHaven's Secure Boot guide.
+      and shows the Secure Boot notice. Its guide link opens MSI's Secure Boot page (the
+      sample is a custom-built PC with an MSI motherboard).
 - [ ] **U5** Copy buttons put the exact command on the clipboard (paste into Notepad).
 - [ ] **U6** Source links open in the browser.
 - [ ] **U7** Resize the window narrow and wide. Nothing is cut off; text wraps.
 - [ ] **U8** At 150% and 200% display scaling (Settings → System → Display → Scale),
       text is sharp and nothing overlaps.
+- [ ] **U9** Parts carry "Essential" or "Important" labels, explained under the parts heading.
+      Same-named parts are told apart: sound controllers "(AMD)"/"(NVIDIA)", USB controllers
+      "(1 of 2)"/"(2 of 2)".
+- [ ] **U10** On Windows 10, a calm "About Windows 10" notice with a link to Microsoft's page.
 
 Themes
 - [ ] **T1** "Appearance: Match Windows" follows Windows' light/dark app mode, including when
