@@ -257,3 +257,42 @@ public class DistroReleaseCheckerTests
         Assert.Empty(result.Newer);
     }
 }
+
+public class WindowsNotesTests
+{
+    private static readonly GreyHaven.Compat.Data.WindowsLifecycle Lifecycle = new()
+    {
+        Windows10 = new() { EndOfSupport = "2025-10-14", EsuEnds = "2027-10-12", Source = new() { Title = "Microsoft", Url = "https://www.microsoft.com/en-us/windows/end-of-support" } },
+    };
+
+    private static SystemInfo Windows(int build, string edition = "Professional") =>
+        TestData.Profile([]).System with { Windows = new WindowsVersion("Windows 10 Pro", "22H2", build, 1, edition) };
+
+    [Fact]
+    public void Windows_10_gets_a_calm_note_with_the_esu_date_and_source()
+    {
+        var note = Assert.Single(WindowsNotes.For(Windows(19045), Lifecycle, new DateOnly(2026, 10, 5)));
+        Assert.Contains("14 October 2025", note.Text);
+        Assert.Contains("Extended Security Updates program, which runs until 12 October 2027", note.Text);
+        Assert.Contains("keeps working", note.Text);
+        Assert.Equal("https://www.microsoft.com/en-us/windows/end-of-support", note.Source.Url);
+    }
+
+    [Fact]
+    public void After_esu_ends_the_note_says_so()
+    {
+        var note = Assert.Single(WindowsNotes.For(Windows(19045), Lifecycle, new DateOnly(2027, 11, 1)));
+        Assert.Contains("ended on 12 October 2027", note.Text);
+    }
+
+    [Theory]
+    [InlineData(22631, "Professional")] // Windows 11
+    [InlineData(19044, "EnterpriseS")]  // Windows 10 LTSC: separate support schedule
+    [InlineData(17763, "IoTEnterpriseS")]
+    public void No_note_for_windows_11_or_ltsc(int build, string edition) =>
+        Assert.Empty(WindowsNotes.For(Windows(build, edition), Lifecycle, new DateOnly(2026, 10, 5)));
+
+    [Fact]
+    public void No_note_before_end_of_support() =>
+        Assert.Empty(WindowsNotes.For(Windows(19045), Lifecycle, new DateOnly(2025, 6, 1)));
+}

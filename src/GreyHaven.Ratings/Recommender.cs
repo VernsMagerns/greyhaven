@@ -58,7 +58,7 @@ public static class Recommender
                 Paragraph = paragraph,
                 Paths = [MakePath(PathKind.Recommended, best, catalog, paragraph, requirements,
                     requirements.Length > 0 ? SecureBootNotice(profile, catalog.Get(best.DistroId)) : null,
-                    requirements.Length > 0 ? guides.For(profile.System) : null)],
+                    requirements.Length > 0 ? guides.For(profile) : null)],
                 DefaultPath = PathKind.Recommended,
             };
         }
@@ -75,7 +75,7 @@ public static class Recommender
             [
                 MakePath(PathKind.Easy, easy, catalog, EasyParagraph(components, easy, best, catalog), [], null, null),
                 MakePath(PathKind.Advanced, best, catalog, AdvancedParagraph(components, best, easy, catalog),
-                    [PreSwitchRequirement.TurnOffSecureBoot], SecureBootNotice(profile, bestInfo), guides.For(profile.System)),
+                    [PreSwitchRequirement.TurnOffSecureBoot], SecureBootNotice(profile, bestInfo), guides.For(profile)),
             ],
             DefaultPath = PathKind.Easy,
         };

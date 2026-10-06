@@ -61,6 +61,9 @@ public sealed partial class WindowsRawHardwareSource : IRawHardwareSource
             HasBattery = Try(() => (bool?)Query("SELECT Name FROM Win32_Battery").Any(), null, "Could not check for a battery.", warnings),
             SystemManufacturer = Try(() => ReadComputerSystem("Manufacturer"), null, "Could not read the PC manufacturer.", warnings),
             SystemModel = Try(() => ReadComputerSystem("Model"), null, "Could not read the PC model.", warnings),
+            BaseBoardManufacturer = Try(
+                () => Query("SELECT Manufacturer FROM Win32_BaseBoard").Select(mo => Prop<string>(mo, "Manufacturer")).FirstOrDefault(),
+                null, "Could not read the motherboard maker.", warnings),
             ReadWarnings = warnings,
         };
 

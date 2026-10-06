@@ -83,6 +83,11 @@ public sealed record SystemInfo
     /// <summary>e.g. "LENOVO". Not personal data; useful for model-specific advice.</summary>
     public string? SystemManufacturer { get; init; }
     public string? SystemModel { get; init; }
+    /// <summary>
+    /// Motherboard maker, e.g. "ASUSTeK COMPUTER INC.". On custom-built PCs this is the useful
+    /// one: the PC "manufacturer" is often a placeholder like "System manufacturer".
+    /// </summary>
+    public string? BoardManufacturer { get; init; }
 
     public bool IsArm => Architecture == CpuArchitecture.Arm64;
 }

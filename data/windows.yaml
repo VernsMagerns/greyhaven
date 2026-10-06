@@ -1,0 +1,12 @@
+# Facts about Windows itself, used for context notes in reports. Licensed CC-BY-4.0.
+# checked: how the facts were verified.
+
+windows10:
+  # Windows 10 support ended on this date (Home, Pro, Enterprise and Education, version 22H2).
+  endOfSupport: 2025-10-14
+  # Enrolled PCs get security updates until this date (Extended Security Updates, ESU).
+  esuEnds: 2027-10-12
+  source:
+    title: Microsoft - End of support for Windows 10
+    url: https://www.microsoft.com/en-us/windows/end-of-support
+  checked: fetched 2026-10-05

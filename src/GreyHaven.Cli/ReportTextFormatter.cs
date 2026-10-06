@@ -19,6 +19,17 @@ internal static class ReportTextFormatter
         if (p.Description is not null) Wrap(sb, p.Description, "");
         sb.AppendLine();
 
+        if (r.ContextNotes.Count > 0)
+        {
+            sb.AppendLine("ABOUT YOUR WINDOWS");
+            foreach (var n in r.ContextNotes)
+            {
+                Wrap(sb, n.Text, "  ");
+                Wrap(sb, $"Source: {n.Source.Title}{(n.Source.Url is null ? "" : $" <{n.Source.Url}>")}", "  ");
+            }
+            sb.AppendLine();
+        }
+
         sb.AppendLine("RECOMMENDATION");
         Wrap(sb, r.Recommendation.Paragraph, "  ");
         if (r.Recommendation.Paths.Count > 1)
@@ -30,14 +41,14 @@ internal static class ReportTextFormatter
                 sb.AppendLine($"  {(chosen ? "(*)" : "( )")} {path.Title}{(path.Kind == r.Recommendation.DefaultPath ? " - default" : "")}{(chosen ? " - selected" : "")}   [download: {path.EditionName}]");
                 Wrap(sb, path.Paragraph, "      ");
                 if (path.SecureBootNotice is not null) Wrap(sb, "Secure Boot: " + path.SecureBootNotice, "      ");
-                if (path.SecureBootGuide is { } g) Wrap(sb, $"How-to: {g.Title} <{g.Url}>{(g.FromManufacturer ? "" : $" (also in {g.LocalPath})")}", "      ");
+                if (path.SecureBootGuide is { } g) Wrap(sb, "How-to: " + GuideText(g), "      ");
             }
             sb.AppendLine("  Choose with --path easy|advanced.");
         }
         else if (r.SelectedRecommendation is { } only)
         {
             if (only.SecureBootNotice is not null) Wrap(sb, "Secure Boot: " + only.SecureBootNotice, "  ");
-            if (only.SecureBootGuide is { } g) Wrap(sb, $"How-to: {g.Title} <{g.Url}>", "  ");
+            if (only.SecureBootGuide is { } g) Wrap(sb, "How-to: " + GuideText(g), "  ");
             sb.AppendLine($"  Download: {only.EditionName}");
         }
         sb.AppendLine();
@@ -110,6 +121,19 @@ internal static class ReportTextFormatter
             foreach (var n in p.Warnings.Concat(r.DataNotes)) Wrap(sb, "- " + n, "  ");
         }
         return sb.ToString().TrimEnd();
+    }
+
+    private static string GuideText(GuideLink g)
+    {
+        var where = (g.Url, g.LocalPath) switch
+        {
+            ({ } url, { } local) => $"<{url}> (also in {local} next to GreyHaven)",
+            ({ } url, null) => $"<{url}>",
+            (null, { } local) => $"{local} (next to GreyHaven)",
+            _ => "",
+        };
+        var basis = g.MatchedBy == "motherboard" ? " - chosen from your motherboard's maker" : "";
+        return $"{g.Title}{basis} {where}".TrimEnd();
     }
 
     internal static string Symbol(Rating r) => r switch

@@ -27,6 +27,8 @@ public enum SourceKind
     Libfprint,
     /// <summary>linux-hardware.org community probes.</summary>
     LinuxHardwareDb,
+    /// <summary>Official documentation cited by GreyHaven's data, e.g. Microsoft's Windows 10 lifecycle page.</summary>
+    Reference,
 }
 
 public sealed record Source(string Title, string? Url, SourceKind Kind);
@@ -152,8 +154,12 @@ public enum PreSwitchRequirement
     TurnOffSecureBoot,
 }
 
-public sealed record GuideLink(string Title, string Url, bool FromManufacturer)
+/// <param name="Url">Web address; null for GreyHaven's own guide until the repository is public (use <see cref="LocalPath"/>).</param>
+public sealed record GuideLink(string Title, string? Url, bool FromManufacturer)
 {
+    /// <summary>"motherboard" when the guide was chosen from the motherboard maker (custom-built PCs); otherwise null.</summary>
+    public string? MatchedBy { get; init; }
+
     /// <summary>For GreyHaven's own guides: path of the copy shipped with the app, so it works offline.</summary>
     public string? LocalPath { get; init; }
 }
@@ -217,6 +223,9 @@ public sealed record Caveat
     public required string WhatToTest { get; init; }
 }
 
+/// <summary>Background worth knowing when deciding whether to switch, e.g. Windows 10's end of support.</summary>
+public sealed record ContextNote(string Text, Source Source);
+
 /// <summary>Everything the UI and reports need.</summary>
 public sealed record CompatibilityReport
 {
@@ -227,6 +236,8 @@ public sealed record CompatibilityReport
     public IReadOnlyList<Caveat> Caveats { get; init; } = [];
     /// <summary>Notes about the data itself, e.g. "Online lookups were skipped: you appear to be offline."</summary>
     public IReadOnlyList<string> DataNotes { get; init; } = [];
+    /// <summary>Context about this PC's Windows, shown near the top in calm, plain words.</summary>
+    public IReadOnlyList<ContextNote> ContextNotes { get; init; } = [];
     public required DataFreshness Data { get; init; }
     public required DateTimeOffset GeneratedAt { get; init; }
 

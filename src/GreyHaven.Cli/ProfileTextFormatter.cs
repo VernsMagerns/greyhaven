@@ -17,6 +17,7 @@ internal static class ProfileTextFormatter
 
         sb.AppendLine("SYSTEM");
         Row(sb, "PC", Join(s.SystemManufacturer, s.SystemModel) ?? "Unknown");
+        if (s.BoardManufacturer is not null) Row(sb, "Motherboard", s.BoardManufacturer);
         Row(sb, "Type", Labels.Of(s.FormFactor));
         Row(sb, "Windows", s.Windows.FriendlyName);
         Row(sb, "Architecture", Labels.Of(s.Architecture));

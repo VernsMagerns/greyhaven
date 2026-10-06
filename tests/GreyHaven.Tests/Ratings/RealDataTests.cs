@@ -146,10 +146,10 @@ public class RealDataTests
         Assert.Equal([PreSwitchRequirement.TurnOffSecureBoot], advanced.Requirements);
         Assert.Contains("turn it back on later", advanced.SecureBootNotice);
         Assert.Contains("won't change this setting for you", advanced.SecureBootNotice);
-        // The sample's maker ("System manufacturer") isn't recognised, so our own guide is linked.
-        Assert.False(advanced.SecureBootGuide!.FromManufacturer);
-        Assert.Equal("docs/secure-boot.md", advanced.SecureBootGuide.LocalPath);
-        Assert.True(File.Exists(Path.Combine(AppContext.BaseDirectory, advanced.SecureBootGuide.LocalPath!)));
+        // The PC maker ("System manufacturer") isn't recognised, so the motherboard maker's guide is linked.
+        Assert.True(advanced.SecureBootGuide!.FromManufacturer);
+        Assert.Equal("motherboard", advanced.SecureBootGuide.MatchedBy);
+        Assert.Contains("msi.com", advanced.SecureBootGuide.Url);
         // Fixes follow the chosen distro: the GPU needs nothing on the NVIDIA ISO
         Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, Rating(r, ComponentCategory.Gpu, r.SelectedDistroId!).Rating);
     }

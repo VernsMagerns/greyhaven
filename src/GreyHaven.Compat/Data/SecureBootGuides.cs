@@ -8,11 +8,19 @@ namespace GreyHaven.Compat.Data;
 public sealed class SecureBootGuideCatalog
 {
     public FallbackGuide Fallback { get; set; } = new();
+    /// <summary>Matched against the PC maker (and model/form factor).</summary>
     public List<ManufacturerGuide> Guides { get; set; } = [];
+    /// <summary>Matched against the motherboard maker when the PC maker isn't recognised, e.g. on a custom-built PC.</summary>
+    public List<ManufacturerGuide> Motherboards { get; set; } = [];
 
-    /// <summary>The PC maker's own guide when the manufacturer is recognised; otherwise GreyHaven's general guide.</summary>
-    public GuideLink For(SystemInfo system)
+    /// <summary>
+    /// The PC maker's own guide when the manufacturer is recognised; otherwise the motherboard
+    /// maker's; otherwise GreyHaven's general guide.
+    /// </summary>
+    public GuideLink For(HardwareProfile profile)
     {
+        var system = profile.System;
+        var cpuVendor = profile.Components.FirstOrDefault(c => c.Cpu is not null)?.Cpu!.Vendor;
         var maker = system.SystemManufacturer?.ToLowerInvariant() ?? "";
         var model = system.SystemModel?.ToLowerInvariant() ?? "";
         foreach (var g in Guides)
@@ -22,7 +30,21 @@ public sealed class SecureBootGuideCatalog
             if (g.FormFactor is not null && !string.Equals(g.FormFactor, system.FormFactor.ToString(), StringComparison.OrdinalIgnoreCase)) continue;
             return new GuideLink(g.Title, g.Url, FromManufacturer: true);
         }
-        return new GuideLink(Fallback.Title, $"https://github.com/{GreyHavenInfo.GitHubRepository}/blob/main/{Fallback.Path}", FromManufacturer: false)
+
+        var board = system.BoardManufacturer?.ToLowerInvariant() ?? "";
+        foreach (var g in Motherboards)
+        {
+            if (!g.Manufacturers.Any(m => board.Contains(m, StringComparison.Ordinal))) continue;
+            if (g.CpuVendors.Count > 0 && !g.CpuVendors.Contains(cpuVendor ?? "", StringComparer.OrdinalIgnoreCase)) continue;
+            return new GuideLink(g.Title, g.Url, FromManufacturer: true) { MatchedBy = "motherboard" };
+        }
+
+        // GreyHaven's own guide ships with the app. Link the web copy only once the repository
+        // is set; never a placeholder URL.
+        return new GuideLink(
+            Fallback.Title,
+            GreyHavenInfo.IsGitHubRepositoryConfigured ? $"https://github.com/{GreyHavenInfo.GitHubRepository}/blob/main/{Fallback.Path}" : null,
+            FromManufacturer: false)
         {
             LocalPath = Fallback.Path,
         };
@@ -44,6 +66,8 @@ public sealed class ManufacturerGuide
     public List<string> ModelContains { get; set; } = [];
     /// <summary>Optional: laptop | desktop.</summary>
     public string? FormFactor { get; set; }
+    /// <summary>Optional, motherboard guides only: CPU vendors the guide is written for, e.g. "AuthenticAMD".</summary>
+    public List<string> CpuVendors { get; set; } = [];
     public string Title { get; set; } = "";
     public string Url { get; set; } = "";
     public string? Checked { get; set; }

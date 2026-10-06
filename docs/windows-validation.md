@@ -47,12 +47,17 @@ cli\greyhaven.exe scan --dump-raw greyhaven-raw.json
 - [ ] **S1.8** Open `greyhaven-raw.json` and confirm it contains no serial numbers, your
       user name, your PC's name or MAC addresses. Send it to the project if anything looked
       wrong in S1.2–S1.7; it can be replayed on Linux with `greyhaven scan --raw <file>`.
+- [ ] **S1.9** On a custom-built PC: the scan's "Motherboard" line matches the maker printed
+      on the board or shown in `msinfo32` → "BaseBoard Manufacturer".
 
 ## Ratings (milestone 2)
+
 
 - [ ] **S2.1** Run `cli\greyhaven.exe rate` and skim the report. Does anything look obviously
       wrong for hardware you know works or doesn't work on Linux? Note it; it becomes a rule
       or a fix.
+- [ ] **S2.2** On Windows 10, the report starts with a short, calm note about Windows 10's end of
+      support. On Windows 11 there is no such note.
 
 ## UI review (milestone 3)
 
@@ -111,6 +116,8 @@ explains how to turn Secure Boot off. Update `data/secure-boot-guides.yaml` if o
 - [ ] **G.2** Lenovo (Think models): https://support.lenovo.com/solutions/HT509044
 - [ ] **G.3** Acer notebook: https://community.acer.com/en/kb/articles/88-enable-or-disable-secure-boot-on-an-acer-notebook
 - [ ] **G.4** Acer desktop: https://community.acer.com/en/kb/articles/87-enable-or-disable-secure-boot-on-an-acer-desktop
+- [ ] **G.5** MSI motherboards: https://www.msi.com/faq/faq-11370
+- [ ] **G.6** GIGABYTE AMD motherboards: https://www.gigabyte.com/Support/Consumer/FAQ/4395
 
 ---
 

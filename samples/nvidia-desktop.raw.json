@@ -19,7 +19,8 @@
     ],
     "hasBattery": false,
     "systemManufacturer": "System manufacturer",
-    "systemModel": "System Product Name"
+    "systemModel": "System Product Name",
+    "baseBoardManufacturer": "Micro-Star International Co., Ltd."
   },
   "processors": [
     {

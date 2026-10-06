@@ -96,7 +96,8 @@ public sealed partial class RatingEngine(
             progress?.Report(new RatingProgress("Checking for new distro releases"));
             releaseCheck = await releases.CheckAsync(data.Distros, cancellationToken).ConfigureAwait(false);
         }
-        var freshness = Freshness.Evaluate(data.Dataset.BuiltOnDate, DateOnly.FromDateTime(_time.GetUtcNow().UtcDateTime), releaseCheck);
+        var today = DateOnly.FromDateTime(_time.GetLocalNow().DateTime);
+        var freshness = Freshness.Evaluate(data.Dataset.BuiltOnDate, today, releaseCheck);
 
         // 4. Caveats, importance, scores, recommendation.
         var caveats = FindCaveats(profile);
@@ -123,6 +124,7 @@ public sealed partial class RatingEngine(
             SelectedPath = recommendation.DefaultPath,
             Caveats = caveats.Select(c => c.Caveat).ToList(),
             DataNotes = dataNotes.Distinct().ToList(),
+            ContextNotes = WindowsNotes.For(profile.System, data.Windows, today),
             Data = freshness,
             GeneratedAt = _time.GetUtcNow(),
         };

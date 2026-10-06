@@ -205,6 +205,7 @@ public static partial class ProfileBuilder
             HasBattery = s.HasBattery,
             SystemManufacturer = CleanName(s.SystemManufacturer),
             SystemModel = CleanName(s.SystemModel),
+            BoardManufacturer = CleanName(s.BaseBoardManufacturer),
         };
     }
 

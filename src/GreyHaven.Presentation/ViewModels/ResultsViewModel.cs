@@ -65,9 +65,9 @@ public sealed partial class PathOptionViewModel : ObservableObject
         SecureBootNotice = path.SecureBootNotice;
         if (path.SecureBootGuide is { } g)
         {
-            // GreyHaven's own guide ships with the app, so it works offline and before the
-            // project's GitHub address is configured.
-            var target = g.LocalPath is not null && !GreyHavenInfo.IsGitHubRepositoryConfigured
+            // GreyHaven's own guide ships with the app, so it works offline and while the
+            // repository is private.
+            var target = g.LocalPath is not null && (g.Url is null || !GreyHavenInfo.IsGitHubRepositoryConfigured)
                 ? Path.Combine(AppContext.BaseDirectory, g.LocalPath)
                 : g.Url;
             Guide = new LinkViewModel(g.FromManufacturer ? $"How to turn off Secure Boot: {g.Title}" : $"How to turn off Secure Boot (GreyHaven guide)", target, services);
@@ -253,6 +253,8 @@ public sealed partial class ResultsViewModel : ObservableObject
         if (scanNotes.Count > 0)
             notices.Add(new(NoticeKind.Info, "Some details couldn't be read", string.Join(" ", scanNotes)));
         // Data notes (e.g. "online check unavailable") appear once here, never per component.
+        foreach (var note in report.ContextNotes)
+            notices.Add(new(NoticeKind.Info, "About Windows 10", note.Text, new LinkViewModel(note.Source.Title, note.Source.Url, services)));
         foreach (var note in report.DataNotes)
             notices.Add(new(NoticeKind.Info, "About this report", note));
         return notices;

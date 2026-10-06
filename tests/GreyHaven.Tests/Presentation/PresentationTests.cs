@@ -100,9 +100,10 @@ internal sealed class FakeServices : IAppServices
 
     private static readonly Lazy<CompatibilityData> Data = new(() => CompatibilityData.Load());
 
-    public static async Task<CompatibilityReport> RealReport(string sample)
+    public static async Task<CompatibilityReport> RealReport(string sample, Func<HardwareProfile, HardwareProfile>? change = null)
     {
         var profile = await SampleProfiles.Open(sample).ScanAsync();
+        if (change is not null) profile = change(profile);
         return await new RatingEngine(Data.Value).RateAsync(profile, new RatingOptions { UseOnlineLookups = false });
     }
 
@@ -235,7 +236,9 @@ public class ResultsViewModelTests
     public async Task Secure_boot_guide_opens_the_bundled_copy_while_the_repo_is_unconfigured()
     {
         var services = FakeServices.ForSample("nvidia-desktop");
-        var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), services);
+        // An unrecognised PC and motherboard maker gets GreyHaven's own guide.
+        var report = await FakeServices.RealReport("nvidia-desktop", p => p with { System = p.System with { BoardManufacturer = null } });
+        var vm = new ResultsViewModel(report, services);
         var guide = vm.Paths.Single(p => p.Kind == PathKind.Advanced).Guide!;
 
         guide.OpenCommand.Execute(null);

@@ -1,6 +1,8 @@
 # Official "turn Secure Boot off/on" instructions from PC makers, matched against the
-# manufacturer (and optionally model) Windows reports. First match wins; if nothing matches,
-# GreyHaven links its own general guide (docs/secure-boot.md). Licensed CC-BY-4.0.
+# manufacturer (and optionally model) Windows reports. First match wins. If the PC maker isn't
+# recognised (custom-built PCs often report "System manufacturer"), the motherboard maker is
+# matched against "motherboards". If nothing matches, GreyHaven links its own general guide
+# (docs/secure-boot.md). Licensed CC-BY-4.0.
 #
 # checked: how the link was verified. "fetched" = page loaded and covers Secure Boot.
 # "search" = the maker's site blocks automated checks; the page was confirmed via search
@@ -49,3 +51,24 @@ guides:
     title: Microsoft - Manage Surface UEFI settings (Secure Boot)
     url: https://learn.microsoft.com/en-us/surface/manage-surface-uefi-settings
     checked: fetched 2026-10-05
+
+# Matched against the motherboard maker (Win32_BaseBoard) when no PC maker above matched.
+# cpuVendors: optional, for guides written for one CPU platform.
+# ASRock: no official general Secure Boot how-to was found (2026-10-05); ASRock PCs get
+# GreyHaven's guide, which tells people to check their board's manual.
+motherboards:
+  - manufacturers: [micro-star, msi]
+    title: MSI - Secure Boot Violation error at startup (includes turning Secure Boot off)
+    url: https://www.msi.com/faq/faq-11370
+    checked: search 2026-10-05
+
+  - manufacturers: [asustek, asus]
+    title: ASUS - How to enable/disable Secure Boot
+    url: https://www.asus.com/support/faq/1050047/
+    checked: fetched 2026-10-05 (has a desktop section)
+
+  - manufacturers: [gigabyte]
+    cpuVendors: [AuthenticAMD]
+    title: GIGABYTE - Secure Boot on AM4 and TRX40 motherboards (also how to turn it off)
+    url: https://www.gigabyte.com/Support/Consumer/FAQ/4395
+    checked: search 2026-10-05

@@ -82,6 +82,9 @@ public sealed record RawSystemData
     public string? SystemManufacturer { get; init; }
     public string? SystemModel { get; init; }
 
+    /// <summary><c>Win32_BaseBoard.Manufacturer</c>: the motherboard maker, e.g. "Micro-Star International Co., Ltd.".</summary>
+    public string? BaseBoardManufacturer { get; init; }
+
     /// <summary>Plain-English notes about values that could not be read.</summary>
     public IReadOnlyList<string> ReadWarnings { get; init; } = [];
 }

@@ -17,6 +17,7 @@ public sealed class CompatibilityData
     public required CaveatCatalog Caveats { get; init; }
     public required SecureBootGuideCatalog SecureBootGuides { get; init; }
     public required DatasetInfo Dataset { get; init; }
+    public WindowsLifecycle Windows { get; init; } = new();
     public required IReadOnlyDictionary<string, AliasIndex> KernelIndexes { get; init; }
     public required IReadOnlyDictionary<string, AliasIndex> PackageIndexes { get; init; }
     public required IReadOnlyDictionary<string, AliasIndex> FingerprintIndexes { get; init; }
@@ -47,6 +48,7 @@ public sealed class CompatibilityData
             Caveats = Yaml.Load<CaveatCatalog>(Path.Combine(dir, "caveats.yaml")),
             SecureBootGuides = Yaml.Load<SecureBootGuideCatalog>(Path.Combine(dir, "secure-boot-guides.yaml")),
             Dataset = Yaml.Load<DatasetInfo>(Path.Combine(dir, "dataset.yaml")),
+            Windows = Yaml.Load<WindowsLifecycle>(Path.Combine(dir, "windows.yaml")),
             KernelIndexes = distros.Kernels.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "kernel")),
             PackageIndexes = distros.DriverPackageSets.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "packages")),
             FingerprintIndexes = distros.FingerprintSets.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "fingerprint")),
