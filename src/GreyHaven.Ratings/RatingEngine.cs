@@ -11,9 +11,15 @@ namespace GreyHaven.Ratings;
 
 public sealed class RatingOptions
 {
-    /// <summary>Query linux-hardware.org for devices nothing else knows about.</summary>
+    /// <summary>
+    /// Allow network access: linux-hardware.org for devices nothing else knows about, and the
+    /// distros' release feeds for the data-freshness check.
+    /// </summary>
     public bool UseOnlineLookups { get; init; } = true;
 }
+
+/// <summary>Progress for the UI: a plain-English message, optionally "n of total".</summary>
+public sealed record RatingProgress(string Message, int? Current = null, int? Total = null);
 
 /// <summary>
 /// Rates every component for every distro. For each component and distro, the first source
@@ -31,13 +37,24 @@ public sealed class RatingOptions
 /// If the install ISO's kernel lacks support but the kernel installed with updates has it,
 /// the rating becomes "works with extra driver/config: install updates".
 /// </summary>
-public sealed partial class RatingEngine(CompatibilityData data, ICommunityLookup? community = null)
+public sealed partial class RatingEngine(
+    CompatibilityData data,
+    ICommunityLookup? community = null,
+    IDistroReleaseChecker? releases = null,
+    TimeProvider? time = null)
 {
+    private readonly TimeProvider _time = time ?? TimeProvider.System;
+
     private const string LibfprintListUrl = "https://fprint.freedesktop.org/supported-devices.html";
 
-    public async Task<CompatibilityReport> RateAsync(HardwareProfile profile, RatingOptions? options = null, CancellationToken cancellationToken = default)
+    public async Task<CompatibilityReport> RateAsync(
+        HardwareProfile profile,
+        RatingOptions? options = null,
+        IProgress<RatingProgress>? progress = null,
+        CancellationToken cancellationToken = default)
     {
         options ??= new RatingOptions();
+        progress?.Report(new RatingProgress("Checking Linux support for each part"));
         var contexts = data.Distros.Distros.Select(d => CreateContext(d, profile)).ToList();
         var dataNotes = new List<string>();
 
@@ -50,10 +67,12 @@ public sealed partial class RatingEngine(CompatibilityData data, ICommunityLooku
         if (options.UseOnlineLookups && community is not null)
         {
             var unavailableNoted = false;
-            foreach (var row in rows)
+            var toLookUp = rows.Where(r => r.Component.Id is not null && r.Ratings.Any(x => x.Rating == Rating.Unknown)).ToList();
+            for (var n = 0; n < toLookUp.Count; n++)
             {
-                if (row.Component.Id is null || row.Ratings.All(r => r.Rating != Rating.Unknown)) continue;
-                var result = await community.LookupAsync(row.Component.Id, cancellationToken).ConfigureAwait(false);
+                var row = toLookUp[n];
+                progress?.Report(new RatingProgress("Checking the online Linux hardware database", n + 1, toLookUp.Count));
+                var result = await community.LookupAsync(row.Component.Id!, cancellationToken).ConfigureAwait(false);
                 if (result.Status == CommunityStatus.Unavailable)
                 {
                     if (!unavailableNoted) dataNotes.Add($"Online lookups were incomplete: {result.Reason} Ratings use GreyHaven's built-in data only.");
@@ -70,7 +89,16 @@ public sealed partial class RatingEngine(CompatibilityData data, ICommunityLooku
             dataNotes.Add("Online lookups were turned off. Ratings use GreyHaven's built-in data only.");
         }
 
-        // 3. Caveats, importance, scores, recommendation.
+        // 3. Data freshness (release feeds only when online lookups are allowed).
+        ReleaseCheckResult? releaseCheck = null;
+        if (options.UseOnlineLookups && releases is not null)
+        {
+            progress?.Report(new RatingProgress("Checking for new distro releases"));
+            releaseCheck = await releases.CheckAsync(data.Distros, cancellationToken).ConfigureAwait(false);
+        }
+        var freshness = Freshness.Evaluate(data.Dataset.BuiltOnDate, DateOnly.FromDateTime(_time.GetUtcNow().UtcDateTime), releaseCheck);
+
+        // 4. Caveats, importance, scores, recommendation.
         var caveats = FindCaveats(profile);
         var rated = rows.Select(r => new RatedComponent
         {
@@ -84,15 +112,18 @@ public sealed partial class RatingEngine(CompatibilityData data, ICommunityLooku
         foreach (var k in contexts.Select(c => c.IsoKernel).Concat(contexts.Select(c => c.UpdatesKernel)).OfType<KernelInfo>().Where(k => k.Approximation is not null).Distinct())
             dataNotes.Add($"Kernel {k.Version}: {Collapse(k.Approximation!)}");
 
+        var recommendation = Recommender.Recommend(profile, rated, summaries, data.Distros, data.SecureBootGuides);
         return new CompatibilityReport
         {
             Profile = profile,
             Distros = summaries,
             Components = rated,
-            Recommendation = Recommender.Recommend(profile, rated, summaries, data.Distros),
+            Recommendation = recommendation,
+            SelectedPath = recommendation.DefaultPath,
             Caveats = caveats.Select(c => c.Caveat).ToList(),
             DataNotes = dataNotes.Distinct().ToList(),
-            GeneratedAt = DateTimeOffset.UtcNow,
+            Data = freshness,
+            GeneratedAt = _time.GetUtcNow(),
         };
     }
 
@@ -262,6 +293,8 @@ public sealed partial class RatingEngine(CompatibilityData data, ICommunityLooku
             ? RuleSet.ParseConfidence(conf)
             : Confidence.Medium;
         var series = ctx.IsoKernel.Series;
+        var approximation = ApproximationNote(ctx, matches);
+        if (approximation is not null && confidence == Confidence.High) confidence = Confidence.Medium;
         var explanation = classWide
             ? $"{ctx.Distro.Name}'s Linux {series} kernel handles this as a standard {Labels.Of(c.Category).ToLowerInvariant()} using its \"{module}\" driver."
             : $"{ctx.Distro.Name}'s Linux {series} kernel includes the \"{module}\" driver, which lists this exact device.";
@@ -273,7 +306,22 @@ public sealed partial class RatingEngine(CompatibilityData data, ICommunityLooku
             Explanation = explanation,
             Sources = [KernelSource(ctx.IsoKernel, ctx.Distro, module)],
             LinuxDriver = string.Join(", ", modules),
+            ApproximationNote = approximation,
         };
+    }
+
+    /// <summary>
+    /// Explains why kernel evidence is approximate, or null if it isn't. Approximate evidence is
+    /// capped at medium confidence.
+    /// </summary>
+    private static string? ApproximationNote(DistroContext ctx, IReadOnlyList<AliasEntry> matches)
+    {
+        var notes = new List<string>();
+        if (ctx.IsoKernel.Approximation is not null)
+            notes.Add($"{ctx.Distro.Name} doesn't publish this exact kernel package, so GreyHaven used the matching upstream kernel release ({ctx.IsoKernel.Series}).");
+        if (matches.Count > 0 && matches.All(m => m.Provenance is not null))
+            notes.Add($"Linux {ctx.IsoKernel.Series} doesn't list its built-in drivers' devices, so GreyHaven used this driver's general pattern from a newer kernel.");
+        return notes.Count == 0 ? null : string.Join(" ", notes);
     }
 
     private static Source KernelSource(KernelInfo k, DistroInfo d, string module) =>
@@ -306,9 +354,14 @@ public sealed partial class RatingEngine(CompatibilityData data, ICommunityLooku
         var iso = ctx.IsoKernel.Series;
         var upd = ctx.UpdatesKernel!.Series;
         var isNetwork = c.Category is ComponentCategory.Wifi or ComponentCategory.Ethernet or ComponentCategory.UsbNetwork;
+        var isoApproximate = ctx.IsoKernel.Approximation is not null
+            ? $"The \"no driver on the install USB\" part is based on approximate data: {ctx.Distro.Name} doesn't publish its exact install kernel package, so GreyHaven used the matching upstream release."
+            : null;
         return updated with
         {
             Rating = Rating.WorksWithExtraDriver,
+            Confidence = isoApproximate is not null && updated.Confidence == Confidence.High ? Confidence.Medium : updated.Confidence,
+            ApproximationNote = isoApproximate ?? updated.ApproximationNote,
             Explanation = $"The {ctx.Distro.Name} install USB uses Linux {iso}, which doesn't support this device, but the Linux {upd} kernel that {ctx.Distro.Name} installs with system updates does{(updated.LinuxDriver is null ? "" : $" (\"{updated.LinuxDriver}\")")}. Install updates after setup, then restart.",
             Fix = new Fix
             {
@@ -460,6 +513,7 @@ public sealed partial class RatingEngine(CompatibilityData data, ICommunityLooku
             DistroId = ctx.Distro.Id,
             DisplayName = ctx.Distro.DisplayName,
             Edition = ctx.Edition.Name,
+            EditionId = ctx.Edition.Id,
             KernelVersion = ctx.IsoKernel.Version,
             Score = ScoreCalculator.Calculate(items),
             Notes = notes,

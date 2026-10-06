@@ -1,5 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <InternalsVisibleTo Include="GreyHaven.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\GreyHaven.Core\GreyHaven.Core.csproj" />
   </ItemGroup>
   <ItemGroup>

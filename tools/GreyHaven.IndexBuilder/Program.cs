@@ -26,8 +26,7 @@ var catalog = Yaml.Load<DistroCatalog>(Path.Combine(dataDir, "distros.yaml"));
 catalog.Validate();
 Directory.CreateDirectory(cacheDir);
 
-using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(20) };
-http.DefaultRequestHeaders.UserAgent.ParseAdd("GreyHaven-index-builder/0.1");
+using var http = GreyHaven.Compat.Online.GreyHavenHttp.Create(TimeSpan.FromMinutes(20));
 var generated = DateTime.UtcNow.ToString("yyyy-MM-dd");
 
 if (command is "kernels" or "all")
@@ -62,7 +61,10 @@ if (command is "kernels" or "all")
             // from a newer kernel's index. See distros.yaml.
             var refIndex = AliasIndex.Load(Path.Combine(dataDir, catalog.Kernels[refId].Index));
             var builtin = kernel.Packages.Select(u => DebReader.ReadBuiltinModuleNames(Path.Combine(cacheDir, CacheName(u)))).SelectMany(x => x).ToHashSet();
-            var borrowed = refIndex.Entries.Where(e => !e.IsDeviceSpecific && builtin.Contains(e.Target)).ToList();
+            var borrowed = refIndex.Entries
+                .Where(e => !e.IsDeviceSpecific && builtin.Contains(e.Target))
+                .Select(e => e with { Provenance = $"borrowed:{refId}" })
+                .ToList();
             entries.AddRange(borrowed);
             headers["builtin-class-aliases-from"] = $"{refId} ({borrowed.Count} class-wide patterns for {borrowed.Select(b => b.Target).Distinct().Count()} built-in modules)";
             Console.WriteLine($"  borrowed {borrowed.Count} class-wide built-in aliases from {refId}");
@@ -96,6 +98,15 @@ if (command is "packages" or "all")
         AliasIndex.Write(outPath, headers, entries);
         Console.WriteLine($"  wrote {Path.GetRelativePath(dataDir, outPath)} ({new FileInfo(outPath).Length / 1024} KiB)");
     }
+}
+
+if (command is "fingerprint" or "all" or "kernels" or "packages")
+{
+    // Record when the data was built; the app warns when it's over 90 days old.
+    File.WriteAllText(Path.Combine(dataDir, "dataset.yaml"),
+        "# Updated by the index builder on every run. Shown in the app and every report, and used to\n" +
+        "# warn when the data is more than 90 days old.\n" +
+        $"builtOn: {generated}\n");
 }
 
 if (command is "fingerprint" or "all")

@@ -53,6 +53,12 @@ and the fix is to install updates.
 example a HID device's group). Unknown fields only match a wildcard, so GreyHaven never
 assumes a driver binds when it can't tell.
 
+**Approximate data.** Some indexes are approximations: Pop!_OS doesn't publish the exact
+kernel packages from its ISOs, so those indexes are built from the same upstream release.
+Kernels before about 7.0 don't record built-in drivers' devices, so their class-wide
+patterns are borrowed from a newer kernel. A rating that rests on approximate data is
+**capped at medium confidence** and carries a note saying why.
+
 **ARM PCs.** The indexes describe x64 kernels, so on an ARM PC everything except the
 processor is rated Unknown.
 
@@ -110,9 +116,36 @@ Distros are ordered by:
 4. `tieBreakRank` in `data/distros.yaml` (Mint, then Ubuntu, then Pop!_OS)
 
 The paragraph names the components the winner handles better than the runner-up, says who
-the distro suits, counts the extra steps and unrated parts, and mentions Secure Boot or ARM
-limitations. If no distro supports the processor at all, GreyHaven doesn't recommend
-switching.
+the distro suits, counts the extra steps and unrated parts, and mentions ARM limitations.
+If no distro supports the processor at all, GreyHaven doesn't recommend switching.
+
+### Two paths when Secure Boot is involved
+
+If the best distro needs Secure Boot turned off, and Secure Boot is on (or GreyHaven
+couldn't read it), the user chooses between two paths:
+
+- **Easy (default):** `secureBootEasyModeDistro` in `data/distros.yaml` (Ubuntu), which
+  keeps Secure Boot on. The paragraph explains every extra step it needs in plain words,
+  for example installing the NVIDIA driver and confirming the one-time "Enroll MOK" screen.
+- **Advanced:** the best-supported distro (e.g. Pop!_OS). It comes with a short notice:
+  Secure Boot must be turned off, what that means, and that it can be turned back on later
+  (though Pop!_OS won't start while it's on). It also links a how-to guide: the PC maker's
+  official instructions when the maker is recognised (`data/secure-boot-guides.yaml`),
+  otherwise [docs/secure-boot.md](secure-boot.md).
+
+GreyHaven never changes Secure Boot itself; it is instructions-only. The chosen path
+decides which distro's fixes are shown, adds "turn off Secure Boot" to the pre-switch
+checklist (Advanced only), picks the live USB creator's default ISO (e.g. Pop!_OS's NVIDIA
+ISO), and is recorded in exported reports.
+
+## Data freshness
+
+Every report shows when the bundled data was built (`data/dataset.yaml`). GreyHaven tells the
+user to check for an update when the data is more than **90 days** old, or when (with online
+checks allowed) a newer release of a supported distro is found: a new Ubuntu point release,
+a new Linux Mint version, or a new Pop!_OS ISO build or version. A weekly GitHub Action
+(`.github/workflows/distro-releases.yml`) runs the same check and opens an issue for each
+new release.
 
 ## Things that can't be judged from Windows
 

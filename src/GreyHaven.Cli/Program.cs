@@ -2,6 +2,7 @@ using GreyHaven.Cli;
 using GreyHaven.Compat;
 using GreyHaven.Compat.Online;
 using GreyHaven.Core;
+using GreyHaven.Core.Compatibility;
 using GreyHaven.Core.Scanning;
 using GreyHaven.Core.Serialization;
 using GreyHaven.Ratings;
@@ -22,6 +23,7 @@ namespace GreyHaven.Cli
               greyhaven scan --raw <file>      Replay a raw snapshot saved with --dump-raw
               greyhaven rate [scan options]    Scan, then rate every part for Mint, Ubuntu and Pop!_OS
               greyhaven samples                List bundled sample profiles
+              greyhaven check-releases         Check for distro releases newer than the bundled data
 
             Options for scan:
               --json              Print the profile as JSON instead of a readable summary
@@ -32,6 +34,8 @@ namespace GreyHaven.Cli
             Options for rate:
               --offline           Don't query linux-hardware.org (built-in data only)
               --distro <id>       Show details for one distro only (mint, ubuntu, pop-os)
+              --path <kind>       Choose the recommendation path: easy or advanced
+                                  (offered when the best distro needs Secure Boot turned off)
               --json              Print the full report as JSON
               --data <dir>        Use compatibility data from this directory
 
@@ -60,6 +64,7 @@ namespace GreyHaven.Cli
                     "scan" => await ScanAsync(opts),
                     "rate" => await RateAsync(opts),
                     "samples" => ListSamples(opts),
+                    "check-releases" => await CheckReleasesAsync(opts),
                     _ => Fail($"Unknown command '{args[0]}'.\n\n{Usage}"),
                 };
             }
@@ -83,19 +88,49 @@ namespace GreyHaven.Cli
             var profile = await (await CreateScannerAsync(opts)).ScanAsync();
             var data = CompatibilityData.Load(opts.DataDir);
 
-            using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(30) };
-            http.DefaultRequestHeaders.UserAgent.ParseAdd($"GreyHaven/{GreyHavenInfo.Version}");
+            using var http = GreyHavenHttp.Create(TimeSpan.FromSeconds(30));
             var community = new LinuxHardwareDbClient(http, LinuxHardwareDbClient.DefaultCacheDirectory);
-            var engine = new RatingEngine(data, community);
+            var engine = new RatingEngine(data, community, new DistroReleaseChecker(http));
 
-            if (!opts.Offline && !opts.Json)
-                Console.Error.WriteLine("Checking linux-hardware.org for devices GreyHaven doesn't know (one request every 10 seconds; use --offline to skip)...");
-            var report = await engine.RateAsync(profile, new RatingOptions { UseOnlineLookups = !opts.Offline });
+            IProgress<RatingProgress>? progress = opts.Json ? null : new Progress<RatingProgress>(p =>
+                Console.Error.WriteLine(p.Total is null ? $"{p.Message}..." : $"{p.Message} ({p.Current} of {p.Total}, one request every 10 seconds; use --offline to skip)..."));
+            var report = await engine.RateAsync(profile, new RatingOptions { UseOnlineLookups = !opts.Offline }, progress);
+            if (opts.Path is { } path)
+            {
+                var kind = path switch
+                {
+                    "easy" => PathKind.Easy,
+                    "advanced" => PathKind.Advanced,
+                    _ => throw new CliException("--path must be 'easy' or 'advanced'."),
+                };
+                if (report.Recommendation.Get(kind) is null)
+                    throw new CliException($"This PC has no '{path}' path: it is only offered when the best distro needs Secure Boot turned off.");
+                report = report.WithPath(kind);
+            }
 
             var json = GreyHavenJson.Serialize(report);
             if (opts.Out is not null) await File.WriteAllTextAsync(opts.Out, json);
             Console.WriteLine(opts.Json ? json : ReportTextFormatter.Format(report, opts.Distro));
             return 0;
+        }
+
+        /// <summary>Used by the scheduled GitHub Action to open an issue when a distro releases a new version.</summary>
+        private static async Task<int> CheckReleasesAsync(Options opts)
+        {
+            var data = CompatibilityData.Load(opts.DataDir);
+            using var http = GreyHavenHttp.Create(TimeSpan.FromSeconds(30));
+            var result = await new DistroReleaseChecker(http).CheckAsync(data.Distros);
+            if (opts.Json)
+            {
+                Console.WriteLine(GreyHavenJson.Serialize(new { result.Newer, result.Errors }));
+            }
+            else
+            {
+                if (result.Newer.Count == 0) Console.WriteLine("No newer releases found.");
+                foreach (var n in result.Newer) Console.WriteLine($"{n.DistroName}: data covers {n.Current}, found {n.Found}");
+                foreach (var e in result.Errors) Console.Error.WriteLine(e);
+            }
+            return result.Complete ? 0 : 2;
         }
 
         private static async Task<IHardwareScanner> CreateScannerAsync(Options opts)
@@ -153,11 +188,11 @@ namespace GreyHaven.Cli
     internal sealed class CliException(string message) : Exception(message);
 
     internal sealed record Options(string? Sample, string? Raw, bool Json, string? Out, string? DumpRaw, string? SamplesDir,
-        bool Offline = false, string? Distro = null, string? DataDir = null)
+        bool Offline = false, string? Distro = null, string? DataDir = null, string? Path = null)
     {
         public static Options Parse(string[] args)
         {
-            string? sample = null, raw = null, @out = null, dumpRaw = null, samplesDir = null, distro = null, dataDir = null;
+            string? sample = null, raw = null, @out = null, dumpRaw = null, samplesDir = null, distro = null, dataDir = null, path = null;
             var json = false;
             var offline = false;
             for (var i = 0; i < args.Length; i++)
@@ -174,12 +209,13 @@ namespace GreyHaven.Cli
                     case "--offline": offline = true; break;
                     case "--distro": distro = Value(); break;
                     case "--data": dataDir = Value(); break;
+                    case "--path": path = Value(); break;
                     default: throw new CliException($"Unknown option '{args[i]}'.");
                 }
             }
             if (sample is not null && raw is not null) throw new CliException("Use either --sample or --raw, not both.");
             if (dumpRaw is not null && (sample is not null || raw is not null)) throw new CliException("--dump-raw only applies to a live scan.");
-            return new Options(sample, raw, json, @out, dumpRaw, samplesDir, offline, distro, dataDir);
+            return new Options(sample, raw, json, @out, dumpRaw, samplesDir, offline, distro, dataDir, path);
         }
     }
 }

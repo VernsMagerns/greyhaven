@@ -14,8 +14,10 @@ namespace GreyHaven.Tests.Ratings;
 /// </summary>
 internal static class TestData
 {
+    /// <summary>Targets may carry a provenance after a '|', e.g. "xhci_pci|borrowed:ref".</summary>
     public static AliasIndex Index(string id, string kind, params (string Pattern, string Target)[] entries) =>
-        AliasIndex.Create(new AliasIndexInfo(id, kind, new Dictionary<string, string>()), entries.Select(e => new AliasEntry(e.Pattern, e.Target)));
+        AliasIndex.Create(new AliasIndexInfo(id, kind, new Dictionary<string, string>()), entries.Select(e =>
+            e.Target.Split('|') is [var t, var prov] ? new AliasEntry(e.Pattern, t, prov) : new AliasEntry(e.Pattern, e.Target)));
 
     public static CompatibilityData Build(
         IEnumerable<(string Pattern, string Module)>? alphaKernel = null,
@@ -24,14 +26,21 @@ internal static class TestData
         IEnumerable<(string Pattern, string Package)>? packages = null,
         IEnumerable<(string Pattern, string Target)>? fingerprint = null,
         IEnumerable<Rule>? rules = null,
-        ModuleCatalog? modules = null)
+        ModuleCatalog? modules = null,
+        string builtOn = "2026-10-01",
+        bool alphaKernelApproximate = false)
     {
         var catalog = new DistroCatalog
         {
             SchemaVersion = 1,
+            SecureBootEasyModeDistro = "alpha",
             Kernels = new()
             {
-                ["alpha-6.10"] = new KernelInfo { Version = "6.10.0-1-generic", Series = "6.10", Index = "a", Packages = ["https://example.test/alpha-6.10.deb"] },
+                ["alpha-6.10"] = new KernelInfo
+                {
+                    Version = "6.10.0-1-generic", Series = "6.10", Index = "a", Packages = ["https://example.test/alpha-6.10.deb"],
+                    Approximation = alphaKernelApproximate ? "Built from the matching upstream kernel." : null,
+                },
                 ["alpha-7.0"] = new KernelInfo { Version = "7.0.0-1-generic", Series = "7.0", Index = "b" },
                 ["beta-7.0"] = new KernelInfo { Version = "7.0.5-generic", Series = "7.0", Index = "c" },
             },
@@ -86,6 +95,16 @@ internal static class TestData
                     new CaveatInfo { Id = "fp", Title = "Fingerprint", Why = "w", Test = "t", AppliesWhen = new CaveatCondition { Category = "fingerprintReader" } },
                 ],
             },
+            SecureBootGuides = new SecureBootGuideCatalog
+            {
+                Fallback = new FallbackGuide { Title = "General guide", Path = "docs/secure-boot.md" },
+                Guides =
+                [
+                    new ManufacturerGuide { Manufacturers = ["dell"], Title = "Dell guide", Url = "https://dell.example/sb" },
+                    new ManufacturerGuide { Manufacturers = ["lenovo"], ModelContains = ["think"], Title = "Lenovo Think guide", Url = "https://lenovo.example/sb" },
+                ],
+            },
+            Dataset = new DatasetInfo { BuiltOn = builtOn },
             KernelIndexes = new Dictionary<string, AliasIndex>
             {
                 ["alpha-6.10"] = Index("alpha-6.10", "kernel", [.. alphaKernel ?? []]),
@@ -135,7 +154,10 @@ internal static class TestData
         IEnumerable<HardwareComponent> components,
         SecureBootState secureBoot = SecureBootState.Disabled,
         FormFactor formFactor = FormFactor.Desktop,
-        CpuArchitecture arch = CpuArchitecture.X64) => new()
+        CpuArchitecture arch = CpuArchitecture.X64,
+        string? manufacturer = null,
+        string? model = null,
+        BitLockerState bitLocker = BitLockerState.NotEncrypted) => new()
     {
         GeneratedBy = "test",
         ScannedAt = DateTimeOffset.UnixEpoch,
@@ -147,6 +169,9 @@ internal static class TestData
             Firmware = FirmwareMode.Uefi,
             SecureBoot = secureBoot,
             FormFactor = formFactor,
+            SystemManufacturer = manufacturer,
+            SystemModel = model,
+            BitLocker = bitLocker,
         },
         Components = components.ToList(),
     };

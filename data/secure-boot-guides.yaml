@@ -1,0 +1,51 @@
+# Official "turn Secure Boot off/on" instructions from PC makers, matched against the
+# manufacturer (and optionally model) Windows reports. First match wins; if nothing matches,
+# GreyHaven links its own general guide (docs/secure-boot.md). Licensed CC-BY-4.0.
+#
+# checked: how the link was verified. "fetched" = page loaded and covers Secure Boot.
+# "search" = the maker's site blocks automated checks; the page was confirmed via search
+# results only and should be clicked through by a person (docs/windows-validation.md).
+
+fallback:
+  title: GreyHaven guide - turning Secure Boot off (and back on)
+  path: docs/secure-boot.md
+
+guides:
+  - manufacturers: [dell]
+    title: Dell - How to enable or disable Secure Boot on your Dell device
+    url: https://www.dell.com/support/kbdoc/en-us/000190116/how-to-enable-secure-boot-on-your-dell-device
+    checked: fetched 2026-10-05
+
+  - manufacturers: [hp, hewlett-packard]
+    title: HP - Secure Boot on HP computers (enable or disable)
+    url: https://support.hp.com/us-en/document/ish_6930187-6931079-16
+    checked: search 2026-10-05
+
+  - manufacturers: [lenovo]
+    modelContains: [think]
+    title: Lenovo - How to enable or disable Secure Boot on ThinkPad, ThinkCentre and ThinkStation
+    url: https://support.lenovo.com/solutions/HT509044
+    checked: search 2026-10-05
+
+  - manufacturers: [asus, asustek]
+    title: ASUS - How to enable/disable Secure Boot
+    url: https://www.asus.com/support/faq/1050047/
+    checked: fetched 2026-10-05
+
+  - manufacturers: [acer]
+    formFactor: laptop
+    title: Acer - Enable or disable Secure Boot on an Acer notebook
+    url: https://community.acer.com/en/kb/articles/88-enable-or-disable-secure-boot-on-an-acer-notebook
+    checked: search 2026-10-05
+
+  - manufacturers: [acer]
+    formFactor: desktop
+    title: Acer - Enable or disable Secure Boot on an Acer desktop
+    url: https://community.acer.com/en/kb/articles/87-enable-or-disable-secure-boot-on-an-acer-desktop
+    checked: search 2026-10-05
+
+  - manufacturers: [microsoft]
+    modelContains: [surface]
+    title: Microsoft - Manage Surface UEFI settings (Secure Boot)
+    url: https://learn.microsoft.com/en-us/surface/manage-surface-uefi-settings
+    checked: fetched 2026-10-05

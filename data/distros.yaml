@@ -11,6 +11,10 @@
 
 schemaVersion: 1
 
+# When the best distro for a PC needs Secure Boot turned off, GreyHaven also offers an
+# "easy" path with this distro, which keeps Secure Boot on.
+secureBootEasyModeDistro: ubuntu
+
 kernels:
   ubuntu-7.0.0-30:
     version: 7.0.0-30-generic
@@ -126,6 +130,10 @@ distros:
         name: Cinnamon
         isoKernel: mint-6.14.0-37
     updatesKernel: mint-6.14.0-37
+    # Newer releases appear as new version directories on the official mirror.
+    releaseCheck:
+      kind: directoryListing
+      url: https://mirrors.edge.kernel.org/linuxmint/stable/
     sources:
       - title: Linux Mint 22.3 release notes
         url: https://www.linuxmint.com/rel_zena_cinnamon.php
@@ -149,6 +157,9 @@ distros:
         name: Desktop
         isoKernel: ubuntu-7.0.0-30
     updatesKernel: ubuntu-7.0.0-30
+    releaseCheck:
+      kind: ubuntuMetaRelease
+      url: https://changelogs.ubuntu.com/meta-release-lts
     sources:
       - title: Ubuntu 26.04.1 desktop ISO manifest
         url: https://releases.ubuntu.com/26.04/ubuntu-26.04.1-desktop-amd64.manifest
@@ -171,12 +182,19 @@ distros:
       - id: intel
         name: Intel/AMD ISO
         isoKernel: pop-6.16.3
+        isoBuild: 20
       - id: nvidia
         name: NVIDIA ISO
         isoKernel: pop-7.0.11
+        isoBuild: 28
         selectWhen: nvidiaGpu
         preinstalledDrivers: [nvidia]
     updatesKernel: pop-7.1.5
+    # Pop!_OS's build API: a newer ISO build (which can bring a new kernel) or a newer LTS
+    # version both count as a newer release. Edition ids are the API's channel names.
+    releaseCheck:
+      kind: popApi
+      url: https://api.pop-os.org/builds/
     sources:
       - title: System76 - Install Pop!_OS
         url: https://system76.com/support/articles/install-pop/

@@ -4,6 +4,8 @@ namespace GreyHaven.Compat.Data;
 public sealed class DistroCatalog
 {
     public int SchemaVersion { get; set; }
+    /// <summary>Distro offered as the "easy" path (keeps Secure Boot on) when the best distro needs it off.</summary>
+    public string? SecureBootEasyModeDistro { get; set; }
     public Dictionary<string, KernelInfo> Kernels { get; set; } = [];
     public Dictionary<string, DriverPackageSet> DriverPackageSets { get; set; } = [];
     public Dictionary<string, FingerprintSet> FingerprintSets { get; set; } = [];
@@ -37,6 +39,12 @@ public sealed class DistroCatalog
         foreach (var (id, k) in Kernels)
             if (k.BuiltinClassAliasesFrom is not null && !Kernels.ContainsKey(k.BuiltinClassAliasesFrom))
                 throw new InvalidDataException($"distros.yaml: kernel '{id}' borrows from unknown kernel '{k.BuiltinClassAliasesFrom}'.");
+        if (SecureBootEasyModeDistro is { } easy &&
+            (Distros.FirstOrDefault(d => d.Id == easy) is not { } easyDistro || !easyDistro.SecureBoot.Supported))
+            throw new InvalidDataException($"distros.yaml: secureBootEasyModeDistro '{easy}' must be a distro that supports Secure Boot.");
+        foreach (var d in Distros)
+            if (d.ReleaseCheck is { } rc && rc.Kind is not ("ubuntuMetaRelease" or "directoryListing" or "popApi"))
+                throw new InvalidDataException($"distros.yaml: '{d.Id}' has unknown releaseCheck kind '{rc.Kind}'.");
         if (Distros.Select(d => d.Id).Distinct().Count() != Distros.Count)
             throw new InvalidDataException("distros.yaml: duplicate distro ids.");
     }
@@ -92,6 +100,7 @@ public sealed class DistroInfo
     public SecureBootSupport SecureBoot { get; set; } = new();
     public List<DistroEdition> Editions { get; set; } = [];
     public string? UpdatesKernel { get; set; }
+    public ReleaseCheck? ReleaseCheck { get; set; }
     public List<SourceLink> Sources { get; set; } = [];
 
     public string DisplayName => Edition is null ? $"{Name} {Version}" : $"{Name} {Version} {Edition}";
@@ -112,6 +121,16 @@ public sealed class DistroEdition
     public string? SelectWhen { get; set; }
     /// <summary>Driver families already installed on this edition, e.g. "nvidia".</summary>
     public List<string> PreinstalledDrivers { get; set; } = [];
+    /// <summary>ISO build number the data was verified against (Pop!_OS publishes numbered builds).</summary>
+    public int? IsoBuild { get; set; }
+}
+
+/// <summary>How to detect a newer release of a distro. See DistroReleaseChecker.</summary>
+public sealed class ReleaseCheck
+{
+    /// <summary>ubuntuMetaRelease | directoryListing | popApi.</summary>
+    public string Kind { get; set; } = "";
+    public string Url { get; set; } = "";
 }
 
 public sealed class SourceLink

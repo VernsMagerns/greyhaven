@@ -15,6 +15,8 @@ public sealed class CompatibilityData
     public required RuleSet Rules { get; init; }
     public required ModuleCatalog Modules { get; init; }
     public required CaveatCatalog Caveats { get; init; }
+    public required SecureBootGuideCatalog SecureBootGuides { get; init; }
+    public required DatasetInfo Dataset { get; init; }
     public required IReadOnlyDictionary<string, AliasIndex> KernelIndexes { get; init; }
     public required IReadOnlyDictionary<string, AliasIndex> PackageIndexes { get; init; }
     public required IReadOnlyDictionary<string, AliasIndex> FingerprintIndexes { get; init; }
@@ -43,6 +45,8 @@ public sealed class CompatibilityData
             Rules = RuleSet.LoadDirectory(Path.Combine(dir, "rules"), distros.Distros.Select(d => d.Id).ToList()),
             Modules = Yaml.Load<ModuleCatalog>(Path.Combine(dir, "modules.yaml")),
             Caveats = Yaml.Load<CaveatCatalog>(Path.Combine(dir, "caveats.yaml")),
+            SecureBootGuides = Yaml.Load<SecureBootGuideCatalog>(Path.Combine(dir, "secure-boot-guides.yaml")),
+            Dataset = Yaml.Load<DatasetInfo>(Path.Combine(dir, "dataset.yaml")),
             KernelIndexes = distros.Kernels.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "kernel")),
             PackageIndexes = distros.DriverPackageSets.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "packages")),
             FingerprintIndexes = distros.FingerprintSets.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "fingerprint")),

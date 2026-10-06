@@ -46,3 +46,13 @@ greyhaven.exe rate
 
 - [ ] **S2.1** (Optional, same session) Skim the report. Does anything look obviously wrong
       for hardware you know works or doesn't work on Linux? Note it; it becomes a rule or a fix.
+
+## Secure Boot guide links (any PC, any browser)
+
+These official pages block automated checks, so a person needs to confirm each one opens and
+explains how to turn Secure Boot off. Update `data/secure-boot-guides.yaml` if one has moved.
+
+- [ ] **G.1** HP: https://support.hp.com/us-en/document/ish_6930187-6931079-16
+- [ ] **G.2** Lenovo (Think models): https://support.lenovo.com/solutions/HT509044
+- [ ] **G.3** Acer notebook: https://community.acer.com/en/kb/articles/88-enable-or-disable-secure-boot-on-an-acer-notebook
+- [ ] **G.4** Acer desktop: https://community.acer.com/en/kb/articles/87-enable-or-disable-secure-boot-on-an-acer-desktop

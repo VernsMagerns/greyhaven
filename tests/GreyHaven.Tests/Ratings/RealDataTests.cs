@@ -67,6 +67,114 @@ public class RealDataTests
         Assert.All(r.Components.Where(c => c.Component.Category == ComponentCategory.UsbController), c => Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, c.For("mint").Rating));
     }
 
+    // ---- Secure Boot paths (nvidia-desktop: Pop!_OS scores best but needs Secure Boot off) ----
+
+    [Fact]
+    public async Task Nvidia_desktop_easy_path_is_default_and_keeps_secure_boot_on()
+    {
+        var r = await Rate("nvidia-desktop");
+
+        Assert.Equal(2, r.Recommendation.Paths.Count);
+        Assert.Equal(PathKind.Easy, r.SelectedPath);
+        var easy = r.SelectedRecommendation!;
+        Assert.Equal("ubuntu", easy.DistroId);
+
+        // Live USB creator default ISO
+        Assert.Equal("desktop", easy.EditionId);
+        // Pre-switch checklist: nothing to change in the firmware
+        Assert.DoesNotContain(PreSwitchRequirement.TurnOffSecureBoot, easy.Requirements);
+        Assert.Null(easy.SecureBootNotice);
+        // Fixes follow the chosen distro: the NVIDIA driver step, in plain words, with MOK advice
+        Assert.Contains("Additional Drivers", easy.Paragraph);
+        Assert.Contains("Enroll MOK", easy.Paragraph);
+        var gpu = Rating(r, ComponentCategory.Gpu, r.SelectedDistroId!);
+        Assert.Equal(Core.Compatibility.Rating.WorksWithExtraDriver, gpu.Rating);
+        Assert.Equal(["sudo ubuntu-drivers install"], gpu.Fix!.Commands);
+        Assert.NotNull(gpu.Fix.SecureBootAdvice);
+    }
+
+    [Fact]
+    public async Task Nvidia_desktop_advanced_path_offers_pop_with_secure_boot_notice()
+    {
+        var r = (await Rate("nvidia-desktop")).WithPath(PathKind.Advanced);
+        var advanced = r.SelectedRecommendation!;
+
+        Assert.Equal("pop-os", r.SelectedDistroId);
+        // Live USB creator default ISO: the NVIDIA build
+        Assert.Equal("nvidia", advanced.EditionId);
+        Assert.Equal("NVIDIA ISO", advanced.EditionName);
+        // Pre-switch checklist gets an instructions-only Secure Boot item
+        Assert.Equal([PreSwitchRequirement.TurnOffSecureBoot], advanced.Requirements);
+        Assert.Contains("turn it back on later", advanced.SecureBootNotice);
+        Assert.Contains("won't change this setting for you", advanced.SecureBootNotice);
+        // The sample's maker ("System manufacturer") isn't recognised, so our own guide is linked.
+        Assert.False(advanced.SecureBootGuide!.FromManufacturer);
+        Assert.Equal("docs/secure-boot.md", advanced.SecureBootGuide.LocalPath);
+        Assert.True(File.Exists(Path.Combine(AppContext.BaseDirectory, advanced.SecureBootGuide.LocalPath!)));
+        // Fixes follow the chosen distro: the GPU needs nothing on the NVIDIA ISO
+        Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, Rating(r, ComponentCategory.Gpu, r.SelectedDistroId!).Rating);
+    }
+
+    [Fact]
+    public async Task Selected_path_is_carried_into_the_json_export()
+    {
+        var r = (await Rate("nvidia-desktop")).WithPath(PathKind.Advanced);
+        var json = GreyHaven.Core.Serialization.GreyHavenJson.Serialize(r);
+
+        Assert.Contains("\"selectedPath\": \"advanced\"", json);
+        Assert.Contains("\"selectedDistroId\": \"pop-os\"", json);
+        Assert.Contains("turnOffSecureBoot", json);
+    }
+
+    [Fact]
+    public async Task Nvidia_desktop_with_secure_boot_off_gets_one_path()
+    {
+        var profile = await SampleProfiles.Open("nvidia-desktop").ScanAsync();
+        profile = profile with { System = profile.System with { SecureBoot = SecureBootState.Disabled } };
+        var r = await new RatingEngine(Data.Value).RateAsync(profile, new RatingOptions { UseOnlineLookups = false });
+
+        var path = Assert.Single(r.Recommendation.Paths);
+        Assert.Equal("pop-os", path.DistroId);
+        Assert.Empty(path.Requirements);
+    }
+
+    [Fact]
+    public async Task Choosing_a_path_the_report_does_not_have_fails()
+    {
+        var r = await Rate("intel-laptop");
+        Assert.Throws<ArgumentException>(() => r.WithPath(PathKind.Advanced));
+    }
+
+    [Fact]
+    public void Secure_boot_guides_are_https_and_fallback_guide_ships()
+    {
+        Assert.All(Data.Value.SecureBootGuides.Guides, g => Assert.StartsWith("https://", g.Url));
+        Assert.True(File.Exists(Path.Combine(AppContext.BaseDirectory, Data.Value.SecureBootGuides.Fallback.Path)));
+    }
+
+    [Fact]
+    public async Task Approximate_kernel_data_is_never_high_confidence()
+    {
+        var r = await Rate("intel-laptop");
+        var pop = r.Components.Select(c => c.For("pop-os")).Where(x => x.ApproximationNote is not null).ToList();
+        Assert.NotEmpty(pop); // Pop!_OS's ISO kernel index is approximated
+        Assert.All(pop, x => Assert.NotEqual(Confidence.High, x.Confidence));
+
+        // Mint's 6.14 kernel borrows class-wide patterns for built-in drivers (e.g. USB controllers).
+        var mintUsb = r.Components.First(c => c.Component.Category == ComponentCategory.UsbController).For("mint");
+        Assert.NotNull(mintUsb.ApproximationNote);
+        Assert.Equal(Confidence.Medium, mintUsb.Confidence);
+
+        // Ubuntu's index is exact: no notes.
+        Assert.All(r.Components, c => Assert.Null(c.For("ubuntu").ApproximationNote));
+    }
+
+    [Fact]
+    public void Dataset_build_date_is_set()
+    {
+        Assert.True(Data.Value.Dataset.BuiltOnDate > new DateOnly(2026, 1, 1));
+    }
+
     [Fact]
     public async Task Broadcom_laptop_needs_wl_with_distro_specific_package()
     {
@@ -92,7 +200,7 @@ public class RealDataTests
     {
         var r = await Rate("intel-laptop");
         Assert.All(r.Distros, d => Assert.Equal(100, d.Score.Score));
-        Assert.Equal("mint", r.Recommendation.DistroId); // tie -> tieBreakRank
+        Assert.Equal("mint", r.SelectedDistroId); // tie -> tieBreakRank
     }
 
     [Fact]

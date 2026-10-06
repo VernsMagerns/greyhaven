@@ -4,8 +4,11 @@ using GreyHaven.Core.Hardware;
 
 namespace GreyHaven.Compat.Kernel;
 
-/// <summary>One alias pattern and the module (or driver package) that claims it.</summary>
-public sealed record AliasEntry(string Pattern, string Target)
+/// <summary>
+/// One alias pattern and the module (or driver package) that claims it. <paramref name="Provenance"/>
+/// is set for entries that didn't come from this kernel's own packages (e.g. "borrowed:ubuntu-7.0.0-30").
+/// </summary>
+public sealed record AliasEntry(string Pattern, string Target, string? Provenance = null)
 {
     /// <summary>
     /// True when the pattern names a specific vendor and device (e.g. <c>pci:v00008086d00002723…</c>),
@@ -52,7 +55,7 @@ public sealed record AliasIndexInfo(string Id, string Kind, IReadOnlyDictionary<
 /// #id: ubuntu-7.0.0-30
 /// #kind: kernel
 /// #&lt;key&gt;: &lt;value&gt;          (any number of provenance headers)
-/// &lt;pattern&gt;\t&lt;target&gt;
+/// &lt;pattern&gt;\t&lt;target&gt;[\t&lt;provenance&gt;]
 /// </code>
 /// </summary>
 public sealed class AliasIndex
@@ -130,9 +133,9 @@ public sealed class AliasIndex
                 if (colon > 1) headers[line[1..colon].Trim()] = line[(colon + 1)..].Trim();
                 continue;
             }
-            var tab = line.IndexOf('\t');
-            if (tab <= 0) throw new InvalidDataException($"Malformed index line: {line}");
-            entries.Add(new AliasEntry(line[..tab], line[(tab + 1)..]));
+            var parts = line.Split('\t');
+            if (parts.Length is < 2 or > 3 || parts[0].Length == 0) throw new InvalidDataException($"Malformed index line: {line}");
+            entries.Add(new AliasEntry(parts[0], parts[1], parts.Length == 3 ? parts[2] : null));
         }
 
         var id = headers.GetValueOrDefault("id") ?? throw new InvalidDataException("Index file has no #id header.");
@@ -151,11 +154,13 @@ public sealed class AliasIndex
         foreach (var (k, v) in headers) w.WriteLine($"#{k}: {v}");
         foreach (var e in entries
                      .Where(e => IsRelevantPattern(e.Pattern))
+                     // A kernel's own entry wins over a borrowed duplicate.
+                     .OrderBy(e => e.Provenance is null ? 0 : 1)
                      .DistinctBy(e => (e.Pattern, e.Target))
                      .OrderBy(e => e.Pattern, StringComparer.Ordinal)
                      .ThenBy(e => e.Target, StringComparer.Ordinal))
         {
-            w.WriteLine($"{e.Pattern}\t{e.Target}");
+            w.WriteLine(e.Provenance is null ? $"{e.Pattern}\t{e.Target}" : $"{e.Pattern}\t{e.Target}\t{e.Provenance}");
         }
     }
 }

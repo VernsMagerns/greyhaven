@@ -14,18 +14,39 @@ internal static class ReportTextFormatter
         var sb = new StringBuilder();
         var p = r.Profile;
         sb.AppendLine($"GreyHaven report  ({p.Source})");
+        sb.AppendLine($"Hardware data built {r.Data.BuiltOn:yyyy-MM-dd} ({(r.Data.AgeDays == 1 ? "1 day" : $"{r.Data.AgeDays} days")} old){(r.Data.ReleasesChecked ? ", checked for newer distro releases" : "")}");
+        if (r.Data.Notice is not null) Wrap(sb, "UPDATE NOTICE: " + r.Data.Notice, "");
         if (p.Description is not null) Wrap(sb, p.Description, "");
         sb.AppendLine();
 
         sb.AppendLine("RECOMMENDATION");
         Wrap(sb, r.Recommendation.Paragraph, "  ");
+        if (r.Recommendation.Paths.Count > 1)
+        {
+            foreach (var path in r.Recommendation.Paths)
+            {
+                sb.AppendLine();
+                var chosen = path.Kind == r.SelectedPath;
+                sb.AppendLine($"  {(chosen ? "(*)" : "( )")} {path.Title}{(path.Kind == r.Recommendation.DefaultPath ? " - default" : "")}{(chosen ? " - selected" : "")}   [download: {path.EditionName}]");
+                Wrap(sb, path.Paragraph, "      ");
+                if (path.SecureBootNotice is not null) Wrap(sb, "Secure Boot: " + path.SecureBootNotice, "      ");
+                if (path.SecureBootGuide is { } g) Wrap(sb, $"How-to: {g.Title} <{g.Url}>{(g.FromManufacturer ? "" : $" (also in {g.LocalPath})")}", "      ");
+            }
+            sb.AppendLine("  Choose with --path easy|advanced.");
+        }
+        else if (r.SelectedRecommendation is { } only)
+        {
+            if (only.SecureBootNotice is not null) Wrap(sb, "Secure Boot: " + only.SecureBootNotice, "  ");
+            if (only.SecureBootGuide is { } g) Wrap(sb, $"How-to: {g.Title} <{g.Url}>", "  ");
+            sb.AppendLine($"  Download: {only.EditionName}");
+        }
         sb.AppendLine();
 
         sb.AppendLine("SCORES");
         foreach (var d in r.Distros)
         {
             var s = d.Score;
-            var flag = d.DistroId == r.Recommendation.DistroId ? "*" : " ";
+            var flag = d.DistroId == r.SelectedDistroId ? "*" : " ";
             sb.AppendLine($" {flag}{d.DisplayName,-30} {s.Score,3}/100  {s.Band,-5}  coverage {s.Coverage:P0}{(s.Incomplete ? "  INCOMPLETE" : "")}   [{d.Edition}, kernel {d.KernelVersion}]");
             if (s.CapReason is not null) Wrap(sb, s.CapReason, "      ");
             foreach (var n in d.Notes) Wrap(sb, "Note: " + n, "      ");
@@ -33,7 +54,7 @@ internal static class ReportTextFormatter
         sb.AppendLine();
 
         var distros = r.Distros.Select(d => d.DistroId).ToList();
-        var detailDistro = onlyDistro ?? r.Recommendation.DistroId ?? distros[0];
+        var detailDistro = onlyDistro ?? r.SelectedDistroId ?? distros[0];
         if (!distros.Contains(detailDistro))
             throw new CliException($"Unknown distro '{detailDistro}'. Choose one of: {string.Join(", ", distros)}.");
 
@@ -56,6 +77,7 @@ internal static class ReportTextFormatter
             sb.AppendLine($"  {Labels.Of(c.Component.Category)}: {c.Component.Name}  ({c.Component.Id?.FullKey ?? "cpu"})");
             sb.AppendLine($"    {Symbol(rating.Rating)} {Describe(rating.Rating)}  - confidence {rating.Confidence.ToString().ToLowerInvariant()}{(rating.IsWeakData ? " (limited data)" : "")}");
             Wrap(sb, rating.Explanation, "    ");
+            if (rating.ApproximationNote is not null) Wrap(sb, "Approximate data: " + rating.ApproximationNote, "    ");
             if (rating.Fix is { } fix)
             {
                 sb.AppendLine($"    Fix: {fix.Driver}");
