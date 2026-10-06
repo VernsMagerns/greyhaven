@@ -33,16 +33,18 @@ public sealed partial class ComponentViewModel : ObservableObject
         Rating = r.Rating;
 
         Title = Labels.Of(c.Category);
-        Name = c.Count > 1 ? $"{c.Name} (×{c.Count})" : c.Name;
+        Name = c.Count > 1 ? $"{rated.DisplayName} (×{c.Count})" : rated.DisplayName;
         RatingLabel = RatingDisplay.Label(r.Rating);
         Glyph = RatingDisplay.Glyph(r.Rating);
         ColourKey = RatingDisplay.ColourKey(r.Rating);
         IsEssential = rated.Importance == Importance.Critical;
+        // Essential and important parts carry a visible label; other parts don't need one.
+        ImportanceLabel = rated.Importance == Importance.Minor ? null : Labels.Of(rated.Importance);
         Explanation = r.Explanation;
         ApproximationNote = r.ApproximationNote;
         ConfidenceLabel = $"How sure GreyHaven is: {RatingDisplay.Confidence(r.Confidence)}";
         WeakDataLabel = r.IsWeakData ? "Based on limited data" : null;
-        AccessibleName = $"{Title}: {RatingLabel}.{(IsEssential ? " Essential part." : "")} {Name}";
+        AccessibleName = $"{Title}: {RatingLabel}.{(ImportanceLabel is null ? "" : $" {ImportanceLabel} part.")} {Name}";
 
         if (r.Fix is { } fix)
         {
@@ -73,7 +75,7 @@ public sealed partial class ComponentViewModel : ObservableObject
         if (r.LinuxDriver is not null) details.Add(new("Linux driver", r.LinuxDriver));
         if (c.WindowsDriver is not null) details.Add(new("Windows driver", c.WindowsDriver));
         if (c.WindowsProblemCode is > 0) details.Add(new("Windows status", c.WindowsProblemCode == 28 ? "No Windows driver installed" : $"Problem code {c.WindowsProblemCode}"));
-        details.Add(new("Importance", rated.Importance.ToString()));
+        details.Add(new("Importance", Labels.Explain(rated.Importance)));
         TechnicalDetails = details;
     }
 
@@ -85,6 +87,8 @@ public sealed partial class ComponentViewModel : ObservableObject
     /// <summary>Palette name of the rating colour (always paired with <see cref="Glyph"/> and <see cref="RatingLabel"/>).</summary>
     public string ColourKey { get; }
     public bool IsEssential { get; }
+    /// <summary>"Essential" or "Important"; null for other parts.</summary>
+    public string? ImportanceLabel { get; }
     public string Explanation { get; }
     public string? ApproximationNote { get; }
     public string ConfidenceLabel { get; }

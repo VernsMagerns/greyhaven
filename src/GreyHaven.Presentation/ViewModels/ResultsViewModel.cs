@@ -141,6 +141,11 @@ public sealed partial class ResultsViewModel : ObservableObject
     [ObservableProperty]
     public partial string DistroName { get; private set; } = "";
 
+    /// <summary>Explains the "Essential" and "Important" labels on parts.</summary>
+    public string ImportanceKey { get; } =
+        "Parts labelled \"Essential\" are ones the PC can't be used properly without, and they count most toward the score. " +
+        "\"Important\" parts are ones you'd notice if they didn't work.";
+
     [ObservableProperty]
     public partial string ScoreText { get; private set; } = "";
 

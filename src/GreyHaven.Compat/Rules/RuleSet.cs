@@ -158,6 +158,11 @@ public sealed class RuleSet
                     errors.Add($"{where}: id '{k}' must look like 'pci:8086:2723' or 'pci:8086:2723:8086:0084' (lower case).");
             if (!ValidConfidence.Contains(r.Confidence)) errors.Add($"{where}: confidence must be high, medium or low.");
             if (r.Sources.Count == 0) errors.Add($"{where}: every rule needs at least one source.");
+            foreach (var d in r.Sources.SelectMany(s => s.Distros).Distinct())
+                if (!distroIds.Contains(d)) errors.Add($"{where}: unknown distro '{d}' in a source's 'distros'.");
+            if (r.Sources.Count > 0)
+                foreach (var d in distroIds.Where(d => !r.Sources.Any(s => s.AppliesTo(d))))
+                    errors.Add($"{where}: no source applies to '{d}'. Add one for it, or a source without 'distros'.");
             if (r.Ratings.Count == 0) errors.Add($"{where}: no ratings.");
             if (r.Ratings.Count > 0 && r.Ratings[^1].When is not null)
                 errors.Add($"{where}: the last rating must have no 'when', so every distro gets a rating.");

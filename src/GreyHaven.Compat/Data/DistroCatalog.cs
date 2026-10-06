@@ -137,4 +137,8 @@ public sealed class SourceLink
 {
     public string Title { get; set; } = "";
     public string? Url { get; set; }
+    /// <summary>Distro ids this source is about; empty means it applies to every distro.</summary>
+    public List<string> Distros { get; set; } = [];
+
+    public bool AppliesTo(string distroId) => Distros.Count == 0 || Distros.Contains(distroId);
 }

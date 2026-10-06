@@ -100,9 +100,11 @@ public sealed partial class RatingEngine(
 
         // 4. Caveats, importance, scores, recommendation.
         var caveats = FindCaveats(profile);
-        var rated = rows.Select(r => new RatedComponent
+        var displayNames = ComponentNames.Distinct(rows.Select(r => r.Component).ToList());
+        var rated = rows.Select((r, i) => new RatedComponent
         {
             Component = r.Component,
+            DisplayName = displayNames[i],
             Importance = ImportanceRules.For(r.Component, profile),
             Ratings = r.Ratings,
             CaveatIds = caveats.Where(c => c.Components.Contains(r.Component)).Select(c => c.Caveat.Id).ToList(),
@@ -223,7 +225,7 @@ public sealed partial class RatingEngine(
             Rating = rating,
             Confidence = RuleSet.ParseConfidence(outcome.Confidence ?? rule.Confidence),
             Explanation = Fill(outcome.Explanation, ctx, packages),
-            Sources = rule.Sources.Select(s => new Source(s.Title, s.Url, SourceKind.CuratedRule)).ToList(),
+            Sources = rule.Sources.Where(s => s.AppliesTo(ctx.Distro.Id)).Select(s => new Source(s.Title, s.Url, SourceKind.CuratedRule)).ToList(),
             Fix = fixData is null ? null : BuildFix(fixData, ctx),
             LinuxDriver = fixData?.Driver,
         };

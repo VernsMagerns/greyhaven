@@ -73,13 +73,22 @@ public class RuleSetTests
         { Rule("fix", new RuleMatch { Category = "gpu" }, new RuleOutcome { Rating = "worksWithExtraDriver", Explanation = "x" }), "needs a fix" },
         { Rule("explain", new RuleMatch { Category = "gpu" }, new RuleOutcome { Rating = "partial", Explanation = " " }), "needs an explanation" },
         { new Rule { Id = "nosource", Match = new RuleMatch { Category = "gpu" }, Ratings = [Ok] }, "at least one source" },
+        { WithSources("srcdistro", new SourceLink { Title = "t", Url = "https://x", Distros = ["nope"] }), "unknown distro 'nope' in a source" },
+        { WithSources("srcgap", new SourceLink { Title = "t", Url = "https://x", Distros = ["alpha"] }), "no source applies to 'beta'" },
     };
+
+    private static Rule WithSources(string id, params SourceLink[] sources)
+    {
+        var rule = Rule(id, new RuleMatch { Category = "gpu" }, Ok);
+        rule.Sources = [.. sources];
+        return rule;
+    }
 
     [Theory]
     [MemberData(nameof(InvalidRules))]
     public void Invalid_rules_are_rejected_with_a_helpful_message(Rule rule, string message)
     {
-        var ex = Assert.Throws<InvalidDataException>(() => new RuleSet([rule], ["alpha"]));
+        var ex = Assert.Throws<InvalidDataException>(() => new RuleSet([rule], ["alpha", "beta"]));
         Assert.Contains(message, ex.Message);
     }
 

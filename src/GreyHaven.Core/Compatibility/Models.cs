@@ -87,6 +87,14 @@ public enum Importance { Critical, Important, Minor }
 public sealed record RatedComponent
 {
     public required HardwareComponent Component { get; init; }
+
+    /// <summary>
+    /// The name to show: the component's name, plus a distinguishing detail when another part of
+    /// the same kind has the same name (see <see cref="ComponentNames"/>).
+    /// </summary>
+    public string DisplayName { get => _displayName ?? Component.Name; init => _displayName = value; }
+    private readonly string? _displayName;
+
     public required Importance Importance { get; init; }
     public required IReadOnlyList<ComponentRating> Ratings { get; init; }
     /// <summary>Ids of <see cref="Caveat"/>s that concern this component.</summary>

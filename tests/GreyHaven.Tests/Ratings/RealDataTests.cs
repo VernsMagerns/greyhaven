@@ -51,6 +51,45 @@ public class RealDataTests
         Assert.Contains(r.Caveats, c => c.Id == "sleep");
     }
 
+    [Theory]
+    [MemberData(nameof(GreyHaven.Tests.Scanning.SampleProfileTests.SampleNames), MemberType = typeof(GreyHaven.Tests.Scanning.SampleProfileTests))]
+    public async Task Sources_shown_for_a_distro_are_about_that_distro(string sample)
+    {
+        // Names that mark a source as being about one particular distro.
+        var otherDistroWords = new Dictionary<string, string[]>
+        {
+            ["ubuntu"] = ["Mint", "System76", "Pop!_OS"],
+            ["mint"] = ["System76", "Pop!_OS"],
+            ["pop-os"] = ["Mint"],
+        };
+        var r = await Rate(sample);
+        foreach (var c in r.Components)
+            foreach (var rating in c.Ratings)
+                foreach (var src in rating.Sources)
+                    Assert.False(otherDistroWords[rating.DistroId].Any(w => src.Title.Contains(w, StringComparison.Ordinal)),
+                        $"{sample}: {c.DisplayName} on {rating.DistroId} cites '{src.Title}'");
+    }
+
+    [Theory]
+    [MemberData(nameof(GreyHaven.Tests.Scanning.SampleProfileTests.SampleNames), MemberType = typeof(GreyHaven.Tests.Scanning.SampleProfileTests))]
+    public async Task Separate_parts_never_share_a_display_name(string sample)
+    {
+        var r = await Rate(sample);
+        var dupes = r.Components.GroupBy(c => (c.Component.Category, c.DisplayName)).Where(g => g.Count() > 1).Select(g => g.Key.DisplayName);
+        Assert.Empty(dupes);
+    }
+
+    [Fact]
+    public async Task Nvidia_desktop_same_named_parts_are_told_apart()
+    {
+        var r = await Rate("nvidia-desktop");
+        Assert.Equal(
+            ["High Definition Audio Controller (AMD)", "High Definition Audio Controller (NVIDIA)"],
+            r.Components.Where(c => c.Component.Category == ComponentCategory.AudioController).Select(c => c.DisplayName).Order());
+        Assert.All(r.Components.Where(c => c.Component.Category == ComponentCategory.UsbController),
+            c => Assert.Matches(@"\((1|2) of 2\)$", c.DisplayName));
+    }
+
     [Fact]
     public async Task Nvidia_desktop()
     {

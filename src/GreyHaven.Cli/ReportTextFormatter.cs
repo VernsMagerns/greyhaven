@@ -58,14 +58,17 @@ internal static class ReportTextFormatter
         if (!distros.Contains(detailDistro))
             throw new CliException($"Unknown distro '{detailDistro}'. Choose one of: {string.Join(", ", distros)}.");
 
-        sb.AppendLine($"COMPONENTS{"",-38}{string.Join("", distros.Select(d => $"{Short(d),-10}"))}");
-        foreach (var c in r.Components.OrderBy(c => c.Importance).ThenBy(c => c.Component.Category))
+        // Ratings first, then the full name, so long names never need truncating.
+        sb.AppendLine("COMPONENTS");
+        sb.AppendLine($"  {string.Join("", distros.Select(d => $"{Short(d),-10}"))}Part");
+        foreach (var group in r.Components.OrderBy(c => c.Component.Category).GroupBy(c => c.Importance).OrderBy(g => g.Key))
         {
-            var name = $"{Labels.Of(c.Component.Category)}: {c.Component.Name}";
-            if (name.Length > 46) name = name[..45] + "…";
-            sb.AppendLine($"  {Tag(c.Importance)} {name,-46}{string.Join("", distros.Select(d => $"{Symbol(c.For(d).Rating),-10}"))}");
+            sb.AppendLine($"  {Labels.Of(group.Key)} parts");
+            foreach (var c in group)
+                sb.AppendLine($"  {string.Join("", distros.Select(d => $"{Symbol(c.For(d).Rating),-10}"))}{Labels.Of(c.Component.Category)}: {c.DisplayName}");
         }
-        sb.AppendLine($"  Key: {string.Join("  ", Enum.GetValues<Rating>().Select(x => $"{Symbol(x)} = {Describe(x)}"))}");
+        Wrap(sb, $"Key: {string.Join("  ", Enum.GetValues<Rating>().Select(x => $"{Symbol(x)} = {Describe(x)}"))}", "  ");
+        foreach (var i in Enum.GetValues<Importance>()) Wrap(sb, Labels.Explain(i), "       ");
         sb.AppendLine();
 
         sb.AppendLine($"DETAILS FOR {r.Distros.First(d => d.DistroId == detailDistro).DisplayName.ToUpperInvariant()}{(onlyDistro is null ? " (anything not working out of the box; use --distro for others)" : "")}");
@@ -74,7 +77,7 @@ internal static class ReportTextFormatter
             var rating = c.For(detailDistro);
             if (onlyDistro is null && rating.Rating == Rating.WorksOutOfTheBox) continue;
             sb.AppendLine();
-            sb.AppendLine($"  {Labels.Of(c.Component.Category)}: {c.Component.Name}  ({c.Component.Id?.FullKey ?? "cpu"})");
+            sb.AppendLine($"  {Labels.Of(c.Component.Category)}: {c.DisplayName}  ({c.Component.Id?.FullKey ?? "cpu"}, {Labels.Of(c.Importance).ToLowerInvariant()} part)");
             sb.AppendLine($"    {Symbol(rating.Rating)} {Describe(rating.Rating)}  - confidence {rating.Confidence.ToString().ToLowerInvariant()}{(rating.IsWeakData ? " (limited data)" : "")}");
             Wrap(sb, rating.Explanation, "    ");
             if (rating.ApproximationNote is not null) Wrap(sb, "Approximate data: " + rating.ApproximationNote, "    ");
@@ -104,7 +107,7 @@ internal static class ReportTextFormatter
         {
             sb.AppendLine();
             sb.AppendLine("NOTES");
-            foreach (var n in p.Warnings.Concat(r.DataNotes)) Wrap(sb, "! " + n, "  ");
+            foreach (var n in p.Warnings.Concat(r.DataNotes)) Wrap(sb, "- " + n, "  ");
         }
         return sb.ToString().TrimEnd();
     }
@@ -125,13 +128,6 @@ internal static class ReportTextFormatter
         Rating.Partial => "Partial/known issues",
         Rating.Unsupported => "Unsupported",
         _ => "Unknown",
-    };
-
-    private static string Tag(Importance i) => i switch
-    {
-        Importance.Critical => "!!",
-        Importance.Important => "! ",
-        _ => "  ",
     };
 
     private static string Short(string distroId) => distroId switch

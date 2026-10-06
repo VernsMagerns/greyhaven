@@ -64,11 +64,14 @@ processor is rated Unknown.
 
 ## Importance
 
-| Importance | Components | Weight |
+Each part is labelled by how much it matters. Reports and the app show these labels in plain
+words (the code calls them Critical, Important and Minor).
+
+| Label | Components | Weight |
 |---|---|---|
-| Critical | Processor, graphics, storage controller, NVMe SSD, Wi-Fi on laptops (or when there's no wired network), wired network on desktops (or when there's no Wi-Fi) | 3 |
+| Essential | Processor, graphics, storage controller, NVMe SSD, Wi-Fi on laptops (or when there's no wired network), wired network on desktops (or when there's no Wi-Fi) | 3 |
 | Important | Sound, Bluetooth, touchpad, camera, USB controllers, the other network adapter | 1.5 |
-| Minor | Everything else: HDMI audio, fingerprint reader, card reader, Thunderbolt, touchscreen | 1 |
+| Other | Everything else: HDMI audio, fingerprint reader, card reader, Thunderbolt, touchscreen | 1 |
 
 Chipset parts (bridges, SMBus, management engine), external input devices and unclassified
 devices are rated and shown but **not scored**. Otherwise dozens of trivially supported

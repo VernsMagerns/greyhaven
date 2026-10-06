@@ -9,8 +9,13 @@ rules:
     sources:
       - title: Linux Mint download (64-bit)
         url: https://www.linuxmint.com/download.php
+        distros: [mint]
       - title: Ubuntu Desktop download
         url: https://ubuntu.com/download/desktop
+        distros: [ubuntu]
+      - title: Pop!_OS download
+        url: https://system76.com/pop/download
+        distros: [pop-os]
 
   - id: x86-32-windows
     title: 32-bit Windows
@@ -22,6 +27,13 @@ rules:
     sources:
       - title: Linux Mint download (64-bit only)
         url: https://www.linuxmint.com/download.php
+        distros: [mint]
+      - title: Ubuntu Desktop download
+        url: https://ubuntu.com/download/desktop
+        distros: [ubuntu]
+      - title: Pop!_OS download
+        url: https://system76.com/pop/download
+        distros: [pop-os]
 
   - id: arm64-cpu
     title: ARM processor (e.g. Snapdragon)
@@ -41,7 +53,10 @@ rules:
     sources:
       - title: Canonical - Ubuntu on ARM, summer '26 update
         url: https://discourse.ubuntu.com/t/ubuntu-on-arm-summer-26-update/84872
+        distros: [ubuntu]
       - title: Pop!_OS download
         url: https://system76.com/pop/download
+        distros: [pop-os]
       - title: Linux Mint download
         url: https://www.linuxmint.com/download.php
+        distros: [mint]

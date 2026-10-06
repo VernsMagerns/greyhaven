@@ -1,3 +1,5 @@
+using GreyHaven.Core.Compatibility;
+
 namespace GreyHaven.Core.Hardware;
 
 /// <summary>Plain-English labels for display. Shared by the CLI, UI and reports.</summary>
@@ -26,6 +28,22 @@ public static class Labels
         ComponentCategory.InputDevice => "Keyboard, mouse or other input",
         ComponentCategory.Chipset => "System chipset",
         _ => "Other device",
+    };
+
+    /// <summary>How much a part matters, in plain words: "Essential", "Important" or "Other".</summary>
+    public static string Of(Importance i) => i switch
+    {
+        Importance.Critical => "Essential",
+        Importance.Important => "Important",
+        _ => "Other",
+    };
+
+    /// <summary>What each importance means, for report keys.</summary>
+    public static string Explain(Importance i) => i switch
+    {
+        Importance.Critical => "Essential parts: the PC can't be used properly without them. They count most toward the score.",
+        Importance.Important => "Important parts: you'd notice if they didn't work. They count less toward the score.",
+        _ => "Other parts: count least toward the score; some, such as chipset parts, aren't scored at all.",
     };
 
     public static string Of(SecureBootState s) => s switch

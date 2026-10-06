@@ -43,6 +43,7 @@ rules:
     sources:                                 # required: link what you checked
       - title: Debian wiki - wl
         url: https://wiki.debian.org/wl
+        distros: [ubuntu, mint]              # optional: only show this source for these distros
 ```
 
 **Match fields** (all given fields must hold): `ids`, `excludeIds`, `vendor` (e.g.
@@ -60,5 +61,8 @@ category, class or bus are "class rules" and rank below device-specific kernel m
 - Use IDs, never device names.
 - Every rule needs at least one source you've actually checked. Prefer official docs,
   kernel source or distro release notes.
+- A source about one distro (release notes, a distro's own docs) should say so with
+  `distros`, so each distro's details only cite what's relevant to it. Every distro needs at
+  least one source per rule.
 - If you're not sure, don't add the rule. "Unknown" is better than a wrong answer.
 - Run `dotnet test`. Malformed rules fail with a message naming the file and rule.

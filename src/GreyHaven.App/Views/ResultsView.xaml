@@ -42,8 +42,8 @@
                                     <TextBlock Text="{Binding Title}" Style="{StaticResource Strong}" />
                                     <Border BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="1" CornerRadius="4"
                                             Padding="6,0" Margin="10,0,0,0" VerticalAlignment="Center"
-                                            Visibility="{Binding IsEssential, Converter={StaticResource HasValueToVisibility}}">
-                                        <TextBlock Text="Essential" FontSize="12" Foreground="{DynamicResource GH.TextSecondary}" />
+                                            Visibility="{Binding ImportanceLabel, Converter={StaticResource HasValueToVisibility}}">
+                                        <TextBlock Text="{Binding ImportanceLabel}" FontSize="12" Foreground="{DynamicResource GH.TextSecondary}" />
                                     </Border>
                                 </StackPanel>
                                 <TextBlock Text="{Binding Name}" Style="{StaticResource Secondary}" />
@@ -271,6 +271,7 @@
             <Run Text="How each part works on" />
             <Run Text="{Binding DistroName, Mode=OneWay}" />
         </TextBlock>
+        <TextBlock Text="{Binding ImportanceKey, Mode=OneTime}" Style="{StaticResource Secondary}" Margin="0,0,0,8" />
         <ItemsControl ItemsSource="{Binding Groups}" Focusable="False">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>

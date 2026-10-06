@@ -38,9 +38,13 @@ rules:
         ubuntu: [sudo ubuntu-drivers install]
         pop-os: [sudo apt install system76-driver-nvidia]
     sources:
+      # Mint uses the same "ubuntu-drivers" tool, so Ubuntu's guide applies to it too.
       - title: Ubuntu Server docs - NVIDIA drivers installation
         url: https://documentation.ubuntu.com/server/how-to/graphics/install-nvidia-drivers/
+        distros: [ubuntu, mint]
       - title: Linux Mint 22.3 release notes
         url: https://www.linuxmint.com/rel_zena_cinnamon.php
+        distros: [mint]
       - title: System76 - Install the System76 driver
         url: https://system76.com/support/articles/system76-driver/
+        distros: [pop-os]
