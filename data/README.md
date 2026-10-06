@@ -8,7 +8,9 @@ Improving ratings is a data change. You don't need to touch any C# code.
 | `rules/*.yaml` | Curated rules: hand-checked knowledge about specific devices and device classes |
 | `modules.yaml` | How to interpret particular kernel modules (e.g. bus drivers that don't really drive the device) |
 | `caveats.yaml` | Things that can't be judged from Windows, with what to test from a live USB |
-| `secure-boot-guides.yaml` | PC makers' official "turn Secure Boot off" instructions, matched by manufacturer/model |
+| `secure-boot-guides.yaml` | PC and motherboard makers' official "turn Secure Boot off" instructions, matched by manufacturer/model |
+| `live-usb.yaml` | What to test in a live session, per kind of part, and the optional hw-probe upload |
+| `windows.yaml` | Windows 10 support dates for the report's context note, with Microsoft's page |
 | `dataset.yaml` | When the data was built (written by the index builder) |
 | `indexes/` | Generated. Device ID lists extracted from official distro packages. Don't edit by hand; see `tools/GreyHaven.IndexBuilder/README.md` |
 

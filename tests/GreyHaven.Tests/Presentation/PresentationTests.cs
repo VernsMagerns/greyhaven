@@ -89,6 +89,12 @@ internal sealed class FakeServices : IAppServices
 
     public void Open(string target) => Opened.Add(target);
     public void CopyToClipboard(string text) => Copied.Add(text);
+    /// <summary>What the fake Save dialog returns; null = cancelled.</summary>
+    public string? SaveLocation { get; set; }
+    public string? SuggestedName { get; private set; }
+    public List<string> Shown { get; } = [];
+    public string? ChooseSaveLocation(string suggestedFileName) { SuggestedName = suggestedFileName; return SaveLocation; }
+    public void ShowInFolder(string path) => Shown.Add(path);
 
     public sealed class MemorySettings : ISettingsStore
     {
@@ -246,6 +252,48 @@ public class ResultsViewModelTests
         var opened = Assert.Single(services.Opened);
         Assert.EndsWith(Path.Combine("docs", "secure-boot.md"), opened);
         Assert.True(File.Exists(opened));
+    }
+
+    [Fact]
+    public async Task Saving_the_report_follows_the_chosen_path_and_can_be_shown()
+    {
+        var services = FakeServices.ForSample("nvidia-desktop");
+        var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), services);
+        vm.Paths.Single(p => p.Kind == PathKind.Advanced).IsSelected = true;
+        var path = Path.Combine(Path.GetTempPath(), $"gh-{Guid.NewGuid():N}.md");
+        services.SaveLocation = path;
+        try
+        {
+            await vm.SaveReportCommand.ExecuteAsync(null);
+
+            Assert.Matches(@"^greyhaven-report-\d{4}-\d{2}-\d{2}\.html$", services.SuggestedName);
+            Assert.Contains("How each part works on Pop!\\_OS", await File.ReadAllTextAsync(path));
+            Assert.Equal($"Report saved: {Path.GetFileName(path)}", vm.SaveStatus);
+            vm.ShowSavedReportCommand.Execute(null);
+            Assert.Equal([path], services.Shown);
+        }
+        finally { File.Delete(path); }
+    }
+
+    [Fact]
+    public async Task Cancelling_the_save_dialog_does_nothing()
+    {
+        var services = FakeServices.ForSample("nvidia-desktop");
+        var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), services);
+        await vm.SaveReportCommand.ExecuteAsync(null);
+        Assert.Null(vm.SaveStatus);
+        Assert.Null(vm.SavedPath);
+    }
+
+    [Fact]
+    public async Task A_failed_save_says_so_in_plain_words()
+    {
+        var services = FakeServices.ForSample("nvidia-desktop");
+        var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), services);
+        services.SaveLocation = Path.Combine(Path.GetTempPath(), $"missing-{Guid.NewGuid():N}", "report.html");
+        await vm.SaveReportCommand.ExecuteAsync(null);
+        Assert.StartsWith("The report couldn't be saved there.", vm.SaveStatus);
+        Assert.Null(vm.SavedPath);
     }
 
     [Fact]

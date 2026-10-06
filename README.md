@@ -3,7 +3,7 @@
 GreyHaven is a Windows app that scans your PC's hardware, tells you how well it will work on
 Linux (Linux Mint, Ubuntu and Pop!_OS), and helps you prepare to switch.
 
-> **Status:** early development (milestone 3 of 8: user interface). Not ready for users yet.
+> **Status:** early development (milestone 4 of 8: reports and export). Not ready for users yet.
 > See [docs/PLAN.md](docs/PLAN.md) for the full plan.
 
 ## Privacy
@@ -40,6 +40,7 @@ dotnet run --project src/GreyHaven.Cli -- scan --sample intel-vmd-laptop
 dotnet run --project src/GreyHaven.Cli -- scan --sample nvidia-desktop --json
 dotnet run --project src/GreyHaven.Cli -- rate --sample nvidia-desktop --offline
 dotnet run --project src/GreyHaven.Cli -- rate --sample intel-vmd-laptop --offline --distro ubuntu
+dotnet run --project src/GreyHaven.Cli -- rate --sample nvidia-desktop --offline --out report.html --out report.md
 ```
 
 The Windows app is in `src/GreyHaven.App` (WPF). It builds on Linux but runs only on Windows.
@@ -58,6 +59,7 @@ unprocessed scan data; it can be replayed anywhere with `greyhaven scan --raw <f
 | `src/GreyHaven.Scan.Windows` | Reads WMI, the registry and Win32 APIs (Windows only) |
 | `src/GreyHaven.Compat` | Compatibility data: distro catalog, driver indexes, curated rules, linux-hardware.org client |
 | `src/GreyHaven.Ratings` | Rating engine, summary score, distro recommendation |
+| `src/GreyHaven.Reports` | Report export: Markdown, self-contained HTML, JSON, live-USB guide |
 | `src/GreyHaven.Presentation` | View models, colour palette and settings for the UI (no WPF; tested on Linux) |
 | `src/GreyHaven.App` | The Windows app (WPF views, theming) |
 | `src/GreyHaven.Cli` | Command-line tool for development and demos |

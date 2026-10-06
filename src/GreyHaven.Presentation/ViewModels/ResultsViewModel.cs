@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GreyHaven.Core;
 using GreyHaven.Core.Compatibility;
+using GreyHaven.Reports;
 
 namespace GreyHaven.Presentation.ViewModels;
 
@@ -213,6 +214,40 @@ public sealed partial class ResultsViewModel : ObservableObject
         ComparingText = Report.SelectedDistroId is { } chosen && chosen != distroId
             ? $"You're comparing {summary.DisplayName}. Your chosen path uses {Report.Distros.First(d => d.DistroId == chosen).DisplayName}."
             : null;
+    }
+
+    // ---- Saving the report ----
+
+    /// <summary>Plain-English result of the last save, announced to screen readers.</summary>
+    [ObservableProperty]
+    public partial string? SaveStatus { get; private set; }
+
+    [ObservableProperty]
+    public partial string? SavedPath { get; private set; }
+
+    /// <summary>Saves the report for the chosen path as a web page, Markdown or JSON (picked by file type in the dialog).</summary>
+    [RelayCommand]
+    private async Task SaveReportAsync()
+    {
+        var path = _services.ChooseSaveLocation(ReportExporter.SuggestedFileName(Report, ReportFormat.Html));
+        if (path is null) return;
+        try
+        {
+            await ReportExporter.SaveAsync(Report, path, ReportExporter.FormatFromPath(path) ?? ReportFormat.Html);
+            SavedPath = path;
+            SaveStatus = $"Report saved: {Path.GetFileName(path)}";
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            SavedPath = null;
+            SaveStatus = $"The report couldn't be saved there. {ex.Message} Try another folder, such as Documents.";
+        }
+    }
+
+    [RelayCommand]
+    private void ShowSavedReport()
+    {
+        if (SavedPath is not null) _services.ShowInFolder(SavedPath);
     }
 
     [RelayCommand]

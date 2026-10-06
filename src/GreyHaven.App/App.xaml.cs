@@ -39,6 +39,8 @@ public partial class App : Application
             new JsonSettingsStore(JsonSettingsStore.DefaultPath),
             Open,
             CopyToClipboard,
+            ChooseSaveLocation,
+            ShowInFolder,
             sample);
 
         var vm = new MainViewModel(services);
@@ -83,6 +85,32 @@ public partial class App : Application
         {
             MessageBox.Show($"Windows couldn't open this link:\n{target}", "GreyHaven", MessageBoxButton.OK, MessageBoxImage.Information);
         }
+    }
+
+    private static string? ChooseSaveLocation(string suggestedFileName)
+    {
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "Save your GreyHaven report",
+            FileName = Path.GetFileNameWithoutExtension(suggestedFileName),
+            Filter = "Web page (*.html)|*.html|Markdown (*.md)|*.md|JSON, for other programs (*.json)|*.json",
+            DefaultExt = ".html",
+            AddExtension = true,
+            InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+        };
+        return dialog.ShowDialog(Current.MainWindow) == true ? dialog.FileName : null;
+    }
+
+    /// <summary>Opens File Explorer with the saved report selected. Only for files GreyHaven just wrote.</summary>
+    private static void ShowInFolder(string path)
+    {
+        if (!File.Exists(path)) return;
+        try
+        {
+            // Windows file names can't contain quotes, so quoting the path is safe.
+            Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{path}\"") { UseShellExecute = false });
+        }
+        catch (System.ComponentModel.Win32Exception) { /* Explorer unavailable; the status text still shows the file name */ }
     }
 
     private static void CopyToClipboard(string text)

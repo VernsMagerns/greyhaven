@@ -185,7 +185,7 @@ Each milestone ends with tests plus CLI output against sample profiles.
 | 1 | Scan: Windows scanner, profile JSON format, sample profiles, `greyhaven scan` | Real-scan accuracy only |
 | 2 | Lookup and ratings: rules, kernel index builder, LHDB client, cache, rating engine, score, recommendation | No |
 | 3 | UI: WPF shell, scan button, score header, expandable details, themes, accessibility | Yes — UI review |
-| 4 | Report and export: Markdown, HTML, JSON, live-USB verification guide | No |
+| 4 | Report and export: Markdown, HTML, JSON, live-USB verification guide (done 2026-10-05) | No |
 | 5 | Checklist and safe fixes: elevated helper, Fast Startup fix with undo | Yes — apply/undo |
 | 6 | Live USB creator: download, verify, drive filtering, flash, cancel | Yes — flashing |
 | 7 | Data contribution: opt-in preview, GitHub issue form, triage Action | No (needs repo name) |

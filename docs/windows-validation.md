@@ -82,6 +82,14 @@ Look and feel
       "(1 of 2)"/"(2 of 2)".
 - [ ] **U10** On Windows 10, a calm "About Windows 10" notice with a link to Microsoft's page.
 
+Saving the report (milestone 4)
+- [ ] **E1** "Save report…" opens a Save dialog in Documents, suggesting
+      `greyhaven-report-<date>.html`. Saving shows "Report saved", and "Show in folder" opens
+      File Explorer with the file selected.
+- [ ] **E2** The saved web page opens in Edge or another browser, looks right in light and
+      dark mode, and prints legibly (Ctrl+P preview). It follows the path you chose.
+- [ ] **E3** Saving as Markdown (.md) or JSON (.json) also works (choose the type in the dialog).
+
 Themes
 - [ ] **T1** "Appearance: Match Windows" follows Windows' light/dark app mode, including when
       you change it while GreyHaven is open.

@@ -68,6 +68,10 @@ public interface IAppServices
     /// <summary>Opens a web link or a file shipped with the app.</summary>
     void Open(string target);
     void CopyToClipboard(string text);
+    /// <summary>Asks where to save a report (a Save dialog). Null if the user cancels.</summary>
+    string? ChooseSaveLocation(string suggestedFileName);
+    /// <summary>Shows a file the user just saved, selected in File Explorer.</summary>
+    void ShowInFolder(string path);
     ISettingsStore Settings { get; }
 }
 
@@ -79,6 +83,8 @@ public sealed class AppServices(
     ISettingsStore settings,
     Action<string> open,
     Action<string> copy,
+    Func<string, string?> chooseSaveLocation,
+    Action<string> showInFolder,
     string? demoSample) : IAppServices
 {
     public string? DemoSample => demoSample;
@@ -99,4 +105,6 @@ public sealed class AppServices(
 
     public void Open(string target) => open(target);
     public void CopyToClipboard(string text) => copy(text);
+    public string? ChooseSaveLocation(string suggestedFileName) => chooseSaveLocation(suggestedFileName);
+    public void ShowInFolder(string path) => showInFolder(path);
 }

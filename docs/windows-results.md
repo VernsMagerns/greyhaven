@@ -1,6 +1,7 @@
 # GreyHaven: Windows test session results
 
-Fill this in as you go, then bring it back (along with `greyhaven-raw.json`, see step 6).
+Fill this in as you go, then bring it back along with `greyhaven-raw.json` and
+`greyhaven-report.txt` (see "Bringing results back").
 Tick a box by changing `[ ]` to `[x]`. If something is wrong, leave it unticked and write what
 you saw under **Notes**. Short notes are fine ("text cut off at the right edge").
 
@@ -16,7 +17,7 @@ The whole session takes **about 45 minutes**. More detail on any check is in
 
 ---
 
-## Getting set up (about 10 minutes)
+## Getting set up (about 8 minutes)
 
 ### Download the test build from GitHub
 
@@ -104,7 +105,7 @@ If the GitHub download doesn't work, build it on the Linux PC and copy it across
 
 ---
 
-## S1. Scan (about 10 minutes)
+## S1. Scan (about 8 minutes)
 
 Compare what GreyHaven's scan (step 10) printed with what Windows says.
 
@@ -144,7 +145,7 @@ Read `greyhaven-report.txt` (step 11).
 
 &nbsp;
 
-## U. Look and feel (about 8 minutes)
+## U. Look and feel (about 7 minutes)
 
 In demo mode (`--sample nvidia-desktop`) unless it says otherwise.
 
@@ -169,6 +170,22 @@ In demo mode (`--sample nvidia-desktop`) unless it says otherwise.
       and "(NVIDIA)", and the two USB controllers end in "(1 of 2)" and "(2 of 2)".
 - [ ] **U10** On Windows 10, a calm "About Windows 10" note appears at the top of the results,
       with a link to Microsoft's page.
+
+**Notes:**
+
+&nbsp;
+
+## E. Saving the report (about 3 minutes)
+
+In demo mode, choose "Advanced: Pop!_OS" first.
+
+- [ ] **E1** "Save report…" opens a Save dialog in Documents, suggesting a name like
+      `greyhaven-report-2026-10-05.html`. After saving, "Report saved" appears, and "Show in
+      folder" opens File Explorer with the file selected.
+- [ ] **E2** Double-click the saved file. It opens in your browser, follows the path you chose
+      (Pop!_OS), and looks right. Press Ctrl+P: the print preview is readable.
+- [ ] **E3** Saving as Markdown (.md) or JSON (.json) also works: pick the type under the file
+      name in the Save dialog.
 
 **Notes:**
 
@@ -202,7 +219,7 @@ Put the mouse aside.
 
 &nbsp;
 
-## N. Screen reader (about 6 minutes)
+## N. Screen reader (about 5 minutes)
 
 Turn on Narrator with **Ctrl + Windows key + Enter** (same keys to turn it off).
 
