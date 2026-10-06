@@ -24,6 +24,7 @@ rules:
     ratings:
       - rating: unknown
         explanation: This PC runs 32-bit Windows, so GreyHaven can't tell whether the processor is 64-bit. {distro} needs a 64-bit processor.
+        summary: "Windows here is 32-bit, so we can't tell if this PC can run {distro}."
     sources:
       - title: Linux Mint download (64-bit only)
         url: https://www.linuxmint.com/download.php
@@ -44,12 +45,15 @@ rules:
         rating: partial
         confidence: low
         explanation: Ubuntu's ARM64 download supports some Snapdragon X laptops, but how well depends on the exact model, and things like graphics acceleration, audio and battery life may be limited. GreyHaven can't check your model.
+        summary: "Only some ARM laptops work, and some features may be missing."
       - when: { distros: [pop-os] }
         rating: unsupported
         explanation: Pop!_OS's ARM download is for ARM computers supported by Tow-Boot, not Windows ARM laptops like this one.
+        summary: "{distro} doesn't run on ARM laptops like this one."
       - rating: unsupported
         confidence: high
         explanation: "{distro} is only available for 64-bit Intel and AMD PCs, not ARM processors like this one."
+        summary: "{distro} doesn't run on ARM processors."
     sources:
       - title: Canonical - Ubuntu on ARM, summer '26 update
         url: https://discourse.ubuntu.com/t/ubuntu-on-arm-summer-26-update/84872

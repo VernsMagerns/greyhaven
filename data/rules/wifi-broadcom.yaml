@@ -10,6 +10,7 @@ rules:
     ratings:
       - rating: worksWithExtraDriver
         explanation: Linux has no built-in driver for this Broadcom Wi-Fi chip. Broadcom's own "wl" driver works once it's installed, but it isn't on the install USB, so you'll need another way online first - a network cable, or USB tethering from your phone.
+        summary: "Works after you add a driver. You'll need a cable or your phone to get online first."
     fix:
       driver: Broadcom STA ("wl")
       secureBoot: mokRequired

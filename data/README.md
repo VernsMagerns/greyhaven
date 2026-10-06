@@ -34,6 +34,7 @@ rules:
       - when: { distros: [ubuntu], kernelAtLeast: "7.0" }
         rating: worksOutOfTheBox
         explanation: Plain English, no jargon. Placeholders - {distro}, {kernelSeries}, {driverTool}, {edition}, {driverPackages}.
+        summary: One short line for beginners, shown first. Optional; recommended for anything that isn't "works".
       - rating: worksWithExtraDriver
         explanation: ...
     fix:                                     # required for worksWithExtraDriver

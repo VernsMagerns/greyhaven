@@ -19,7 +19,9 @@
     ],
     "hasBattery": true,
     "systemManufacturer": "Example PC Co.",
-    "systemModel": "Laptop 14 (Intel 11th gen)"
+    "systemModel": "Laptop 14 (Intel 11th gen)",
+    "systemDriveFreeBytes": 193273528320,
+    "systemDriveTotalBytes": 511101108224
   },
   "processors": [
     {

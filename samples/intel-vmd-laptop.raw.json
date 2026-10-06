@@ -19,7 +19,9 @@
     ],
     "hasBattery": true,
     "systemManufacturer": "Example PC Co.",
-    "systemModel": "Laptop 14 (Intel 12th gen)"
+    "systemModel": "Laptop 14 (Intel 12th gen)",
+    "systemDriveFreeBytes": 40802189312,
+    "systemDriveTotalBytes": 254476812288
   },
   "processors": [
     {

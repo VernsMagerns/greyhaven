@@ -88,6 +88,9 @@ public sealed record SystemInfo
     /// one: the PC "manufacturer" is often a placeholder like "System manufacturer".
     /// </summary>
     public string? BoardManufacturer { get; init; }
+    /// <summary>Free and total space on the Windows drive, for "install alongside Windows". Null if unknown.</summary>
+    public long? SystemDriveFreeBytes { get; init; }
+    public long? SystemDriveTotalBytes { get; init; }
 
     public bool IsArm => Architecture == CpuArchitecture.Arm64;
 }

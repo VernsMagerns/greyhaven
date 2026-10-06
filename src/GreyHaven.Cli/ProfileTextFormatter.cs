@@ -18,6 +18,8 @@ internal static class ProfileTextFormatter
         sb.AppendLine("SYSTEM");
         Row(sb, "PC", Join(s.SystemManufacturer, s.SystemModel) ?? "Unknown");
         if (s.BoardManufacturer is not null) Row(sb, "Motherboard", s.BoardManufacturer);
+        if (s.SystemDriveFreeBytes is { } free && s.SystemDriveTotalBytes is { } total)
+            Row(sb, "Windows drive", $"{free / 1073741824.0:0} GB free of {total / 1073741824.0:0} GB");
         Row(sb, "Type", Labels.Of(s.FormFactor));
         Row(sb, "Windows", s.Windows.FriendlyName);
         Row(sb, "Architecture", Labels.Of(s.Architecture));

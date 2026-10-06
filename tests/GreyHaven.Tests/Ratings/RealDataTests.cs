@@ -275,3 +275,42 @@ public class RealDataTests
         Assert.Contains("ARM", r.Recommendation.Paragraph);
     }
 }
+
+public class PlainWordsTests
+{
+    private static readonly Lazy<GreyHaven.Compat.CompatibilityData> Data = new(() => GreyHaven.Compat.CompatibilityData.Load());
+
+    [Fact]
+    public void Every_rule_outcome_that_isnt_works_has_a_short_summary()
+    {
+        var missing = Data.Value.Rules.Rules
+            .SelectMany(r => r.Ratings.Select(o => (r.Id, o)))
+            .Where(x => x.o.Rating != "worksOutOfTheBox" && string.IsNullOrWhiteSpace(x.o.Summary))
+            .Select(x => x.Id)
+            .ToList();
+        Assert.Empty(missing);
+    }
+
+    [Fact]
+    public void Summaries_are_short_and_plain()
+    {
+        foreach (var o in Data.Value.Rules.Rules.SelectMany(r => r.Ratings).Where(o => o.Summary is not null))
+        {
+            var sentences = o.Summary!.Split(['.', '!', '?'], StringSplitOptions.RemoveEmptyEntries).Where(s => s.Trim().Length > 0).ToList();
+            Assert.True(sentences.Count <= 2, $"'{o.Summary}': at most two sentences");
+            Assert.All(sentences, s => Assert.True(s.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length <= 14, $"'{s.Trim()}': keep sentences under 15 words"));
+        }
+    }
+
+    [Theory]
+    [InlineData(98, "Your PC is ready for Linux")]
+    [InlineData(79, "Your PC should work well with Linux")]
+    [InlineData(55, "Linux will work, with a few problems")]
+    [InlineData(20, "Linux may not work well on this PC")]
+    public void Headline_follows_the_score(int score, string expected) =>
+        Assert.Equal(expected, GreyHaven.Core.Hardware.PlainWords.Headline(score));
+
+    [Fact]
+    public void Short_names_drop_the_version() =>
+        Assert.Equal(["Ubuntu", "Pop!_OS", "Linux Mint"], new[] { "Ubuntu 26.04.1 LTS", "Pop!_OS 24.04", "Linux Mint 22.3" }.Select(GreyHaven.Core.Hardware.PlainWords.ShortName));
+}

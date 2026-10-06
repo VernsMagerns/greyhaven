@@ -1,0 +1,72 @@
+# PC and motherboard makers: the key that opens the one-time startup (boot) menu, and the
+# official support page for BIOS updates. Matched against the PC maker first, then the
+# motherboard maker (custom-built PCs), like secure-boot-guides.yaml. Licensed CC-BY-4.0.
+#
+# checked: "official" = the maker's own documentation; "search" = only third-party references
+# were found, so a person should confirm it (docs/windows-validation.md).
+# Support pages marked "blocks bots" refuse automated checks and need a click-through.
+
+makers:
+  - name: Dell
+    manufacturers: [dell]
+    bootMenuKey: F12
+    supportUrl: https://www.dell.com/support/home
+    source: https://www.dell.com/support/kbdoc/en-us/000128928/flashing-the-bios-from-the-f12-one-time-boot-menu
+    checked: official 2026-10-06 (support page blocks bots)
+
+  - name: HP
+    manufacturers: [hp, hewlett-packard]
+    bootMenuKey: Esc, then F9
+    supportUrl: https://support.hp.com/drivers
+    source: https://h30434.www3.hp.com/t5/Notebook-Boot-and-Lockup/Startup-menu/m-p/9116245
+    checked: official community 2026-10-06
+
+  - name: Lenovo
+    manufacturers: [lenovo]
+    bootMenuKey: F12
+    bootMenuNote: On some IdeaPads, press the small Novo button (a pinhole with a curved arrow) instead.
+    supportUrl: https://pcsupport.lenovo.com/
+    checked: search 2026-10-06
+
+  - name: ASUS
+    manufacturers: [asustek, asus]
+    bootMenuKeyLaptop: Esc
+    bootMenuKeyDesktop: F8
+    supportUrl: https://www.asus.com/support/download-center/
+    checked: search 2026-10-06
+
+  - name: Acer
+    manufacturers: [acer]
+    bootMenuKey: F12
+    bootMenuNote: On some Acer laptops this key is switched off. If it does nothing, use the Windows way below.
+    supportUrl: https://www.acer.com/support
+    source: https://community.acer.com/en/kb/articles/563-why-cant-i-get-the-f12-boot-menu-to-work-on-my-notebook-or-netbook
+    checked: official 2026-10-06 (support page didn't respond to an automated check)
+
+  - name: MSI
+    manufacturers: [micro-star, msi]
+    bootMenuKey: F11
+    supportUrl: https://www.msi.com/support
+    source: https://us.msi.com/faq/motherboard-901
+    checked: official 2026-10-06 (support page blocks bots)
+
+  - name: GIGABYTE
+    manufacturers: [gigabyte]
+    bootMenuKey: F12
+    supportUrl: https://www.gigabyte.com/Support
+    checked: search 2026-10-06 (support page blocks bots)
+
+  - name: ASRock
+    manufacturers: [asrock]
+    bootMenuKey: F11
+    supportUrl: https://www.asrock.com/support/index.asp
+    source: https://www.asrock.com/support/faq.asp?id=152
+    checked: official 2026-10-06
+
+  - name: Microsoft Surface
+    manufacturers: [microsoft]
+    modelContains: [surface]
+    bootMenuKey: Hold the volume-down button, then press and let go of the power button
+    supportUrl: https://support.microsoft.com/surface
+    source: https://support.microsoft.com/en-us/help/4023511/surface-boot-surface-from-a-usb-device
+    checked: official 2026-10-06 (support page blocks bots)

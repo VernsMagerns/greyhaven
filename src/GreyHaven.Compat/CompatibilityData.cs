@@ -19,6 +19,7 @@ public sealed class CompatibilityData
     public required DatasetInfo Dataset { get; init; }
     public WindowsLifecycle Windows { get; init; } = new();
     public LiveUsbCatalog LiveUsb { get; init; } = new();
+    public MakerCatalog Makers { get; init; } = new();
     public required IReadOnlyDictionary<string, AliasIndex> KernelIndexes { get; init; }
     public required IReadOnlyDictionary<string, AliasIndex> PackageIndexes { get; init; }
     public required IReadOnlyDictionary<string, AliasIndex> FingerprintIndexes { get; init; }
@@ -34,6 +35,8 @@ public sealed class CompatibilityData
         distros.Validate();
         var liveUsb = Yaml.Load<LiveUsbCatalog>(Path.Combine(dir, "live-usb.yaml"));
         liveUsb.Validate();
+        var makers = Yaml.Load<MakerCatalog>(Path.Combine(dir, "makers.yaml"));
+        makers.Validate();
 
         AliasIndex LoadIndex(string relative, string expectedId, string expectedKind)
         {
@@ -53,6 +56,7 @@ public sealed class CompatibilityData
             Dataset = Yaml.Load<DatasetInfo>(Path.Combine(dir, "dataset.yaml")),
             Windows = Yaml.Load<WindowsLifecycle>(Path.Combine(dir, "windows.yaml")),
             LiveUsb = liveUsb,
+            Makers = makers,
             KernelIndexes = distros.Kernels.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "kernel")),
             PackageIndexes = distros.DriverPackageSets.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "packages")),
             FingerprintIndexes = distros.FingerprintSets.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "fingerprint")),

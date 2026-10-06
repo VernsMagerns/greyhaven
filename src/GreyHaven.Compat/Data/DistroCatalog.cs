@@ -124,6 +124,8 @@ public sealed class DistroEdition
     public List<string> PreinstalledDrivers { get; set; } = [];
     /// <summary>ISO build number the data was verified against (Pop!_OS publishes numbered builds).</summary>
     public int? IsoBuild { get; set; }
+    /// <summary>Size in bytes of the official installer file (ISO), shown to users before downloading.</summary>
+    public long? InstallerBytes { get; set; }
 }
 
 /// <summary>How to detect a newer release of a distro. See DistroReleaseChecker.</summary>

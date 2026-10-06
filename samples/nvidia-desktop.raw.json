@@ -20,6 +20,8 @@
     "hasBattery": false,
     "systemManufacturer": "System manufacturer",
     "systemModel": "System Product Name",
+    "systemDriveFreeBytes": 442381631488,
+    "systemDriveTotalBytes": 999653638144,
     "baseBoardManufacturer": "Micro-Star International Co., Ltd."
   },
   "processors": [

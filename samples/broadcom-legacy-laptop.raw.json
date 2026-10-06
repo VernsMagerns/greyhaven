@@ -18,7 +18,9 @@
     ],
     "hasBattery": true,
     "systemManufacturer": "Example PC Co.",
-    "systemModel": "Laptop 15 (2012)"
+    "systemModel": "Laptop 15 (2012)",
+    "systemDriveFreeBytes": 65498251264,
+    "systemDriveTotalBytes": 255550554112
   },
   "processors": [
     {

@@ -7,6 +7,7 @@ rules:
     ratings:
       - rating: partial
         explanation: This laptop's camera uses Intel's IPU6 camera system rather than a standard USB webcam. Linux {kernelSeries} has a driver for the IPU6 itself, but the camera only works if its image sensor is also supported and extra camera software is set up. On many laptops the camera doesn't work, or works only in some apps.
+        summary: "This kind of laptop camera often doesn't work on Linux. Test it from a USB stick first."
     sources:
       - title: Linux kernel docs - Intel IPU6 input system driver
         url: https://docs.kernel.org/admin-guide/media/ipu6-isys.html

@@ -213,7 +213,7 @@ public class RatingEngineTests
         var on = await RateOne(data, wifi, SecureBootState.Enabled);
         var off = await RateOne(data, wifi, SecureBootState.Disabled);
 
-        Assert.Contains("must be approved", on.For("alpha").Fix!.SecureBootAdvice);
+        Assert.Contains("needs your OK before it can run", on.For("alpha").Fix!.SecureBootAdvice);
         Assert.Contains("turned off", on.For("beta").Fix!.SecureBootAdvice); // beta doesn't support Secure Boot
         Assert.Null(off.For("alpha").Fix!.SecureBootAdvice);
     }

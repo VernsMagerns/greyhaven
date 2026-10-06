@@ -67,6 +67,12 @@ public sealed record ComponentRating
     public required Confidence Confidence { get; init; }
     /// <summary>Plain-English explanation of the rating.</summary>
     public required string Explanation { get; init; }
+    /// <summary>
+    /// One short, beginner-level line for the main view (about a 6th-grade reading level),
+    /// e.g. "Works after you add NVIDIA's driver." Null means use the default for the rating
+    /// (<see cref="Hardware.PlainWords.Summary"/>).
+    /// </summary>
+    public string? Summary { get; init; }
     public IReadOnlyList<Source> Sources { get; init; } = [];
     /// <summary>Set for anything not rated "works out of the box" where a fix is known.</summary>
     public Fix? Fix { get; init; }
@@ -223,6 +229,11 @@ public sealed record Caveat
     public required string WhatToTest { get; init; }
 }
 
+/// <summary>The PC's (or, for custom-built PCs, the motherboard's) maker, from data/makers.yaml.</summary>
+/// <param name="BootMenuKey">Key for the one-time startup menu, e.g. "F12", or an instruction for Surface.</param>
+/// <param name="SupportUrl">The maker's official support page, for BIOS updates.</param>
+public sealed record PcMaker(string Name, string BootMenuKey, string? BootMenuNote, string SupportUrl, bool FromMotherboard);
+
 /// <summary>One thing to try in a live session, e.g. "Wi-Fi: join your network and open a website".</summary>
 public sealed record LiveUsbCheck(string Title, string Test);
 
@@ -239,6 +250,8 @@ public sealed record LiveUsbGuide
     public Source? MakeUsbGuide { get; init; }
     /// <summary>The distro's official guide to starting the live session, if separate.</summary>
     public Source? TryItGuide { get; init; }
+    /// <summary>Size of the installer file (ISO) for this edition, from the official download.</summary>
+    public long? InstallerBytes { get; init; }
     /// <summary>Things to check, for the parts this PC has, plus what can't be judged from Windows.</summary>
     public IReadOnlyList<LiveUsbCheck> Checks { get; init; } = [];
     /// <summary>Preparation specific to this PC, e.g. turning Secure Boot off or having the BitLocker recovery key.</summary>
@@ -268,6 +281,8 @@ public sealed record CompatibilityReport
     public IReadOnlyList<ContextNote> ContextNotes { get; init; } = [];
     /// <summary>One live-USB test guide per distro (for the edition picked for this PC).</summary>
     public IReadOnlyList<LiveUsbGuide> LiveUsbGuides { get; init; } = [];
+    /// <summary>Who made this PC (or its motherboard), when recognised: boot menu key and support page.</summary>
+    public PcMaker? Maker { get; init; }
     public required DataFreshness Data { get; init; }
     public required DateTimeOffset GeneratedAt { get; init; }
 

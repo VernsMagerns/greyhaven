@@ -19,6 +19,7 @@ rules:
     ratings:
       - rating: partial
         explanation: No driver in {distro}'s kernel lists this exact sound chip, so Linux will use its generic HD Audio driver. That usually gives working speakers and headphones, but extras like mute lights, some microphones or speaker tuning may not work.
+        summary: "Sound usually works. A few extras, like mute lights, may not."
     sources:
       - title: Linux kernel docs - More notes on HD-Audio driver
         url: https://docs.kernel.org/sound/hd-audio/notes.html
@@ -30,6 +31,7 @@ rules:
     ratings:
       - rating: partial
         explanation: No driver in {distro}'s kernel lists this exact HDMI audio device, so Linux will use its generic HD Audio support. Sound over HDMI or DisplayPort usually works but isn't guaranteed.
+        summary: "Sound through HDMI usually works, but we can't be sure."
     sources:
       - title: Linux kernel docs - More notes on HD-Audio driver
         url: https://docs.kernel.org/sound/hd-audio/notes.html

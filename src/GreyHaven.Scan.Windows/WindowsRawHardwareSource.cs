@@ -67,6 +67,9 @@ public sealed partial class WindowsRawHardwareSource : IRawHardwareSource
             ReadWarnings = warnings,
         };
 
+        var (free, total) = Try(ReadSystemDrive, (null, null), "Could not read the free space on the Windows drive.", warnings);
+        system = system with { SystemDriveFreeBytes = free, SystemDriveTotalBytes = total };
+
         return new RawSnapshot
         {
             CapturedAt = DateTimeOffset.UtcNow,
@@ -119,6 +122,16 @@ public sealed partial class WindowsRawHardwareSource : IRawHardwareSource
             .SelectMany(mo => Prop<ushort[]>(mo, "ChassisTypes") ?? [])
             .Select(t => (int)t)
             .ToList();
+
+    /// <summary>Free and total bytes on the Windows drive (e.g. "C:"). No admin rights needed.</summary>
+    private static (long?, long?) ReadSystemDrive()
+    {
+        var drive = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.Windows))?.TrimEnd('\\') ?? "C:";
+        if (drive.Length != 2 || drive[1] != ':') return (null, null);
+        var disk = Query($"SELECT FreeSpace, Size FROM Win32_LogicalDisk WHERE DeviceID = '{drive}'").FirstOrDefault();
+        if (disk is null) return (null, null);
+        return ((long?)Prop<ulong>(disk, "FreeSpace"), (long?)Prop<ulong>(disk, "Size"));
+    }
 
     private static string? ReadComputerSystem(string property) =>
         Query($"SELECT {property} FROM Win32_ComputerSystem").Select(mo => Prop<string>(mo, property)).FirstOrDefault();

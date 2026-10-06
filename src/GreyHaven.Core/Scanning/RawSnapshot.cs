@@ -82,6 +82,10 @@ public sealed record RawSystemData
     public string? SystemManufacturer { get; init; }
     public string? SystemModel { get; init; }
 
+    /// <summary><c>Win32_LogicalDisk</c> FreeSpace and Size of the Windows drive (usually C:).</summary>
+    public long? SystemDriveFreeBytes { get; init; }
+    public long? SystemDriveTotalBytes { get; init; }
+
     /// <summary><c>Win32_BaseBoard.Manufacturer</c>: the motherboard maker, e.g. "Micro-Star International Co., Ltd.".</summary>
     public string? BaseBoardManufacturer { get; init; }
 

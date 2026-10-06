@@ -11,12 +11,15 @@ rules:
         rating: partial
         confidence: medium
         explanation: This older NVIDIA card is only supported by NVIDIA's legacy 470 driver. The Linux Mint 22.3 release notes say that driver is no longer supported by NVIDIA and has problems with the kernel Mint ships, so you may be limited to the basic open-source driver (slow 3D, no gaming).
+        summary: "This older card only gets a basic driver. Games and 3D will be slow."
       - when: { driverPackage: "nvidia-driver-*" }
         rating: worksWithExtraDriver
         explanation: Linux's built-in open-source driver (nouveau) will show a picture, but for good performance and gaming you need NVIDIA's own driver. {distro} offers it ({driverPackages}) and installs it with {driverTool}.
+        summary: "Works after you add NVIDIA's driver. It takes a few clicks once {distro} is installed."
       - rating: partial
         confidence: medium
         explanation: None of the NVIDIA driver packages in {distro} list this card, so only the basic open-source driver (nouveau) is available. Expect a working desktop but slow 3D and no gaming.
+        summary: "Only a basic driver is available. Games and 3D will be slow."
     fix:
       driver: NVIDIA proprietary driver
       secureBoot: mokMayBeRequired

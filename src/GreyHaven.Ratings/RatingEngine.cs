@@ -127,6 +127,7 @@ public sealed partial class RatingEngine(
             LiveUsbGuides = LiveUsbGuides.Build(profile, rated, summaries, caveatList, data),
             DataNotes = dataNotes.Distinct().ToList(),
             ContextNotes = WindowsNotes.For(profile.System, data.Windows, today),
+            Maker = data.Makers.For(profile.System),
             Data = freshness,
             GeneratedAt = _time.GetLocalNow(),
         };
@@ -229,6 +230,7 @@ public sealed partial class RatingEngine(
             Rating = rating,
             Confidence = RuleSet.ParseConfidence(outcome.Confidence ?? rule.Confidence),
             Explanation = Fill(outcome.Explanation, ctx, packages),
+            Summary = outcome.Summary is null ? null : Fill(outcome.Summary, ctx, packages),
             Sources = rule.Sources.Where(s => s.AppliesTo(ctx.Distro.Id)).Select(s => new Source(s.Title, s.Url, SourceKind.CuratedRule)).ToList(),
             Fix = fixData is null ? null : BuildFix(fixData, ctx),
             LinuxDriver = fixData?.Driver,
@@ -275,6 +277,7 @@ public sealed partial class RatingEngine(
                 Rating = Rating.Unsupported,
                 Confidence = Confidence.High,
                 Explanation = $"This fingerprint reader is on libfprint {version}'s list of known unsupported devices, so fingerprint login won't work on {ctx.Distro.Name}. You can still log in with your password.",
+                Summary = "Fingerprint login won't work. You can still use your password.",
                 Sources = [source],
             };
         }
@@ -459,10 +462,11 @@ public sealed partial class RatingEngine(
         if (!ctx.Distro.SecureBoot.Supported)
             return $"{ctx.Distro.Name} requires Secure Boot to be turned off before installing, so no extra Secure Boot step is needed for this driver.";
 
-        var prefix = ctx.SecureBoot == SecureBootState.Unknown ? "If Secure Boot is on: " : "Secure Boot is on, so: ";
+        // Plain words: the blue "Enroll MOK" screen scares people who aren't expecting it.
+        var start = ctx.SecureBoot == SecureBootState.Unknown ? "If Secure Boot is on, " : "Secure Boot is on, so ";
         return impact == SecureBootImpact.MokRequired
-            ? prefix + "this driver is built on your PC and must be approved before it can load. While installing it you'll be asked to create a password; after restarting, a blue \"Enroll MOK\" screen appears - choose \"Enroll MOK\", then \"Continue\", and enter that password."
-            : prefix + "you may be asked to create a Secure Boot password while installing the driver. If so, after restarting a blue \"Enroll MOK\" screen appears - choose \"Enroll MOK\", then \"Continue\", and enter that password.";
+            ? start + "this driver needs your OK before it can run. While it installs, make up a password. After you restart, a blue screen appears. Choose \"Enroll MOK\", then \"Continue\", and type that password. This is normal."
+            : start + "you may be asked to make up a password while the driver installs. After you restart, a blue screen appears. Choose \"Enroll MOK\", then \"Continue\", and type that password. This is normal.";
     }
 
     // ---- Caveats ----------------------------------------------------------------------------

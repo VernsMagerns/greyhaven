@@ -33,6 +33,7 @@ public static class LiveUsbGuides
                 Website = info.Website,
                 MakeUsbGuide = ToSource(info.LiveUsb.MakeUsb),
                 TryItGuide = ToSource(info.LiveUsb.TryIt),
+                InstallerBytes = info.Editions.FirstOrDefault(e => e.Id == summary.EditionId)?.InstallerBytes,
                 Checks = checks,
                 BeforeYouStart = BeforeYouStart(profile.System, info.Name, info.SecureBoot.Supported),
                 ExpectedInLiveSession = rated

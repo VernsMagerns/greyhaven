@@ -62,6 +62,8 @@ public sealed class RuleOutcome
     /// <summary>worksOutOfTheBox | worksWithExtraDriver | partial | unsupported | unknown.</summary>
     public string Rating { get; set; } = "";
     public string Explanation { get; set; } = "";
+    /// <summary>Optional one short beginner-level line for the main view; same placeholders as the explanation.</summary>
+    public string? Summary { get; set; }
     public string? Confidence { get; set; }
     /// <summary>Overrides the rule's fix for this outcome.</summary>
     public RuleFix? Fix { get; set; }

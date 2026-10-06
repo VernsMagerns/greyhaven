@@ -206,6 +206,8 @@ public static partial class ProfileBuilder
             SystemManufacturer = CleanName(s.SystemManufacturer),
             SystemModel = CleanName(s.SystemModel),
             BoardManufacturer = CleanName(s.BaseBoardManufacturer),
+            SystemDriveFreeBytes = s.SystemDriveFreeBytes is >= 0 ? s.SystemDriveFreeBytes : null,
+            SystemDriveTotalBytes = s.SystemDriveTotalBytes is > 0 ? s.SystemDriveTotalBytes : null,
         };
     }
 

@@ -129,6 +129,7 @@ distros:
       - id: cinnamon
         name: Cinnamon
         isoKernel: mint-6.14.0-37
+        installerBytes: 3091660800   # linuxmint-22.3-cinnamon-64bit.iso, mirrors.edge.kernel.org, 2026-10-05
     updatesKernel: mint-6.14.0-37
     liveUsb:
       makeUsb:
@@ -163,6 +164,7 @@ distros:
       - id: desktop
         name: Desktop
         isoKernel: ubuntu-7.0.0-30
+        installerBytes: 6482409472   # ubuntu-26.04.1-desktop-amd64.iso, releases.ubuntu.com, 2026-10-05
     updatesKernel: ubuntu-7.0.0-30
     liveUsb:
       makeUsb:
@@ -197,10 +199,12 @@ distros:
         name: Intel/AMD ISO
         isoKernel: pop-6.16.3
         isoBuild: 20
+        installerBytes: 2955067392   # api.pop-os.org/builds/24.04/intel, 2026-10-05
       - id: nvidia
         name: NVIDIA ISO
         isoKernel: pop-7.0.11
         isoBuild: 28
+        installerBytes: 3934945280   # api.pop-os.org/builds/24.04/nvidia, 2026-10-05
         selectWhen: nvidiaGpu
         preinstalledDrivers: [nvidia]
     updatesKernel: pop-7.1.5

@@ -19,7 +19,9 @@
     ],
     "hasBattery": true,
     "systemManufacturer": "Example PC Co.",
-    "systemModel": "Laptop 14 (Snapdragon X)"
+    "systemModel": "Laptop 14 (Snapdragon X)",
+    "systemDriveFreeBytes": 322122547200,
+    "systemDriveTotalBytes": 511101108224
   },
   "processors": [
     {
