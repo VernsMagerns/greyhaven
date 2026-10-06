@@ -62,7 +62,8 @@ No match anywhere → **Unknown**. Names are never used to guess a rating.
   interop in any stack; Electron/Tauri would add a second language for no gain.
 - WPF Fluent theme follows the system light/dark setting; WPF has mature UI Automation
   (screen reader) support. WinUI 3 has more packaging friction and fewer contributors.
-- Installer: WiX Toolset MSI (Start Menu shortcut, uninstaller), built by GitHub Actions.
+- Installer: WiX Toolset MSI (Start Menu shortcut, uninstaller) wrapped in a single
+  `GreyHaven-Setup.exe`, built by GitHub Actions. See section 6.
   Self-contained x64 publish so users don't need .NET installed (~70–90 MB).
 - Libraries: CommunityToolkit.Mvvm, YamlDotNet, SQLite (lookup cache), BouncyCastle (GPG),
   xUnit.
@@ -188,5 +189,126 @@ Each milestone ends with tests plus CLI output against sample profiles.
 | 4 | Report and export: Markdown, HTML, JSON, live-USB verification guide (done 2026-10-05) | No |
 | 5 | Checklist and safe fixes: elevated helper, Fast Startup fix with undo | Yes — apply/undo |
 | 6 | Live USB creator: download, verify, drive filtering, flash, cancel | Yes — flashing |
-| 7 | Data contribution: opt-in preview, GitHub issue form, triage Action | No (needs repo name) |
-| 8 | Installer and update check: WiX MSI, release workflow, notify-only update check, README | Yes — install/uninstall (needs repo name) |
+| 7 | Data contribution: opt-in preview, GitHub issue form, triage Action | No |
+| 8 | Installer, release and update check: Setup.exe + MSI, release workflow, checksums, notify-only update check, README; download page and signing when public (section 6) | Yes — install/uninstall |
+
+---
+
+## 6. Distribution for v1 (milestone 8) — planned 2026-10-05
+
+Goal: someone who has never heard of an `.msi` clicks one big button, double-clicks one file,
+and has GreyHaven in their Start menu. Nothing below is built yet. The public parts (download
+page, signing, winget) wait until the repository is public.
+
+### Installer: `GreyHaven-Setup.exe` (primary) and the MSI (secondary)
+
+- **MSI** (WiX v6+, built in CI): installs the self-contained app for the current machine
+  (`Program Files\GreyHaven`), Start menu shortcut, Add/Remove Programs entry with a working
+  uninstall, and a stable `UpgradeCode` so new versions replace old ones cleanly.
+  Per-machine install needs one UAC prompt at install time; GreyHaven itself still runs
+  without admin rights.
+- **`GreyHaven-Setup.exe`**: a WiX **Burn** bundle wrapping the MSI, with the standard
+  WiX bootstrapper UI (licence, install, progress, finish with "Launch GreyHaven"). One file,
+  one double-click; it's what the download button gets. Supports `/quiet` for scripted use.
+- **Recommendation: also attach the MSI to each release, but don't advertise it** on the
+  download page. IT admins deploy MSIs directly (Intune, Group Policy, `msiexec /qn`) and
+  some environments block bootstrapper EXEs; normal users never need to see it. Mention it
+  in the README's "For IT admins" line.
+- **Licensing note:** WiX 6+ has an "Open Source Maintenance Fee" that applies only to users
+  with US$10,000+ annual revenue using it for revenue-generating work. A free, non-commercial
+  GreyHaven is exempt. Check SignPath doesn't treat the Burn engine inside Setup.exe as a
+  "proprietary component" (see Signing); if it does, Inno Setup (open source, single EXE)
+  is the fallback for the wrapper, keeping the WiX MSI for admins.
+
+### Release workflow (tag `v*` → GitHub Release)
+
+1. Build and test on Windows; `tools/release-check.sh` must pass (no placeholders,
+   `IsRepositoryPublic` set correctly).
+2. Build the app, MSI and `GreyHaven-Setup.exe`; sign them (once signing is approved).
+3. Write `SHA256SUMS.txt` for every downloadable file, and add GitHub artifact attestations
+   (build provenance, free for public repos) so anyone can verify a file came from this repo's CI.
+4. Create the release with notes: `GreyHaven-Setup.exe`, `GreyHaven.msi`, `SHA256SUMS.txt`.
+   GitHub adds "Source code (zip/tar.gz)" automatically.
+5. Fixed asset names (no version in the file name), so
+   `https://github.com/VernsMagerns/greyhaven/releases/latest/download/GreyHaven-Setup.exe`
+   always points to the newest installer. The download page and README use that link.
+6. The in-app update check (notify-only) reads the latest release from the GitHub API.
+
+### Download page (GitHub Pages)
+
+- One static page (`site/` or `docs/site/`, deployed by a Pages workflow): what GreyHaven
+  does in two sentences, one big **Download for Windows** button (the `latest/download`
+  link above), size and "Windows 10 and 11, no admin rights needed to run", a short privacy
+  line, and a small **View the source on GitHub** link. Same accessibility rules as the app
+  (headings, contrast, keyboard, no eyebrow labels).
+- **Goes live when the repository is public:** GitHub Pages for private repositories needs a
+  paid plan.
+- Once signing is in place, the page explains in one line what to expect from SmartScreen
+  while reputation builds (see below), with a screenshot of "More info → Run anyway".
+
+### Source access
+
+- Every release includes the source archives (automatic), and the README gets a
+  **Build from source** section: install the .NET 10 SDK, `git clone`, `dotnet test`,
+  `./tools/publish-windows.sh` (or `dotnet publish` on Windows), and how to build the MSI.
+- MIT for code, CC-BY-4.0 for `data/`, stated on the download page and in the installer.
+
+### Code signing (before v1)
+
+Unsigned installers get the strongest SmartScreen warning, aimed squarely at our audience.
+Important: **no option removes the warning on day one.** Since 2024 even EV certificates
+don't skip SmartScreen; reputation builds as signed releases are downloaded, and carries over
+to later releases signed with the same identity. Signing still matters: an unsigned file
+from an unknown publisher is treated far more harshly, and enterprises may block it outright.
+
+Two routes, in order of preference:
+
+1. **SignPath Foundation (free for open source).** Requirements, from signpath.org/terms:
+   - OSI-approved licence for all components, no proprietary components, no malware/PUP.
+     *Open question:* `data/` is CC-BY-4.0 (not an OSI licence, though it's data, not code)
+     and the WiX Burn engine's licence; confirm both are acceptable when applying.
+   - Actively maintained, and **already released** in the form to be signed, with the
+     functionality described on the download page, and some verifiable reputation. So:
+     make the repo public, publish an unsigned pre-release, then apply.
+   - Named roles: authors, reviewers (approve changes from non-committers) and approvers
+     (approve each signing request). One person can hold these at first.
+   - **MFA** on GitHub and SignPath for everyone involved.
+   - A public **code signing policy** page stating "Free code signing provided by
+     SignPath.io, certificate by SignPath Foundation", listing the team per role, and a
+     privacy statement. GreyHaven does send data (device IDs to linux-hardware.org when
+     online lookups are on; release and update checks), so it needs a short privacy policy
+     saying what is sent, when, and that lookups can be turned off.
+   - Signed files must carry correct metadata (product name, version): already set in
+     `Directory.Build.props`.
+   - Signing runs through SignPath's GitHub Action; the certificate is in SignPath's
+     name ("SignPath Foundation"), not the maintainer's.
+2. **Azure Artifact Signing** (formerly Trusted Signing), if SignPath declines or is slow:
+   about US$9.99/month (Basic), an Azure subscription with a payment method, and identity
+   validation of the maintainer as an individual (US and Canada only) using a government ID
+   (via Microsoft's verification partner) and the Microsoft Authenticator app. The
+   certificate shows the maintainer's own name. Integrates with GitHub Actions; no hardware
+   token.
+
+Also worth evaluating later: the **Microsoft Store** (free developer account for individuals;
+the Store signs MSIX packages itself, so no SmartScreen warning), if the elevated helper
+and raw USB writing (milestones 5–6) work within MSIX's rules.
+
+### winget (optional, after v1)
+
+- Needs: a public, stable installer URL on GitHub Releases (yes); a silent install (MSI and
+  Burn bundles are both supported installer types); manifests (YAML) submitted as a pull
+  request to `microsoft/winget-pkgs`, which runs automated validation (malware scan,
+  install/uninstall test); a privacy policy URL since GreyHaven sends device IDs.
+- Signing isn't required but helps validation and users.
+- Ongoing: a pull request per release, automated with a GitHub Action (e.g. `wingetcreate`
+  or Komac) in the release workflow. Package ID, e.g. `VernsMagerns.GreyHaven`.
+
+### Before going public (checklist)
+
+- [ ] Decide on commit email: the history shows the maintainer's personal address; offer to
+      switch to the GitHub no-reply address (rewrites history, needs a force-push).
+- [ ] Set `GreyHavenInfo.IsRepositoryPublic = true`.
+- [ ] Privacy policy and code signing policy pages.
+- [ ] Enable MFA, branch protection on `main`, Pages.
+- [ ] Revisit the Windows-jobs-on-main-only CI rule (public repos get free Actions minutes).
+
