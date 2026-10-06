@@ -52,7 +52,6 @@ cli\greyhaven.exe scan --dump-raw greyhaven-raw.json
 
 ## Ratings (milestone 2)
 
-
 - [ ] **S2.1** Run `cli\greyhaven.exe rate` and skim the report. Does anything look obviously
       wrong for hardware you know works or doesn't work on Linux? Note it; it becomes a rule
       or a fix.
