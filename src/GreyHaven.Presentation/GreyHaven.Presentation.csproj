@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <InternalsVisibleTo Include="GreyHaven.Tests" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GreyHaven.Core\GreyHaven.Core.csproj" />
+    <ProjectReference Include="..\GreyHaven.Compat\GreyHaven.Compat.csproj" />
+    <ProjectReference Include="..\GreyHaven.Ratings\GreyHaven.Ratings.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />
+  </ItemGroup>
+</Project>

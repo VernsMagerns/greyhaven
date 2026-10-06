@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <AssemblyName>GreyHaven</AssemblyName>
+    <RootNamespace>GreyHaven.App</RootNamespace>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GreyHaven.Presentation\GreyHaven.Presentation.csproj" />
+    <ProjectReference Include="..\GreyHaven.Scan.Windows\GreyHaven.Scan.Windows.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\data\**\*" Link="data\%(RecursiveDir)%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\docs\secure-boot.md" Link="docs\secure-boot.md" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\samples\*.json" Link="samples\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+</Project>

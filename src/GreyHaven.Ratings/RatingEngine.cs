@@ -109,8 +109,7 @@ public sealed partial class RatingEngine(
         }).ToList();
 
         var summaries = contexts.Select(ctx => Summarize(ctx, rated, profile)).ToList();
-        foreach (var k in contexts.Select(c => c.IsoKernel).Concat(contexts.Select(c => c.UpdatesKernel)).OfType<KernelInfo>().Where(k => k.Approximation is not null).Distinct())
-            dataNotes.Add($"Kernel {k.Version}: {Collapse(k.Approximation!)}");
+        // Approximate kernel data is explained on each affected rating (ApproximationNote), not here.
 
         var recommendation = Recommender.Recommend(profile, rated, summaries, data.Distros, data.SecureBootGuides);
         return new CompatibilityReport

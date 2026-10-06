@@ -16,6 +16,7 @@
     <ProjectReference Include="..\..\src\GreyHaven.Core\GreyHaven.Core.csproj" />
     <ProjectReference Include="..\..\src\GreyHaven.Compat\GreyHaven.Compat.csproj" />
     <ProjectReference Include="..\..\src\GreyHaven.Ratings\GreyHaven.Ratings.csproj" />
+    <ProjectReference Include="..\..\src\GreyHaven.Presentation\GreyHaven.Presentation.csproj" />
     <ProjectReference Include="..\..\tools\GreyHaven.IndexBuilder\GreyHaven.IndexBuilder.csproj" />
   </ItemGroup>
   <ItemGroup>

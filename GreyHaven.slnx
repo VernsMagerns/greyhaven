@@ -1,8 +1,10 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/GreyHaven.App/GreyHaven.App.csproj" />
     <Project Path="src/GreyHaven.Cli/GreyHaven.Cli.csproj" />
     <Project Path="src/GreyHaven.Compat/GreyHaven.Compat.csproj" />
     <Project Path="src/GreyHaven.Core/GreyHaven.Core.csproj" />
+    <Project Path="src/GreyHaven.Presentation/GreyHaven.Presentation.csproj" />
     <Project Path="src/GreyHaven.Ratings/GreyHaven.Ratings.csproj" />
     <Project Path="src/GreyHaven.Scan.Windows/GreyHaven.Scan.Windows.csproj" />
   </Folder>
@@ -11,5 +13,6 @@
   </Folder>
   <Folder Name="/tools/">
     <Project Path="tools/GreyHaven.IndexBuilder/GreyHaven.IndexBuilder.csproj" />
+    <Project Path="tools/GreyHaven.UiSmoke/GreyHaven.UiSmoke.csproj" />
   </Folder>
 </Solution>

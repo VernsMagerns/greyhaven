@@ -1,0 +1,24 @@
+<UserControl x:Class="GreyHaven.App.Views.StartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:infra="clr-namespace:GreyHaven.App.Infrastructure">
+    <StackPanel Margin="0,24,0,0">
+        <TextBlock Text="Will this PC work well with Linux?" Style="{StaticResource Heading1}"
+                   Focusable="True" infra:Accessibility.FocusOnShow="True" />
+        <TextBlock Style="{StaticResource Body}" MaxWidth="680" HorizontalAlignment="Left"
+                   Text="GreyHaven checks each part of your PC and tells you how well it will work with Linux Mint, Ubuntu and Pop!_OS, what to do about anything that needs attention, and which one suits your PC best. It doesn't change anything on your PC." />
+
+        <Button Content="_Scan my PC" Command="{Binding ScanCommand}" Margin="0,28,0,8"
+                FontSize="20" FontWeight="SemiBold" Padding="40,14" MinHeight="56" HorizontalAlignment="Left"
+                Background="{DynamicResource GH.Accent}" Foreground="{DynamicResource GH.OnAccent}"
+                AutomationProperties.HelpText="Reads your PC's hardware and checks it against Linux. Usually takes under a minute." />
+        <TextBlock Text="{Binding StatusText}" Style="{StaticResource Secondary}" infra:Accessibility.Announce="True"
+                   Visibility="{Binding StatusText, Converter={StaticResource HasValueToVisibility}}" />
+
+        <CheckBox IsChecked="{Binding UseOnlineLookups}" Margin="0,24,0,0" MaxWidth="680" HorizontalAlignment="Left"
+                  AutomationProperties.Name="{Binding OnlineLookupsText}">
+            <TextBlock Text="{Binding OnlineLookupsText}" Style="{StaticResource Body}" />
+        </CheckBox>
+        <TextBlock Text="{Binding PrivacyText}" Style="{StaticResource Secondary}" Margin="0,16,0,0" MaxWidth="680" HorizontalAlignment="Left" />
+    </StackPanel>
+</UserControl>

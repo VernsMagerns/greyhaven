@@ -54,3 +54,25 @@ jobs:
             ci-raw.json
             ci-profile.json
             ci-report.json
+
+  # Launches the WPF app in demo mode on a Windows VM, walks the main flow, saves screenshots
+  # (light and dark) and fails if any control lacks an accessible name. Screenshots are
+  # downloadable from the workflow run, so the UI can be reviewed without a Windows PC.
+  # continue-on-error until this job has passed once on a real runner (it was written on Linux).
+  ui-smoke:
+    runs-on: windows-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Build app
+        run: dotnet build src/GreyHaven.App -c Release
+      - name: Run UI smoke test
+        run: dotnet run --project tools/GreyHaven.UiSmoke -c Release -- src/GreyHaven.App/bin/Release/net10.0-windows/GreyHaven.exe ui-screenshots nvidia-desktop
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-screenshots
+          path: ui-screenshots
