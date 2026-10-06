@@ -1,0 +1,102 @@
+/* Mirrors src/GreyHaven.App/Theming/Styles.xaml and MainWindow.xaml. Colours come from tokens.css
+   (generated from Palette.cs). Sizes are WPF device-independent pixels, which match CSS px. */
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--gh-page);
+  color: var(--gh-text);
+  font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+}
+a, .link { color: var(--gh-accent); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Preview-only banner (not part of the app's design). */
+.preview-banner {
+  display: flex; flex-wrap: wrap; gap: .5rem 1rem; align-items: center; justify-content: center;
+  padding: 8px 16px; background: var(--gh-notice-warning); color: var(--gh-text);
+  border-bottom: 1px solid var(--gh-card-border); font-size: 14px;
+}
+
+/* Window chrome */
+.window { max-width: 1000px; margin: 16px auto; border: 1px solid var(--gh-card-border); border-radius: 8px; background: var(--gh-page); min-height: 70vh; }
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 12px 24px 4px; }
+.appname { font-size: 16px; font-weight: 600; }
+.appearance label { margin-right: 8px; }
+select { font: inherit; color: var(--gh-text); background: var(--gh-card); border: 1px solid var(--gh-card-border); border-radius: 4px; padding: 5px 8px; min-width: 160px; }
+.content { max-width: 880px; margin: 8px auto 40px; padding: 0 24px; outline: none; }
+
+/* Text styles: Heading1/2/3, Body, Secondary, Strong. Headings lead directly (no eyebrow labels). */
+h1 { font-size: 28px; font-weight: 600; margin: 0 0 12px; }
+h2 { font-size: 20px; font-weight: 600; margin: 28px 0 10px; }
+h3 { font-size: 16px; font-weight: 600; margin: 16px 0 8px; }
+p, .body { font-size: 14px; line-height: 21px; margin: 0; }
+.secondary { color: var(--gh-text-secondary); }
+.strong { font-weight: 600; }
+.measure { max-width: 680px; }
+
+/* Buttons */
+button { font: inherit; color: var(--gh-text); background: var(--gh-card); border: 1px solid var(--gh-card-border); border-radius: 4px; padding: 6px 24px; cursor: pointer; }
+button:hover { filter: brightness(0.97); }
+button.accent { background: var(--gh-accent); color: var(--gh-on-accent); border-color: var(--gh-accent); }
+button.big { font-size: 20px; font-weight: 600; padding: 14px 40px; min-height: 56px; margin: 28px 0 8px; }
+button.linkbutton { background: transparent; border: 0; padding: 2px 0; color: var(--gh-accent); text-decoration: underline; text-align: left; }
+:focus-visible { outline: 2px solid var(--gh-text); outline-offset: 2px; }
+button.linkbutton:focus-visible { outline: none; border-bottom: 2px solid var(--gh-text); }
+
+/* Surfaces: Card, CommandBox, notices */
+.card { background: var(--gh-card); border: 1px solid var(--gh-card-border); border-radius: 8px; padding: 20px; margin: 0 0 12px; }
+.notice { border: 1px solid var(--gh-card-border); border-radius: 6px; padding: 12px 16px; margin: 0 0 10px; }
+.notice.info { background: var(--gh-notice-info); }
+.notice.warning { background: var(--gh-notice-warning); }
+.notice p + p { margin-top: 4px; }
+.command { display: flex; gap: 8px; align-items: center; background: var(--gh-command-background); border: 1px solid var(--gh-card-border); border-radius: 4px; padding: 6px 10px; margin: 4px 0; }
+.command code { flex: 1; font-family: "Cascadia Mono", Consolas, "Courier New", monospace; font-size: 14px; overflow-wrap: anywhere; }
+.command button { padding: 4px 10px; }
+
+/* Score card */
+.score { display: grid; grid-template-columns: auto 1fr; gap: 0 28px; align-items: center; }
+.score-number { font-size: 56px; font-weight: 600; line-height: 1.1; }
+.score-number small { font-size: 20px; font-weight: 400; color: var(--gh-text-secondary); }
+.score-band { font-size: 20px; font-weight: 600; }
+
+/* Radio groups: path choice and distro cards */
+.radio { display: flex; gap: 10px; align-items: flex-start; margin: 0 0 8px; cursor: pointer; }
+.radio input { width: 20px; height: 20px; margin: 1px 0 0; accent-color: var(--gh-accent); flex: none; }
+.distros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.distros .radio { border: 1px solid transparent; border-radius: 6px; padding: 6px; margin: 0; }
+
+/* Rating badge: icon + text + colour, never colour alone */
+.badge { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; white-space: nowrap; }
+.badge .glyph { font-size: 16px; }
+.c-works { color: var(--gh-works); } .c-extrastep { color: var(--gh-extra-step); } .c-partial { color: var(--gh-partial); }
+.c-unsupported { color: var(--gh-unsupported); } .c-unknown { color: var(--gh-unknown); }
+
+/* Part (Expander in a Card) */
+details.part { background: var(--gh-card); border: 1px solid var(--gh-card-border); border-radius: 8px; margin: 0 0 8px; }
+details.part > summary { list-style: none; cursor: pointer; padding: 14px 16px; display: grid; grid-template-columns: auto 1fr auto; gap: 12px; align-items: center; }
+details.part > summary::-webkit-details-marker { display: none; }
+details.part > summary::before { content: "›"; font-size: 18px; color: var(--gh-text-secondary); transition: transform .15s; display: inline-block; width: 12px; }
+details.part[open] > summary::before { transform: rotate(90deg); }
+.part-body { padding: 0 16px 16px 40px; }
+.importance { border: 1px solid var(--gh-card-border); border-radius: 4px; padding: 0 6px; margin-left: 10px; font-size: 12px; color: var(--gh-text-secondary); font-weight: 400; }
+ol.steps { padding-left: 24px; margin: 6px 0 0; }
+ol.steps li { line-height: 21px; padding: 2px 0; }
+.techrow { display: grid; grid-template-columns: 160px 1fr; gap: 4px 0; padding: 2px 0; }
+.techrow code { font-family: "Cascadia Mono", Consolas, monospace; overflow-wrap: anywhere; }
+details.tech > summary { cursor: pointer; margin-top: 14px; }
+.section { margin-top: 14px; }
+.sb-box { background: var(--gh-notice-warning); border: 1px solid var(--gh-card-border); border-radius: 6px; padding: 12px 14px; margin-top: 12px; }
+
+/* Working screen */
+.progress { height: 6px; max-width: 680px; margin: 8px 0 16px; background: var(--gh-command-background); border-radius: 3px; overflow: hidden; }
+.progress::after { content: ""; display: block; height: 100%; width: 30%; background: var(--gh-accent); animation: slide 1.2s infinite ease-in-out; }
+@keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
+@media (prefers-reduced-motion: reduce) { .progress::after { animation: none; width: 100%; opacity: .5; } }
+
+@media (max-width: 640px) {
+  .distros { grid-template-columns: 1fr; }
+  .score { grid-template-columns: 1fr; }
+  .techrow { grid-template-columns: 1fr; }
+}

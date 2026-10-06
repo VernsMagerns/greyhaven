@@ -4,17 +4,6 @@
              xmlns:infra="clr-namespace:GreyHaven.App.Infrastructure">
     <UserControl.Resources>
 
-        <!-- A notice: title + message, tinted background, plus an optional link. -->
-        <DataTemplate x:Key="NoticeTemplate">
-            <Border Background="{Binding Kind, Converter={StaticResource NoticeBrush}}" BorderBrush="{DynamicResource GH.CardBorder}"
-                    BorderThickness="1" CornerRadius="6" Padding="16,12" Margin="0,0,0,10">
-                <StackPanel>
-                    <TextBlock Text="{Binding Title}" Style="{StaticResource Strong}" />
-                    <TextBlock Text="{Binding Message}" Style="{StaticResource Body}" Margin="0,4,0,0" />
-                </StackPanel>
-            </Border>
-        </DataTemplate>
-
         <!-- One link (or plain text for sources without a URL). -->
         <DataTemplate x:Key="LinkTemplate">
             <Grid>
@@ -24,6 +13,19 @@
                 <TextBlock Text="{Binding Title}" Style="{StaticResource Body}"
                            Visibility="{Binding IsLink, Converter={StaticResource NoValueToVisibility}}" />
             </Grid>
+        </DataTemplate>
+
+        <!-- A notice: title + message, tinted background, plus an optional link (e.g. Microsoft's Windows 10 page). -->
+        <DataTemplate x:Key="NoticeTemplate">
+            <Border Background="{Binding Kind, Converter={StaticResource NoticeBrush}}" BorderBrush="{DynamicResource GH.CardBorder}"
+                    BorderThickness="1" CornerRadius="6" Padding="16,12" Margin="0,0,0,10">
+                <StackPanel>
+                    <TextBlock Text="{Binding Title}" Style="{StaticResource Strong}" />
+                    <TextBlock Text="{Binding Message}" Style="{StaticResource Body}" Margin="0,4,0,0" />
+                    <ContentPresenter Content="{Binding Link}" ContentTemplate="{StaticResource LinkTemplate}" Margin="0,6,0,0"
+                                      Visibility="{Binding Link, Converter={StaticResource HasValueToVisibility}}" />
+                </StackPanel>
+            </Border>
         </DataTemplate>
 
         <!-- One component: summary in the header, everything else one click away. -->

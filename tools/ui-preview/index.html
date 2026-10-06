@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<!-- Throwaway design preview of the GreyHaven app's flow. Not the real app; never shipped.
+     Built into artifacts/preview by tools/ui-preview/build.py, which adds tokens.css,
+     labels.js and data/ (real sample reports). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>GreyHaven - design preview</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="preview-banner" role="note">
+  <strong>Design preview — not the real app.</strong>
+  <span>Sample PC:</span>
+  <label class="visually-hidden" for="sample">Sample PC</label>
+  <select id="sample"></select>
+  <a href="../index.html">Back to the preview index</a>
+</div>
+
+<div class="window">
+  <!-- Top bar: app name and appearance setting (as in MainWindow.xaml) -->
+  <header class="topbar">
+    <span class="appname">GreyHaven</span>
+    <span class="appearance">
+      <label for="theme"><u>A</u>ppearance</label>
+      <select id="theme">
+        <option value="system">Match Windows</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </span>
+  </header>
+  <main id="screen" class="content" tabindex="-1"></main>
+</div>
+
+<div id="live" class="visually-hidden" aria-live="polite"></div>
+<script src="labels.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

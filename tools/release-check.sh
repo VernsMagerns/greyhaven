@@ -20,6 +20,13 @@ else
   echo "ok: no placeholder links in README, docs, data, samples or $out"
 fi
 
+# The throwaway design preview (tools/ui-preview) must never ship.
+if [ -d "$out" ] && grep -rIl "Design preview" "$out" 2>/dev/null | grep -q .; then
+  echo "FAIL: the design preview (tools/ui-preview) is in $out."; fail=1
+else
+  echo "ok: no design preview in $out"
+fi
+
 # Reports generated for every sample, in every format the CLI produces.
 cli="dotnet run --project src/GreyHaven.Cli -c Release --"
 reports_ok=1

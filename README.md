@@ -72,6 +72,7 @@ unprocessed scan data; it can be replayed anywhere with `greyhaven scan --raw <f
 | `docs/secure-boot.md` | General guide to turning Secure Boot off and back on |
 | `docs/windows-validation.md` | Checks that need a real Windows PC |
 | `docs/windows-results.md` | Step-by-step Windows test session and results form |
+| `tools/ui-preview` | Throwaway browser mock-up of the app's flow for design review; never shipped |
 | `tools/release-check.sh` | Fails if a placeholder (e.g. the GitHub repo name) would ship |
 
 ## License
