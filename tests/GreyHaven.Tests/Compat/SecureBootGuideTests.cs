@@ -49,10 +49,10 @@ public class SecureBootGuideTests
     }
 
     [Fact]
-    public void The_general_guide_never_links_a_placeholder_address()
+    public void The_general_guide_never_links_a_placeholder_or_private_address()
     {
         var g = Data.Value.SecureBootGuides.For(Pc(null, null));
-        if (GreyHavenInfo.IsGitHubRepositoryConfigured)
+        if (GreyHavenInfo.CanLinkToRepository)
             Assert.Equal($"https://github.com/{GreyHavenInfo.GitHubRepository}/blob/main/docs/secure-boot.md", g.Url);
         else
             Assert.Null(g.Url);

@@ -66,9 +66,9 @@ public sealed partial class PathOptionViewModel : ObservableObject
         SecureBootNotice = path.SecureBootNotice;
         if (path.SecureBootGuide is { } g)
         {
-            // GreyHaven's own guide ships with the app, so it works offline and while the
-            // repository is private.
-            var target = g.LocalPath is not null && (g.Url is null || !GreyHavenInfo.IsGitHubRepositoryConfigured)
+            // GreyHaven's own guide ships with the app: open that copy, so it works offline
+            // and whatever the repository's visibility.
+            var target = g.LocalPath is not null
                 ? Path.Combine(AppContext.BaseDirectory, g.LocalPath)
                 : g.Url;
             Guide = new LinkViewModel(g.FromManufacturer ? $"How to turn off Secure Boot: {g.Title}" : $"How to turn off Secure Boot (GreyHaven guide)", target, services);

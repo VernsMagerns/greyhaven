@@ -282,7 +282,7 @@ public static class ReportBuilder
         b.Add(new Heading(2, "About this report"));
         b.Add(P("This report contains device IDs and Windows settings only. It has no serial numbers, user names, PC name or network (MAC) addresses, so it's safe to share when asking for help."));
         var made = new List<Inline> { new Text("Made with GreyHaven, which checks how well a PC will work on Linux.") };
-        if (GreyHavenInfo.IsGitHubRepositoryConfigured)
+        if (GreyHavenInfo.CanLinkToRepository)
         {
             made.Add(new Text(" "));
             made.Add(new Link("GreyHaven on GitHub", $"https://github.com/{GreyHavenInfo.GitHubRepository}"));

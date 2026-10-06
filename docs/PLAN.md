@@ -163,9 +163,9 @@ structured so more editions can be added as data, not code.
 
 - **Name**: GreyHaven.
 - **License**: MIT for code, CC-BY-4.0 for `data/`.
-- **GitHub owner/repo**: not yet chosen. Stored in a single config value
-  (`GreyHavenInfo.GitHubRepository`) with a placeholder. Must be set before
-  milestone 7 (contribution) and milestone 8 (update check).
+- **GitHub owner/repo** (decided 2026-10-05): `VernsMagerns/greyhaven`, private until v1.
+  Stored in one config value (`GreyHavenInfo.GitHubRepository`); `IsRepositoryPublic` keeps
+  links pointing at bundled copies while private. `tools/release-check.sh` fails on placeholders.
 - **Testing**: develop on Linux using the CLI, sample profiles, unit tests and GitHub
   Actions Windows runners. Checks that need real Windows hardware (real scans, UI review,
   USB flashing) are listed per milestone and batched into as few sessions as possible.

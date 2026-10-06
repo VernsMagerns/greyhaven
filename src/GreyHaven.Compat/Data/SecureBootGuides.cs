@@ -40,10 +40,10 @@ public sealed class SecureBootGuideCatalog
         }
 
         // GreyHaven's own guide ships with the app. Link the web copy only once the repository
-        // is set; never a placeholder URL.
+        // is set and public; never a placeholder or a private (not found) URL.
         return new GuideLink(
             Fallback.Title,
-            GreyHavenInfo.IsGitHubRepositoryConfigured ? $"https://github.com/{GreyHavenInfo.GitHubRepository}/blob/main/{Fallback.Path}" : null,
+            GreyHavenInfo.CanLinkToRepository ? $"https://github.com/{GreyHavenInfo.GitHubRepository}/blob/main/{Fallback.Path}" : null,
             FromManufacturer: false)
         {
             LocalPath = Fallback.Path,

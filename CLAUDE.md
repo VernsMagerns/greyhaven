@@ -26,8 +26,12 @@ See `docs/PLAN.md` for architecture, decisions and milestones, and
   elevated helper and USB disk I/O) runs and is tested on Linux.
 - When a milestone needs real Windows hardware, say so clearly and add the check to
   `docs/windows-validation.md` so they can be done in batches.
-- The GitHub owner/repo is a placeholder (`GreyHavenInfo.GitHubRepository`). Remind the
-  maintainer before milestone 7 (contribution) and milestone 8 (update check).
+- The repository is `VernsMagerns/greyhaven` (`GreyHavenInfo.GitHubRepository`), **private**
+  for now (`GreyHavenInfo.IsRepositoryPublic = false`). Before it's made public: remind the
+  maintainer that commit emails become visible and offer to switch to their GitHub no-reply
+  address, then flip `IsRepositoryPublic`.
+- `gh` and GitHub credentials live on the host; from the VS Code Flatpak, run them with
+  `flatpak-spawn --host` (e.g. `flatpak-spawn --host gh run list`).
 - Compatibility ratings come from IDs only, never device names, and never guess: no data
   means "Unknown".
 

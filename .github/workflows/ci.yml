@@ -1,8 +1,13 @@
 name: CI
 
 on:
-  push:          # every branch, so every push has a downloadable Windows build
+  push:              # every branch, so every push has a downloadable Windows build
   pull_request:
+  workflow_dispatch: # "Run workflow" button on the Actions tab
+
+# Saving Actions minutes while the repo is private (Windows runners count double): the jobs
+# that run ON Windows only run for pushes to main and manual runs. Other branches and pull
+# requests get the Linux tests and the greyhaven-windows build (cross-built on Linux).
 
 permissions:
   contents: read
@@ -17,7 +22,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: ${{ fromJSON((github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')) && '["ubuntu-latest","windows-latest"]' || '["ubuntu-latest"]') }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -56,6 +61,7 @@ jobs:
   # real-device accuracy. It does prove the scanner runs end to end on Windows, and the
   # output is downloadable from the workflow run for inspection.
   windows-live-scan:
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -89,6 +95,7 @@ jobs:
   # downloadable from the workflow run, so the UI can be reviewed without a Windows PC.
   # continue-on-error until this job has passed once on a real runner (it was written on Linux).
   ui-smoke:
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     runs-on: windows-latest
     continue-on-error: true
     steps:

@@ -239,7 +239,7 @@ public class ResultsViewModelTests
     }
 
     [Fact]
-    public async Task Secure_boot_guide_opens_the_bundled_copy_while_the_repo_is_unconfigured()
+    public async Task Secure_boot_guide_opens_the_bundled_copy()
     {
         var services = FakeServices.ForSample("nvidia-desktop");
         // An unrecognised PC and motherboard maker gets GreyHaven's own guide.
