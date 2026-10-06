@@ -5,6 +5,11 @@ Scan my PC → score → Easy/Advanced choice → distro comparison → part det
 It is **not the real app**, isn't built into the app, installer or releases, and says so in a
 banner on every page.
 
+Round 2 (2026-10-06) tries out brand directions (`brands.json`: palettes, fonts, picture
+style) and plain, beginner-level wording. Switch with **Look** in the preview's yellow bar.
+The build checks every brand against WCAG AA (text 4.5:1, borders 3:1) in light and dark mode
+and stops if one fails. `?counts=1` shows the words on screen and a rough reading level.
+
 It uses real data and the app's own design sources:
 
 - reports for every sample, from the GreyHaven CLI (`rate --json`)

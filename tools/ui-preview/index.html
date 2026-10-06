@@ -1,27 +1,33 @@
 <!DOCTYPE html>
 <!-- Throwaway design preview of the GreyHaven app's flow. Not the real app; never shipped.
-     Built into artifacts/preview by tools/ui-preview/build.py, which adds tokens.css,
-     labels.js and data/ (real sample reports). -->
+     Built into artifacts/preview by tools/ui-preview/build.py, which adds tokens.css, brands.css,
+     brands.js, labels.js and data.js (real sample reports). -->
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>GreyHaven - design preview</title>
+<!-- Preview only: the app would ship these open-licensed (OFL) font files itself. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Lexend:wght@400;600&family=Nunito:wght@400;700&family=Rubik:wght@600;800&display=swap">
 <link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="brands.css">
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
 <div class="preview-banner" role="note">
-  <strong>Design preview — not the real app.</strong>
-  <span>Sample PC:</span>
-  <label class="visually-hidden" for="sample">Sample PC</label>
-  <select id="sample"></select>
-  <a href="../index.html">Back to the preview index</a>
+  <div class="preview-controls">
+    <strong>Design preview — not the real app.</strong>
+    <label>Look <select id="brand"></select></label>
+    <label>Sample PC <select id="sample"></select></label>
+    <a href="../index.html">Preview index</a>
+  </div>
+  <p id="brandnote" class="preview-note"></p>
 </div>
 
 <div class="window">
-  <!-- Top bar: app name and appearance setting (as in MainWindow.xaml) -->
   <header class="topbar">
     <span class="appname">GreyHaven</span>
     <span class="appearance">
@@ -30,6 +36,7 @@
         <option value="system">Match Windows</option>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
+        <option value="hc">High contrast (simulated)</option>
       </select>
     </span>
   </header>
@@ -38,6 +45,7 @@
 
 <div id="live" class="visually-hidden" aria-live="polite"></div>
 <script src="labels.js"></script>
+<script src="brands.js"></script>
 <script src="data.js"></script>
 <script src="app.js"></script>
 </body>
