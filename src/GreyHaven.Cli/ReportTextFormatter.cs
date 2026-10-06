@@ -145,14 +145,7 @@ internal static class ReportTextFormatter
         _ => "[?]",
     };
 
-    internal static string Describe(Rating r) => r switch
-    {
-        Rating.WorksOutOfTheBox => "Works out of the box",
-        Rating.WorksWithExtraDriver => "Works with extra driver/config",
-        Rating.Partial => "Partial/known issues",
-        Rating.Unsupported => "Unsupported",
-        _ => "Unknown",
-    };
+    internal static string Describe(Rating r) => Labels.Official(r);
 
     private static string Short(string distroId) => distroId switch
     {

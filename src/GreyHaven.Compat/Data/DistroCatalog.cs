@@ -100,6 +100,7 @@ public sealed class DistroInfo
     public SecureBootSupport SecureBoot { get; set; } = new();
     public List<DistroEdition> Editions { get; set; } = [];
     public string? UpdatesKernel { get; set; }
+    public DistroLiveUsb LiveUsb { get; set; } = new();
     public ReleaseCheck? ReleaseCheck { get; set; }
     public List<SourceLink> Sources { get; set; } = [];
 

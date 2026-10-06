@@ -1,4 +1,5 @@
 using GreyHaven.Core.Compatibility;
+using GreyHaven.Core.Hardware;
 
 namespace GreyHaven.Presentation;
 
@@ -9,24 +10,10 @@ namespace GreyHaven.Presentation;
 public static class RatingDisplay
 {
     /// <summary>Main-view wording: no jargon.</summary>
-    public static string Label(Rating r) => r switch
-    {
-        Rating.WorksOutOfTheBox => "Works out of the box",
-        Rating.WorksWithExtraDriver => "Works after an extra step",
-        Rating.Partial => "Partly works",
-        Rating.Unsupported => "Doesn't work",
-        _ => "Not sure yet",
-    };
+    public static string Label(Rating r) => Labels.Of(r);
 
     /// <summary>The official rating names, shown in technical details and reports.</summary>
-    public static string OfficialName(Rating r) => r switch
-    {
-        Rating.WorksOutOfTheBox => "Works out of the box",
-        Rating.WorksWithExtraDriver => "Works with extra driver/config",
-        Rating.Partial => "Partial/known issues",
-        Rating.Unsupported => "Unsupported",
-        _ => "Unknown",
-    };
+    public static string OfficialName(Rating r) => Labels.Official(r);
 
     /// <summary>Segoe Fluent Icons / Segoe MDL2 Assets glyph (both fonts share these code points).</summary>
     public static string Glyph(Rating r) => r switch

@@ -30,6 +30,26 @@ public static class Labels
         _ => "Other device",
     };
 
+    /// <summary>Plain-English rating, without jargon: "Works after an extra step".</summary>
+    public static string Of(Rating r) => r switch
+    {
+        Rating.WorksOutOfTheBox => "Works out of the box",
+        Rating.WorksWithExtraDriver => "Works after an extra step",
+        Rating.Partial => "Partly works",
+        Rating.Unsupported => "Doesn't work",
+        _ => "Not sure yet",
+    };
+
+    /// <summary>The official rating names (docs/scoring.md), for technical details.</summary>
+    public static string Official(Rating r) => r switch
+    {
+        Rating.WorksOutOfTheBox => "Works out of the box",
+        Rating.WorksWithExtraDriver => "Works with extra driver/config",
+        Rating.Partial => "Partial/known issues",
+        Rating.Unsupported => "Unsupported",
+        _ => "Unknown",
+    };
+
     /// <summary>How much a part matters, in plain words: "Essential", "Important" or "Other".</summary>
     public static string Of(Importance i) => i switch
     {

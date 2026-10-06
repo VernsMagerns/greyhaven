@@ -1,0 +1,83 @@
+# The live-USB test guide: what to try in a live session before installing. Checks appear when
+# the PC has a matching part (categories are camelCase ComponentCategory names). Things that
+# can't be judged from Windows (sleep, battery...) come from caveats.yaml and are added too.
+# Licensed CC-BY-4.0 (see LICENSE).
+
+checks:
+  - id: screen
+    categories: [gpu]
+    title: Screen
+    test: The desktop fills the screen and looks sharp. If you use more than one monitor, connect them and check each one shows a picture.
+
+  - id: wifi
+    categories: [wifi]
+    title: Wi-Fi
+    test: Click the network icon in the corner of the screen, join your Wi-Fi network and open a website.
+
+  - id: ethernet
+    categories: [ethernet]
+    title: Wired network
+    test: Plug in the network cable (unplug Wi-Fi first if you like) and open a website.
+
+  - id: usbNetwork
+    categories: [usbNetwork]
+    title: USB network adapter
+    test: Plug in the adapter, connect to your network and open a website.
+
+  - id: sound
+    categories: [audioController, audioCodec]
+    title: Sound
+    test: Play a video with sound. Check the speakers and, if you use them, headphones. In Settings, open Sound and check your microphone's level moves when you speak.
+
+  - id: hdmiAudio
+    categories: [displayAudio]
+    title: Sound through your monitor or TV
+    test: If you play sound through a monitor or TV, choose it in Settings > Sound and play a video.
+
+  - id: bluetooth
+    categories: [bluetooth]
+    title: Bluetooth
+    test: Turn on Bluetooth in Settings and pair something you use, such as headphones, a mouse or a phone.
+
+  - id: camera
+    categories: [webcam]
+    title: Camera
+    test: Open a video-call website (or a camera app if one is installed) and check you can see yourself.
+
+  - id: touchpad
+    categories: [touchpad]
+    title: Touchpad
+    test: Move the pointer, tap to click, and scroll with two fingers.
+
+  - id: touchscreen
+    categories: [touchscreen]
+    title: Touchscreen
+    test: Tap to click, and drag a finger to scroll a web page.
+
+  - id: usb
+    categories: [usbController, thunderbolt]
+    title: USB ports
+    test: Plug a USB stick or another device into each port you use, including any USB-C or Thunderbolt docks, and check it works.
+
+  - id: cardReader
+    categories: [cardReader]
+    title: Memory card reader
+    test: Insert a memory card and check its files appear.
+
+# Optional: share the live session's hardware report with linux-hardware.org, which is how
+# GreyHaven's community data grows. Commands per distro id, or "default".
+hwProbe:
+  commands:
+    ubuntu:
+      - sudo add-apt-repository universe
+      - sudo apt update
+      - sudo apt install --no-install-recommends hw-probe
+      - sudo -E hw-probe -all -upload
+    default:
+      - sudo apt update
+      - sudo apt install --no-install-recommends hw-probe
+      - sudo -E hw-probe -all -upload
+  note: This uploads a hardware report to linux-hardware.org, where it is public. hw-probe says it removes or scrambles private details such as user names, serial numbers and network addresses before uploading. The website shows a link to your report when it's done.
+  source:
+    title: hw-probe (linux-hardware.org)
+    url: https://github.com/linuxhw/hw-probe

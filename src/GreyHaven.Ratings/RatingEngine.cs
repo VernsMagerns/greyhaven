@@ -115,6 +115,7 @@ public sealed partial class RatingEngine(
         // Approximate kernel data is explained on each affected rating (ApproximationNote), not here.
 
         var recommendation = Recommender.Recommend(profile, rated, summaries, data.Distros, data.SecureBootGuides);
+        var caveatList = caveats.Select(c => c.Caveat).ToList();
         return new CompatibilityReport
         {
             Profile = profile,
@@ -122,11 +123,12 @@ public sealed partial class RatingEngine(
             Components = rated,
             Recommendation = recommendation,
             SelectedPath = recommendation.DefaultPath,
-            Caveats = caveats.Select(c => c.Caveat).ToList(),
+            Caveats = caveatList,
+            LiveUsbGuides = LiveUsbGuides.Build(profile, rated, summaries, caveatList, data),
             DataNotes = dataNotes.Distinct().ToList(),
             ContextNotes = WindowsNotes.For(profile.System, data.Windows, today),
             Data = freshness,
-            GeneratedAt = _time.GetUtcNow(),
+            GeneratedAt = _time.GetLocalNow(),
         };
     }
 

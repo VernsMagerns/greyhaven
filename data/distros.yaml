@@ -130,6 +130,13 @@ distros:
         name: Cinnamon
         isoKernel: mint-6.14.0-37
     updatesKernel: mint-6.14.0-37
+    liveUsb:
+      makeUsb:
+        title: Linux Mint Installation Guide - Create the bootable media
+        url: https://linuxmint-installation-guide.readthedocs.io/en/latest/burn.html
+      tryIt:
+        title: Linux Mint Installation Guide - Boot Linux Mint
+        url: https://linuxmint-installation-guide.readthedocs.io/en/latest/boot.html
     # Newer releases appear as new version directories on the official mirror.
     releaseCheck:
       kind: directoryListing
@@ -157,6 +164,13 @@ distros:
         name: Desktop
         isoKernel: ubuntu-7.0.0-30
     updatesKernel: ubuntu-7.0.0-30
+    liveUsb:
+      makeUsb:
+        title: Ubuntu - Create a bootable USB stick with Rufus on Windows
+        url: https://ubuntu.com/tutorials/create-a-usb-stick-on-windows
+      tryIt:
+        title: Ubuntu - Try Ubuntu before you install it
+        url: https://ubuntu.com/tutorials/try-ubuntu-before-you-install
     releaseCheck:
       kind: ubuntuMetaRelease
       url: https://changelogs.ubuntu.com/meta-release-lts
@@ -190,6 +204,10 @@ distros:
         selectWhen: nvidiaGpu
         preinstalledDrivers: [nvidia]
     updatesKernel: pop-7.1.5
+    liveUsb:
+      makeUsb:
+        title: System76 - Live Disk Creation
+        url: https://system76.com/support/articles/live-disk/
     # Pop!_OS's build API: a newer ISO build (which can bring a new kernel) or a newer LTS
     # version both count as a newer release. Edition ids are the API's channel names.
     releaseCheck:

@@ -6,6 +6,7 @@ using GreyHaven.Core.Compatibility;
 using GreyHaven.Core.Scanning;
 using GreyHaven.Core.Serialization;
 using GreyHaven.Ratings;
+using GreyHaven.Reports;
 using GreyHaven.Scan.Windows;
 
 return await CliApp.RunAsync(args);
@@ -37,6 +38,8 @@ namespace GreyHaven.Cli
               --path <kind>       Choose the recommendation path: easy or advanced
                                   (offered when the best distro needs Secure Boot turned off)
               --json              Print the full report as JSON
+              --out <file>        Save the report; the format follows the name: .md (Markdown),
+                                  .html (a single web page) or .json. Can be given more than once.
               --data <dir>        Use compatibility data from this directory
 
             Privacy: scans read device IDs and settings only - never serial numbers,
@@ -78,7 +81,8 @@ namespace GreyHaven.Cli
         {
             var profile = await (await CreateScannerAsync(opts)).ScanAsync();
             var json = GreyHavenJson.Serialize(profile);
-            if (opts.Out is not null) await File.WriteAllTextAsync(opts.Out, json);
+            if (opts.Out.Count > 1) throw new CliException("scan writes one profile file; give --out once.");
+            if (opts.Out.Count == 1) await File.WriteAllTextAsync(opts.Out[0], json);
             Console.WriteLine(opts.Json ? json : ProfileTextFormatter.Format(profile));
             return 0;
         }
@@ -108,9 +112,14 @@ namespace GreyHaven.Cli
                 report = report.WithPath(kind);
             }
 
-            var json = GreyHavenJson.Serialize(report);
-            if (opts.Out is not null) await File.WriteAllTextAsync(opts.Out, json);
-            Console.WriteLine(opts.Json ? json : ReportTextFormatter.Format(report, opts.Distro));
+            foreach (var file in opts.Out)
+            {
+                var format = ReportExporter.FormatFromPath(file) ?? throw new CliException($"Can't tell the format of '{file}'. Use a name ending in .md, .html or .json.");
+                try { await ReportExporter.SaveAsync(report, file, format, opts.Distro); }
+                catch (ArgumentException ex) { throw new CliException(ex.Message); }
+                if (!opts.Json) Console.Error.WriteLine($"Saved {file}");
+            }
+            Console.WriteLine(opts.Json ? ReportExporter.Render(report, ReportFormat.Json) : ReportTextFormatter.Format(report, opts.Distro));
             return 0;
         }
 
@@ -187,12 +196,13 @@ namespace GreyHaven.Cli
 
     internal sealed class CliException(string message) : Exception(message);
 
-    internal sealed record Options(string? Sample, string? Raw, bool Json, string? Out, string? DumpRaw, string? SamplesDir,
+    internal sealed record Options(string? Sample, string? Raw, bool Json, IReadOnlyList<string> Out, string? DumpRaw, string? SamplesDir,
         bool Offline = false, string? Distro = null, string? DataDir = null, string? Path = null)
     {
         public static Options Parse(string[] args)
         {
-            string? sample = null, raw = null, @out = null, dumpRaw = null, samplesDir = null, distro = null, dataDir = null, path = null;
+            var @out = new List<string>();
+            string? sample = null, raw = null, dumpRaw = null, samplesDir = null, distro = null, dataDir = null, path = null;
             var json = false;
             var offline = false;
             for (var i = 0; i < args.Length; i++)
@@ -203,7 +213,7 @@ namespace GreyHaven.Cli
                     case "--sample": sample = Value(); break;
                     case "--raw": raw = Value(); break;
                     case "--json": json = true; break;
-                    case "--out": @out = Value(); break;
+                    case "--out": @out.Add(Value()); break;
                     case "--dump-raw": dumpRaw = Value(); break;
                     case "--samples-dir": samplesDir = Value(); break;
                     case "--offline": offline = true; break;

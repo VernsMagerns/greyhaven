@@ -223,6 +223,34 @@ public sealed record Caveat
     public required string WhatToTest { get; init; }
 }
 
+/// <summary>One thing to try in a live session, e.g. "Wi-Fi: join your network and open a website".</summary>
+public sealed record LiveUsbCheck(string Title, string Test);
+
+/// <summary>How to try a distro from a USB stick on this PC before installing, and what to test.</summary>
+public sealed record LiveUsbGuide
+{
+    public required string DistroId { get; init; }
+    /// <summary>e.g. "Pop!_OS 24.04".</summary>
+    public required string DistroName { get; init; }
+    /// <summary>The download to use, e.g. "NVIDIA ISO".</summary>
+    public required string EditionName { get; init; }
+    public string? Website { get; init; }
+    /// <summary>The distro's official guide to writing the download to a USB stick.</summary>
+    public Source? MakeUsbGuide { get; init; }
+    /// <summary>The distro's official guide to starting the live session, if separate.</summary>
+    public Source? TryItGuide { get; init; }
+    /// <summary>Things to check, for the parts this PC has, plus what can't be judged from Windows.</summary>
+    public IReadOnlyList<LiveUsbCheck> Checks { get; init; } = [];
+    /// <summary>Preparation specific to this PC, e.g. turning Secure Boot off or having the BitLocker recovery key.</summary>
+    public IReadOnlyList<string> BeforeYouStart { get; init; } = [];
+    /// <summary>Parts that need an extra step after installing, so may not fully work in the live session.</summary>
+    public IReadOnlyList<string> ExpectedInLiveSession { get; init; } = [];
+    /// <summary>Optional: commands to share a hardware report with linux-hardware.org.</summary>
+    public IReadOnlyList<string> ShareCommands { get; init; } = [];
+    public string? ShareNote { get; init; }
+    public Source? ShareSource { get; init; }
+}
+
 /// <summary>Background worth knowing when deciding whether to switch, e.g. Windows 10's end of support.</summary>
 public sealed record ContextNote(string Text, Source Source);
 
@@ -238,6 +266,8 @@ public sealed record CompatibilityReport
     public IReadOnlyList<string> DataNotes { get; init; } = [];
     /// <summary>Context about this PC's Windows, shown near the top in calm, plain words.</summary>
     public IReadOnlyList<ContextNote> ContextNotes { get; init; } = [];
+    /// <summary>One live-USB test guide per distro (for the edition picked for this PC).</summary>
+    public IReadOnlyList<LiveUsbGuide> LiveUsbGuides { get; init; } = [];
     public required DataFreshness Data { get; init; }
     public required DateTimeOffset GeneratedAt { get; init; }
 
@@ -249,6 +279,9 @@ public sealed record CompatibilityReport
 
     /// <summary>The distro the chosen path uses, or null if nothing is recommended.</summary>
     public string? SelectedDistroId => SelectedRecommendation?.DistroId;
+
+    /// <summary>The live-USB guide for the chosen path's distro.</summary>
+    public LiveUsbGuide? SelectedLiveUsbGuide => LiveUsbGuides.FirstOrDefault(g => g.DistroId == SelectedDistroId);
 
     /// <summary>Returns a copy with another path selected.</summary>
     public CompatibilityReport WithPath(PathKind kind) =>
