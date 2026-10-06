@@ -21,9 +21,10 @@ The whole session takes **about 45 minutes**. More detail on any check is in
 
 ### Download the test build from GitHub
 
-1. On the Windows PC, open the GreyHaven repository on GitHub in your browser and sign in.
-   It's private, so you need to be signed in to see it.
-2. Click the **Actions** tab near the top.
+1. On the Windows PC, sign in to GitHub in your browser, then open
+   https://github.com/VernsMagerns/greyhaven/actions/workflows/ci.yml?query=branch%3Amain
+   (the repository is private, so you need to be signed in).
+2. You're now on the list of **CI** runs for `main` (the Actions tab, filtered).
 3. Click the newest run at the top of the list. It should have a green tick; if it's still
    running (yellow dot), wait a few minutes.
 4. Scroll to the bottom of the run's page, to **Artifacts**, and click **greyhaven-windows**.
