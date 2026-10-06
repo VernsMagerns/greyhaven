@@ -73,7 +73,7 @@ jobs:
           & $exe scan --raw ci-raw.json --json | Out-Null
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           # Rate the VM's hardware with the bundled data (offline, so CI never hits linux-hardware.org).
-          & $exe rate --raw ci-raw.json --offline --out ci-report.json
+          & $exe rate --raw ci-raw.json --offline --out ci-report.json --out ci-report.html
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - uses: actions/upload-artifact@v4
         with:
@@ -82,6 +82,7 @@ jobs:
             ci-raw.json
             ci-profile.json
             ci-report.json
+            ci-report.html
 
   # Launches the WPF app in demo mode on a Windows VM, walks the main flow, saves screenshots
   # (light and dark) and fails if any control lacks an accessible name. Screenshots are
