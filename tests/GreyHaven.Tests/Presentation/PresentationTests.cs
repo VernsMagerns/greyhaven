@@ -448,6 +448,20 @@ public partial class XamlLintTests
     }
 
     [Fact]
+    public void Content_presenters_dont_bind_their_own_visibility()
+    {
+        // A ContentPresenter's DataContext is its Content, so Visibility="{Binding X}" next to
+        // Content="{Binding X}" looks up X on the content, fails, and stays Visible: an empty,
+        // unnamed control appears. Put the Visibility binding on a wrapper instead.
+        var offenders = Views()
+            .SelectMany(v => ContentPresenterRegex().Matches(v.Xaml).Select(m => (v.File, Tag: m.Value)))
+            .Where(x => x.Tag.Contains("Content=\"{Binding ") && x.Tag.Contains("Visibility=\"{Binding"))
+            .Select(x => $"{x.File}: {x.Tag[..Math.Min(100, x.Tag.Length)]}")
+            .ToList();
+        Assert.Empty(offenders);
+    }
+
+    [Fact]
     public void Icon_glyphs_are_hidden_from_screen_readers()
     {
         // Any element using the icon font must be DecorativeText (paired with a visible text label).
@@ -472,6 +486,9 @@ public partial class XamlLintTests
 
     [GeneratedRegex(@"<Button\b[^>]*>", RegexOptions.Singleline)]
     private static partial Regex ButtonRegex();
+
+    [GeneratedRegex(@"<ContentPresenter\b[^>]*>", RegexOptions.Singleline)]
+    private static partial Regex ContentPresenterRegex();
 
     [GeneratedRegex(@"<[\w:]+\b[^>]*FontFamily=""\{StaticResource IconFont\}""[^>]*>", RegexOptions.Singleline)]
     private static partial Regex IconUseRegex();

@@ -22,8 +22,10 @@
                 <StackPanel>
                     <TextBlock Text="{Binding Title}" Style="{StaticResource Strong}" />
                     <TextBlock Text="{Binding Message}" Style="{StaticResource Body}" Margin="0,4,0,0" />
-                    <ContentPresenter Content="{Binding Link}" ContentTemplate="{StaticResource LinkTemplate}" Margin="0,6,0,0"
-                                      Visibility="{Binding Link, Converter={StaticResource HasValueToVisibility}}" />
+                    <!-- Visibility on a wrapper: a ContentPresenter's own bindings see its Content, not the notice. -->
+                    <Border Margin="0,6,0,0" Visibility="{Binding Link, Converter={StaticResource HasValueToVisibility}}">
+                        <ContentPresenter Content="{Binding Link}" ContentTemplate="{StaticResource LinkTemplate}" />
+                    </Border>
                 </StackPanel>
             </Border>
         </DataTemplate>
@@ -233,8 +235,9 @@
                                 <StackPanel>
                                     <TextBlock Text="Secure Boot needs to be turned off" Style="{StaticResource Strong}" />
                                     <TextBlock Text="{Binding SecureBootNotice}" Style="{StaticResource Body}" Margin="0,4,0,8" />
-                                    <ContentPresenter Content="{Binding Guide}" ContentTemplate="{StaticResource LinkTemplate}"
-                                                      Visibility="{Binding Guide, Converter={StaticResource HasValueToVisibility}}" />
+                                    <Border Visibility="{Binding Guide, Converter={StaticResource HasValueToVisibility}}">
+                                        <ContentPresenter Content="{Binding Guide}" ContentTemplate="{StaticResource LinkTemplate}" />
+                                    </Border>
                                 </StackPanel>
                             </Border>
                             <TextBlock Text="{Binding DownloadText}" Style="{StaticResource Secondary}" Margin="0,12,0,0" />
