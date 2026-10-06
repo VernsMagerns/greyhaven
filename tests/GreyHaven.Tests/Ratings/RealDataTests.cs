@@ -79,6 +79,28 @@ public class RealDataTests
         Assert.Empty(dupes);
     }
 
+    [Theory]
+    [MemberData(nameof(GreyHaven.Tests.Scanning.SampleProfileTests.SampleNames), MemberType = typeof(GreyHaven.Tests.Scanning.SampleProfileTests))]
+    public async Task Reports_never_contain_placeholder_links(string sample)
+    {
+        // The full report includes every path's guide link, whichever path is selected.
+        var json = Core.Serialization.GreyHavenJson.Serialize(await Rate(sample));
+        Assert.DoesNotContain("OWNER/", json);
+    }
+
+    [Fact]
+    public async Task General_secure_boot_guide_never_links_a_placeholder()
+    {
+        // A custom-built PC whose motherboard maker isn't recognised gets GreyHaven's own guide.
+        var profile = await SampleProfiles.Open("nvidia-desktop").ScanAsync();
+        profile = profile with { System = profile.System with { BoardManufacturer = "ASRock" } };
+        var r = await new RatingEngine(Data.Value).RateAsync(profile, new RatingOptions { UseOnlineLookups = false });
+
+        var guide = r.Recommendation.Get(PathKind.Advanced)!.SecureBootGuide!;
+        Assert.False(guide.FromManufacturer);
+        Assert.DoesNotContain("OWNER/", Core.Serialization.GreyHavenJson.Serialize(r));
+    }
+
     [Fact]
     public async Task Nvidia_desktop_same_named_parts_are_told_apart()
     {

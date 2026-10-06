@@ -1,12 +1,16 @@
 name: CI
 
 on:
-  push:
-    branches: [main]
+  push:          # every branch, so every push has a downloadable Windows build
   pull_request:
 
 permissions:
   contents: read
+
+# A newer push to the same branch cancels the older run (saves Actions minutes).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -22,6 +26,30 @@ jobs:
           global-json-file: global.json
       - run: dotnet build -c Release
       - run: dotnet test -c Release --no-build --logger "console;verbosity=normal"
+
+  # Builds the Windows app and CLI (self-contained: nothing to install on the PC) and uploads
+  # them as the "greyhaven-windows" artifact: open the workflow run on GitHub, scroll to
+  # Artifacts and download. Cross-built on Linux, which is faster and uses fewer minutes.
+  # The release check fails the job if a placeholder (e.g. the GitHub repo name) would ship.
+  windows-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Build Windows app and CLI
+        run: ./tools/publish-windows.sh
+      - name: Release check (no placeholders)
+        run: ./tools/release-check.sh artifacts/windows
+      - uses: actions/upload-artifact@v4
+        with:
+          name: greyhaven-windows
+          path: artifacts/windows
+          # Each build is ~100 MB zipped. Private repos on GitHub Free include 500 MB of artifact
+          # storage, so builds are kept 5 days; re-run the workflow to rebuild an older commit.
+          retention-days: 5
+          if-no-files-found: error
 
   # Runs the real WMI/registry scanner on a Windows VM. A VM is not real hardware, and
   # GitHub's runners run as administrator, so this does NOT prove non-admin behaviour or
