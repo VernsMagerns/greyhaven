@@ -124,7 +124,7 @@ ol.steps { padding-left: 22px; }
 :root[data-brand="allotment"] button.plain { border-radius: 999px; }
 :root[data-brand="allotment"] button.accent { border-radius: 999px; }
 /* Market Day: stickers with thick outlines and hard shadows. */
-:root[data-brand="market"] { --radius: 12px; --radius-small: 8px; --border-width: 2.5px; --shadow: 4px 4px 0 var(--gh-card-border); }
+:root[data-brand="market"] { --radius: 12px; --radius-small: 8px; --border-width: 2.5px; --shadow: 4px 4px 0 var(--gh-shadow-colour, var(--gh-card-border)); }
 :root[data-brand="market"] .score-pill { border: 2.5px solid var(--gh-card-border); transform: rotate(-4deg); }
 :root[data-brand="market"] .tag { background: var(--gh-notice-warning); border-width: 2px; }
 

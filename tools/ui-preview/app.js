@@ -52,7 +52,7 @@ function applyLook() {
   remember("gh-brand", brandBox.value);
   remember("gh-theme", themeBox.value);
 }
-brandBox.value = query.get("brand") || recall("gh-brand") || BRANDS[0].id;
+brandBox.value = query.get("brand") || recall("gh-brand") || "market"; // chosen 2026-10-06
 themeBox.value = query.get("theme") || recall("gh-theme") || "system";
 brandBox.addEventListener("change", () => { applyLook(); rerender(); });
 themeBox.addEventListener("change", applyLook);
@@ -437,11 +437,11 @@ function art(size) {
       <svg viewBox="0 0 260 220" width="${w}" height="${h}">
         <defs><pattern id="dots-${size}" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="3" cy="3" r="2" fill="var(--gh-deco-4)" opacity=".35"/></pattern></defs>
         <rect x="0" y="0" width="260" height="220" fill="url(#dots-${size})"/>
-        <rect x="38" y="48" width="150" height="80" rx="10" fill="var(--gh-deco-4)"/>
+        <rect x="38" y="48" width="150" height="80" rx="10" fill="var(--gh-shadow-colour, var(--gh-deco-4))"/>
         <rect x="30" y="40" width="150" height="80" rx="10" fill="var(--gh-deco-2)" stroke="var(--gh-deco-4)" stroke-width="4"/>
         <circle cx="30" cy="80" r="10" fill="var(--gh-page)" stroke="var(--gh-deco-4)" stroke-width="4"/>
         <circle cx="180" cy="80" r="10" fill="var(--gh-page)" stroke="var(--gh-deco-4)" stroke-width="4"/>
-        <circle cx="198" cy="158" r="42" fill="var(--gh-deco-4)"/>
+        <circle cx="198" cy="158" r="42" fill="var(--gh-shadow-colour, var(--gh-deco-4))"/>
         <circle cx="192" cy="152" r="42" fill="var(--gh-deco-1)" stroke="var(--gh-deco-4)" stroke-width="4"/>
         <path d="M172 152 l14 14 l26 -28" stroke="var(--gh-deco-4)" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>`;

@@ -3,63 +3,202 @@
     "id": "terracotta",
     "name": "Terracotta Block",
     "tagline": "Urban and solid: warm brick, cream walls, rooftop shapes.",
-    "headingFont": { "family": "Bricolage Grotesque", "weights": "600;800", "licence": "SIL Open Font License 1.1" },
-    "bodyFont": { "family": "Atkinson Hyperlegible", "weights": "400;700", "licence": "SIL Open Font License 1.1" },
+    "headingFont": {
+      "family": "Bricolage Grotesque",
+      "weights": "600;800",
+      "licence": "SIL Open Font License 1.1"
+    },
+    "bodyFont": {
+      "family": "Atkinson Hyperlegible",
+      "weights": "400;700",
+      "licence": "SIL Open Font License 1.1"
+    },
     "illustration": "Flat geometric city shapes: rooftops, arches and windows built from simple blocks, in brick, mustard and green. Square corners, no outlines.",
     "palette": {
       "light": {
-        "page": "#F6EEE2", "card": "#FFFBF5", "cardBorder": "#8C7765", "text": "#2A1E16", "textSecondary": "#5B4A3D",
-        "accent": "#A8401C", "onAccent": "#FFFFFF", "works": "#2D6630", "extraStep": "#1C5A73", "partial": "#855300",
-        "unsupported": "#A1262B", "unknown": "#5B4A3D", "noticeInfo": "#E8EFE0", "noticeWarning": "#FAE6C8", "commandBackground": "#F0E7DA"
+        "page": "#F6EEE2",
+        "card": "#FFFBF5",
+        "cardBorder": "#8C7765",
+        "text": "#2A1E16",
+        "textSecondary": "#5B4A3D",
+        "accent": "#A8401C",
+        "onAccent": "#FFFFFF",
+        "works": "#2D6630",
+        "extraStep": "#1C5A73",
+        "partial": "#855300",
+        "unsupported": "#A1262B",
+        "unknown": "#5B4A3D",
+        "noticeInfo": "#E8EFE0",
+        "noticeWarning": "#FAE6C8",
+        "commandBackground": "#F0E7DA"
       },
       "dark": {
-        "page": "#1D1915", "card": "#29231E", "cardBorder": "#908172", "text": "#F8F0E5", "textSecondary": "#D4C6B6",
-        "accent": "#F2936A", "onAccent": "#1D1915", "works": "#8FCB7E", "extraStep": "#82C8E2", "partial": "#F2C35A",
-        "unsupported": "#FF9E92", "unknown": "#D4C6B6", "noticeInfo": "#2B3326", "noticeWarning": "#3C2D1C", "commandBackground": "#15120F"
+        "page": "#1D1915",
+        "card": "#29231E",
+        "cardBorder": "#908172",
+        "text": "#F8F0E5",
+        "textSecondary": "#D4C6B6",
+        "accent": "#F2936A",
+        "onAccent": "#1D1915",
+        "works": "#8FCB7E",
+        "extraStep": "#82C8E2",
+        "partial": "#F2C35A",
+        "unsupported": "#FF9E92",
+        "unknown": "#D4C6B6",
+        "noticeInfo": "#2B3326",
+        "noticeWarning": "#3C2D1C",
+        "commandBackground": "#15120F"
       }
     },
-    "deco": { "light": ["#C4552A", "#E3A63B", "#4E7A3E", "#F1D9B5"], "dark": ["#D9683C", "#E8B04A", "#6E9A5C", "#4A3A2C"] }
+    "deco": {
+      "light": [
+        "#C4552A",
+        "#E3A63B",
+        "#4E7A3E",
+        "#F1D9B5"
+      ],
+      "dark": [
+        "#D9683C",
+        "#E8B04A",
+        "#6E9A5C",
+        "#4A3A2C"
+      ]
+    }
   },
   {
     "id": "allotment",
     "name": "Sunny Allotment",
     "tagline": "Whimsical and friendly: mustard sun, leafy greens, soft round shapes.",
-    "headingFont": { "family": "Fraunces", "weights": "600;800", "licence": "SIL Open Font License 1.1" },
-    "bodyFont": { "family": "Nunito", "weights": "400;700", "licence": "SIL Open Font License 1.1" },
+    "headingFont": {
+      "family": "Fraunces",
+      "weights": "600;800",
+      "licence": "SIL Open Font License 1.1"
+    },
+    "bodyFont": {
+      "family": "Nunito",
+      "weights": "400;700",
+      "licence": "SIL Open Font License 1.1"
+    },
     "illustration": "Hand-drawn-feeling round blobs, a big sun, sprouting leaves and wavy garden rows, in mustard, leaf green and clay. Soft, rounded corners everywhere.",
     "palette": {
       "light": {
-        "page": "#FFF7E4", "card": "#FFFFFF", "cardBorder": "#857B57", "text": "#232114", "textSecondary": "#57533D",
-        "accent": "#3B6620", "onAccent": "#FFFFFF", "works": "#2C661D", "extraStep": "#255A85", "partial": "#855200",
-        "unsupported": "#9E3220", "unknown": "#57533D", "noticeInfo": "#EDF2DA", "noticeWarning": "#FFE8A6", "commandBackground": "#F5EED6"
+        "page": "#FFF7E4",
+        "card": "#FFFFFF",
+        "cardBorder": "#857B57",
+        "text": "#232114",
+        "textSecondary": "#57533D",
+        "accent": "#3B6620",
+        "onAccent": "#FFFFFF",
+        "works": "#2C661D",
+        "extraStep": "#255A85",
+        "partial": "#855200",
+        "unsupported": "#9E3220",
+        "unknown": "#57533D",
+        "noticeInfo": "#EDF2DA",
+        "noticeWarning": "#FFE8A6",
+        "commandBackground": "#F5EED6"
       },
       "dark": {
-        "page": "#1A1C13", "card": "#25291B", "cardBorder": "#8E8C6F", "text": "#FBF6E3", "textSecondary": "#D7D2B5",
-        "accent": "#C3DE78", "onAccent": "#1A1C13", "works": "#9CD680", "extraStep": "#8DC8F0", "partial": "#F5C94F",
-        "unsupported": "#FFA08A", "unknown": "#D7D2B5", "noticeInfo": "#2A321F", "noticeWarning": "#3A3114", "commandBackground": "#14160E"
+        "page": "#1A1C13",
+        "card": "#25291B",
+        "cardBorder": "#8E8C6F",
+        "text": "#FBF6E3",
+        "textSecondary": "#D7D2B5",
+        "accent": "#C3DE78",
+        "onAccent": "#1A1C13",
+        "works": "#9CD680",
+        "extraStep": "#8DC8F0",
+        "partial": "#F5C94F",
+        "unsupported": "#FFA08A",
+        "unknown": "#D7D2B5",
+        "noticeInfo": "#2A321F",
+        "noticeWarning": "#3A3114",
+        "commandBackground": "#14160E"
       }
     },
-    "deco": { "light": ["#F2B72E", "#6E9B3A", "#C7663A", "#FBE3A0"], "dark": ["#E3A92A", "#7FA94A", "#C7663A", "#3D3A22"] }
+    "deco": {
+      "light": [
+        "#F2B72E",
+        "#6E9B3A",
+        "#C7663A",
+        "#FBE3A0"
+      ],
+      "dark": [
+        "#E3A92A",
+        "#7FA94A",
+        "#C7663A",
+        "#3D3A22"
+      ]
+    }
   },
   {
     "id": "market",
     "name": "Market Day",
     "tagline": "Poppy and bold: sticker shapes, thick outlines, tomato and butter yellow.",
-    "headingFont": { "family": "Rubik", "weights": "600;800", "licence": "SIL Open Font License 1.1" },
-    "bodyFont": { "family": "Lexend", "weights": "400;600", "licence": "SIL Open Font License 1.1" },
+    "headingFont": {
+      "family": "Rubik",
+      "weights": "600;800",
+      "licence": "SIL Open Font License 1.1"
+    },
+    "bodyFont": {
+      "family": "Lexend",
+      "weights": "400;600",
+      "licence": "SIL Open Font License 1.1"
+    },
     "illustration": "Stickers and ticket stubs with thick dark outlines and hard offset shadows, plus halftone dots. Cards look like stickers stuck on paper.",
     "palette": {
       "light": {
-        "page": "#F3EDE0", "card": "#FFFFFF", "cardBorder": "#1F1B16", "text": "#1F1B16", "textSecondary": "#52473B",
-        "accent": "#B2361A", "onAccent": "#FFFFFF", "works": "#2B6630", "extraStep": "#0D5986", "partial": "#845000",
-        "unsupported": "#9E1C20", "unknown": "#52473B", "noticeInfo": "#E1EDD8", "noticeWarning": "#FFE08A", "commandBackground": "#EEE6D5"
+        "page": "#F3EDE0",
+        "card": "#FFFFFF",
+        "cardBorder": "#1F1B16",
+        "text": "#1F1B16",
+        "textSecondary": "#52473B",
+        "accent": "#B2361A",
+        "onAccent": "#FFFFFF",
+        "works": "#2B6630",
+        "extraStep": "#0D5986",
+        "partial": "#845000",
+        "unsupported": "#9E1C20",
+        "unknown": "#52473B",
+        "noticeInfo": "#E1EDD8",
+        "noticeWarning": "#FFE08A",
+        "commandBackground": "#EEE6D5"
       },
       "dark": {
-        "page": "#17150F", "card": "#24211A", "cardBorder": "#F3EDE0", "text": "#F8F3E6", "textSecondary": "#D9CFBC",
-        "accent": "#FF8F63", "onAccent": "#17150F", "works": "#95D58C", "extraStep": "#82C9F3", "partial": "#FFCC5A",
-        "unsupported": "#FF9C92", "unknown": "#D9CFBC", "noticeInfo": "#21301E", "noticeWarning": "#3A2E11", "commandBackground": "#110F0A"
+        "page": "#0D1218",
+        "card": "#18212B",
+        "cardBorder": "#8C9BAB",
+        "text": "#F3EFE7",
+        "textSecondary": "#B8C3CE",
+        "accent": "#FF9065",
+        "onAccent": "#0D1218",
+        "works": "#8FD69B",
+        "extraStep": "#8DCBF5",
+        "partial": "#FFCF5C",
+        "unsupported": "#FF9F95",
+        "unknown": "#B8C3CE",
+        "noticeInfo": "#1B2B2A",
+        "noticeWarning": "#2D2616",
+        "commandBackground": "#111820"
       }
     },
-    "deco": { "light": ["#E0532B", "#FFC93C", "#3E8A4A", "#1F1B16"], "dark": ["#FF8F63", "#FFCC5A", "#5FAE6A", "#F3EDE0"] }
+    "deco": {
+      "light": [
+        "#E0532B",
+        "#FFC93C",
+        "#3E8A4A",
+        "#1F1B16"
+      ],
+      "dark": [
+        "#FF7A4D",
+        "#FFC93C",
+        "#5FAE6A",
+        "#C5CFD9"
+      ]
+    },
+    "shadow": {
+      "light": "#1F1B16",
+      "dark": "#05080B"
+    }
   }
 ]
