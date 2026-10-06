@@ -270,7 +270,7 @@ function showResults(focus) {
   screen.querySelectorAll('input[name="distro"]').forEach(i => i.addEventListener("change", () => {
     state.distro = i.value; showResults(false); $(`input[name="distro"][value="${i.value}"]`).focus();
   }));
-  $("#next").addEventListener("click", () => alert("The step-by-step walkthrough comes in the next round of the preview."));
+  $("#next").addEventListener("click", () => showWalkthrough(0));
   $("#save").addEventListener("click", saveReport);
   $("#showsaved").addEventListener("click", () => window.open(state.saved.href, "_blank", "noopener"));
   $("#again").addEventListener("click", showStart);
@@ -460,6 +460,14 @@ function init() {
 
   // Shortcuts: ?sample=..&screen=results|working&path=advanced&brand=market&theme=dark&open=all
   if (query.get("screen") === "working") { scan(true); return; }
+  if (query.get("screen") === "walk" || query.get("screen") === "allsteps") {
+    loadReport();
+    if (state.report.recommendation.paths.some(p => p.kind === query.get("path"))) { state.path = query.get("path"); state.distro = selectedDistroId(); }
+    if (query.get("install")) { walk.install = query.get("install"); walk.confirmErase = query.get("confirm") === "1"; }
+    if (query.get("screen") === "allsteps") showAllSteps(); else showWalkthrough(Number(query.get("step") || 1) - 1);
+    if (query.get("open") === "all") screen.querySelectorAll("details").forEach(d => (d.open = true));
+    return;
+  }
   if (query.get("screen") === "results") {
     loadReport();
     if (state.report.recommendation.paths.some(p => p.kind === query.get("path"))) { state.path = query.get("path"); state.distro = selectedDistroId(); }
@@ -495,4 +503,5 @@ if (query.get("counts")) {
   document.addEventListener("toggle", update, true);
 }
 
-init();
+// walkthrough.js loads after this file and adds the "What's next" screens.
+window.addEventListener("DOMContentLoaded", init);

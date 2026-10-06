@@ -114,6 +114,42 @@ ol.steps { padding-left: 22px; }
 @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(340%); } }
 @media (prefers-reduced-motion: reduce) { .progress::after { animation: none; width: 100%; opacity: .5; } }
 
+/* ---- Walkthrough --------------------------------------------------------------------------- */
+.walk-top { display: flex; justify-content: space-between; gap: 12px; margin: 4px 0 12px; }
+.stepcount { font-weight: 700; color: var(--gh-text-secondary); margin: 0 0 6px; }
+.steps-bar { display: grid; grid-auto-flow: column; gap: 6px; margin-bottom: 14px; }
+.steps-bar span { height: 10px; border-radius: 999px; border: 2px solid var(--gh-card-border); background: var(--gh-card); }
+.steps-bar span.done { background: var(--gh-works); border-color: var(--gh-works); }
+.steps-bar span.now { background: var(--gh-accent); border-color: var(--gh-accent); }
+.step-body { font-size: 17px; }
+.step-body h3 { margin-top: 22px; }
+.walk-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 28px 0 18px; flex-wrap: wrap; }
+.tip { background: var(--gh-notice-info); border: var(--border-width) solid var(--gh-card-border); border-radius: var(--radius); padding: 12px 16px; margin: 18px 0; font-size: 15px; }
+.tip p:last-child { margin: 0; }
+.warn-box { background: var(--gh-notice-warning); border: var(--border-width) solid var(--gh-card-border); border-radius: var(--radius); padding: 12px 16px; margin: 12px 0; }
+.big-warn { border-width: 4px; font-size: 18px; }
+ul.todo { list-style: none; padding: 0; }
+ul.todo > li { padding: 8px 0; border-bottom: 1px solid var(--gh-card-border); }
+ul.todo > li > label { display: flex; gap: 12px; align-items: flex-start; }
+ul.todo input { width: 22px; height: 22px; margin-top: 3px; flex: none; accent-color: var(--gh-accent); }
+.picture { margin: 0; }
+.picture-frame { display: grid; place-items: center; height: 140px; background: var(--gh-command-background); border: var(--border-width) dashed var(--gh-card-border); border-radius: var(--radius); }
+.picture figcaption { font-size: 14px; margin-top: 4px; }
+ol.picture-steps { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; padding: 0; list-style: none; counter-reset: pic; }
+ol.picture-steps li { counter-increment: pic; }
+ol.picture-steps li > p::before { content: counter(pic) ". "; font-weight: 800; }
+ol.picture-steps li > p { margin-top: 6px; font-weight: 600; }
+.keycard { text-align: center; }
+.bigkey { font-family: var(--gh-font-heading); font-size: 40px; font-weight: 800; margin: 0; }
+.sim .progress-fill { height: 12px; border: 2px solid var(--gh-card-border); border-radius: 999px; overflow: hidden; margin: 12px 0 6px; }
+.sim .progress-fill span { display: block; height: 100%; width: 0; background: var(--gh-works); transition: width .15s; }
+@media print {
+  .preview-banner, .topbar, .walk-top, .demo-banner, .counter { display: none; }
+  .window { border: 0; box-shadow: none; margin: 0; }
+  .printstep { break-inside: avoid; box-shadow: none; }
+  :root { --gh-page: #fff; --gh-card: #fff; }
+}
+
 /* ---- Brand shapes -------------------------------------------------------------------------- */
 /* Terracotta Block: square, solid, a brick-coloured top edge on cards. */
 :root[data-brand="terracotta"] { --radius: 2px; --radius-small: 2px; }

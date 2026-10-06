@@ -20,7 +20,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-STATIC = ["index.html", "app.js", "app.css"]
+STATIC = ["index.html", "app.js", "walkthrough.js", "app.css"]
 
 # WCAG 2.1 AA: normal text 4.5:1; borders and other UI parts 3:1.
 TEXT_TOKENS = ["text", "textSecondary", "accent", "works", "extraStep", "partial", "unsupported", "unknown"]
