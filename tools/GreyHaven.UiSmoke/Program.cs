@@ -40,6 +40,12 @@ try
         Console.WriteLine($"saved {file}");
     }
 
+    static bool IsScrollBarPart(AutomationElement e)
+    {
+        try { return e.Parent?.ControlType == ControlType.ScrollBar; }
+        catch { return false; }
+    }
+
     void CheckNames(string screen)
     {
         var interactive = new[] { ControlType.Button, ControlType.RadioButton, ControlType.CheckBox, ControlType.ComboBox, ControlType.Hyperlink, ControlType.Edit, ControlType.Group };
@@ -49,6 +55,9 @@ try
             try { type = e.ControlType; } catch { continue; }
             if (!interactive.Contains(type) || !e.IsEnabled) continue;
             if (type == ControlType.Group && !e.Patterns.ExpandCollapse.IsSupported) continue; // only expanders
+            // WPF's own scrollbar parts (PageUp/PageDown/LineUp...) are unnamed buttons inside a
+            // ScrollBar; screen readers announce the scrollbar, not these parts.
+            if (IsScrollBarPart(e)) continue;
             if (string.IsNullOrWhiteSpace(e.Name)) problems.Add($"{screen}: {type} without an accessible name (AutomationId '{e.AutomationId}')");
         }
     }

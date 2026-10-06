@@ -69,7 +69,7 @@ public sealed partial class PathOptionViewModel : ObservableObject
             // GreyHaven's own guide ships with the app: open that copy, so it works offline
             // and whatever the repository's visibility.
             var target = g.LocalPath is not null
-                ? Path.Combine(AppContext.BaseDirectory, g.LocalPath)
+                ? Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, g.LocalPath.Replace('/', Path.DirectorySeparatorChar)))
                 : g.Url;
             Guide = new LinkViewModel(g.FromManufacturer ? $"How to turn off Secure Boot: {g.Title}" : $"How to turn off Secure Boot (GreyHaven guide)", target, services);
         }

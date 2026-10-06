@@ -93,11 +93,9 @@ jobs:
   # Launches the WPF app in demo mode on a Windows VM, walks the main flow, saves screenshots
   # (light and dark) and fails if any control lacks an accessible name. Screenshots are
   # downloadable from the workflow run, so the UI can be reviewed without a Windows PC.
-  # continue-on-error until this job has passed once on a real runner (it was written on Linux).
   ui-smoke:
     if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     runs-on: windows-latest
-    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
