@@ -11,9 +11,10 @@ The whole session takes **about 45 to 50 minutes**. More detail on any check is 
 | | |
 |---|---|
 | Date | |
-| Windows version (Settings → System → About, "Edition" and "Version") | |
+| Windows version: 10 or 11? (Settings → System → About: "Edition", "Version" and "OS build") | |
+| Real PC or virtual machine? | |
 | PC maker and model, or "custom-built" | |
-| Build used (first line of `START-HERE.txt`) | |
+| Build used (the commit in the release title, also the first line of `START-HERE.txt`) | |
 
 ---
 
@@ -21,14 +22,15 @@ The whole session takes **about 45 to 50 minutes**. More detail on any check is 
 
 ### Download the test build from GitHub
 
-1. On the Windows PC, sign in to GitHub in your browser, then open
-   https://github.com/VernsMagerns/greyhaven/actions/workflows/ci.yml?query=branch%3Amain
-   (the repository is private, so you need to be signed in).
-2. You're now on the list of **CI** runs for `main` (the Actions tab, filtered).
-3. Click the newest run at the top of the list. It should have a green tick; if it's still
-   running (yellow dot), wait a few minutes.
-4. Scroll to the bottom of the run's page, to **Artifacts**, and click **greyhaven-windows**.
+1. On the Windows PC, sign in to GitHub in your browser. The repository is private, so the
+   download only works while you're signed in.
+2. Open this link. It always gives the newest test build, and it doesn't expire:
+   https://github.com/VernsMagerns/greyhaven/releases/download/latest-test/greyhaven-windows.zip
    Your browser downloads `greyhaven-windows.zip` (about 100 MB).
+3. To see which build you got, open the release page:
+   https://github.com/VernsMagerns/greyhaven/releases/tag/latest-test
+   Its title says "Latest test build" and the commit, like `1dd826f`. Write that in the table
+   at the top of this form.
 
 ### Unzip it
 

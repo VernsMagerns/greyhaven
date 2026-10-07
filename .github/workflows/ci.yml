@@ -51,9 +51,10 @@ jobs:
         with:
           name: greyhaven-windows
           path: artifacts/windows
-          # Each build is ~100 MB zipped. Private repos on GitHub Free include 500 MB of artifact
-          # storage, so builds are kept 5 days; re-run the workflow to rebuild an older commit.
-          retention-days: 5
+          # Each build is ~100 MB zipped, and artifacts count against the 500 MB of Actions storage on
+          # GitHub Free. Kept 2 days: just long enough for the release job below to pick it up.
+          # The lasting download is the "latest-test" pre-release.
+          retention-days: 2
           if-no-files-found: error
 
   # Runs the real WMI/registry scanner on a Windows VM. A VM is not real hardware, and
@@ -84,6 +85,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: windows-vm-scan
+          retention-days: 14
           path: |
             ci-raw.json
             ci-profile.json
@@ -109,4 +111,44 @@ jobs:
         if: always()
         with:
           name: ui-screenshots
+          retention-days: 14
           path: ui-screenshots
+
+  # Every fully green push to main replaces the "latest-test" pre-release, so testers always have
+  # one download link that never expires:
+  #   https://github.com/<owner>/<repo>/releases/download/latest-test/greyhaven-windows.zip
+  # Release files don't count against Actions storage. The release is updated in place (file
+  # replaced, tag moved) rather than deleted, so the link keeps working between builds.
+  release-test-build:
+    needs: [test, windows-build, windows-live-scan, ui-smoke]
+    if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: greyhaven-windows
+          path: greyhaven-windows
+      - name: Zip the build
+        run: cd greyhaven-windows && zip -qr ../greyhaven-windows.zip .
+      - name: Update the latest-test pre-release
+        run: |
+          short=${GITHUB_SHA::7}
+          when=$(TZ=America/Los_Angeles date '+%Y-%m-%d %H:%M %Z')
+          notes="Test build of commit $short, built $when. Not for general use: unsigned, and only for testing.
+
+          Download greyhaven-windows.zip below, then follow docs/windows-results.md.
+          This pre-release is replaced automatically by every passing build on main."
+          if gh release view latest-test >/dev/null 2>&1; then
+            # Move the tag to this commit, then replace the file and notes.
+            gh api -X PATCH "repos/$GH_REPO/git/refs/tags/latest-test" -f sha="$GITHUB_SHA" -F force=true
+            gh release upload latest-test greyhaven-windows.zip --clobber
+            gh release edit latest-test --title "Latest test build ($short)" --notes "$notes" --prerelease
+          else
+            gh release create latest-test greyhaven-windows.zip --target "$GITHUB_SHA" --prerelease --latest=false \
+              --title "Latest test build ($short)" --notes "$notes"
+          fi
