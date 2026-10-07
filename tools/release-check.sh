@@ -20,6 +20,16 @@ else
   echo "ok: no placeholder links in README, docs, data, samples or $out"
 fi
 
+# Going public: no placeholders may remain in the public-facing documents.
+public=$(sed -n 's/.*IsRepositoryPublic = \(true\|false\);.*/\1/p' src/GreyHaven.Core/GreyHavenInfo.cs)
+if [ "$public" = "true" ]; then
+  if grep -n "CONTACT METHOD\|Fill in at application time" CODE_OF_CONDUCT.md docs/*.md 2>/dev/null; then
+    echo "FAIL: placeholders above must be filled in before the repository is public."; fail=1
+  else
+    echo "ok: public-facing documents have no placeholders"
+  fi
+fi
+
 # The throwaway design preview (tools/ui-preview) must never ship.
 if [ -d "$out" ] && grep -rIl "Design preview" "$out" 2>/dev/null | grep -q .; then
   echo "FAIL: the design preview (tools/ui-preview) is in $out."; fail=1

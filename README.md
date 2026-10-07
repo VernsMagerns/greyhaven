@@ -72,11 +72,20 @@ unprocessed scan data; it can be replayed anywhere with `greyhaven scan --raw <f
 | `docs/scoring.md` | How ratings and the summary score are calculated |
 | `docs/secure-boot.md` | General guide to turning Secure Boot off and back on |
 | `docs/windows-validation.md` | Checks that need a real Windows PC |
+| `docs/going-public.md` | Step-by-step checklist for making the repository public and getting code signing |
+| `tools/illustrations` | Generates the walkthrough pictures (SVG for reports, XAML for the app) |
 | `docs/windows-versions.md` | Windows 10 vs 11: what CI covers, differences, testing in a VM |
 | `docs/windows-results.md` | Step-by-step Windows test session and results form |
 | `assets/fonts` | Brand fonts Rubik and Lexend (SIL Open Font License 1.1), used by the app and HTML reports |
 | `tools/ui-preview` | Throwaway browser mock-up of the app's flow for design review; never shipped |
 | `tools/release-check.sh` | Fails if a placeholder (e.g. the GitHub repo name) would ship |
+
+## Contributing, privacy and security
+
+- [CONTRIBUTING.md](CONTRIBUTING.md): how to help, including fixing ratings without code.
+- [PRIVACY.md](PRIVACY.md): exactly what GreyHaven reads, sends and keeps. No tracking.
+- [SECURITY.md](SECURITY.md): report security problems privately.
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## License
 
