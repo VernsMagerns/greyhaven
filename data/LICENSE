@@ -17,3 +17,13 @@ file's header records exactly where it came from (package URL and SHA-256):
 
 Hardware ID lists are factual data. They are redistributed here with attribution to
 their upstream projects, and GreyHaven makes no additional claim over them.
+
+App compatibility data (apps/):
+
+- apps/*.yaml (hand-written app ratings and Linux alternatives): CC-BY-4.0, like the rest of
+  the curated data. Every claim cites its source.
+- apps/anticheat.json: imported from Are We Anti-Cheat Yet
+  (https://github.com/AreWeAntiCheatYet/AreWeAntiCheatYet), MIT License; see
+  apps/LICENSE-anticheat.txt.
+- apps/protondb-summary.json.gz: a summary of ProtonDB's report dumps, Open Database License
+  1.0; see apps/LICENSE-protondb.md. Contains information from ProtonDB.
