@@ -52,14 +52,18 @@ public static class HtmlReportWriter
         sb.AppendLine("</head>");
         sb.AppendLine("<body>");
         sb.AppendLine("<main>");
-        foreach (var block in doc.Blocks) WriteBlock(sb, block);
+        var state = new State();
+        foreach (var block in doc.Blocks) WriteBlock(sb, block, state);
         sb.AppendLine("</main>");
         sb.AppendLine("</body>");
         sb.AppendLine("</html>");
         return sb.ToString();
     }
 
-    private static void WriteBlock(StringBuilder sb, Block block)
+    /// <summary>Per-document counters, for unique picture ids.</summary>
+    private sealed class State { public int Pictures; }
+
+    private static void WriteBlock(StringBuilder sb, Block block, State state)
     {
         switch (block)
         {
@@ -88,11 +92,21 @@ public static class HtmlReportWriter
                 foreach (var s in g.Steps)
                 {
                     // The SVG carries its own alt text (role="img" + aria-label). Under forced colours
-                    // it's hidden and the caption remains.
-                    var picture = Illustrations.Svg(s.PictureId) is { } svg
-                        ? $"<div class=\"pic\">{svg}</div>"
-                        : $"<div class=\"frame\" role=\"img\" aria-label=\"Picture coming soon: {E(s.PictureCaption)}\"><span>Picture coming soon</span></div>";
-                    sb.AppendLine($"<li><figure>{picture}<figcaption>{E(s.PictureCaption)}</figcaption></figure><p>{E(s.Text)}</p></li>");
+                    // it's hidden and the caption remains. Pictures enlarge without scripts: the link
+                    // targets the list item (CSS :target), and Close (or Back, or a tap outside)
+                    // goes back to the list.
+                    string picture;
+                    var id = $"pic-{++state.Pictures}";
+                    if (Illustrations.Svg(s.PictureId) is { } svg)
+                    {
+                        var alt = E(Illustrations.Alt(s.PictureId!) ?? s.PictureCaption);
+                        picture = $"<a class=\"zoom\" href=\"#{id}\" aria-label=\"Enlarge picture: {alt}\"><div class=\"pic\">{svg}</div></a>" +
+                                  $"<a class=\"unzoom backdrop\" href=\"#{id}-back\" tabindex=\"-1\" aria-hidden=\"true\"></a>" +
+                                  $"<a class=\"unzoom close\" href=\"#{id}-back\">Close picture</a>";
+                    }
+                    else
+                        picture = $"<div class=\"frame\" role=\"img\" aria-label=\"Picture coming soon: {E(s.PictureCaption)}\"><span>Picture coming soon</span></div>";
+                    sb.AppendLine($"<li id=\"{id}\"><span id=\"{id}-back\" class=\"anchor\"></span><figure>{picture}<figcaption>{E(s.PictureCaption)}</figcaption></figure><p>{E(s.Text)}</p></li>");
                 }
                 sb.AppendLine("</ol>");
                 break;
@@ -129,7 +143,7 @@ public static class HtmlReportWriter
                 break;
             case Details d:
                 sb.AppendLine($"<details><summary>{E(d.Summary)}</summary><div class=\"more\">");
-                foreach (var inner in d.Content) WriteBlock(sb, inner);
+                foreach (var inner in d.Content) WriteBlock(sb, inner, state);
                 sb.AppendLine("</div></details>");
                 break;
         }
@@ -211,6 +225,16 @@ public static class HtmlReportWriter
             ol.pictures li>p::before{content:counter(pic) ". ";font-family:Rubik,sans-serif}
             ol.pictures figure{margin:0}
             .pic svg{display:block;width:100%;height:auto;border-radius:12px;border:2px solid var(--border)}
+            a.zoom{display:block;border-radius:12px;cursor:zoom-in}
+            a.zoom:focus-visible{outline:3px solid var(--text);outline-offset:3px}
+            .unzoom{display:none}
+            li:target{position:static}
+            li:target a.zoom{position:fixed;z-index:3;inset:3.5rem 1rem 1rem;display:grid;place-items:center;cursor:default;pointer-events:none}
+            li:target a.zoom .pic{width:min(100%,calc((100vh - 5rem) * 1.6))}
+            li:target .backdrop{display:block;position:fixed;inset:0;z-index:2;background:rgba(0,0,0,.8);cursor:zoom-out}
+            li:target .close{display:block;position:fixed;z-index:4;top:.75rem;right:1rem;padding:.5rem 1rem;min-height:2.75rem;background:var(--page);color:var(--text);border:2.5px solid var(--border);border-radius:10px;font-weight:600;text-decoration:none}
+            li:target .close:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+            .anchor{display:block;position:relative;top:-1rem}
             figcaption{font-size:.8rem;color:var(--text-secondary);margin-top:.25rem}
             .frame{display:grid;place-items:center;text-align:center;min-height:7.5rem;padding:.5rem;background:var(--command);border:2px dashed var(--border);border-radius:12px;color:var(--text-secondary);font-size:.85rem}
             .table-wrap{overflow-x:auto}
@@ -230,7 +254,7 @@ public static class HtmlReportWriter
             summary:hover{background:var(--command)}
             .more{margin-top:.5rem;padding-left:1rem;border-left:3px solid var(--border)}
             @media (max-width:40rem){section.headline{grid-template-columns:1fr}main{margin:0;border-radius:0}}
-            @media (forced-colors: active){.pic{display:none}summary{color:LinkText}.rating,.callout,.score{forced-color-adjust:auto}.score{border:2px solid CanvasText}main,section.headline,.callout{box-shadow:none}}
+            @media (forced-colors: active){.pic,a.zoom,.unzoom{display:none}summary{color:LinkText}.rating,.callout,.score{forced-color-adjust:auto}.score{border:2px solid CanvasText}main,section.headline,.callout{box-shadow:none}}
 
             """;
     }

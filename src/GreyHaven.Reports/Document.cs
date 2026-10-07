@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using GreyHaven.Core.Compatibility;
 
 namespace GreyHaven.Reports;
@@ -5,6 +6,13 @@ namespace GreyHaven.Reports;
 // A small, format-neutral document. ReportBuilder fills it once; the Markdown and HTML writers
 // render the same content, so the formats can't drift apart.
 
+// "type" tags let the walkthrough be exported as JSON (JourneyJson) for the design preview.
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+[JsonDerivedType(typeof(Text), "text")]
+[JsonDerivedType(typeof(Strong), "strong")]
+[JsonDerivedType(typeof(Link), "link")]
+[JsonDerivedType(typeof(RatingTag), "rating")]
+[JsonDerivedType(typeof(Code), "code")]
 public abstract record Inline;
 public sealed record Text(string Value) : Inline;
 public sealed record Strong(string Value) : Inline;
@@ -18,6 +26,17 @@ public sealed record Code(string Value) : Inline;
 /// <summary>Info: a calm note. Warning: needs care. Tip: "What could go wrong?". Danger: data will be erased.</summary>
 public enum CalloutKind { Info, Warning, Tip, Danger }
 
+[JsonPolymorphic(TypeDiscriminatorPropertyName = "type")]
+[JsonDerivedType(typeof(Heading), "heading")]
+[JsonDerivedType(typeof(Paragraph), "paragraph")]
+[JsonDerivedType(typeof(Callout), "callout")]
+[JsonDerivedType(typeof(ListBlock), "list")]
+[JsonDerivedType(typeof(CommandBlock), "commands")]
+[JsonDerivedType(typeof(Table), "table")]
+[JsonDerivedType(typeof(Details), "details")]
+[JsonDerivedType(typeof(PictureGuide), "pictures")]
+[JsonDerivedType(typeof(ScoreHeadline), "score")]
+[JsonDerivedType(typeof(KeyFact), "keyfact")]
 public abstract record Block;
 public sealed record Heading(int Level, string Text) : Block;
 public sealed record Paragraph(IReadOnlyList<Inline> Content) : Block;

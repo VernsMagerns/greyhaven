@@ -92,6 +92,9 @@ public sealed record ComponentRating
 /// <summary>How much a component matters to the overall score.</summary>
 public enum Importance { Critical, Important, Minor }
 
+/// <summary>How Linux goes on the PC: next to Windows (pick one at each start) or instead of it.</summary>
+public enum InstallChoice { KeepWindows, ReplaceWindows }
+
 public sealed record RatedComponent
 {
     public required HardwareComponent Component { get; init; }
@@ -232,7 +235,10 @@ public sealed record Caveat
 /// <summary>The PC's (or, for custom-built PCs, the motherboard's) maker, from data/makers.yaml.</summary>
 /// <param name="BootMenuKey">Key for the one-time startup menu, e.g. "F12", or an instruction for Surface.</param>
 /// <param name="SupportUrl">The maker's official support page, for BIOS updates.</param>
-public sealed record PcMaker(string Name, string BootMenuKey, string? BootMenuNote, string SupportUrl, bool FromMotherboard);
+/// <param name="SetupKey">The key that opens the startup settings (BIOS setup), e.g. "Delete".</param>
+/// <param name="SecureBootPath">Where Secure Boot is in those settings, e.g. "Settings > Security > Secure Boot".</param>
+public sealed record PcMaker(string Name, string BootMenuKey, string? BootMenuNote, string SupportUrl, bool FromMotherboard,
+    string? SetupKey = null, string? SecureBootPath = null);
 
 /// <summary>One thing to try in a live session, e.g. "Wi-Fi: join your network and open a website".</summary>
 public sealed record LiveUsbCheck(string Title, string Test);
@@ -297,6 +303,12 @@ public sealed record CompatibilityReport
 
     /// <summary>The live-USB guide for the chosen path's distro.</summary>
     public LiveUsbGuide? SelectedLiveUsbGuide => LiveUsbGuides.FirstOrDefault(g => g.DistroId == SelectedDistroId);
+
+    /// <summary>Keep Windows too, or replace it. Chosen at the start of "Get ready"; null until then.</summary>
+    public InstallChoice? SelectedInstall { get; init; }
+
+    /// <summary>Returns a copy with an install choice.</summary>
+    public CompatibilityReport WithInstall(InstallChoice? choice) => this with { SelectedInstall = choice };
 
     /// <summary>Returns a copy with another path selected.</summary>
     public CompatibilityReport WithPath(PathKind kind) =>

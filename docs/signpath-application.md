@@ -19,7 +19,7 @@ exact questions may differ; these answers cover everything SignPath's published 
 | Team | One maintainer, @VernsMagerns, in all three roles: author/committer, reviewer, approver. MFA on GitHub and SignPath. |
 | Code signing policy | https://github.com/VernsMagerns/greyhaven/blob/main/docs/code-signing-policy.md (also linked from the download page) |
 | Privacy policy | https://github.com/VernsMagerns/greyhaven/blob/main/PRIVACY.md |
-| Proprietary components | None written by the project. Uses .NET (MIT), WPF (MIT), CommunityToolkit.Mvvm (MIT), YamlDotNet (MIT), the Rubik and Lexend fonts (SIL OFL 1.1), and the WiX Toolset (see open questions). |
+| Proprietary components | None written by the project. Uses .NET (MIT), WPF (MIT), CommunityToolkit.Mvvm (MIT), YamlDotNet (MIT), QRCoder (MIT), the Rubik and Lexend fonts (SIL OFL 1.1), and the WiX Toolset (see open questions). |
 | Metadata | Product name "GreyHaven", version, and company "GreyHaven contributors" are set on every binary (`Directory.Build.props`). |
 | Reputation | (Fill in at application time: release downloads, stars, links to discussions or reviews.) |
 

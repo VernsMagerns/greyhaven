@@ -65,7 +65,7 @@ No match anywhere → **Unknown**. Names are never used to guess a rating.
 - Installer: WiX Toolset MSI (Start Menu shortcut, uninstaller) wrapped in a single
   `GreyHaven-Setup.exe`, built by GitHub Actions. See section 6.
   Self-contained x64 publish so users don't need .NET installed (~70–90 MB).
-- Libraries: CommunityToolkit.Mvvm, YamlDotNet, SQLite (lookup cache), BouncyCastle (GPG),
+- Libraries: CommunityToolkit.Mvvm, YamlDotNet, QRCoder (phone-guide QR code), SQLite (lookup cache), BouncyCastle (GPG),
   xUnit.
 
 Everything except `Scan.Windows`, `Elevated`, `UsbCreator`'s disk I/O and `App` targets

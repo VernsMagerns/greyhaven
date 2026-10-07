@@ -49,6 +49,11 @@ makers:
     supportUrl: https://www.msi.com/support
     source: https://us.msi.com/faq/motherboard-901
     checked: official 2026-10-06 (support page blocks bots)
+    setupKey: Delete
+    secureBootPath: Settings > Security > Secure Boot
+    # MSI Click BIOS 5. MSI's own FAQ (faq-11370, in secure-boot-guides.yaml) blocks automated
+    # checks; the path was confirmed via search 2026-10-07 and is on the Windows session list.
+    secureBootSource: https://www.fdaytalk.com/msi-click-bios-5-secure-boot/
 
   - name: GIGABYTE
     manufacturers: [gigabyte]

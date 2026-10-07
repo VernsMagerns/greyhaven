@@ -25,6 +25,7 @@ namespace GreyHaven.Cli
               greyhaven rate [scan options]    Scan, then rate every part for Mint, Ubuntu and Pop!_OS
               greyhaven samples                List bundled sample profiles
               greyhaven check-releases         Check for distro releases newer than the bundled data
+              greyhaven qr <text>              Print a QR code as SVG (used by the design preview)
 
             Options for scan:
               --json              Print the profile as JSON instead of a readable summary
@@ -41,6 +42,9 @@ namespace GreyHaven.Cli
               --out <file>        Save the report; the format follows the name: .md (Markdown),
                                   .html (a single web page) or .json. Can be given more than once.
               --data <dir>        Use compatibility data from this directory
+              --install <choice>  Keep Windows too or replace it: keep or replace
+              --journey           Print the step-by-step walkthrough as JSON (for the design preview)
+              --phone-guide <file> Save the take-along guide (trying, installing, after) as a web page
 
             Privacy: scans read device IDs and settings only - never serial numbers,
             user names, host names or MAC addresses. Online lookups send device IDs only.
@@ -58,6 +62,13 @@ namespace GreyHaven.Cli
                 if (args[0] is "--version")
                 {
                     Console.WriteLine($"{GreyHavenInfo.ProductName} {GreyHavenInfo.Version}");
+                    return 0;
+                }
+
+                if (args[0] == "qr")
+                {
+                    if (args.Length != 2) throw new CliException("Usage: greyhaven qr <text>");
+                    Console.WriteLine(QrCode.Svg(args[1]));
                     return 0;
                 }
 
@@ -110,6 +121,23 @@ namespace GreyHaven.Cli
                 if (report.Recommendation.Get(kind) is null)
                     throw new CliException($"This PC has no '{path}' path: it is only offered when the best distro needs Secure Boot turned off.");
                 report = report.WithPath(kind);
+            }
+            if (opts.Install is { } install)
+                report = report.WithInstall(install switch
+                {
+                    "keep" => InstallChoice.KeepWindows,
+                    "replace" => InstallChoice.ReplaceWindows,
+                    _ => throw new CliException("--install must be 'keep' or 'replace'."),
+                });
+            if (opts.PhoneGuide is { } guideFile)
+            {
+                await File.WriteAllTextAsync(guideFile, HtmlReportWriter.Write(PhoneGuideBuilder.Build(report)));
+                if (!opts.Json && !opts.Journey) Console.Error.WriteLine($"Saved {guideFile}");
+            }
+            if (opts.Journey)
+            {
+                Console.WriteLine(JourneyJson.Render(report));
+                return 0;
             }
 
             foreach (var file in opts.Out)
@@ -197,13 +225,15 @@ namespace GreyHaven.Cli
     internal sealed class CliException(string message) : Exception(message);
 
     internal sealed record Options(string? Sample, string? Raw, bool Json, IReadOnlyList<string> Out, string? DumpRaw, string? SamplesDir,
-        bool Offline = false, string? Distro = null, string? DataDir = null, string? Path = null)
+        bool Offline = false, string? Distro = null, string? DataDir = null, string? Path = null, string? Install = null, bool Journey = false, string? PhoneGuide = null)
     {
         public static Options Parse(string[] args)
         {
             var @out = new List<string>();
-            string? sample = null, raw = null, dumpRaw = null, samplesDir = null, distro = null, dataDir = null, path = null;
+            string? sample = null, raw = null, dumpRaw = null, samplesDir = null, distro = null, dataDir = null, path = null, install = null;
             var json = false;
+            var journey = false;
+            string? phoneGuide = null;
             var offline = false;
             for (var i = 0; i < args.Length; i++)
             {
@@ -220,12 +250,15 @@ namespace GreyHaven.Cli
                     case "--distro": distro = Value(); break;
                     case "--data": dataDir = Value(); break;
                     case "--path": path = Value(); break;
+                    case "--install": install = Value(); break;
+                    case "--journey": journey = true; break;
+                    case "--phone-guide": phoneGuide = Value(); break;
                     default: throw new CliException($"Unknown option '{args[i]}'.");
                 }
             }
             if (sample is not null && raw is not null) throw new CliException("Use either --sample or --raw, not both.");
             if (dumpRaw is not null && (sample is not null || raw is not null)) throw new CliException("--dump-raw only applies to a live scan.");
-            return new Options(sample, raw, json, @out, dumpRaw, samplesDir, offline, distro, dataDir, path);
+            return new Options(sample, raw, json, @out, dumpRaw, samplesDir, offline, distro, dataDir, path, install, journey, phoneGuide);
         }
     }
 }

@@ -26,9 +26,9 @@ public static class WalkthroughBuilder
 {
     public const long LinuxMinimumBytes = 30L * Gb;
     public const long WindowsKeepBytes = 20L * Gb;
-    private const long Gb = 1073741824;
+    internal const long Gb = 1073741824;
 
-    private static readonly IReadOnlyDictionary<string, (string Title, string Url)[]> Help = new Dictionary<string, (string, string)[]>
+    internal static readonly IReadOnlyDictionary<string, (string Title, string Url)[]> Help = new Dictionary<string, (string, string)[]>
     {
         ["ubuntu"] = [("Ubuntu Discourse (questions and answers)", "https://discourse.ubuntu.com/"), ("Ask Ubuntu", "https://askubuntu.com/")],
         ["mint"] = [("Linux Mint forums", "https://forums.linuxmint.com/")],
@@ -61,7 +61,7 @@ public static class WalkthroughBuilder
     private static WalkStep Step(string id, string title, IReadOnlyList<Block> body, string? tip = null, IReadOnlyList<InstallOption>? options = null) =>
         new(id, title, body, tip, options ?? []);
 
-    private static Block Checklist(params string[] items) => new ListBlock(ListKind.Checkboxes, items.Select(i => Line(i)).ToList());
+    internal static Block Checklist(params string[] items) => new ListBlock(ListKind.Checkboxes, items.Select(i => Line(i)).ToList());
 
     private static WalkStep Backup() => Step("backup", "Back up your files",
     [
@@ -201,7 +201,7 @@ public static class WalkthroughBuilder
             "Windows starts as normal? You pressed the key too late. Try again, pressing it the moment the PC turns on. USB stick not listed? Try a USB port on the back of the PC." + sb);
     }
 
-    private static Block AdvancedStartup(CompatibilityReport r)
+    internal static Block AdvancedStartup(CompatibilityReport r)
     {
         var win11 = r.Profile.System.Windows.IsWindows11;
         var settings = win11 ? "Settings > System > Recovery" : "Settings > Update & Security > Recovery";
@@ -213,7 +213,7 @@ public static class WalkthroughBuilder
         ]);
     }
 
-    private static WalkStep TryLinux(LiveUsbGuide g, string name)
+    internal static WalkStep TryLinux(LiveUsbGuide g, string name)
     {
         var body = new List<Block>
         {
@@ -279,16 +279,16 @@ public static class WalkthroughBuilder
     /// Each distro's installer, step by step, matching the button labels on the real screens
     /// (checked against the official guides' screenshots; see assets/illustrations/catalog.json).
     /// </summary>
-    private static IReadOnlyList<PictureStep> InstallerSteps(string distroId, string name, bool alongside, int giveGb)
+    internal static IReadOnlyList<PictureStep> InstallerSteps(string distroId, string name, bool alongside, int giveGb, string? opening = null)
     {
         PictureStep S(string text, string caption, string id) => new(text, caption, $"{distroId}-{id}");
-        const string again = "Start from the USB stick again, like in step 6.";
+        var again = opening ?? "Start from the USB stick again, like in step 6.";
         return distroId switch
         {
             // Pop!_OS has no automatic "alongside Windows" option, so only a clean install is offered.
             "pop-os" =>
             [
-                S($"{again} The installer opens by itself. Pick your language.", "The Pop!_OS installer's language list", "language"),
+                S(opening is not null ? $"{opening} Pick your language." : $"{again} The installer opens by itself. Pick your language.", "The Pop!_OS installer's language list", "language"),
                 S("Pick your keyboard layout.", "The keyboard layout list", "keyboard"),
                 S("Choose Clean Install, then click Clean Install at the bottom right.", "Clean Install chosen, and the Clean Install button", "clean-install"),
                 S("Pick your drive, then click Erase and Install.", "The drive list and the Erase and Install button", "erase"),
@@ -298,7 +298,7 @@ public static class WalkthroughBuilder
             ],
             "mint" =>
             [
-                S($"{again} Then double-click Install Linux Mint on the desktop.", "The Install Linux Mint icon on the desktop", "install-icon"),
+                S(opening is not null ? "Double-click Install Linux Mint on the desktop." : $"{again} Then double-click Install Linux Mint on the desktop.", "The Install Linux Mint icon on the desktop", "install-icon"),
                 S("Pick your language, then click Continue.", "The language list and the Continue button", "language"),
                 S("Pick your keyboard layout, then click Continue.", "The keyboard layout screen", "keyboard"),
                 S("Connect to Wi-Fi, then click Continue.", "The wireless network list", "wifi"),
@@ -320,7 +320,7 @@ public static class WalkthroughBuilder
             ],
             _ =>
             [
-                S($"{again} The installer opens by itself. Pick your language, then click Next.", "The language list and the Next button", "language"),
+                S(opening is not null ? $"{opening} Pick your language, then click Next." : $"{again} The installer opens by itself. Pick your language, then click Next.", "The language list and the Next button", "language"),
                 S("Click Next on Accessibility. Pick your keyboard, then click Next.", "The keyboard layout screen", "keyboard"),
                 S("Connect to the internet, then click Next.", "The Connect to the internet screen", "internet"),
                 S($"Choose Install {name}, then click Next.", $"Install {name} chosen", "try-install"),
@@ -343,7 +343,7 @@ public static class WalkthroughBuilder
     }
 
     /// <summary>Installers can't resize a drive that BitLocker (or Device encryption) protects, so it's turned off first.</summary>
-    private static IReadOnlyList<Block> TurnOffEncryption(SystemInfo s)
+    internal static IReadOnlyList<Block> TurnOffEncryption(SystemInfo s)
     {
         var home = s.Windows.Edition is { } e && e.StartsWith("Core", StringComparison.Ordinal);
         var win11 = s.Windows.IsWindows11;
@@ -365,7 +365,7 @@ public static class WalkthroughBuilder
         ];
     }
 
-    private static WalkStep AfterInstalling(CompatibilityReport r, RecommendationPath path, string name)
+    internal static WalkStep AfterInstalling(CompatibilityReport r, RecommendationPath path, string name)
     {
         var id = path.DistroId;
         var updater = id switch { "mint" => "Update Manager", "pop-os" => "COSMIC Store", _ => "Software Updater" };

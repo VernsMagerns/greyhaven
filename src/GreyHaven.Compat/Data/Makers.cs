@@ -54,11 +54,18 @@ public sealed class MakerInfo
     public string SupportUrl { get; set; } = "";
     public string? Source { get; set; }
     public string? Checked { get; set; }
+    /// <summary>The key that opens the startup settings (BIOS setup).</summary>
+    public string? SetupKey { get; set; }
+    /// <summary>Menu path to the Secure Boot setting, with " > " between menus.</summary>
+    public string? SecureBootPath { get; set; }
+    public string? SecureBootSource { get; set; }
 
     internal PcMaker ToMaker(FormFactor formFactor, bool fromMotherboard) => new(
         Name,
         BootMenuKey ?? (formFactor == FormFactor.Laptop ? BootMenuKeyLaptop! : BootMenuKeyDesktop!),
         BootMenuNote,
         SupportUrl,
-        fromMotherboard);
+        fromMotherboard,
+        SetupKey,
+        SecureBootPath);
 }
