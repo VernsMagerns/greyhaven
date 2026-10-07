@@ -56,6 +56,16 @@ public class WalkthroughTests
         Assert.Contains("Use a device", unknown);
     }
 
+    [Theory]
+    [InlineData(19045, "Settings > Update & Security > Recovery")] // Windows 10 22H2
+    [InlineData(26100, "Settings > System > Recovery")]            // Windows 11 24H2
+    public async Task Advanced_startup_path_matches_the_windows_version(int build, string path)
+    {
+        var r = await Rate("intel-vmd-laptop", p => p with { System = p.System with { Windows = p.System.Windows with { Build = build } } });
+        var steps = WalkthroughBuilder.Build(r).Single(s => s.Id == "boot").Body.OfType<PictureGuide>().SelectMany(g => g.Steps);
+        Assert.Contains(steps, st => st.Text.Contains(path, StringComparison.Ordinal));
+    }
+
     [Fact]
     public async Task Install_alongside_needs_enough_free_space()
     {

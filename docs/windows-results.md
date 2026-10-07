@@ -11,7 +11,7 @@ The whole session takes **about 45 to 50 minutes**. More detail on any check is 
 | | |
 |---|---|
 | Date | |
-| Windows version: 10 or 11? (Settings → System → About: "Edition", "Version" and "OS build") | |
+| Windows version: 10 or 11? (press Windows key + R, type `winver`, press Enter: it shows the version and OS build) | |
 | Real PC or virtual machine? | |
 | PC maker and model, or "custom-built" | |
 | Build used (the commit in the release title, also the first line of `START-HERE.txt`) | |
@@ -120,8 +120,9 @@ Compare what GreyHaven's scan (step 10) printed with what Windows says.
 - [ ] **S1.3** "Secure Boot" matches System Information: press Start, type `msinfo32`, open
       it, and look for "Secure Boot State".
 - [ ] **S1.4** "Boot mode" matches "BIOS Mode" in the same System Information window.
-- [ ] **S1.5** "BitLocker" matches Settings → Privacy & security → Device encryption (or
-      "BitLocker" in Control Panel).
+- [ ] **S1.5** "BitLocker" matches Device encryption in Settings (Windows 11: Privacy &
+      security → Device encryption; Windows 10: Update & Security → Device encryption), or
+      "BitLocker Drive Encryption" in Control Panel.
 - [ ] **S1.6** "Fast Startup" matches Control Panel → Power Options → "Choose what the power
       buttons do" (the "Turn on fast startup" box).
 - [ ] **S1.7** "Storage mode" matches Device Manager → Storage controllers: write down
@@ -219,7 +220,8 @@ Click **What's next →** on the results.
       even if you change it while GreyHaven is open (Settings → Personalization → Colors).
 - [ ] **T2** "Dark" is a very dark slate blue-grey with light text; the title bar is dark too.
       Your choice is remembered after closing and reopening the app.
-- [ ] **T3** With a contrast theme on (Settings → Accessibility → Contrast themes), everything is
+- [ ] **T3** With a contrast theme on (Windows 11: Settings → Accessibility → Contrast themes;
+      Windows 10: Settings → Ease of Access → High contrast), everything is
       readable, the ticket picture and shadows disappear, and ratings still show their words.
       Turn it off afterwards.
 
@@ -291,6 +293,23 @@ GIGABYTE F12.
 &nbsp;
 
 ---
+
+## Windows 10 or 11 differences
+
+If this session is on Windows 10, also check:
+
+- [ ] **V1** The small arrows (for example on "Show more" and the Appearance box) and the
+      checkbox ticks draw as symbols, not empty boxes.
+- [ ] **V2** In Dark, the window's title bar is dark too.
+- [ ] **V3** Walkthrough step 6, "If that doesn't work", says Settings → Update & Security →
+      Recovery (on Windows 11 it says Settings → System → Recovery).
+
+On a Windows 10 **LTSC** test copy (the free Microsoft evaluation), the Windows 10 end-of-support
+note doesn't appear. That's on purpose: LTSC is supported for longer.
+
+**Notes:**
+
+&nbsp;
 
 ## Anything else
 

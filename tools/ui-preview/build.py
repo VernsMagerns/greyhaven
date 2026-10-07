@@ -142,7 +142,13 @@ def fetch_screenshots(out):
     dest = out / "screenshots"
     shutil.rmtree(dest, ignore_errors=True)
     dest.mkdir(parents=True)
-    run(gh + ["run", "download", str(r["databaseId"]), "-R", repo, "-n", "ui-screenshots", "-D", str(dest)])
+    # The Windows Server 2025 run (Windows 11 generation); older runs named it "ui-screenshots".
+    for name in ("ui-screenshots-windows-2025", "ui-screenshots"):
+        try:
+            run(gh + ["run", "download", str(r["databaseId"]), "-R", repo, "-n", name, "-D", str(dest)])
+            break
+        except subprocess.CalledProcessError:
+            continue
     return r
 
 

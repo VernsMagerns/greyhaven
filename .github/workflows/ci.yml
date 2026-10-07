@@ -95,14 +95,26 @@ jobs:
   # Launches the WPF app in demo mode on a Windows VM, walks the main flow, saves screenshots
   # (light and dark) and fails if any control lacks an accessible name. Screenshots are
   # downloadable from the workflow run, so the UI can be reviewed without a Windows PC.
+  # Two images: Windows Server 2025 (Windows 11 24H2 generation) and Windows Server 2022, which
+  # lacks Windows 11's "Segoe Fluent Icons" font, so the icon-font fallback Windows 10 relies on
+  # gets exercised too. GitHub has no Windows 10 or 11 client images; see docs/windows-versions.md.
   ui-smoke:
     if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [windows-2025, windows-2022]
+    runs-on: ${{ matrix.image }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           global-json-file: global.json
+      - name: Which icon fonts does this image have?
+        shell: pwsh
+        run: |
+          "Windows 11 icon font (Segoe Fluent Icons, SegoeIcons.ttf): $(Test-Path "$env:WINDIR\Fonts\SegoeIcons.ttf")"
+          "Windows 10 icon font (Segoe MDL2 Assets, segmdl2.ttf): $(Test-Path "$env:WINDIR\Fonts\segmdl2.ttf")"
       - name: Build app
         run: dotnet build src/GreyHaven.App -c Release
       - name: Run UI smoke test
@@ -110,7 +122,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: ui-screenshots
+          name: ui-screenshots-${{ matrix.image }}
           retention-days: 14
           path: ui-screenshots
 

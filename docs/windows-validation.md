@@ -68,4 +68,6 @@ next" walkthrough), **E** (saving the report), **T** (themes and high contrast),
 
 # Session 2
 
-Added by milestones 5 (safe fixes), 6 (USB creator) and 8 (installer).
+Added by milestones 5 (safe fixes), 6 (USB creator) and 8 (installer). Test on both Windows 10
+and Windows 11 (one can be a VM, see [windows-versions.md](windows-versions.md)), especially
+installing, the Start menu entry and uninstalling.
