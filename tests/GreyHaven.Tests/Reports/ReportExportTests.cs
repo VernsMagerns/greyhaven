@@ -78,6 +78,16 @@ public class ReportExportTests
     }
 
     [Fact]
+    public async Task Show_more_is_a_red_link_that_uses_windows_colours_in_high_contrast()
+    {
+        var html = ReportExporter.Render(await Rate("nvidia-desktop"), ReportFormat.Html);
+        Assert.Contains("summary{cursor:pointer;color:var(--accent)", html);
+        Assert.Contains("summary:focus-visible", html);
+        Assert.Contains("summary{color:LinkText}", html); // inside the forced-colors block
+        Assert.Contains("<summary>Why switch now?</summary>", ReportExporter.Render(await Rate("broadcom-legacy-laptop"), ReportFormat.Html)); // Windows 10
+    }
+
+    [Fact]
     public async Task Chipset_parts_are_one_line_and_not_counted()
     {
         var md = ReportExporter.Render(await Rate("nvidia-desktop"), ReportFormat.Markdown);

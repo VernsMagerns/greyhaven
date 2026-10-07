@@ -226,10 +226,11 @@ public static class HtmlReportWriter
             ul.checks label{display:flex;gap:.6rem;align-items:flex-start}
             ul.checks input{width:1.2rem;height:1.2rem;margin-top:.3rem;flex:none;accent-color:var(--accent)}
             details{margin:.6rem 0 1rem}
-            summary{cursor:pointer;color:var(--accent);font-weight:600}
+            summary{cursor:pointer;color:var(--accent);font-weight:600;text-decoration:underline;text-underline-offset:.2em;padding:.35rem .25rem;min-height:2rem;border-radius:6px;width:fit-content}
+            summary:hover{background:var(--command)}
             .more{margin-top:.5rem;padding-left:1rem;border-left:3px solid var(--border)}
             @media (max-width:40rem){section.headline{grid-template-columns:1fr}main{margin:0;border-radius:0}}
-            @media (forced-colors: active){.pic{display:none}.rating,.callout,.score{forced-color-adjust:auto}.score{border:2px solid CanvasText}main,section.headline,.callout{box-shadow:none}}
+            @media (forced-colors: active){.pic{display:none}summary{color:LinkText}.rating,.callout,.score{forced-color-adjust:auto}.score{border:2px solid CanvasText}main,section.headline,.callout{box-shadow:none}}
 
             """;
     }

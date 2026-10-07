@@ -166,14 +166,61 @@
         </Setter>
     </Style>
 
-    <!-- "Show more": an expander whose header reads like a link. -->
-    <Style x:Key="ShowMore" TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}">
+    <!--
+        "Show more": an expander whose header is a red text link with an arrow, like the saved
+        report's <details>. The header is a DisclosureButton, so screen readers hear
+        "collapsed/expanded". In High Contrast, GH.Accent and GH.Text are Windows' own colours.
+    -->
+    <Style x:Key="ShowMore" TargetType="Expander">
         <Setter Property="Foreground" Value="{DynamicResource GH.Text}" />
-        <Setter Property="HeaderTemplate">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="AutomationProperties.Name" Value="{Binding Header, RelativeSource={RelativeSource Self}}" />
+        <Setter Property="Template">
             <Setter.Value>
-                <DataTemplate>
-                    <TextBlock Text="{Binding}" FontWeight="SemiBold" Foreground="{DynamicResource GH.Accent}" FontSize="15" />
-                </DataTemplate>
+                <ControlTemplate TargetType="Expander">
+                    <StackPanel>
+                        <infra:DisclosureButton Content="{TemplateBinding Header}" HorizontalAlignment="Left" Cursor="Hand" FocusVisualStyle="{x:Null}"
+                                                IsChecked="{Binding IsExpanded, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                                AutomationProperties.Name="{Binding (AutomationProperties.Name), RelativeSource={RelativeSource TemplatedParent}}">
+                            <infra:DisclosureButton.Template>
+                                <ControlTemplate TargetType="infra:DisclosureButton">
+                                    <!-- MinHeight 32 keeps the click/tap area comfortable even for one short word. -->
+                                    <Border x:Name="Bd" Background="Transparent" BorderBrush="Transparent" BorderThickness="2" CornerRadius="6"
+                                            Padding="4,3,8,3" Margin="-6,0,0,0" MinHeight="32">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Path x:Name="Arrow" Data="M 0,0 L 5,5 L 0,10" Stroke="{DynamicResource GH.Accent}" StrokeThickness="2.2"
+                                                  Width="7" Height="11" Stretch="None" Margin="2,0,9,0" VerticalAlignment="Center" RenderTransformOrigin="0.4,0.5" />
+                                            <TextBlock Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" TextWrapping="Wrap"
+                                                       Foreground="{DynamicResource GH.Accent}" FontWeight="SemiBold" FontSize="15" TextDecorations="Underline"
+                                                       VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsChecked" Value="True">
+                                            <Setter TargetName="Arrow" Property="RenderTransform">
+                                                <Setter.Value>
+                                                    <RotateTransform Angle="90" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource GH.CommandBackground}" />
+                                        </Trigger>
+                                        <Trigger Property="IsKeyboardFocused" Value="True">
+                                            <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource GH.Text}" />
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </infra:DisclosureButton.Template>
+                        </infra:DisclosureButton>
+                        <ContentPresenter x:Name="Body" Visibility="Collapsed" Focusable="False" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="True">
+                            <Setter TargetName="Body" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
