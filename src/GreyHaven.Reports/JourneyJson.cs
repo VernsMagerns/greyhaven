@@ -12,6 +12,7 @@ public static class JourneyJson
         SuggestedInstall = JourneyBuilder.Suggested(r),
         DistroId = r.SelectedDistroId,
         PhoneGuideFragment = r.Recommendation.Paths.Count > 0 ? JourneyBuilder.PhoneGuideFragment(r) : null,
+        PhoneGuideUrl = JourneyBuilder.PhoneGuideUrl(r),
         Phases = Enum.GetValues<JourneyPhase>().Select(p => new { Phase = p, Name = JourneyBuilder.PhaseName(p) }),
         Steps = JourneyBuilder.Build(r),
     });

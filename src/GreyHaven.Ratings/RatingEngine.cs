@@ -232,7 +232,7 @@ public sealed partial class RatingEngine(
             Explanation = Fill(outcome.Explanation, ctx, packages),
             Summary = outcome.Summary is null ? null : Fill(outcome.Summary, ctx, packages),
             Sources = rule.Sources.Where(s => s.AppliesTo(ctx.Distro.Id)).Select(s => new Source(s.Title, s.Url, SourceKind.CuratedRule)).ToList(),
-            Fix = fixData is null ? null : BuildFix(fixData, ctx),
+            Fix = fixData is null ? null : BuildFix(fixData, ctx) with { Id = rule.Id },
             LinuxDriver = fixData?.Driver,
         };
     }
@@ -441,29 +441,35 @@ public sealed partial class RatingEngine(
 
     // ---- Fixes ------------------------------------------------------------------------------
 
-    private static Fix BuildFix(RuleFix f, DistroContext ctx)
+    private static Fix BuildFix(RuleFix f, DistroContext ctx) => BuildFix(f, ctx.Distro, ctx.SecureBoot);
+
+    internal static Fix BuildFix(RuleFix f, DistroInfo distro, SecureBootState secureBoot)
     {
         var impact = RuleSet.ParseSecureBoot(f.SecureBoot);
         return new Fix
         {
             Driver = f.Driver,
-            Steps = f.Steps.GetValueOrDefault(ctx.Distro.Id) ?? f.Steps.GetValueOrDefault("default") ?? [],
-            Commands = f.Commands.GetValueOrDefault(ctx.Distro.Id) ?? f.Commands.GetValueOrDefault("default") ?? [],
+            Steps = f.Steps.GetValueOrDefault(distro.Id) ?? f.Steps.GetValueOrDefault("default") ?? [],
+            Commands = f.Commands.GetValueOrDefault(distro.Id) ?? f.Commands.GetValueOrDefault("default") ?? [],
             Note = f.Note,
             NeedsInternet = f.NeedsInternet,
             SecureBoot = impact,
-            SecureBootAdvice = SecureBootAdvice(impact, ctx),
+            SecureBootAdvice = SecureBootAdvice(impact, distro, secureBoot),
         };
     }
 
-    private static string? SecureBootAdvice(SecureBootImpact impact, DistroContext ctx)
+    private static string? SecureBootAdvice(SecureBootImpact impact, DistroContext ctx) =>
+        SecureBootAdvice(impact, ctx.Distro, ctx.SecureBoot);
+
+    /// <summary>Also used for the public phone guide, where the PC's Secure Boot state is unknown.</summary>
+    internal static string? SecureBootAdvice(SecureBootImpact impact, DistroInfo distro, SecureBootState secureBoot)
     {
-        if (impact == SecureBootImpact.None || ctx.SecureBoot is SecureBootState.Disabled or SecureBootState.NotSupported) return null;
-        if (!ctx.Distro.SecureBoot.Supported)
-            return $"{ctx.Distro.Name} requires Secure Boot to be turned off before installing, so no extra Secure Boot step is needed for this driver.";
+        if (impact == SecureBootImpact.None || secureBoot is SecureBootState.Disabled or SecureBootState.NotSupported) return null;
+        if (!distro.SecureBoot.Supported)
+            return $"{distro.Name} requires Secure Boot to be turned off before installing, so no extra Secure Boot step is needed for this driver.";
 
         // Plain words: the blue "Enroll MOK" screen scares people who aren't expecting it.
-        var start = ctx.SecureBoot == SecureBootState.Unknown ? "If Secure Boot is on, " : "Secure Boot is on, so ";
+        var start = secureBoot == SecureBootState.Unknown ? "If Secure Boot is on, " : "Secure Boot is on, so ";
         return impact == SecureBootImpact.MokRequired
             ? start + "this driver needs your OK before it can run. While it installs, make up a password. After you restart, a blue screen appears. Choose \"Enroll MOK\", then \"Continue\", and type that password. This is normal."
             : start + "you may be asked to make up a password while the driver installs. After you restart, a blue screen appears. Choose \"Enroll MOK\", then \"Continue\", and type that password. This is normal.";

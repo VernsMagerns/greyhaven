@@ -20,8 +20,8 @@ Round 4 (2026-10-07, Part B) replaces it with the white-glove walkthrough in fiv
 `docs/walkthrough-v2.md`). Every word comes from the app's JourneyBuilder via
 `greyhaven rate --journey`; the preview only simulates finding, downloading and writing the USB
 stick and restarting. The pictures are the app's real drawings (click to enlarge). The QR code
-opens the generated phone guide; to try it on your phone, build with `--serve --lan` (this
-serves the preview to your whole local network while it runs). Shortcuts:
+opens the hosted phone guide (docs/phone-guide-hosting.md), never a local address; "Open the
+guide" opens a local copy of the same public page (`artifacts/preview/site`). Shortcuts:
 `?screen=walk&step=4&path=advanced&install=keep|replace`.
 
 It uses real data and the app's own design sources:
@@ -35,7 +35,6 @@ When those change, rebuild. When the views change, update `app.js`/`app.css` by 
 
 ```sh
 python3 -I tools/ui-preview/build.py --serve      # build into artifacts/preview, serve on :8765
-python3 -I tools/ui-preview/build.py --serve --lan   # ...and on your Wi-Fi, for the phone guide QR code
 ```
 
 Then open http://localhost:8765/. The index links the preview, HTML reports for every sample

@@ -333,9 +333,7 @@ public static class JourneyBuilder
         {
             P("When your PC restarts, GreyHaven closes. Your guide shows you every step from there: trying Linux, installing it, and setting it up."),
         };
-        body.Add(phone is not null
-            ? P("Scan the code with your phone's camera. The guide opens in your phone's browser.")
-            : new Callout(CalloutKind.Info, "Phone code coming soon", Line("Until GreyHaven's website is live, print the guide or save it to your phone.")));
+        if (phone is not null) body.Add(P("Scan the code with your phone's camera. The guide opens in your phone's browser, on Wi-Fi or mobile data."));
         if (onDrive is not null)
             body.Add(P(new Text("A copy is also saved on your Windows drive, in "), new Strong(onDrive), new Text(". You can open it from Linux too: open Files, click your Windows drive, then go to that folder.")));
         return Step("guide", JourneyPhase.TakeGuide, "Take the guide with you",
@@ -345,35 +343,23 @@ public static class JourneyBuilder
     }
 
     /// <summary>
-    /// The phone guide's address. Only the choices go in the part after "#", which browsers never
-    /// send to the website: distro, download, install choice, boot keys. Nothing about the person.
-    /// Null until the repository (and its GitHub Pages site) is public.
+    /// The public phone guide's address for this report's choices: the general page for the
+    /// distro, download and install choice, plus <see cref="GuideFragment"/> after "#" (which
+    /// browsers never send to the website). Null until an install choice is made, or when there's
+    /// no page for it (Pop!_OS next to Windows).
     /// </summary>
     public static string? PhoneGuideUrl(CompatibilityReport r)
     {
-        if (!GreyHavenInfo.CanLinkToRepository) return null;
         var path = r.SelectedRecommendation ?? r.Recommendation.Paths.FirstOrDefault();
-        if (path is null) return null;
-        var (owner, repo) = (GreyHavenInfo.GitHubRepository.Split('/')[0].ToLowerInvariant(), GreyHavenInfo.GitHubRepository.Split('/')[1]);
-        return $"https://{owner}.github.io/{repo}/guide/#{PhoneGuideFragment(r)}";
+        if (path is null || r.SelectedInstall is not { } install) return null;
+        if (install == InstallChoice.KeepWindows && !PhoneGuidePages.CanKeepWindows(path.DistroId)) return null;
+        return GreyHavenInfo.PhoneGuideSite + PhoneGuidePages.FileName(path.DistroId, path.EditionId, install) + "#" + PhoneGuideFragment(r);
     }
 
     public static string PhoneGuideFragment(CompatibilityReport r)
     {
         var path = r.SelectedRecommendation ?? r.Recommendation.Paths.First();
-        var fixes = r.Components.Where(c => c.For(path.DistroId).Fix is not null).Select(c => c.Component.Category.ToString().ToLowerInvariant()).Distinct();
-        var parts = new List<string>
-        {
-            "v=1",
-            $"d={path.DistroId}",
-            $"e={path.EditionId}",
-            $"i={r.SelectedInstall switch { InstallChoice.KeepWindows => "keep", InstallChoice.ReplaceWindows => "replace", _ => "ask" }}",
-            $"w={(r.Profile.System.Windows.IsWindows11 ? 11 : 10)}",
-            $"f={r.Profile.System.FormFactor.ToString().ToLowerInvariant()}",
-        };
-        if (r.Maker is { } m) parts.Add($"k={Uri.EscapeDataString(m.BootMenuKey)}");
-        if (fixes.Any()) parts.Add($"x={string.Join(",", fixes)}");
-        return string.Join("&", parts);
+        return GuideFragment.For(r, new Ctx(r, path).GiveGb);
     }
 
     // ---- Phase 4: Restart into your USB stick ------------------------------------------------

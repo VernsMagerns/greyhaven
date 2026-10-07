@@ -279,8 +279,10 @@ public static class WalkthroughBuilder
     /// Each distro's installer, step by step, matching the button labels on the real screens
     /// (checked against the official guides' screenshots; see assets/illustrations/catalog.json).
     /// </summary>
-    internal static IReadOnlyList<PictureStep> InstallerSteps(string distroId, string name, bool alongside, int giveGb, string? opening = null)
+    internal static IReadOnlyList<PictureStep> InstallerSteps(string distroId, string name, bool alongside, int? giveGb, string? opening = null)
     {
+        // Without this PC's free space (the public phone guide), give the minimum and say more is better.
+        var give = giveGb is { } g ? $"about {g} GB" : "at least 30 GB (more if you have room)";
         PictureStep S(string text, string caption, string id) => new(text, caption, $"{distroId}-{id}");
         var again = opening ?? "Start from the USB stick again, like in step 6.";
         return distroId switch
@@ -307,7 +309,7 @@ public static class WalkthroughBuilder
                     ? new[]
                     {
                         S("Choose Install Linux Mint alongside Windows Boot Manager, then click Continue.", "Installation type with the alongside option chosen", "alongside"),
-                        S($"Drag the divider to give Linux Mint about {giveGb} GB, then click Install Now.", "The divider between Windows and Linux Mint", "divider"),
+                        S($"Drag the divider to give Linux Mint {give}, then click Install Now.", "The divider between Windows and Linux Mint", "divider"),
                     }
                     : new[]
                     {
@@ -331,7 +333,7 @@ public static class WalkthroughBuilder
                     ? new[]
                     {
                         S($"Choose Install {name} alongside Windows Boot Manager, then click Next.", "Disk setup with the alongside option chosen", "alongside"),
-                        S($"Drag the slider to give {name} about {giveGb} GB, then click Next.", "The slider between Windows and Ubuntu", "divider"),
+                        S($"Drag the slider to give {name} {give}, then click Next.", "The slider between Windows and Ubuntu", "divider"),
                     }
                     : new[] { S($"Choose Erase disk and install {name}, then click Next.", "Disk setup with Erase disk chosen", "erase") },
                 S("Type your name and a password, then click Next.", "The Create your account screen", "account"),
@@ -365,10 +367,12 @@ public static class WalkthroughBuilder
         ];
     }
 
+    internal static string Updater(string distroId) => distroId switch { "mint" => "Update Manager", "pop-os" => "COSMIC Store", _ => "Software Updater" };
+
     internal static WalkStep AfterInstalling(CompatibilityReport r, RecommendationPath path, string name)
     {
         var id = path.DistroId;
-        var updater = id switch { "mint" => "Update Manager", "pop-os" => "COSMIC Store", _ => "Software Updater" };
+        var updater = Updater(id);
         var body = new List<Block>
         {
             P($"Welcome to {name}! A few last things."),

@@ -38,13 +38,27 @@ public static class HtmlReportWriter
         ["shadow"] = ("#1F1B16", "#05080B"),
     };
 
-    public static string Write(ReportDocument doc)
+    /// <summary>
+    /// Content-Security-Policy for pages that carry a script (the public phone guide): only that
+    /// exact script may run, and nothing loads from anywhere (fonts and pictures are inline).
+    /// </summary>
+    public static string ContentSecurityPolicy(string script) =>
+        "default-src 'none'; style-src 'unsafe-inline'; font-src data:; img-src data:; base-uri 'none'; form-action 'none'; " +
+        $"script-src 'sha256-{Convert.ToBase64String(System.Security.Cryptography.SHA256.HashData(Encoding.UTF8.GetBytes(script)))}'";
+
+    /// <param name="script">Only for the public phone guide (<see cref="GuideFragment.Script"/>); reports have no scripts.</param>
+    public static string Write(ReportDocument doc, string? script = null)
     {
         var sb = new StringBuilder();
         sb.AppendLine("<!DOCTYPE html>");
         sb.AppendLine("<html lang=\"en\">");
         sb.AppendLine("<head>");
         sb.AppendLine("<meta charset=\"utf-8\">");
+        if (script is not null)
+        {
+            sb.AppendLine($"<meta http-equiv=\"Content-Security-Policy\" content=\"{ContentSecurityPolicy(script)}\">");
+            sb.AppendLine("<meta name=\"referrer\" content=\"no-referrer\">");
+        }
         sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
         sb.AppendLine("<meta name=\"color-scheme\" content=\"light dark\">");
         sb.AppendLine($"<title>{E(doc.Title)}</title>");
@@ -55,6 +69,7 @@ public static class HtmlReportWriter
         var state = new State();
         foreach (var block in doc.Blocks) WriteBlock(sb, block, state);
         sb.AppendLine("</main>");
+        if (script is not null) sb.Append("<script>").Append(script).AppendLine("</script>");
         sb.AppendLine("</body>");
         sb.AppendLine("</html>");
         return sb.ToString();
@@ -146,6 +161,11 @@ public static class HtmlReportWriter
                 foreach (var inner in d.Content) WriteBlock(sb, inner, state);
                 sb.AppendLine("</div></details>");
                 break;
+            case OnlyIf o:
+                sb.AppendLine($"<div data-if=\"{E(o.Condition)}\">");
+                foreach (var inner in o.Content) WriteBlock(sb, inner, state);
+                sb.AppendLine("</div>");
+                break;
         }
     }
 
@@ -160,6 +180,7 @@ public static class HtmlReportWriter
         // The symbol is decorative: the words carry the meaning for screen readers.
         RatingTag r => $"<span class=\"rating {RatingSymbols.CssClass(r.Rating)}\"><span aria-hidden=\"true\">{RatingSymbols.Of(r.Rating)}</span> {E(PlainWords.Rating(r.Rating))}</span>",
         Code c => $"<code>{E(c.Value)}</code>",
+        Fill f => $"<span data-fill=\"{E(f.Key)}\">{E(f.General)}</span>",
         _ => "",
     };
 
@@ -235,6 +256,7 @@ public static class HtmlReportWriter
             li:target .close{display:block;position:fixed;z-index:4;top:.75rem;right:1rem;padding:.5rem 1rem;min-height:2.75rem;background:var(--page);color:var(--text);border:2.5px solid var(--border);border-radius:10px;font-weight:600;text-decoration:none}
             li:target .close:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
             .anchor{display:block;position:relative;top:-1rem}
+            [hidden]{display:none!important}
             figcaption{font-size:.8rem;color:var(--text-secondary);margin-top:.25rem}
             .frame{display:grid;place-items:center;text-align:center;min-height:7.5rem;padding:.5rem;background:var(--command);border:2px dashed var(--border);border-radius:12px;color:var(--text-secondary);font-size:.85rem}
             .table-wrap{overflow-x:auto}

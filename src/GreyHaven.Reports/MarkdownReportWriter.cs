@@ -68,6 +68,9 @@ public static class MarkdownReportWriter
                 sb.AppendLine($"**{Escape(d.Summary)}**").AppendLine();
                 foreach (var inner in d.Content) WriteBlock(sb, inner);
                 break;
+            case OnlyIf o:
+                foreach (var inner in o.Content) WriteBlock(sb, inner);
+                break;
         }
     }
 
@@ -80,6 +83,7 @@ public static class MarkdownReportWriter
         Link l when HtmlReportWriter.IsWebUrl(l.Url) => $"[{Escape(l.Label)}](<{l.Url}>)",
         Link l => Escape(l.Label),
         RatingTag r => $"{RatingSymbols.Of(r.Rating)} {PlainWords.Rating(r.Rating)}",
+        Fill f => Escape(f.General),
         Code c => $"`{c.Value.Replace("`", "")}`",
         _ => "",
     };

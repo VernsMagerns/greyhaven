@@ -26,6 +26,7 @@ namespace GreyHaven.Cli
               greyhaven samples                List bundled sample profiles
               greyhaven check-releases         Check for distro releases newer than the bundled data
               greyhaven qr <text>              Print a QR code as SVG (used by the design preview)
+              greyhaven phone-guide-site --out <dir>   Build the public phone guide website
 
             Options for scan:
               --json              Print the profile as JSON instead of a readable summary
@@ -79,6 +80,7 @@ namespace GreyHaven.Cli
                     "rate" => await RateAsync(opts),
                     "samples" => ListSamples(opts),
                     "check-releases" => await CheckReleasesAsync(opts),
+                    "phone-guide-site" => PhoneGuideSite(opts),
                     _ => Fail($"Unknown command '{args[0]}'.\n\n{Usage}"),
                 };
             }
@@ -148,6 +150,16 @@ namespace GreyHaven.Cli
                 if (!opts.Json) Console.Error.WriteLine($"Saved {file}");
             }
             Console.WriteLine(opts.Json ? ReportExporter.Render(report, ReportFormat.Json) : ReportTextFormatter.Format(report, opts.Distro));
+            return 0;
+        }
+
+        /// <summary>Builds the public phone guide website (deployed to Cloudflare Pages by CI). General pages only.</summary>
+        private static int PhoneGuideSite(Options opts)
+        {
+            if (opts.Out.Count != 1) throw new CliException("Give the output folder with --out <dir>.");
+            var data = CompatibilityData.Load(opts.DataDir);
+            var files = PhoneGuideSiteWriter.Write(opts.Out[0], Ratings.PhoneGuideSite.Pages(data));
+            Console.WriteLine($"Wrote {files.Count} files to {opts.Out[0]}: {string.Join(", ", files)}");
             return 0;
         }
 

@@ -1,0 +1,85 @@
+name: Phone guide
+
+# Builds the public phone guide (what GreyHaven's QR code opens) and deploys it to Cloudflare
+# Pages, project "greyhaven-guide" (GreyHavenInfo.PhoneGuideSite). The pages are general: one per
+# distro, download and install choice, built from data/ only. Personal touches live after "#" in
+# the QR code's address, which browsers never send to Cloudflare.
+#
+# Needs two repository secrets (see docs/phone-guide-hosting.md): CLOUDFLARE_API_TOKEN and
+# CLOUDFLARE_ACCOUNT_ID. Without them the site is still built and checked, but not deployed.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: phone-guide
+  cancel-in-progress: true
+
+env:
+  PROJECT: greyhaven-guide
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Build the site
+        run: dotnet run --project src/GreyHaven.Cli -c Release -- phone-guide-site --out site
+
+      # Belt and braces (the tests check this too): nothing about any PC may be on a public page.
+      - name: Check the site is general
+        run: |
+          if grep -rlE 'pci:|usb:[0-9a-f]{4}|hdaudio:' site; then echo "::error::Part IDs on a public page"; exit 1; fi
+          test -f site/_headers
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: phone-guide-site
+          path: site
+          retention-days: 2
+
+      - name: Check for Cloudflare settings
+        id: cf
+        env:
+          TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          if [ -n "$TOKEN" ] && [ -n "$ACCOUNT" ]; then echo "ready=true" >> "$GITHUB_OUTPUT"
+          else echo "::notice::CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID aren't set, so the site was built but not deployed. See docs/phone-guide-hosting.md."; fi
+
+      # First run only: creates the Pages project. Later runs say it already exists, which is fine.
+      - name: Create the Pages project
+        if: steps.cf.outputs.ready == 'true'
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create ${{ env.PROJECT }} --production-branch=main
+
+      - name: Deploy
+        if: steps.cf.outputs.ready == 'true'
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy site --project-name=${{ env.PROJECT }} --branch=main --commit-dirty=true
+
+      - name: Check the live site
+        if: steps.cf.outputs.ready == 'true'
+        run: |
+          sleep 20
+          code=$(curl -s -o /dev/null -w '%{http_code}' https://${PROJECT}.pages.dev/ubuntu-desktop-keep.html)
+          echo "https://${PROJECT}.pages.dev/ubuntu-desktop-keep.html -> $code"
+          if [ "$code" != "200" ]; then
+            echo "::warning::The guide isn't at https://${PROJECT}.pages.dev yet. If Cloudflare gave the project another address (the name was taken), update GreyHavenInfo.PhoneGuideSite."
+          fi

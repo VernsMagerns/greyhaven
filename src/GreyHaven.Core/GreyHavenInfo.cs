@@ -18,6 +18,12 @@ public static class GreyHavenInfo
     /// </summary>
     public const bool IsRepositoryPublic = false;
 
+    /// <summary>
+    /// The public phone guide that the QR code opens: the Cloudflare Pages project deployed by
+    /// .github/workflows/phone-guide.yml. Always https and never a local address (a test checks).
+    /// </summary>
+    public const string PhoneGuideSite = "https://greyhaven-guide.pages.dev/";
+
     public static bool IsGitHubRepositoryConfigured => !GitHubRepository.StartsWith("OWNER/", StringComparison.Ordinal);
 
     /// <summary>Links to the repository work for everyone: it's configured and public.</summary>

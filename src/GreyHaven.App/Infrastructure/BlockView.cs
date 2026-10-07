@@ -50,6 +50,7 @@ public static class BlockView
         ListBlock l => List(scope, l),
         CommandBlock c => Commands(scope, c),
         Details d => Details(scope, d),
+        OnlyIf o => Stack(scope, o.Content),
         PictureGuide g => Pictures(scope, g),
         KeyFact k => KeyFact(scope, k),
         Table t => Text(scope, [new Text(string.Join("\n", t.Rows.Select(r => string.Join(" · ", r.Select(c => string.Concat(c.Select(Plain)))))))], "Body", new Thickness(0, 0, 0, 10)),
@@ -95,6 +96,7 @@ public static class BlockView
         Strong s => s.Value,
         Link l => l.Label,
         Code c => c.Value,
+        Fill f => f.General,
         RatingTag r => PlainWords.Rating(r.Rating),
         _ => "",
     };
@@ -163,6 +165,13 @@ public static class BlockView
             grid.Children.Add(copy);
             panel.Children.Add(new Border { Style = Style(scope, "CommandBox"), Child = grid });
         }
+        return panel;
+    }
+
+    private static UIElement Stack(FrameworkElement scope, IReadOnlyList<Block> content)
+    {
+        var panel = new StackPanel();
+        foreach (var inner in content) panel.Children.Add(Render(scope, inner));
         return panel;
     }
 

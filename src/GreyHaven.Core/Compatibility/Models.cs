@@ -46,6 +46,8 @@ public enum SecureBootImpact
 /// <summary>How to get a component working on a specific distro.</summary>
 public sealed record Fix
 {
+    /// <summary>The rule it comes from, e.g. "nvidia-gpu". Used to pick sections of the public phone guide.</summary>
+    public string? Id { get; init; }
     /// <summary>Driver name, e.g. "NVIDIA proprietary driver".</summary>
     public required string Driver { get; init; }
     /// <summary>Plain-English steps, e.g. using a graphical driver tool.</summary>
@@ -315,4 +317,32 @@ public sealed record CompatibilityReport
         Recommendation.Get(kind) is null
             ? throw new ArgumentException($"This report has no '{kind}' path.", nameof(kind))
             : this with { SelectedPath = kind };
+}
+
+/// <summary>
+/// One page of the public phone guide (trying, installing and setting up Linux), for a distro,
+/// download and install choice. General: nothing about any one PC is in it.
+/// </summary>
+/// <param name="DistroName">Short name, e.g. "Ubuntu".</param>
+/// <param name="Checks">Live-USB checks for any PC; people skip the parts they don't have.</param>
+/// <param name="LaptopChecks">Only for laptops (touchpad, battery, closing the lid).</param>
+/// <param name="DesktopChecks">Only for desktops (the same tests, worded for a desktop).</param>
+/// <param name="Fixes">Every extra step that can apply on this download, shown only to PCs that need it.</param>
+public sealed record PhoneGuidePage(string DistroId, string DistroName, string EditionId, string EditionName, InstallChoice Install,
+    IReadOnlyList<LiveUsbCheck> Checks, IReadOnlyList<LiveUsbCheck> LaptopChecks, IReadOnlyList<LiveUsbCheck> DesktopChecks, IReadOnlyList<PhoneGuideFix> Fixes)
+{
+    public string FileName => PhoneGuidePages.FileName(DistroId, EditionId, Install);
+}
+
+/// <param name="Id">The rule id, e.g. "nvidia-gpu", as used after "#x=".</param>
+/// <param name="Title">What it's for, e.g. "NVIDIA graphics".</param>
+public sealed record PhoneGuideFix(string Id, string Title, Fix Fix);
+
+public static class PhoneGuidePages
+{
+    public static string FileName(string distroId, string editionId, InstallChoice install) =>
+        $"{distroId}-{editionId}-{(install == InstallChoice.KeepWindows ? "keep" : "replace")}.html";
+
+    /// <summary>Pop!_OS's installer can't make room next to Windows by itself.</summary>
+    public static bool CanKeepWindows(string distroId) => distroId != "pop-os";
 }

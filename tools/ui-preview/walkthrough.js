@@ -199,10 +199,9 @@ function runUsb() {
 }
 
 function guideScreen(s) {
-  const j = journey(), g = s.guide;
-  const comingSoon = s.body.filter(b => b.type === "callout" && b.title === "Phone code coming soon");
-  const local = j.qr.url.includes("//localhost");
-  return `${blocks(s.body.filter(b => !comingSoon.includes(b)), s.id)}
+  const j = journey();
+  if (!j.qr) return `${blocks(s.body, s.id)}<div class="note-box"><p>Choose how to install first (part 1), so the guide shows the right steps.</p></div>`;
+  return `${blocks(s.body, s.id)}
     <div class="guide-handoff">
       <figure class="qr"><div class="qr-code" role="img" aria-label="QR code that opens your guide on a phone">${j.qr.svg}</div>
         <figcaption>Scan with your phone's camera</figcaption></figure>
@@ -210,13 +209,10 @@ function guideScreen(s) {
         <p class="strong">Or keep it another way:</p>
         <p><button class="plain" id="printguide">Print the guide</button></p>
         <p><a href="${esc(j.phoneGuide)}" target="_blank" rel="noopener">Open the guide</a> <span class="secondary small">(to save it, or to see it as your phone will)</span></p>
-        ${g.onWindowsDrive ? `<p class="secondary small">Also saved in ${esc(g.onWindowsDrive)} on your Windows drive.</p>` : ""}
       </div>
     </div>
-    <p class="preview-note-inline secondary small">Preview: this QR code opens <code>${esc(j.qr.url)}</code>.
-      ${local ? "A phone can't open \"localhost\": rebuild with <code>--serve --lan</code> to try it on your phone." : "Your phone must be on the same Wi-Fi as this laptop."}
-      In the app, the code works once GreyHaven's website is live. Until then the app says:
-      ${comingSoon.map(b => `“${esc(b.content.map(x => x.value).join(""))}”`).join("")}</p>`;
+    <p class="preview-note-inline secondary small">Preview: the QR code opens <code>${esc(j.qr.url)}</code>, the hosted guide.
+      Everything after "#" stays on the phone. "Open the guide" shows a local copy of the same page.</p>`;
 }
 
 function restartScreen(s) {

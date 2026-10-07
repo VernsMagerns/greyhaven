@@ -13,6 +13,7 @@ namespace GreyHaven.Reports;
 [JsonDerivedType(typeof(Link), "link")]
 [JsonDerivedType(typeof(RatingTag), "rating")]
 [JsonDerivedType(typeof(Code), "code")]
+[JsonDerivedType(typeof(Fill), "fill")]
 public abstract record Inline;
 public sealed record Text(string Value) : Inline;
 public sealed record Strong(string Value) : Inline;
@@ -22,6 +23,11 @@ public sealed record Link(string Label, string Url) : Inline;
 public sealed record RatingTag(Rating Rating) : Inline;
 /// <summary>A terminal command inside running text.</summary>
 public sealed record Code(string Value) : Inline;
+/// <summary>
+/// A personal touch on the public phone guide: the page's script fills it in from the address
+/// after "#" (see GuideFragment). Everywhere else, and without the script, the general wording shows.
+/// </summary>
+public sealed record Fill(string Key, string General) : Inline;
 
 /// <summary>Info: a calm note. Warning: needs care. Tip: "What could go wrong?". Danger: data will be erased.</summary>
 public enum CalloutKind { Info, Warning, Tip, Danger }
@@ -37,6 +43,7 @@ public enum CalloutKind { Info, Warning, Tip, Danger }
 [JsonDerivedType(typeof(PictureGuide), "pictures")]
 [JsonDerivedType(typeof(ScoreHeadline), "score")]
 [JsonDerivedType(typeof(KeyFact), "keyfact")]
+[JsonDerivedType(typeof(OnlyIf), "onlyIf")]
 public abstract record Block;
 public sealed record Heading(int Level, string Text) : Block;
 public sealed record Paragraph(IReadOnlyList<Inline> Content) : Block;
@@ -58,6 +65,13 @@ public sealed record PictureGuide(IReadOnlyList<PictureStep> Steps) : Block;
 public sealed record ScoreHeadline(string Title, string? Suggestion, string Summary, int Score) : Block;
 /// <summary>A big, single fact to spot at a glance, e.g. the startup menu key "F11".</summary>
 public sealed record KeyFact(string Label, string Value) : Block;
+
+/// <summary>
+/// Content for some PCs only, on the public phone guide, e.g. "x:nvidia-gpu" or "f:laptop" (see GuideFragment.Script). The
+/// page's script hides it when the address after "#" says it doesn't apply; without the script
+/// (and in every other format) it shows, under its heading.
+/// </summary>
+public sealed record OnlyIf(string Condition, IReadOnlyList<Block> Content) : Block;
 
 public sealed record ReportDocument(string Title, IReadOnlyList<Block> Blocks);
 

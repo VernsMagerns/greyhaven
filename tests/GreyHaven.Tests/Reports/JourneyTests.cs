@@ -4,6 +4,7 @@ using GreyHaven.Core.Hardware;
 using GreyHaven.Core.Scanning;
 using GreyHaven.Ratings;
 using GreyHaven.Reports;
+using PhoneGuideSite = GreyHaven.Ratings.PhoneGuideSite;
 
 namespace GreyHaven.Tests.Reports;
 
@@ -134,11 +135,75 @@ public class JourneyTests
     }
 
     [Fact]
-    public async Task Phone_guide_link_holds_only_choices_and_waits_for_the_public_repo()
+    public async Task Phone_guide_link_is_the_hosted_page_plus_choices_after_the_hash()
     {
         var r = (await Rate(RealPc)).WithInstall(InstallChoice.KeepWindows);
-        Assert.Null(JourneyBuilder.PhoneGuideUrl(r)); // the repository is still private
-        Assert.Equal("v=1&d=ubuntu&e=desktop&i=keep&w=11&f=desktop&k=F11&x=gpu", JourneyBuilder.PhoneGuideFragment(r));
+        Assert.Equal("https://greyhaven-guide.pages.dev/ubuntu-desktop-keep.html#v=1&m=MSI&k=F11&f=desktop&g=100&x=nvidia-gpu", JourneyBuilder.PhoneGuideUrl(r));
+        Assert.Null(JourneyBuilder.PhoneGuideUrl(r.WithInstall(null)));                                          // nothing chosen yet
+        Assert.Null(JourneyBuilder.PhoneGuideUrl(r.WithPath(PathKind.Advanced)));                                 // Pop!_OS can't keep Windows
+        // Pop!_OS's NVIDIA download already has the driver, so there's no extra step (no "x").
+        Assert.Equal("https://greyhaven-guide.pages.dev/pop-os-nvidia-replace.html#v=1&m=MSI&k=F11&s=Delete&sb=Settings%20%3E%20Security%20%3E%20Secure%20Boot&f=desktop",
+            JourneyBuilder.PhoneGuideUrl(r.WithPath(PathKind.Advanced).WithInstall(InstallChoice.ReplaceWindows)));
+    }
+
+    public static TheoryData<string> Samples => GreyHaven.Tests.Scanning.SampleProfileTests.SampleNames;
+
+    /// <summary>The QR code must always open the hosted guide: never localhost or a home-network address.</summary>
+    [Theory]
+    [MemberData(nameof(Samples))]
+    public async Task Qr_code_always_points_to_the_hosted_guide(string sample)
+    {
+        var r = await Rate(sample);
+        var site = new Uri(GreyHaven.Core.GreyHavenInfo.PhoneGuideSite);
+        Assert.True(IsPublicHttps(site), $"PhoneGuideSite must be a public https address: {site}");
+        foreach (var path in r.Recommendation.Paths)
+            foreach (var choice in new[] { InstallChoice.KeepWindows, InstallChoice.ReplaceWindows })
+            {
+                var report = r.WithPath(path.Kind).WithInstall(choice);
+                if (JourneyBuilder.PhoneGuideUrl(report) is not { } url) continue;
+                var uri = new Uri(url);
+                Assert.True(IsPublicHttps(uri), url);
+                Assert.Equal(site.Host, uri.Host);
+                Assert.Equal(url, JourneyBuilder.Build(report).Single(s => s.Id == "guide").Guide!.PhoneUrl);
+            }
+    }
+
+    private static bool IsPublicHttps(Uri u)
+    {
+        if (u.Scheme != "https" || u.IsLoopback || u.Host is "localhost" || u.Host.EndsWith(".local", StringComparison.OrdinalIgnoreCase)) return false;
+        if (!System.Net.IPAddress.TryParse(u.Host, out var ip)) return true;
+        var b = ip.GetAddressBytes();
+        return !(b[0] == 10 || b[0] == 127 || (b[0] == 172 && b[1] is >= 16 and <= 31) || (b[0] == 192 && b[1] == 168) || (b[0] == 169 && b[1] == 254) || ip.IsIPv6LinkLocal || ip.IsIPv6SiteLocal);
+    }
+
+    [Theory]
+    [MemberData(nameof(Samples))]
+    public async Task Fragment_has_only_known_fields_and_nothing_identifying(string sample)
+    {
+        var r = await Rate(sample);
+        foreach (var path in r.Recommendation.Paths)
+        {
+            var fragment = JourneyBuilder.PhoneGuideFragment(r.WithPath(path.Kind).WithInstall(InstallChoice.ReplaceWindows));
+            foreach (var kv in fragment.Split('&'))
+            {
+                var (k, v) = (kv[..kv.IndexOf('=')], Uri.UnescapeDataString(kv[(kv.IndexOf('=') + 1)..]));
+                Assert.True(GuideFragment.IsValid(k, v), $"{sample}: {kv}");
+            }
+            Assert.DoesNotContain("pci", fragment);
+            Assert.DoesNotContain("usb", fragment, StringComparison.OrdinalIgnoreCase);
+            if (r.Profile.System.SystemModel is { Length: > 2 } model) Assert.DoesNotContain(Uri.EscapeDataString(model), fragment);
+            Assert.True(fragment.Length < 300);
+        }
+    }
+
+    [Fact]
+    public void Fragment_rejects_anything_outside_the_known_fields()
+    {
+        Assert.False(GuideFragment.IsValid("apps", "Steam"));
+        Assert.False(GuideFragment.IsValid("k", "<script>"));
+        Assert.False(GuideFragment.IsValid("x", "pci:10de:1e84"));
+        Assert.False(GuideFragment.IsValid("f", "tablet"));
+        Assert.True(GuideFragment.IsValid("sb", "Settings > Security > Secure Boot"));
     }
 
     [Fact]
@@ -177,6 +242,41 @@ public class JourneyTests
         Assert.Contains("\"suggestedInstall\": \"keepWindows\"", json);
         Assert.Contains("\"type\": \"pictures\"", json);
         Assert.Contains("\"phase\": \"onTheStick\"", json);
+    }
+
+    [Fact]
+    public void Public_site_is_general_safe_and_locked_down()
+    {
+        var dir = Path.Combine(Path.GetTempPath(), $"gh-site-{Guid.NewGuid():N}");
+        try
+        {
+            var pages = PhoneGuideSite.Pages(Data.Value);
+            Assert.Equal(["mint-cinnamon-keep.html", "mint-cinnamon-replace.html", "ubuntu-desktop-keep.html", "ubuntu-desktop-replace.html", "pop-os-intel-replace.html", "pop-os-nvidia-replace.html"],
+                pages.Select(p => p.FileName));
+            PhoneGuideSiteWriter.Write(dir, pages);
+            var script = GuideFragment.Script();
+            foreach (var p in pages)
+            {
+                var html = File.ReadAllText(Path.Combine(dir, p.FileName));
+                Assert.Contains(HtmlReportWriter.ContentSecurityPolicy(script), html);
+                Assert.Contains("<script>" + script + "</script>", html);
+                Assert.Single(System.Text.RegularExpressions.Regex.Matches(html, "<script"));
+                Assert.DoesNotContain("pci:", html);
+                Assert.DoesNotContain("MSI", html);              // no maker names written into the page
+                Assert.DoesNotContain("Install your apps</h3>\n<ul", html); // never an app list
+                Assert.Contains("data-fill=\"k\"", html);
+            }
+            Assert.DoesNotContain("innerHTML", script);
+            Assert.Contains("textContent", script);
+            Assert.Contains("Referrer-Policy: no-referrer", File.ReadAllText(Path.Combine(dir, "_headers")));
+            // Pop!_OS's NVIDIA download already has the driver; its Intel/AMD download doesn't.
+            Assert.DoesNotContain(pages.Single(p => p.FileName == "pop-os-nvidia-replace.html").Fixes, f => f.Id == "nvidia-gpu");
+            Assert.Contains(pages.Single(p => p.FileName == "pop-os-intel-replace.html").Fixes, f => f.Id == "nvidia-gpu");
+            Assert.Contains(pages[0].LaptopChecks, c => c.Title == "Touchpad");
+            Assert.DoesNotContain(pages[0].Checks, c => c.Title == "Touchpad");
+            Assert.DoesNotContain("touchpad", pages[0].DesktopChecks.Single().Test, StringComparison.OrdinalIgnoreCase);
+        }
+        finally { if (Directory.Exists(dir)) Directory.Delete(dir, true); }
     }
 
     [Fact]

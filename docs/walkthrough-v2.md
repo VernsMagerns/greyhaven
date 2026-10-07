@@ -78,13 +78,16 @@ Instead:
 
 - **On the Windows drive:** `Documents\GreyHaven\GreyHaven guide.html`. The live session can open
   it from Files unless the drive is encrypted or in RST/VMD mode (then it isn't offered).
-- **Phone:** a QR code to the static guide on GitHub Pages, once the repository is public. Only
-  the person's *choices* go in the address, after `#`, which browsers never send to the server
-  (`v=1&d=ubuntu&e=desktop&i=keep&w=11&f=desktop&k=F11&x=gpu`): no part IDs, names or serials.
-- **While the repository is private:** no QR code (Pages for private repositories needs a paid
-  plan). Print, open/save the guide, or the Windows-drive copy. A local Wi-Fi server from the
-  app was considered and rejected: listening on the network triggers a Windows Firewall prompt
-  that needs administrator rights, and the page dies when the PC restarts.
+- **Phone:** a QR code to the public phone guide on Cloudflare Pages (free, deployed from the
+  private repository by GitHub Actions; see [phone-guide-hosting.md](phone-guide-hosting.md)).
+  Pages are general, one per distro, download and install choice. Only non-identifying
+  choices go in the address, after `#`, which browsers never send to the server
+  (`#v=1&m=MSI&k=F11&f=desktop&g=100&x=nvidia-gpu`); a small script, locked down by a
+  content-security policy, fills them in as plain text. No part IDs, device or app lists. A
+  test fails if the QR code could ever point to localhost or a home-network address.
+- *Decided 7 October 2026:* GitHub Pages was the first idea, but needs a paid plan while the
+  repository is private; a local Wi-Fi server was rejected (Windows Firewall admin prompt, and
+  it dies when the PC restarts).
 
 ### Pictures that enlarge
 
