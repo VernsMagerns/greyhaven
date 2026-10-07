@@ -43,6 +43,9 @@ public partial class App : Application
             ShowInFolder,
             sample);
 
+        Infrastructure.BlockView.Open = Open;
+        Infrastructure.BlockView.Copy = CopyToClipboard;
+
         var vm = new MainViewModel(services);
         _themes = new ThemeManager(this);
         _themes.Apply(vm.Theme);

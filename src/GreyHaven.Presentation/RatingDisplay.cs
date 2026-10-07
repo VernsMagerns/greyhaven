@@ -9,8 +9,8 @@ namespace GreyHaven.Presentation;
 /// </summary>
 public static class RatingDisplay
 {
-    /// <summary>Main-view wording: no jargon.</summary>
-    public static string Label(Rating r) => Labels.Of(r);
+    /// <summary>Main-view wording: short and plain ("Needs one extra step").</summary>
+    public static string Label(Rating r) => PlainWords.Rating(r);
 
     /// <summary>The official rating names, shown in technical details and reports.</summary>
     public static string OfficialName(Rating r) => Labels.Official(r);

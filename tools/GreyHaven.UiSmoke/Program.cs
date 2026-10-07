@@ -62,36 +62,54 @@ try
         }
     }
 
+    AutomationElement FindStarting(ControlType type, string prefix) =>
+        Retry.WhileNull(() => window.FindAllDescendants(cf => cf.ByControlType(type))
+            .FirstOrDefault(e => (e.Name ?? "").StartsWith(prefix, StringComparison.Ordinal)), timeout).Result
+        ?? throw new InvalidOperationException($"Couldn't find a {type} starting '{prefix}'.");
+
     // Start screen: turn online lookups off so CI never depends on the network.
-    Find("Will this PC work well with Linux?");
+    Find("Will Linux work on your PC?");
     var online = window.FindFirstDescendant(cf => cf.ByControlType(ControlType.CheckBox))?.AsCheckBox();
     if (online?.IsChecked == true) online.Toggle();
     CheckNames("start");
     Shot("01-start-light.png");
 
     Find("Scan my PC").AsButton().Invoke();
-    Find("Your results");
+    Find("Your PC is ready for Linux");
     CheckNames("results");
     Shot("02-results-light.png");
 
-    // Advanced path (only offered when the best distro needs Secure Boot off).
-    var advanced = window.FindFirstDescendant(cf => cf.ByControlType(ControlType.RadioButton).And(cf.ByName("Advanced: Pop!_OS. Needs Secure Boot turned off.")));
-    if (advanced is not null)
-    {
-        advanced.AsRadioButton().IsChecked = true;
-        Shot("03-results-advanced-light.png");
-        Find("Easy: Ubuntu. Keeps Secure Boot on. Suggested for most people.").AsRadioButton().IsChecked = true;
-    }
+    // Advanced path (offered when the best distro needs Secure Boot off), then back to Easy.
+    FindStarting(ControlType.RadioButton, "Pop!_OS, Best fit").AsRadioButton().IsChecked = true;
+    Shot("03-results-advanced-light.png");
+    FindStarting(ControlType.RadioButton, "Ubuntu, Easiest").AsRadioButton().IsChecked = true;
 
-    // Expand the first component that needs attention.
-    var firstExpander = Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByControlType(ControlType.Group).And(cf.ByName("Graphics: Works after an extra step. Essential part. NVIDIA GeForce RTX 3070"))), TimeSpan.FromSeconds(5)).Result;
-    firstExpander?.Patterns.ExpandCollapse.Pattern.Expand();
-    Shot("04-component-expanded-light.png");
+    // "Show more" on the part that needs attention.
+    FindStarting(ControlType.Group, "Show more about Graphics").Patterns.ExpandCollapse.Pattern.Expand();
+    Shot("04-part-show-more-light.png");
 
-    // Dark theme.
+    // The walkthrough: step 1, step 3 (this PC's Windows checklist), step 8 (install choice).
+    FindStarting(ControlType.Button, "What's next").AsButton().Invoke();
+    Find("Back up your files");
+    CheckNames("walkthrough step 1");
+    Shot("06-walkthrough-step1-light.png");
+    for (var i = 0; i < 2; i++) FindStarting(ControlType.Button, "Next:").AsButton().Invoke();
+    Find("Get Windows ready");
+    CheckNames("walkthrough step 3");
+    Shot("07-walkthrough-step3-light.png");
+    for (var i = 0; i < 5; i++) FindStarting(ControlType.Button, "Next:").AsButton().Invoke();
+    Find("Choose how to install");
+    FindStarting(ControlType.RadioButton, "Replace Windows").AsRadioButton().IsChecked = true;
+    CheckNames("walkthrough step 8");
+    Shot("08-walkthrough-install-replace-light.png");
+
+    // Dark theme, on the walkthrough and back on the results.
     var theme = window.FindFirstDescendant(cf => cf.ByControlType(ControlType.ComboBox))?.AsComboBox()
                 ?? throw new InvalidOperationException("Appearance box not found.");
     theme.Select("Dark");
+    Shot("09-walkthrough-dark.png");
+    FindStarting(ControlType.Button, "← Back to results").AsButton().Invoke();
+    Find("Your PC is ready for Linux");
     Shot("05-results-dark.png");
     theme.Select("Match Windows");
 }

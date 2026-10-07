@@ -12,7 +12,7 @@
                    Visibility="{Binding ProgressText, Converter={StaticResource HasValueToVisibility}}" />
         <TextBlock Style="{StaticResource Secondary}" Margin="0,8,0,0" MaxWidth="680" HorizontalAlignment="Left"
                    Visibility="{Binding ProgressText, Converter={StaticResource HasValueToVisibility}}"
-                   Text="Online lookups wait 10 seconds between requests, as linux-hardware.org asks. You can cancel and turn online lookups off on the first screen." />
+                   Text="The online check waits 10 seconds between parts, as linux-hardware.org asks. To skip it, cancel and untick the online check." />
         <Button Content="_Cancel" Command="{Binding CancelScanCommand}" Margin="0,20,0,0" Padding="24,6" HorizontalAlignment="Left" />
     </StackPanel>
 </UserControl>

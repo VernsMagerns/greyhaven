@@ -5,7 +5,7 @@ using GreyHaven.Ratings;
 
 namespace GreyHaven.Presentation.ViewModels;
 
-public enum Screen { Start, Working, Results, Error }
+public enum Screen { Start, Working, Results, Walkthrough, Error }
 
 public sealed record ThemeOption(ThemeChoice Value, string Label);
 
@@ -32,11 +32,16 @@ public sealed partial class MainViewModel : ObservableObject
         new(ThemeChoice.Dark, "Dark"),
     ];
 
-    public string PrivacyText =>
-        "GreyHaven reads device IDs and settings only. It never reads serial numbers, your name, your PC's name or network addresses.";
+    public string? DemoText => _services.DemoSample is null ? null : "Demo: this is a sample PC, not yours.";
 
-    public string OnlineLookupsText =>
-        "Look up unknown devices online. Sends only device IDs (like pci:8086-2723) to linux-hardware.org, and checks the distros' websites for new releases.";
+    public string IntroText =>
+        "GreyHaven checks the parts inside your PC. Then it tells you which version of Linux fits best. It won't change anything.";
+
+    public string PrivacyText => "GreyHaven never reads your files or personal details.";
+
+    public string OnlineLookupsText => "Also check online for parts we don't know";
+
+    public string OnlineLookupsDetail => "Only sends part ID numbers.";
 
     [ObservableProperty]
     public partial Screen Screen { get; private set; } = Screen.Start;
@@ -50,6 +55,9 @@ public sealed partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     public partial ResultsViewModel? Results { get; private set; }
+
+    [ObservableProperty]
+    public partial WalkthroughViewModel? Walkthrough { get; private set; }
 
     [ObservableProperty]
     public partial string? ErrorMessage { get; private set; }
@@ -89,10 +97,10 @@ public sealed partial class MainViewModel : ObservableObject
         ProgressText = null;
         try
         {
-            StatusText = "Reading your PC's hardware...";
+            StatusText = "Looking at the parts inside your PC…";
             var profile = await _services.ScanAsync(cancellationToken);
 
-            StatusText = "Checking how each part works on Linux...";
+            StatusText = "Checking how each part works with Linux…";
             // Progress<T> posts back to the UI thread it was created on.
             var progress = new Progress<RatingProgress>(p =>
             {
@@ -107,7 +115,7 @@ public sealed partial class MainViewModel : ObservableObject
         catch (OperationCanceledException)
         {
             Screen = Screen.Start;
-            StatusText = "Scan cancelled.";
+            StatusText = "Stopped. Nothing was changed.";
         }
         catch (Exception ex)
         {
@@ -121,10 +129,20 @@ public sealed partial class MainViewModel : ObservableObject
         }
     }
 
+    /// <summary>"What's next": the step-by-step walkthrough for the path chosen on the results screen.</summary>
+    [RelayCommand]
+    private void ShowWalkthrough()
+    {
+        if (Results?.HasRecommendation != true) return;
+        Walkthrough = new WalkthroughViewModel(Results.Report, () => Screen = Screen.Results);
+        Screen = Screen.Walkthrough;
+    }
+
     [RelayCommand]
     private void StartOver()
     {
         Results = null;
+        Walkthrough = null;
         ErrorMessage = null;
         ErrorDetails = null;
         StatusText = "";

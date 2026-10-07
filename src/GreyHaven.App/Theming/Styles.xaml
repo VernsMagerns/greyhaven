@@ -10,39 +10,49 @@
     <infra:NoticeBrushConverter x:Key="NoticeBrush" />
     <infra:ItemNumberConverter x:Key="ItemNumber" />
 
+    <!-- "Market Day" brand fonts, shipped with the app (SIL Open Font License 1.1, see Fonts\*-OFL.txt). -->
+    <FontFamily x:Key="HeadingFont">pack://application:,,,/Fonts/#Rubik, Segoe UI</FontFamily>
+    <FontFamily x:Key="BodyFont">pack://application:,,,/Fonts/#Lexend, Segoe UI</FontFamily>
     <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
     <FontFamily x:Key="CodeFont">Cascadia Mono, Consolas, Courier New</FontFamily>
 
     <!-- Text. Headings lead directly: no small all-caps "eyebrow" labels above them. -->
     <Style x:Key="Heading1" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="28" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontFamily" Value="{StaticResource HeadingFont}" />
+        <Setter Property="FontSize" Value="32" />
+        <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="Foreground" Value="{DynamicResource GH.Text}" />
         <Setter Property="Margin" Value="0,0,0,12" />
         <Setter Property="AutomationProperties.HeadingLevel" Value="Level1" />
     </Style>
     <Style x:Key="Heading2" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="20" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontFamily" Value="{StaticResource HeadingFont}" />
+        <Setter Property="FontSize" Value="22" />
+        <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="Foreground" Value="{DynamicResource GH.Text}" />
-        <Setter Property="Margin" Value="0,28,0,10" />
+        <Setter Property="Margin" Value="0,32,0,10" />
         <Setter Property="AutomationProperties.HeadingLevel" Value="Level2" />
     </Style>
     <Style x:Key="Heading3" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="16" />
-        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontFamily" Value="{StaticResource HeadingFont}" />
+        <Setter Property="FontSize" Value="17" />
+        <Setter Property="FontWeight" Value="Bold" />
         <Setter Property="TextWrapping" Value="Wrap" />
         <Setter Property="Foreground" Value="{DynamicResource GH.Text}" />
         <Setter Property="Margin" Value="0,16,0,8" />
         <Setter Property="AutomationProperties.HeadingLevel" Value="Level3" />
     </Style>
     <Style x:Key="Body" TargetType="TextBlock">
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="15" />
         <Setter Property="TextWrapping" Value="Wrap" />
-        <Setter Property="LineHeight" Value="21" />
+        <Setter Property="LineHeight" Value="23" />
         <Setter Property="Foreground" Value="{DynamicResource GH.Text}" />
+    </Style>
+    <Style x:Key="Lead" TargetType="TextBlock" BasedOn="{StaticResource Body}">
+        <Setter Property="FontSize" Value="18" />
+        <Setter Property="LineHeight" Value="27" />
     </Style>
     <Style x:Key="Secondary" TargetType="TextBlock" BasedOn="{StaticResource Body}">
         <Setter Property="Foreground" Value="{DynamicResource GH.TextSecondary}" />
@@ -50,23 +60,87 @@
     <Style x:Key="Strong" TargetType="TextBlock" BasedOn="{StaticResource Body}">
         <Setter Property="FontWeight" Value="SemiBold" />
     </Style>
+    <Style x:Key="BigKey" TargetType="TextBlock">
+        <Setter Property="FontFamily" Value="{StaticResource HeadingFont}" />
+        <Setter Property="FontSize" Value="40" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="TextAlignment" Value="Center" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Foreground" Value="{DynamicResource GH.Text}" />
+    </Style>
 
-    <!-- Surfaces -->
+    <!-- Surfaces. "Sticker": thick ink outline and a hard offset shadow. The shadow is a second
+         shape (not an Effect), so text keeps ClearType. In High Contrast the shadow is transparent. -->
+    <Style x:Key="Sticker" TargetType="ContentControl">
+        <Setter Property="Focusable" Value="False" />
+        <Setter Property="Margin" Value="0,0,0,14" />
+        <Setter Property="Padding" Value="20" />
+        <Setter Property="Background" Value="{DynamicResource GH.Card}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid>
+                        <Border Background="{DynamicResource GH.Shadow}" CornerRadius="12" Margin="5,5,0,0" />
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{DynamicResource GH.CardBorder}"
+                                BorderThickness="2.5" CornerRadius="12" Margin="0,0,5,5" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter />
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <!-- Plain card (no shadow), for lists of parts and smaller boxes. -->
     <Style x:Key="Card" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource GH.Card}" />
         <Setter Property="BorderBrush" Value="{DynamicResource GH.CardBorder}" />
-        <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="BorderThickness" Value="2.5" />
+        <Setter Property="CornerRadius" Value="12" />
         <Setter Property="Padding" Value="20" />
         <Setter Property="Margin" Value="0,0,0,12" />
+    </Style>
+    <Style x:Key="InfoBox" TargetType="Border">
+        <Setter Property="Background" Value="{DynamicResource GH.NoticeInfo}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GH.CardBorder}" />
+        <Setter Property="BorderThickness" Value="2.5" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="Padding" Value="16,12" />
+        <Setter Property="Margin" Value="0,4,0,14" />
+    </Style>
+    <Style x:Key="WarningBox" TargetType="Border" BasedOn="{StaticResource InfoBox}">
+        <Setter Property="Background" Value="{DynamicResource GH.NoticeWarning}" />
+    </Style>
+    <Style x:Key="DangerBox" TargetType="Border" BasedOn="{StaticResource WarningBox}">
+        <Setter Property="BorderThickness" Value="4" />
     </Style>
     <Style x:Key="CommandBox" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource GH.CommandBackground}" />
         <Setter Property="BorderBrush" Value="{DynamicResource GH.CardBorder}" />
         <Setter Property="BorderThickness" Value="1" />
-        <Setter Property="CornerRadius" Value="4" />
+        <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="10,6" />
         <Setter Property="Margin" Value="0,4" />
+    </Style>
+    <Style x:Key="Pill" TargetType="Border">
+        <Setter Property="BorderBrush" Value="{DynamicResource GH.CardBorder}" />
+        <Setter Property="BorderThickness" Value="1.5" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="8,0" />
+        <Setter Property="Margin" Value="8,0,0,0" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <!-- Buttons -->
+    <Style x:Key="AccentButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+        <Setter Property="Background" Value="{DynamicResource GH.Accent}" />
+        <Setter Property="Foreground" Value="{DynamicResource GH.OnAccent}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource GH.CardBorder}" />
+        <Setter Property="BorderThickness" Value="2.5" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontSize" Value="19" />
+        <Setter Property="Padding" Value="32,12" />
+        <Setter Property="MinHeight" Value="54" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
     </Style>
 
     <!-- A link that is a real, focusable button (keyboard + screen reader friendly). -->
@@ -79,7 +153,7 @@
                 <ControlTemplate TargetType="Button">
                     <Border x:Name="Bd" Background="Transparent" Padding="0,2">
                         <TextBlock x:Name="Text" Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" TextWrapping="Wrap" TextDecorations="Underline"
-                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" FontSize="14" />
+                                   Foreground="{Binding Foreground, RelativeSource={RelativeSource TemplatedParent}}" FontSize="15" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsKeyboardFocused" Value="True">
@@ -92,12 +166,24 @@
         </Setter>
     </Style>
 
+    <!-- "Show more": an expander whose header reads like a link. -->
+    <Style x:Key="ShowMore" TargetType="Expander" BasedOn="{StaticResource {x:Type Expander}}">
+        <Setter Property="Foreground" Value="{DynamicResource GH.Text}" />
+        <Setter Property="HeaderTemplate">
+            <Setter.Value>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}" FontWeight="SemiBold" Foreground="{DynamicResource GH.Accent}" FontSize="15" />
+                </DataTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Rating badge: icon + text + colour, never colour alone. -->
     <DataTemplate x:Key="RatingBadge">
         <StackPanel Orientation="Horizontal">
             <infra:DecorativeText Text="{Binding Glyph}" FontFamily="{StaticResource IconFont}" FontSize="16" VerticalAlignment="Center"
                        Foreground="{Binding ColourKey, Converter={StaticResource PaletteBrush}}" />
-            <TextBlock Text="{Binding RatingLabel}" Margin="8,0,0,0" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center"
+            <TextBlock Text="{Binding RatingLabel}" Margin="8,0,0,0" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center"
                        Foreground="{Binding ColourKey, Converter={StaticResource PaletteBrush}}" />
         </StackPanel>
     </DataTemplate>

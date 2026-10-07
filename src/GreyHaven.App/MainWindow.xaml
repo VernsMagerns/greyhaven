@@ -3,15 +3,16 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:views="clr-namespace:GreyHaven.App.Views"
         Title="{Binding WindowTitle}"
-        Width="1000" Height="820" MinWidth="560" MinHeight="480"
+        Width="1000" Height="840" MinWidth="560" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource GH.Page}"
         Foreground="{DynamicResource GH.Text}"
-        FontSize="14">
+        FontFamily="{StaticResource BodyFont}"
+        FontSize="15">
     <DockPanel>
         <!-- Top bar: app name and appearance setting -->
         <Grid DockPanel.Dock="Top" Margin="24,12,24,4">
-            <TextBlock Text="GreyHaven" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"
+            <TextBlock Text="GreyHaven" FontFamily="{StaticResource HeadingFont}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"
                        Foreground="{DynamicResource GH.Text}" />
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <Label x:Name="AppearanceLabel" Content="_Appearance" Target="{Binding ElementName=ThemeBox}"
@@ -24,12 +25,15 @@
         </Grid>
 
         <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
-            <Grid MaxWidth="880" Margin="24,8,24,40">
+            <Grid MaxWidth="840" Margin="24,8,24,40">
                 <views:StartView Visibility="{Binding Screen, Converter={StaticResource EqualsToVisibility}, ConverterParameter=Start}" />
                 <views:WorkingView Visibility="{Binding Screen, Converter={StaticResource EqualsToVisibility}, ConverterParameter=Working}" />
                 <views:ErrorView Visibility="{Binding Screen, Converter={StaticResource EqualsToVisibility}, ConverterParameter=Error}" />
                 <Border Visibility="{Binding Screen, Converter={StaticResource EqualsToVisibility}, ConverterParameter=Results}">
                     <views:ResultsView DataContext="{Binding Results}" />
+                </Border>
+                <Border Visibility="{Binding Screen, Converter={StaticResource EqualsToVisibility}, ConverterParameter=Walkthrough}">
+                    <views:WalkthroughView DataContext="{Binding Walkthrough}" />
                 </Border>
             </Grid>
         </ScrollViewer>

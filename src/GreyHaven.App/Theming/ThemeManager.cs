@@ -49,6 +49,7 @@ internal sealed class ThemeManager : IDisposable
         };
 
         var palette = new ResourceDictionary();
+        // Note: Palette.Light/Dark are the "Market Day" brand colours (Presentation/Theming/Palette.cs).
         if (highContrast)
         {
             // High Contrast: use the user's system colours for everything; ratings keep icons and text.
@@ -64,6 +65,9 @@ internal sealed class ThemeManager : IDisposable
                 palette[$"GH.{name}"] = brush;
             }
         }
+
+        // Decorative pictures use brand colours, so they're hidden in High Contrast.
+        palette["GH.DecorVisibility"] = highContrast ? Visibility.Collapsed : Visibility.Visible;
 
         var dictionaries = _app.Resources.MergedDictionaries;
         dictionaries[0] = new ResourceDictionary { Source = new Uri(highContrast ? FluentHighContrast : IsDark ? FluentDark : FluentLight) };
@@ -87,6 +91,7 @@ internal sealed class ThemeManager : IDisposable
         "Accent" or "ExtraStep" => SystemColors.HotTrackBrush,
         "OnAccent" => SystemColors.HighlightTextBrush,
         "CardBorder" => SystemColors.WindowTextBrush,
+        "Shadow" => Brushes.Transparent, // no decorative sticker shadows in High Contrast
         _ => SystemColors.WindowTextBrush,
     };
 

@@ -41,6 +41,7 @@ public sealed partial class ComponentViewModel : ObservableObject
         // Essential and important parts carry a visible label; other parts don't need one.
         ImportanceLabel = rated.Importance == Importance.Minor ? null : Labels.Of(rated.Importance);
         Explanation = r.Explanation;
+        Summary = PlainWords.Summary(r, Reports.ReportBuilder.ShortName(report, distroId));
         ApproximationNote = r.ApproximationNote;
         ConfidenceLabel = $"How sure GreyHaven is: {RatingDisplay.Confidence(r.Confidence)}";
         WeakDataLabel = r.IsWeakData ? "Based on limited data" : null;
@@ -48,7 +49,7 @@ public sealed partial class ComponentViewModel : ObservableObject
 
         if (r.Fix is { } fix)
         {
-            FixTitle = $"What to do: {fix.Driver}";
+            FixTitle = $"How to fix it: {fix.Driver}";
             FixSteps = fix.Steps;
             FixCommands = fix.Commands.Select(cmd => new CommandLineViewModel(cmd, services)).ToList();
             CopyAllCommandsCommand = new RelayCommand(() => services.CopyToClipboard(string.Join(Environment.NewLine, fix.Commands)), () => fix.Commands.Count > 0);
@@ -90,6 +91,8 @@ public sealed partial class ComponentViewModel : ObservableObject
     /// <summary>"Essential" or "Important"; null for other parts.</summary>
     public string? ImportanceLabel { get; }
     public string Explanation { get; }
+    /// <summary>One short, beginner-level line shown on the card; the explanation is behind "Show more".</summary>
+    public string Summary { get; }
     public string? ApproximationNote { get; }
     public string ConfidenceLabel { get; }
     public string? WeakDataLabel { get; }

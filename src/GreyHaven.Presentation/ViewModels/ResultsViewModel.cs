@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GreyHaven.Core;
 using GreyHaven.Core.Compatibility;
+using GreyHaven.Core.Hardware;
 using GreyHaven.Reports;
 
 namespace GreyHaven.Presentation.ViewModels;
@@ -20,16 +21,15 @@ public sealed class NoticeViewModel(NoticeKind kind, string title, string messag
 
 public sealed record CaveatViewModel(string Title, string Why, string WhatToTest);
 
-/// <summary>A distro's score card. Selecting it shows that distro's ratings.</summary>
-public sealed partial class DistroCardViewModel(DistroSummary summary, ResultsViewModel owner) : ObservableObject
+/// <summary>A distro's comparison card. Selecting it shows that distro's parts.</summary>
+public sealed partial class DistroCardViewModel(DistroSummary summary, string shortName, ResultsViewModel owner) : ObservableObject
 {
     public string DistroId { get; } = summary.DistroId;
-    public string Name { get; } = summary.DisplayName;
-    public string ScoreText { get; } = $"{summary.Score.Score}";
-    public string BandText { get; } = RatingDisplay.Band(summary.Score.Band);
-    public string AccessibleName => $"{Name}: {summary.Score.Score} out of 100, {BandText}.{(IsChosen ? " Your chosen distro." : "")}";
+    public string Name { get; } = shortName;
+    public string ScoreLine { get; } = $"{summary.Score.Score} out of 100";
+    public string AccessibleName => $"{Name}: {summary.Score.Score} out of 100.{(IsChosen ? " Your pick." : "")}";
 
-    /// <summary>Two-way bound to a radio button; selecting shows this distro's ratings.</summary>
+    /// <summary>Two-way bound to a radio button; selecting shows this distro's parts.</summary>
     [ObservableProperty]
     public partial bool IsSelected { get; set; }
 
@@ -43,27 +43,25 @@ public sealed partial class DistroCardViewModel(DistroSummary summary, ResultsVi
     [NotifyPropertyChangedFor(nameof(ChosenLabel))]
     public partial bool IsChosen { get; set; }
 
-    public string? ChosenLabel => IsChosen ? "Your choice" : null;
-    public string ScoreLine => $"{ScoreText} / 100, {BandText}";
+    public string? ChosenLabel => IsChosen ? "Your pick" : null;
 }
 
-/// <summary>One way to switch (Easy or Advanced, or the single recommendation).</summary>
+/// <summary>One way to switch (Easy or Advanced, or the single recommendation): a short card, details behind "Show more".</summary>
 public sealed partial class PathOptionViewModel : ObservableObject
 {
     private readonly ResultsViewModel _owner;
 
-    public PathOptionViewModel(RecommendationPath path, bool isDefault, ResultsViewModel owner, IAppServices services)
+    public PathOptionViewModel(RecommendationPath path, CompatibilityReport report, bool isDefault, ResultsViewModel owner, IAppServices services)
     {
         _owner = owner;
         Kind = path.Kind;
-        Title = path.Title;
-        Subtitle = path.Requirements.Contains(PreSwitchRequirement.TurnOffSecureBoot)
-            ? "Needs Secure Boot turned off"
-            : "Keeps Secure Boot on";
-        Paragraph = path.Paragraph;
+        Name = ReportBuilder.ShortName(report, path.DistroId);
+        Tag = path.Kind == PathKind.Easy ? "Easiest" : "Best fit";
+        Lines = ReportBuilder.PathLines(report, path);
         IsDefault = isDefault;
-        DownloadText = $"You'll download: {path.EditionName}";
-        SecureBootNotice = path.SecureBootNotice;
+        Paragraph = path.Paragraph;
+        SecureBootText = path.SecureBootNotice is null ? null : $"{PlainWords.SecureBoot} {path.SecureBootNotice}";
+        YoullGet = ReportBuilder.YoullGet(report, path);
         if (path.SecureBootGuide is { } g)
         {
             // GreyHaven's own guide ships with the app: open that copy, so it works offline
@@ -71,20 +69,22 @@ public sealed partial class PathOptionViewModel : ObservableObject
             var target = g.LocalPath is not null
                 ? Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, g.LocalPath.Replace('/', Path.DirectorySeparatorChar)))
                 : g.Url;
-            Guide = new LinkViewModel(g.FromManufacturer ? $"How to turn off Secure Boot: {g.Title}" : $"How to turn off Secure Boot (GreyHaven guide)", target, services);
+            var maker = g.FromManufacturer ? $" ({g.Title.Split(" - ")[0]}'s guide)" : " (GreyHaven's guide)";
+            Guide = new LinkViewModel($"How to turn off Secure Boot{maker}", target, services);
         }
     }
 
     public PathKind Kind { get; }
-    public string Title { get; }
-    public string Subtitle { get; }
-    public string Paragraph { get; }
+    public string Name { get; }
+    public string Tag { get; }
+    public IReadOnlyList<string> Lines { get; }
     public bool IsDefault { get; }
-    public string? DefaultLabel => IsDefault ? "Suggested for most people" : null;
-    public string DownloadText { get; }
-    public string? SecureBootNotice { get; }
+    public string? DefaultLabel => IsDefault ? "Suggested" : null;
+    public string Paragraph { get; }
+    public string? SecureBootText { get; }
     public LinkViewModel? Guide { get; }
-    public string AccessibleName => $"{Title}. {Subtitle}.{(IsDefault ? " Suggested for most people." : "")}";
+    public string YoullGet { get; }
+    public string AccessibleName => $"{Name}, {Tag}.{(IsDefault ? " Suggested." : "")} {string.Join(" ", Lines)}";
 
     [ObservableProperty]
     public partial bool IsSelected { get; set; }
@@ -95,12 +95,11 @@ public sealed partial class PathOptionViewModel : ObservableObject
     }
 }
 
-public sealed record ComponentGroupViewModel(string Heading, IReadOnlyList<ComponentViewModel> Components)
-{
-    public string AccessibleName => $"{Heading}, {Components.Count} {(Components.Count == 1 ? "part" : "parts")}";
-}
-
-/// <summary>Everything on the results screen.</summary>
+/// <summary>
+/// The results screen, in plain words: headline and score, the version of Linux to use, "What's
+/// next", the parts that need attention (working parts collapsed to one line), things to test,
+/// a comparison, and saving the report. Details sit behind "Show more".
+/// </summary>
 public sealed partial class ResultsViewModel : ObservableObject
 {
     private readonly IAppServices _services;
@@ -110,60 +109,90 @@ public sealed partial class ResultsViewModel : ObservableObject
         _services = services;
         Report = report;
 
-        RecommendationText = report.Recommendation.Paragraph;
-        Paths = report.Recommendation.Paths.Select(p => new PathOptionViewModel(p, p.Kind == report.Recommendation.DefaultPath, this, services)).ToList();
-        Distros = report.Distros.Select(d => new DistroCardViewModel(d, this)).ToList();
+        Paths = report.Recommendation.Paths.Select(p => new PathOptionViewModel(p, report, p.Kind == report.Recommendation.DefaultPath, this, services)).ToList();
+        Distros = report.Distros.Select(d => new DistroCardViewModel(d, ReportBuilder.ShortName(report, d.DistroId), this)).ToList();
         Caveats = report.Caveats.Select(c => new CaveatViewModel(c.Title, c.Why, c.WhatToTest)).ToList();
-        DataBuiltText = $"Hardware data from {report.Data.BuiltOn.ToString("d MMMM yyyy", CultureInfo.InvariantCulture)}";
-        Notices = BuildNotices(report, services);
+        CaveatsHeading = report.Caveats.Count == 0 ? null : $"{report.Caveats.Count} {(report.Caveats.Count == 1 ? "thing" : "things")} to test before you install";
+        DemoText = services.DemoSample is null ? null : "Demo: this is a sample PC, not yours.";
+        Notices = BuildNotices(report);
+        if (report.ContextNotes.FirstOrDefault() is { } why)
+        {
+            WhySwitchText = "Microsoft stopped supporting Windows 10 in October 2025. Security updates now need a special sign-up. Those updates end in October 2027.";
+            WhySwitchLink = new LinkViewModel("Read Microsoft's page", why.Source.Url, services);
+        }
+        var offline = report.DataNotes.Any(n => n.Contains("turned off", StringComparison.Ordinal));
+        Footnote = $"Checked with GreyHaven's built-in data from {report.Data.BuiltOn.ToString("d MMMM yyyy", CultureInfo.InvariantCulture)}.{(offline ? " The online check was off." : "")}";
 
         var initial = Paths.FirstOrDefault(p => p.Kind == report.SelectedPath);
-        if (initial is not null) initial.IsSelected = true; // also selects the distro
-        else ShowDistro(report.Distros[0].DistroId);
+        if (initial is not null) initial.IsSelected = true; // also selects the distro and sets the headline
+        else
+        {
+            UpdateHeadline();
+            ShowDistro(report.Distros.OrderByDescending(d => d.Score.Score).First().DistroId);
+        }
     }
 
     [ObservableProperty]
     public partial CompatibilityReport Report { get; private set; }
 
-    public string RecommendationText { get; }
     public bool HasRecommendation => Paths.Count > 0;
     public bool HasPathChoice => Paths.Count > 1;
     public IReadOnlyList<PathOptionViewModel> Paths { get; }
     public IReadOnlyList<DistroCardViewModel> Distros { get; }
     public IReadOnlyList<NoticeViewModel> Notices { get; }
     public IReadOnlyList<CaveatViewModel> Caveats { get; }
-    public string DataBuiltText { get; }
+    public string? CaveatsHeading { get; }
+    public string? DemoText { get; }
+    public string? WhySwitchText { get; }
+    public LinkViewModel? WhySwitchLink { get; }
+    public string Footnote { get; }
+    public string PathsHeading => HasPathChoice ? "Pick your version of Linux" : "Your version of Linux";
+    public string? PathsIntro => HasPathChoice ? PlainWords.Distro + " Two fit this PC well." : null;
 
-    // ---- Selected distro (summary score up top + component list) ----
+    // ---- Headline: the chosen path's distro --------------------------------------------------
 
     [ObservableProperty]
-    public partial string SelectedDistroId { get; private set; } = "";
+    public partial string Headline { get; private set; } = "";
 
     [ObservableProperty]
-    public partial string DistroName { get; private set; } = "";
+    public partial string? Suggestion { get; private set; }
 
-    /// <summary>Explains the "Essential" and "Important" labels on parts.</summary>
-    public string ImportanceKey { get; } =
-        "Parts labelled \"Essential\" are ones the PC can't be used properly without, and they count most toward the score. " +
-        "\"Important\" parts are ones you'd notice if they didn't work.";
+    [ObservableProperty]
+    public partial string HeadlineSummary { get; private set; } = "";
 
     [ObservableProperty]
     public partial string ScoreText { get; private set; } = "";
 
     [ObservableProperty]
-    public partial string BandText { get; private set; } = "";
-
-    [ObservableProperty]
     public partial string ScoreAccessibleName { get; private set; } = "";
 
-    [ObservableProperty]
-    public partial string SummaryText { get; private set; } = "";
+    private void UpdateHeadline()
+    {
+        var chosen = Report.SelectedDistroId;
+        var d = chosen is null ? Report.Distros.OrderByDescending(x => x.Score.Score).First() : Report.Distros.First(x => x.DistroId == chosen);
+        Headline = HasRecommendation ? PlainWords.Headline(d.Score.Score) : "We can't suggest a version of Linux yet";
+        Suggestion = chosen is null ? null : $"We suggest {ReportBuilder.ShortName(Report, chosen)}.";
+        HeadlineSummary = PlainWords.PartsSummary(Report.Components.Select(c => c.For(d.DistroId).Rating).ToList());
+        ScoreText = d.Score.Score.ToString(CultureInfo.InvariantCulture);
+        ScoreAccessibleName = $"Score: {d.Score.Score} out of 100";
+    }
+
+    // ---- Parts: the distro being shown (the chosen one, or one being compared) -------------
 
     [ObservableProperty]
-    public partial string? ScoreNote { get; private set; }
+    public partial string SelectedDistroId { get; private set; } = "";
 
     [ObservableProperty]
-    public partial IReadOnlyList<ComponentGroupViewModel> Groups { get; private set; } = [];
+    public partial string PartsHeading { get; private set; } = "";
+
+    [ObservableProperty]
+    public partial IReadOnlyList<ComponentViewModel> AttentionParts { get; private set; } = [];
+
+    [ObservableProperty]
+    public partial IReadOnlyList<ComponentViewModel> WorkingParts { get; private set; } = [];
+
+    [ObservableProperty]
+    public partial string? WorkingHeading { get; private set; }
 
     /// <summary>Set when the user is comparing a distro other than the one their path uses.</summary>
     [ObservableProperty]
@@ -171,49 +200,49 @@ public sealed partial class ResultsViewModel : ObservableObject
 
     public string? ChosenDistroId => Report.SelectedDistroId;
 
-    /// <summary>Called when a path is selected: carries the choice into the report (fixes, checklist, ISO, export).</summary>
+    /// <summary>Called when a path is selected: carries the choice into the report (steps, ISO, export).</summary>
     public void ChoosePath(PathKind kind)
     {
         foreach (var p in Paths) if (p.Kind != kind) p.IsSelected = false;
         Report = Report.WithPath(kind);
-        Groups = []; // force the component list to rebuild for the chosen distro
+        AttentionParts = [];
         OnPropertyChanged(nameof(ChosenDistroId));
         foreach (var d in Distros) d.IsChosen = d.DistroId == Report.SelectedDistroId;
-        ShowDistro(Report.SelectedDistroId!);
+        UpdateHeadline();
+        SavedPath = null;
+        SaveStatus = null;
+        ShowDistro(Report.SelectedDistroId!, force: true);
     }
 
-    public void ShowDistro(string distroId)
+    public void ShowDistro(string distroId) => ShowDistro(distroId, force: false);
+
+    private void ShowDistro(string distroId, bool force)
     {
-        var summary = Report.Distros.First(d => d.DistroId == distroId);
-        if (SelectedDistroId == distroId && Groups.Count > 0) return;
+        if (!force && SelectedDistroId == distroId && (AttentionParts.Count + WorkingParts.Count) > 0) return;
         SelectedDistroId = distroId;
         foreach (var d in Distros) d.IsSelected = d.DistroId == distroId;
-
-        DistroName = summary.DisplayName;
-        ScoreText = summary.Score.Score.ToString(CultureInfo.InvariantCulture);
-        BandText = RatingDisplay.Band(summary.Score.Band);
-        ScoreAccessibleName = $"Score for {summary.DisplayName}: {summary.Score.Score} out of 100, {BandText}.";
-
-        var ratings = Report.Components.Select(c => c.For(distroId).Rating).ToList();
-        SummaryText = Summarise(ratings);
-        ScoreNote = summary.Score.CapReason ?? (summary.Score.Incomplete ? "Some essential parts couldn't be checked, so this score is incomplete." : null);
+        var name = ReportBuilder.ShortName(Report, distroId);
+        PartsHeading = $"Your PC's parts on {name}";
 
         var vms = Report.Components
             .OrderBy(c => c.Importance)
             .ThenBy(c => c.Component.Category)
             .Select(c => new ComponentViewModel(c, distroId, Report, _services))
             .ToList();
-        var attention = vms.Where(v => v.Rating != Rating.WorksOutOfTheBox).ToList();
-        var works = vms.Where(v => v.Rating == Rating.WorksOutOfTheBox).ToList();
-        Groups = new[]
-        {
-            new ComponentGroupViewModel("Needs your attention", attention),
-            new ComponentGroupViewModel("Works out of the box", works),
-        }.Where(g => g.Components.Count > 0).ToList();
+        AttentionParts = vms.Where(v => v.Rating != Rating.WorksOutOfTheBox).ToList();
+        WorkingParts = vms.Where(v => v.Rating == Rating.WorksOutOfTheBox).ToList();
+        WorkingHeading = WorkingParts.Count == 0 ? null
+            : $"{(AttentionParts.Count == 0 ? "All " : "")}{WorkingParts.Count} {(WorkingParts.Count == 1 ? "part works" : "parts work")} right away. Show them";
 
         ComparingText = Report.SelectedDistroId is { } chosen && chosen != distroId
-            ? $"You're comparing {summary.DisplayName}. Your chosen path uses {Report.Distros.First(d => d.DistroId == chosen).DisplayName}."
+            ? $"You're looking at {name}. Your pick is {ReportBuilder.ShortName(Report, chosen)}."
             : null;
+    }
+
+    [RelayCommand]
+    private void ShowChosenDistro()
+    {
+        if (Report.SelectedDistroId is { } id) ShowDistro(id);
     }
 
     // ---- Saving the report ----
@@ -250,47 +279,18 @@ public sealed partial class ResultsViewModel : ObservableObject
         if (SavedPath is not null) _services.ShowInFolder(SavedPath);
     }
 
-    [RelayCommand]
-    private void ShowChosenDistro()
-    {
-        if (Report.SelectedDistroId is { } id) ShowDistro(id);
-    }
-
-    internal static string Summarise(IReadOnlyList<Rating> ratings)
-    {
-        static string Count(int n, string one, string many) => n == 1 ? $"1 part {one}" : $"{n} parts {many}";
-        int N(Rating r) => ratings.Count(x => x == r);
-
-        var parts = new List<string>();
-        if (N(Rating.WorksOutOfTheBox) is > 0 and var w) parts.Add(Count(w, "works out of the box", "work out of the box"));
-        if (N(Rating.WorksWithExtraDriver) is > 0 and var e) parts.Add(Count(e, "needs an extra step", "need an extra step"));
-        if (N(Rating.Partial) is > 0 and var p) parts.Add(Count(p, "partly works", "partly work"));
-        if (N(Rating.Unsupported) is > 0 and var u) parts.Add(Count(u, "doesn't work", "don't work"));
-        if (N(Rating.Unknown) is > 0 and var k) parts.Add(Count(k, "couldn't be checked", "couldn't be checked"));
-        return parts.Count switch
-        {
-            0 => "",
-            1 => parts[0] + ".",
-            _ => string.Join(", ", parts.Take(parts.Count - 1)) + " and " + parts[^1] + ".",
-        };
-    }
-
-    private static IReadOnlyList<NoticeViewModel> BuildNotices(CompatibilityReport report, IAppServices services)
+    /// <summary>Only things that need attention stay as notices; demo mode, the Windows 10 note and data notes have their own small places.</summary>
+    private static IReadOnlyList<NoticeViewModel> BuildNotices(CompatibilityReport report)
     {
         var notices = new List<NoticeViewModel>();
-        if (services.DemoSample is { } sample)
-            notices.Add(new(NoticeKind.Info, "Demo mode", $"This report uses a sample PC (\"{sample}\"), not your hardware."));
         if (report.Data.Notice is { } stale)
             notices.Add(new(NoticeKind.Warning, "Check for a GreyHaven update", stale));
         if (report.Profile.System.IsArm)
-            notices.Add(new(NoticeKind.Warning, "This PC has an ARM processor", "Linux support for ARM Windows PCs is limited, and most parts can't be checked from here."));
+            notices.Add(new(NoticeKind.Warning, "This PC has an ARM chip", "Linux support for these PCs is still limited, and most parts can't be checked from here."));
         var scanNotes = report.Profile.Warnings.Where(w => !w.Contains("ARM processor", StringComparison.Ordinal)).ToList();
         if (scanNotes.Count > 0)
             notices.Add(new(NoticeKind.Info, "Some details couldn't be read", string.Join(" ", scanNotes)));
-        // Data notes (e.g. "online check unavailable") appear once here, never per component.
-        foreach (var note in report.ContextNotes)
-            notices.Add(new(NoticeKind.Info, "About Windows 10", note.Text, new LinkViewModel(note.Source.Title, note.Source.Url, services)));
-        foreach (var note in report.DataNotes)
+        foreach (var note in report.DataNotes.Where(n => !n.Contains("turned off", StringComparison.Ordinal)))
             notices.Add(new(NoticeKind.Info, "About this report", note));
         return notices;
     }

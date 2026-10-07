@@ -80,3 +80,19 @@ public sealed class DecorativeText : TextBlock
         protected override bool IsContentElementCore() => false;
     }
 }
+
+/// <summary>
+/// An ItemsControl that screen readers skip (e.g. the walkthrough's progress segments, which
+/// "Step 3 of 9" already says in words). Its items aren't exposed either.
+/// </summary>
+public sealed class DecorativeItems : ItemsControl
+{
+    protected override AutomationPeer OnCreateAutomationPeer() => new DecorativeItemsPeer(this);
+
+    private sealed class DecorativeItemsPeer(ItemsControl owner) : FrameworkElementAutomationPeer(owner)
+    {
+        protected override bool IsControlElementCore() => false;
+        protected override bool IsContentElementCore() => false;
+        protected override List<AutomationPeer>? GetChildrenCore() => null;
+    }
+}

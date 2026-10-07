@@ -158,7 +158,7 @@ public class MainViewModelTests
         await scan;
 
         Assert.Equal(Screen.Start, vm.Screen);
-        Assert.Equal("Scan cancelled.", vm.StatusText);
+        Assert.Equal("Stopped. Nothing was changed.", vm.StatusText);
     }
 
     [Fact]
@@ -202,40 +202,55 @@ public class MainViewModelTests
 public class ResultsViewModelTests
 {
     [Fact]
-    public async Task Nvidia_desktop_starts_on_the_easy_path()
+    public async Task Nvidia_desktop_leads_with_a_plain_headline_and_the_easy_path()
     {
-        var services = FakeServices.ForSample("nvidia-desktop");
-        var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), services);
+        var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), FakeServices.ForSample("nvidia-desktop", demo: "nvidia-desktop"));
 
+        Assert.Equal("Your PC is ready for Linux", vm.Headline);
+        Assert.Equal("We suggest Ubuntu.", vm.Suggestion);
+        Assert.Equal("98", vm.ScoreText);
+        Assert.Equal("16 parts work right away. 1 part needs one extra step after you install.", vm.HeadlineSummary);
+        Assert.Equal("Demo: this is a sample PC, not yours.", vm.DemoText);
         Assert.True(vm.HasPathChoice);
-        Assert.Equal(PathKind.Easy, vm.Paths.Single(p => p.IsSelected).Kind);
-        Assert.Equal("ubuntu", vm.SelectedDistroId);
-        Assert.Equal("ubuntu", vm.ChosenDistroId);
-        Assert.Equal("Keeps Secure Boot on", vm.Paths[0].Subtitle);
-        Assert.Equal("Suggested for most people", vm.Paths[0].DefaultLabel);
-        Assert.Contains("Ubuntu", vm.DistroName);
+        Assert.Equal("Pick your version of Linux", vm.PathsHeading);
+        var easy = vm.Paths.Single(p => p.IsSelected);
+        Assert.Equal(PathKind.Easy, easy.Kind);
+        Assert.Equal("Ubuntu", easy.Name);
+        Assert.Equal("Easiest", easy.Tag);
+        Assert.Equal("Suggested", easy.DefaultLabel);
+        Assert.Equal(["Nothing to change on your PC first.", "Your graphics card needs one extra step after you install."], easy.Lines);
+        Assert.Equal("Your PC's parts on Ubuntu", vm.PartsHeading);
         Assert.Null(vm.ComparingText);
     }
 
     [Fact]
-    public async Task Choosing_advanced_carries_through_to_report_score_and_components()
+    public async Task Top_of_results_is_calm_windows_10_note_collapsed_and_online_note_a_footnote()
     {
-        var services = FakeServices.ForSample("nvidia-desktop");
-        var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), services);
+        var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), FakeServices.ForSample("nvidia-desktop", demo: "nvidia-desktop"));
+        Assert.Empty(vm.Notices); // no boxes: demo is a strip, Windows 10 is "Why switch now?", online check is a footnote
+        Assert.StartsWith("Microsoft stopped supporting Windows 10", vm.WhySwitchText);
+        Assert.Equal("https://www.microsoft.com/en-us/windows/end-of-support", vm.WhySwitchLink!.Target);
+        Assert.EndsWith("The online check was off.", vm.Footnote);
+    }
+
+    [Fact]
+    public async Task Choosing_advanced_updates_headline_parts_and_what_you_get()
+    {
+        var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), FakeServices.ForSample("nvidia-desktop"));
         var advanced = vm.Paths.Single(p => p.Kind == PathKind.Advanced);
 
         advanced.IsSelected = true;
 
         Assert.False(vm.Paths.Single(p => p.Kind == PathKind.Easy).IsSelected);
         Assert.Equal(PathKind.Advanced, vm.Report.SelectedPath);
-        Assert.Equal("pop-os", vm.SelectedDistroId);
+        Assert.Equal("We suggest Pop!_OS.", vm.Suggestion);
         Assert.Equal("100", vm.ScoreText);
         Assert.True(vm.Distros.Single(d => d.DistroId == "pop-os").IsChosen);
-        Assert.Equal("You'll download: NVIDIA ISO", advanced.DownloadText);
-        Assert.Equal("Needs Secure Boot turned off", advanced.Subtitle);
-        Assert.Contains("turn it back on later", advanced.SecureBootNotice);
-        // Graphics works out of the box on Pop!_OS's NVIDIA ISO, so nothing needs attention.
-        Assert.DoesNotContain(vm.Groups, g => g.Heading == "Needs your attention");
+        Assert.Equal(["Your graphics card works right away.", "First, you turn off Secure Boot in your PC's startup settings."], advanced.Lines);
+        Assert.Equal("The Pop!_OS installer file made for NVIDIA graphics (about 4 GB). GreyHaven will put it on a USB stick for you.", advanced.YoullGet);
+        Assert.StartsWith("Secure Boot is a safety setting.", advanced.SecureBootText);
+        Assert.Empty(vm.AttentionParts); // graphics works out of the box on the NVIDIA ISO
+        Assert.Equal("All 17 parts work right away. Show them", vm.WorkingHeading);
     }
 
     [Fact]
@@ -267,7 +282,9 @@ public class ResultsViewModelTests
             await vm.SaveReportCommand.ExecuteAsync(null);
 
             Assert.Matches(@"^greyhaven-report-\d{4}-\d{2}-\d{2}\.html$", services.SuggestedName);
-            Assert.Contains("Your PC's parts on Pop!\\_OS", await File.ReadAllTextAsync(path));
+            var saved = await File.ReadAllTextAsync(path);
+            Assert.Contains("Your PC's parts on Pop!\\_OS", saved);
+            Assert.Contains("Step 9 of 9", saved);
             Assert.Equal($"Report saved: {Path.GetFileName(path)}", vm.SaveStatus);
             vm.ShowSavedReportCommand.Execute(null);
             Assert.Equal([path], services.Shown);
@@ -297,15 +314,17 @@ public class ResultsViewModelTests
     }
 
     [Fact]
-    public async Task Comparing_another_distro_keeps_the_chosen_path()
+    public async Task Comparing_another_distro_keeps_the_chosen_path_and_headline()
     {
         var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), FakeServices.ForSample("nvidia-desktop"));
 
         vm.Distros.Single(d => d.DistroId == "mint").IsSelected = true;
 
         Assert.Equal("mint", vm.SelectedDistroId);
+        Assert.Equal("Your PC's parts on Linux Mint", vm.PartsHeading);
         Assert.Equal(PathKind.Easy, vm.Report.SelectedPath);
-        Assert.Contains("You're comparing", vm.ComparingText);
+        Assert.Equal("We suggest Ubuntu.", vm.Suggestion);
+        Assert.Equal("You're looking at Linux Mint. Your pick is Ubuntu.", vm.ComparingText);
         Assert.False(vm.Distros.Single(d => d.DistroId == "ubuntu").IsSelected);
 
         vm.ShowChosenDistroCommand.Execute(null);
@@ -314,27 +333,28 @@ public class ResultsViewModelTests
     }
 
     [Fact]
-    public async Task Components_needing_attention_come_first_with_fixes_one_click_away()
+    public async Task Parts_needing_attention_show_one_plain_line_and_details_behind_show_more()
     {
         var services = FakeServices.ForSample("nvidia-desktop");
         var vm = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), services);
 
-        Assert.Equal("Needs your attention", vm.Groups[0].Heading);
-        var gpu = vm.Groups[0].Components.Single(c => c.Title == "Graphics");
-        Assert.Equal("Works after an extra step", gpu.RatingLabel);
+        var gpu = Assert.Single(vm.AttentionParts);
+        Assert.Equal("Graphics", gpu.Title);
+        Assert.Equal("Needs one extra step", gpu.RatingLabel);
+        Assert.Equal("Works after you add NVIDIA's driver. It takes a few clicks once Ubuntu is installed.", gpu.Summary);
         Assert.Equal("ExtraStep", gpu.ColourKey);
-        Assert.StartsWith("Graphics: Works after an extra step. Essential part.", gpu.AccessibleName);
+        Assert.StartsWith("Graphics: Needs one extra step. Essential part.", gpu.AccessibleName);
         Assert.False(gpu.IsExpanded);
-        Assert.True(gpu.HasFix);
+        Assert.Equal("How to fix it: NVIDIA proprietary driver", gpu.FixTitle);
         Assert.Contains("Additional Drivers", string.Join(" ", gpu.FixSteps));
-        Assert.NotNull(gpu.SecureBootAdvice);
+        Assert.Contains("Enroll MOK", gpu.SecureBootAdvice);
         Assert.Contains(gpu.TechnicalDetails, d => d.Label == "Device ID" && d.Value == "pci:10de:2484");
-        Assert.Contains(gpu.TechnicalDetails, d => d.Label == "Rating" && d.Value == "Works with extra driver/config");
 
         gpu.FixCommands[0].CopyCommand.Execute(null);
         Assert.Equal(["sudo ubuntu-drivers install"], services.Copied);
 
-        Assert.Equal("Works out of the box", vm.Groups[1].Heading);
+        Assert.Equal(16, vm.WorkingParts.Count);
+        Assert.Equal("16 parts work right away. Show them", vm.WorkingHeading);
     }
 
     [Fact]
@@ -342,22 +362,21 @@ public class ResultsViewModelTests
     {
         var services = FakeServices.ForSample("broadcom-legacy-laptop");
         var vm = new ResultsViewModel(await FakeServices.RealReport("broadcom-legacy-laptop"), services);
-        var wifi = vm.Groups.SelectMany(g => g.Components).Single(c => c.Title == "Wi-Fi");
+        var wifi = vm.AttentionParts.Concat(vm.WorkingParts).Single(c => c.Title == "Wi-Fi");
 
         wifi.Sources.Single(s => s.IsLink).OpenCommand.Execute(null);
         Assert.Equal(["https://wiki.debian.org/wl"], services.Opened);
     }
 
     [Fact]
-    public async Task Notices_include_demo_and_report_notes_once()
+    public async Task Other_report_notes_still_show_once()
     {
         var report = await FakeServices.RealReport("intel-laptop");
         report = report with { DataNotes = ["Online lookups were incomplete: linux-hardware.org could not be reached."] };
-        var vm = new ResultsViewModel(report, FakeServices.ForSample("intel-laptop", demo: "intel-laptop"));
+        var vm = new ResultsViewModel(report, FakeServices.ForSample("intel-laptop"));
 
-        Assert.Contains(vm.Notices, n => n.Title == "Demo mode");
         Assert.Single(vm.Notices, n => n.Message.Contains("could not be reached"));
-        Assert.StartsWith("Hardware data from ", vm.DataBuiltText);
+        Assert.StartsWith("Checked with GreyHaven's built-in data from ", vm.Footnote);
     }
 
     [Fact]
@@ -376,24 +395,99 @@ public class ResultsViewModelTests
     {
         var vm = new ResultsViewModel(await FakeServices.RealReport("intel-laptop"), FakeServices.ForSample("intel-laptop"));
         Assert.False(vm.HasPathChoice);
+        Assert.Equal("Your version of Linux", vm.PathsHeading);
         Assert.True(Assert.Single(vm.Paths).IsSelected);
         Assert.Equal("mint", vm.SelectedDistroId);
     }
 
     [Fact]
-    public async Task Arm_pc_has_no_paths_and_a_warning()
+    public async Task Arm_pc_gets_a_warning()
     {
         var vm = new ResultsViewModel(await FakeServices.RealReport("snapdragon-arm-laptop"), FakeServices.ForSample("snapdragon-arm-laptop"));
-        Assert.Contains(vm.Notices, n => n.Title == "This PC has an ARM processor" && n.Kind == NoticeKind.Warning);
-        Assert.NotEmpty(vm.Groups);
+        Assert.Contains(vm.Notices, n => n.Title == "This PC has an ARM chip" && n.Kind == NoticeKind.Warning);
+        Assert.NotEmpty(vm.AttentionParts);
+    }
+}
+
+public class WalkthroughViewModelTests
+{
+    private static async Task<(MainViewModel Main, FakeServices Services)> AtResults(string sample)
+    {
+        var services = FakeServices.ForSample(sample);
+        var main = new MainViewModel(services);
+        await main.ScanCommand.ExecuteAsync(null);
+        return (main, services);
     }
 
-    [Theory]
-    [InlineData(new[] { Rating.WorksOutOfTheBox }, "1 part works out of the box.")]
-    [InlineData(new[] { Rating.WorksOutOfTheBox, Rating.WorksOutOfTheBox, Rating.WorksWithExtraDriver }, "2 parts work out of the box and 1 part needs an extra step.")]
-    [InlineData(new[] { Rating.Partial, Rating.Unsupported, Rating.Unknown, Rating.Unknown }, "1 part partly works, 1 part doesn't work and 2 parts couldn't be checked.")]
-    public void Summary_text_reads_naturally(Rating[] ratings, string expected) =>
-        Assert.Equal(expected, ResultsViewModel.Summarise(ratings));
+    [Fact]
+    public async Task Whats_next_opens_step_1_of_9_and_back_returns_to_results()
+    {
+        var (main, _) = await AtResults("nvidia-desktop");
+        main.ShowWalkthroughCommand.Execute(null);
+
+        Assert.Equal(Screen.Walkthrough, main.Screen);
+        var w = main.Walkthrough!;
+        Assert.Equal("Step 1 of 9", w.StepCountText);
+        Assert.Equal("Back up your files", w.Title);
+        Assert.Equal("Next: Get a USB stick →", w.NextLabel);
+        Assert.False(w.CanGoBack);
+        Assert.Equal(["now", "next", "next", "next", "next", "next", "next", "next", "next"], w.Progress);
+
+        w.NextCommand.Execute(null);
+        Assert.Equal("Step 2 of 9", w.StepCountText);
+        Assert.Equal(["done", "now", "next", "next", "next", "next", "next", "next", "next"], w.Progress);
+        Assert.Equal("Step 2 of 9: Get a USB stick", w.Announcement);
+
+        w.BackToResultsCommand.Execute(null);
+        Assert.Equal(Screen.Results, main.Screen);
+    }
+
+    [Fact]
+    public async Task Walkthrough_follows_the_chosen_path()
+    {
+        var (main, _) = await AtResults("nvidia-desktop");
+        main.Results!.Paths.Single(p => p.Kind == PathKind.Advanced).IsSelected = true;
+        main.ShowWalkthroughCommand.Execute(null);
+        var w = main.Walkthrough!;
+        w.Go(2);
+        Assert.Contains(w.Body, b => b is GreyHaven.Reports.ListBlock l && l.Items.Any(i => i.OfType<GreyHaven.Reports.Strong>().Any(s => s.Value.StartsWith("Turn off Secure Boot"))));
+    }
+
+    [Fact]
+    public async Task Replacing_windows_shows_steps_only_after_the_confirmation()
+    {
+        var (main, _) = await AtResults("nvidia-desktop");
+        main.ShowWalkthroughCommand.Execute(null);
+        var w = main.Walkthrough!;
+        w.Go(7);
+        Assert.Equal("Choose how to install", w.Title);
+        var replace = w.InstallOptions.Single(o => o.Id == "replace");
+        var alongside = w.InstallOptions.Single(o => o.Id == "alongside");
+
+        replace.IsSelected = true;
+        Assert.True(replace.NeedsConfirmation);
+        Assert.False(replace.ShowSteps);
+        replace.Confirmed = true;
+        Assert.True(replace.ShowSteps);
+
+        alongside.IsSelected = true;
+        Assert.False(replace.IsSelected);
+        Assert.False(replace.Confirmed); // choosing again later needs a fresh tick
+        Assert.True(alongside.ShowSteps);
+    }
+
+    [Fact]
+    public async Task Last_step_finishes_back_at_results()
+    {
+        var (main, _) = await AtResults("nvidia-desktop");
+        main.ShowWalkthroughCommand.Execute(null);
+        var w = main.Walkthrough!;
+        w.Go(8);
+        Assert.True(w.IsLast);
+        Assert.Equal("Finish", w.NextLabel);
+        w.NextCommand.Execute(null);
+        Assert.Equal(Screen.Results, main.Screen);
+    }
 }
 
 /// <summary>

@@ -15,241 +15,305 @@
             </Grid>
         </DataTemplate>
 
-        <!-- A notice: title + message, tinted background, plus an optional link (e.g. Microsoft's Windows 10 page). -->
+        <!-- A notice that needs attention (update available, ARM chip, scan problems). -->
         <DataTemplate x:Key="NoticeTemplate">
-            <Border Background="{Binding Kind, Converter={StaticResource NoticeBrush}}" BorderBrush="{DynamicResource GH.CardBorder}"
-                    BorderThickness="1" CornerRadius="6" Padding="16,12" Margin="0,0,0,10">
+            <Border Style="{StaticResource InfoBox}" Background="{Binding Kind, Converter={StaticResource NoticeBrush}}">
                 <StackPanel>
                     <TextBlock Text="{Binding Title}" Style="{StaticResource Strong}" />
                     <TextBlock Text="{Binding Message}" Style="{StaticResource Body}" Margin="0,4,0,0" />
-                    <!-- Visibility on a wrapper: a ContentPresenter's own bindings see its Content, not the notice. -->
-                    <Border Margin="0,6,0,0" Visibility="{Binding Link, Converter={StaticResource HasValueToVisibility}}">
-                        <ContentPresenter Content="{Binding Link}" ContentTemplate="{StaticResource LinkTemplate}" />
-                    </Border>
                 </StackPanel>
             </Border>
         </DataTemplate>
 
-        <!-- One component: summary in the header, everything else one click away. -->
-        <DataTemplate x:Key="ComponentTemplate">
-            <Border Style="{StaticResource Card}" Padding="0" Margin="0,0,0,8">
-                <Expander IsExpanded="{Binding IsExpanded}" Padding="16,12" HorizontalContentAlignment="Stretch"
-                          AutomationProperties.Name="{Binding AccessibleName}">
-                    <Expander.Header>
-                        <Grid Margin="0,2">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <StackPanel Margin="0,0,16,0">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{Binding Title}" Style="{StaticResource Strong}" />
-                                    <Border BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="1" CornerRadius="4"
-                                            Padding="6,0" Margin="10,0,0,0" VerticalAlignment="Center"
-                                            Visibility="{Binding ImportanceLabel, Converter={StaticResource HasValueToVisibility}}">
-                                        <TextBlock Text="{Binding ImportanceLabel}" FontSize="12" Foreground="{DynamicResource GH.TextSecondary}" />
-                                    </Border>
-                                </StackPanel>
-                                <TextBlock Text="{Binding Name}" Style="{StaticResource Secondary}" />
+        <!-- A part that needs attention: one plain line, everything else behind "Show more". -->
+        <DataTemplate x:Key="PartTemplate">
+            <Border Style="{StaticResource Card}" Padding="18,14">
+                <StackPanel>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Margin="0,0,16,0">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{Binding Title}" Style="{StaticResource Heading3}" Margin="0" />
+                                <Border Style="{StaticResource Pill}" Visibility="{Binding ImportanceLabel, Converter={StaticResource HasValueToVisibility}}">
+                                    <TextBlock Text="{Binding ImportanceLabel}" FontSize="12" Foreground="{DynamicResource GH.TextSecondary}" />
+                                </Border>
                             </StackPanel>
-                            <ContentPresenter Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource RatingBadge}" VerticalAlignment="Center" />
-                        </Grid>
-                    </Expander.Header>
-
-                    <StackPanel Margin="0,12,0,4">
-                        <TextBlock Text="{Binding Explanation}" Style="{StaticResource Body}" />
-                        <TextBlock Text="{Binding ApproximationNote}" Style="{StaticResource Secondary}" Margin="0,6,0,0"
-                                   Visibility="{Binding ApproximationNote, Converter={StaticResource HasValueToVisibility}}" />
-                        <StackPanel Orientation="Horizontal" Margin="0,6,0,0">
-                            <TextBlock Text="{Binding ConfidenceLabel}" Style="{StaticResource Secondary}" />
-                            <TextBlock Text="{Binding WeakDataLabel}" Style="{StaticResource Secondary}" FontWeight="SemiBold" Margin="12,0,0,0"
-                                       Visibility="{Binding WeakDataLabel, Converter={StaticResource HasValueToVisibility}}" />
+                            <TextBlock Text="{Binding Name}" Style="{StaticResource Secondary}" />
                         </StackPanel>
+                        <ContentPresenter Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource RatingBadge}" VerticalAlignment="Top" />
+                    </Grid>
+                    <TextBlock Text="{Binding Summary}" Style="{StaticResource Body}" Margin="0,8,0,4" />
 
-                        <!-- What to do -->
-                        <StackPanel Margin="0,16,0,0" Visibility="{Binding HasFix, Converter={StaticResource HasValueToVisibility}}">
-                            <TextBlock Text="{Binding FixTitle}" Style="{StaticResource Strong}" />
-                            <ItemsControl ItemsSource="{Binding FixSteps}" AlternationCount="100" Margin="0,6,0,0" Focusable="False">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin="0,2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="24" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Style="{StaticResource Body}"
-                                                       Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ItemNumber}}" />
-                                            <TextBlock Grid.Column="1" Text="{Binding}" Style="{StaticResource Body}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                    <Expander Header="Show more" Style="{StaticResource ShowMore}" IsExpanded="{Binding IsExpanded}"
+                              AutomationProperties.Name="{Binding AccessibleName, StringFormat=Show more about {0}}">
+                        <StackPanel Margin="0,8,0,4">
+                            <TextBlock Text="{Binding Explanation}" Style="{StaticResource Body}" />
+                            <TextBlock Text="{Binding ApproximationNote}" Style="{StaticResource Secondary}" Margin="0,6,0,0"
+                                       Visibility="{Binding ApproximationNote, Converter={StaticResource HasValueToVisibility}}" />
+                            <TextBlock Text="{Binding ConfidenceLabel}" Style="{StaticResource Secondary}" Margin="0,6,0,0" />
 
-                            <ItemsControl ItemsSource="{Binding FixCommands}" Margin="0,8,0,0" Focusable="False">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Style="{StaticResource CommandBox}">
-                                            <Grid>
+                            <!-- How to fix it -->
+                            <StackPanel Margin="0,14,0,0" Visibility="{Binding HasFix, Converter={StaticResource HasValueToVisibility}}">
+                                <TextBlock Text="{Binding FixTitle}" Style="{StaticResource Strong}" />
+                                <ItemsControl ItemsSource="{Binding FixSteps}" AlternationCount="100" Margin="0,6,0,0" Focusable="False">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
                                                 <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="26" />
                                                     <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBox Text="{Binding Text, Mode=OneWay}" IsReadOnly="True" BorderThickness="0" Background="Transparent"
-                                                         FontFamily="{StaticResource CodeFont}" Foreground="{DynamicResource GH.Text}"
-                                                         VerticalAlignment="Center" TextWrapping="Wrap"
-                                                         AutomationProperties.Name="{Binding AccessibleName}" />
-                                                <Button Grid.Column="1" Command="{Binding CopyCommand}" Padding="10,4" Margin="8,0,0,0"
-                                                        AutomationProperties.Name="{Binding Text, StringFormat=Copy command: {0}}">
-                                                    <StackPanel Orientation="Horizontal">
-                                                        <infra:DecorativeText Text="&#xE8C8;" FontFamily="{StaticResource IconFont}" VerticalAlignment="Center" />
-                                                        <TextBlock Text="Copy" Margin="6,0,0,0" />
-                                                    </StackPanel>
-                                                </Button>
+                                                <TextBlock Style="{StaticResource Body}"
+                                                           Text="{Binding (ItemsControl.AlternationIndex), RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource ItemNumber}}" />
+                                                <TextBlock Grid.Column="1" Text="{Binding}" Style="{StaticResource Body}" />
                                             </Grid>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <ItemsControl ItemsSource="{Binding FixCommands}" Margin="0,8,0,0" Focusable="False">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Style="{StaticResource CommandBox}">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="Auto" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBox Text="{Binding Text, Mode=OneWay}" IsReadOnly="True" BorderThickness="0" Background="Transparent"
+                                                             FontFamily="{StaticResource CodeFont}" Foreground="{DynamicResource GH.Text}"
+                                                             VerticalAlignment="Center" TextWrapping="Wrap"
+                                                             AutomationProperties.Name="{Binding AccessibleName}" />
+                                                    <Button Grid.Column="1" Content="Copy" Command="{Binding CopyCommand}" Padding="12,4" Margin="8,0,0,0"
+                                                            AutomationProperties.Name="{Binding Text, StringFormat=Copy command: {0}}" />
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                                <TextBlock Text="{Binding NeedsInternetText}" Style="{StaticResource Secondary}" Margin="0,6,0,0"
+                                           Visibility="{Binding NeedsInternetText, Converter={StaticResource HasValueToVisibility}}" />
+                                <TextBlock Text="{Binding FixNote}" Style="{StaticResource Body}" Margin="0,6,0,0"
+                                           Visibility="{Binding FixNote, Converter={StaticResource HasValueToVisibility}}" />
+                                <Border Style="{StaticResource InfoBox}" Margin="0,10,0,0"
+                                        Visibility="{Binding SecureBootAdvice, Converter={StaticResource HasValueToVisibility}}">
+                                    <TextBlock Text="{Binding SecureBootAdvice}" Style="{StaticResource Body}" />
+                                </Border>
+                            </StackPanel>
 
-                            <TextBlock Text="{Binding NeedsInternetText}" Style="{StaticResource Secondary}" Margin="0,6,0,0"
-                                       Visibility="{Binding NeedsInternetText, Converter={StaticResource HasValueToVisibility}}" />
-                            <TextBlock Text="{Binding FixNote}" Style="{StaticResource Body}" Margin="0,6,0,0"
-                                       Visibility="{Binding FixNote, Converter={StaticResource HasValueToVisibility}}" />
-                            <Border Background="{DynamicResource GH.NoticeWarning}" BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="1"
-                                    CornerRadius="6" Padding="12,10" Margin="0,10,0,0"
-                                    Visibility="{Binding SecureBootAdvice, Converter={StaticResource HasValueToVisibility}}">
-                                <TextBlock Text="{Binding SecureBootAdvice}" Style="{StaticResource Body}" />
-                            </Border>
+                            <!-- Live USB tests -->
+                            <StackPanel Margin="0,12,0,0" Visibility="{Binding LiveUsbTests, Converter={StaticResource HasValueToVisibility}}">
+                                <TextBlock Text="Test this from a USB stick first" Style="{StaticResource Strong}" />
+                                <ItemsControl ItemsSource="{Binding LiveUsbTests}" Focusable="False">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock Text="{Binding}" Style="{StaticResource Body}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+
+                            <!-- Sources -->
+                            <StackPanel Margin="0,12,0,0" Visibility="{Binding Sources, Converter={StaticResource HasValueToVisibility}}">
+                                <TextBlock Text="Sources" Style="{StaticResource Strong}" />
+                                <ItemsControl ItemsSource="{Binding Sources}" ItemTemplate="{StaticResource LinkTemplate}" Focusable="False" />
+                            </StackPanel>
+
+                            <!-- Technical details, one more click away -->
+                            <Expander Header="Technical details" Style="{StaticResource ShowMore}" IsExpanded="{Binding ShowTechnicalDetails}" Margin="0,12,0,0">
+                                <ItemsControl ItemsSource="{Binding TechnicalDetails}" Margin="0,6,0,0" Focusable="False">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid Margin="0,2">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="160" />
+                                                    <ColumnDefinition Width="*" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Label}" Style="{StaticResource Secondary}" />
+                                                <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}" IsReadOnly="True" BorderThickness="0"
+                                                         Background="Transparent" Foreground="{DynamicResource GH.Text}" TextWrapping="Wrap"
+                                                         FontFamily="{StaticResource CodeFont}" AutomationProperties.Name="{Binding Label}" />
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </Expander>
                         </StackPanel>
-
-                        <!-- Live USB tests -->
-                        <StackPanel Margin="0,14,0,0" Visibility="{Binding LiveUsbTests, Converter={StaticResource HasValueToVisibility}}">
-                            <TextBlock Text="Test this with a live USB" Style="{StaticResource Strong}" />
-                            <ItemsControl ItemsSource="{Binding LiveUsbTests}" Focusable="False">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding}" Style="{StaticResource Body}" />
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-
-                        <!-- Sources -->
-                        <StackPanel Margin="0,14,0,0" Visibility="{Binding Sources, Converter={StaticResource HasValueToVisibility}}">
-                            <TextBlock Text="Sources" Style="{StaticResource Strong}" />
-                            <ItemsControl ItemsSource="{Binding Sources}" ItemTemplate="{StaticResource LinkTemplate}" Focusable="False" />
-                        </StackPanel>
-
-                        <!-- Technical details, one more click away -->
-                        <Expander Header="Technical details" IsExpanded="{Binding ShowTechnicalDetails}" Margin="0,14,0,0">
-                            <ItemsControl ItemsSource="{Binding TechnicalDetails}" Margin="0,6,0,0" Focusable="False">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Grid Margin="0,2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="160" />
-                                                <ColumnDefinition Width="*" />
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Text="{Binding Label}" Style="{StaticResource Secondary}" />
-                                            <TextBox Grid.Column="1" Text="{Binding Value, Mode=OneWay}" IsReadOnly="True" BorderThickness="0"
-                                                     Background="Transparent" Foreground="{DynamicResource GH.Text}" TextWrapping="Wrap"
-                                                     FontFamily="{StaticResource CodeFont}" AutomationProperties.Name="{Binding Label}" />
-                                        </Grid>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </Expander>
-                    </StackPanel>
-                </Expander>
+                    </Expander>
+                </StackPanel>
             </Border>
         </DataTemplate>
     </UserControl.Resources>
 
     <StackPanel Margin="0,16,0,0">
+        <!-- Demo mode: a slim strip, not a box -->
+        <Border Style="{StaticResource InfoBox}" CornerRadius="14" Padding="10,2" HorizontalAlignment="Left" BorderThickness="1.5"
+                Visibility="{Binding DemoText, Converter={StaticResource HasValueToVisibility}}">
+            <TextBlock Text="{Binding DemoText}" Style="{StaticResource Body}" FontSize="14" />
+        </Border>
         <ItemsControl ItemsSource="{Binding Notices}" ItemTemplate="{StaticResource NoticeTemplate}" Focusable="False" />
 
-        <TextBlock Text="Your results" Style="{StaticResource Heading1}" Focusable="True" infra:Accessibility.FocusOnShow="True" />
-
-        <!-- Summary score up top -->
-        <Border Style="{StaticResource Card}">
+        <!-- Headline with the score beside it -->
+        <ContentControl Style="{StaticResource Sticker}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <StackPanel Margin="0,0,28,0" VerticalAlignment="Center">
-                    <TextBlock Foreground="{DynamicResource GH.Text}" AutomationProperties.Name="{Binding ScoreAccessibleName}">
-                        <Run Text="{Binding ScoreText, Mode=OneWay}" FontSize="56" FontWeight="SemiBold" />
-                        <Run Text="/ 100" FontSize="20" Foreground="{DynamicResource GH.TextSecondary}" />
-                    </TextBlock>
-                    <TextBlock Text="{Binding BandText}" FontSize="20" FontWeight="SemiBold" Foreground="{DynamicResource GH.Text}" />
+                <StackPanel VerticalAlignment="Center" Margin="0,0,20,0">
+                    <TextBlock Text="{Binding Headline}" Style="{StaticResource Heading1}" Focusable="True" infra:Accessibility.FocusOnShow="True" />
+                    <TextBlock Text="{Binding Suggestion}" Style="{StaticResource Lead}" FontSize="20"
+                               Visibility="{Binding Suggestion, Converter={StaticResource HasValueToVisibility}}" />
+                    <TextBlock Text="{Binding HeadlineSummary}" Style="{StaticResource Body}" Margin="0,6,0,0" />
                 </StackPanel>
-                <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                    <TextBlock Text="{Binding DistroName}" Style="{StaticResource Strong}" FontSize="16" />
-                    <TextBlock Text="{Binding SummaryText}" Style="{StaticResource Body}" Margin="0,4,0,0" />
-                    <TextBlock Text="{Binding ScoreNote}" Style="{StaticResource Secondary}" Margin="0,6,0,0"
-                               Visibility="{Binding ScoreNote, Converter={StaticResource HasValueToVisibility}}" />
-                    <StackPanel Margin="0,8,0,0" Visibility="{Binding ComparingText, Converter={StaticResource HasValueToVisibility}}">
-                        <TextBlock Text="{Binding ComparingText}" Style="{StaticResource Body}" />
-                        <Button Content="Show my chosen distro" Command="{Binding ShowChosenDistroCommand}" Style="{StaticResource LinkButton}" />
+                <Grid Grid.Column="1" Width="128" Height="128" VerticalAlignment="Center" AutomationProperties.Name="{Binding ScoreAccessibleName}">
+                    <Ellipse Fill="{DynamicResource GH.Shadow}" Margin="6,6,0,0" />
+                    <Ellipse Fill="{DynamicResource GH.Accent}" Stroke="{DynamicResource GH.CardBorder}" StrokeThickness="2.5" Margin="0,0,6,6" />
+                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,6,6">
+                        <TextBlock Text="{Binding ScoreText}" FontFamily="{StaticResource HeadingFont}" FontSize="46" FontWeight="Bold"
+                                   Foreground="{DynamicResource GH.OnAccent}" HorizontalAlignment="Center" />
+                        <TextBlock Text="out of 100" FontSize="13" Foreground="{DynamicResource GH.OnAccent}" HorizontalAlignment="Center" />
                     </StackPanel>
-                </StackPanel>
+                </Grid>
             </Grid>
+        </ContentControl>
+
+        <!-- Why switch now? (Windows 10 only) -->
+        <Border Style="{StaticResource Card}" Padding="16,10" Visibility="{Binding WhySwitchText, Converter={StaticResource HasValueToVisibility}}">
+            <Expander Header="Why switch now?" Style="{StaticResource ShowMore}">
+                <StackPanel Margin="0,8,0,0">
+                    <TextBlock Text="{Binding WhySwitchText}" Style="{StaticResource Body}" />
+                    <Border Margin="0,6,0,0" Visibility="{Binding WhySwitchLink, Converter={StaticResource HasValueToVisibility}}">
+                        <ContentPresenter Content="{Binding WhySwitchLink}" ContentTemplate="{StaticResource LinkTemplate}" />
+                    </Border>
+                </StackPanel>
+            </Expander>
         </Border>
 
-        <!-- Recommendation -->
-        <TextBlock Text="What GreyHaven recommends" Style="{StaticResource Heading2}" />
-        <TextBlock Text="{Binding RecommendationText}" Style="{StaticResource Body}" Margin="0,0,0,12" />
-
-        <StackPanel Visibility="{Binding HasPathChoice, Converter={StaticResource HasValueToVisibility}}" Margin="0,0,0,8">
-            <TextBlock x:Name="PathLabel" Text="Choose how you'd like to switch" Style="{StaticResource Strong}" Margin="0,0,0,6" />
-            <ItemsControl ItemsSource="{Binding Paths}" Focusable="False" AutomationProperties.LabeledBy="{Binding ElementName=PathLabel}">
+        <!-- Your version of Linux -->
+        <StackPanel Visibility="{Binding HasRecommendation, Converter={StaticResource HasValueToVisibility}}">
+            <TextBlock x:Name="PathsHeading" Text="{Binding PathsHeading}" Style="{StaticResource Heading2}" />
+            <TextBlock Text="{Binding PathsIntro}" Style="{StaticResource Secondary}" Margin="0,0,0,10"
+                       Visibility="{Binding PathsIntro, Converter={StaticResource HasValueToVisibility}}" />
+            <ItemsControl ItemsSource="{Binding Paths}" Focusable="False" AutomationProperties.LabeledBy="{Binding ElementName=PathsHeading}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <RadioButton GroupName="RecommendationPath" IsChecked="{Binding IsSelected}" Margin="0,0,0,8"
-                                     AutomationProperties.Name="{Binding AccessibleName}">
+                        <Border Style="{StaticResource Card}" Padding="16,12">
                             <StackPanel>
-                                <TextBlock Style="{StaticResource Strong}">
-                                    <Run Text="{Binding Title, Mode=OneWay}" />
-                                    <Run Text="{Binding DefaultLabel, Mode=OneWay, StringFormat=({0})}" FontWeight="Normal" />
-                                </TextBlock>
-                                <TextBlock Text="{Binding Subtitle}" Style="{StaticResource Secondary}" />
+                                <RadioButton GroupName="RecommendationPath" IsChecked="{Binding IsSelected}" AutomationProperties.Name="{Binding AccessibleName}">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding Name}" Style="{StaticResource Heading3}" Margin="0" />
+                                            <Border Style="{StaticResource Pill}" Background="{DynamicResource GH.NoticeWarning}">
+                                                <TextBlock Text="{Binding Tag}" FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource GH.Text}" />
+                                            </Border>
+                                            <TextBlock Text="{Binding DefaultLabel}" Style="{StaticResource Secondary}" FontSize="14" Margin="10,0,0,0" VerticalAlignment="Center"
+                                                       Visibility="{Binding DefaultLabel, Converter={StaticResource HasValueToVisibility}}" />
+                                        </StackPanel>
+                                        <ItemsControl ItemsSource="{Binding Lines}" Focusable="False" Margin="0,4,0,0">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding}" Style="{StaticResource Body}" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+                                </RadioButton>
+                                <Expander Header="Show more" Style="{StaticResource ShowMore}" Margin="30,6,0,0"
+                                          AutomationProperties.Name="{Binding Name, StringFormat=Show more about {0}}">
+                                    <StackPanel Margin="0,8,0,0">
+                                        <TextBlock Text="{Binding Paragraph}" Style="{StaticResource Body}" />
+                                        <Border Style="{StaticResource WarningBox}" Margin="0,10,0,0"
+                                                Visibility="{Binding SecureBootText, Converter={StaticResource HasValueToVisibility}}">
+                                            <StackPanel>
+                                                <TextBlock Text="About Secure Boot" Style="{StaticResource Strong}" />
+                                                <TextBlock Text="{Binding SecureBootText}" Style="{StaticResource Body}" Margin="0,4,0,6" />
+                                                <Border Visibility="{Binding Guide, Converter={StaticResource HasValueToVisibility}}">
+                                                    <ContentPresenter Content="{Binding Guide}" ContentTemplate="{StaticResource LinkTemplate}" />
+                                                </Border>
+                                            </StackPanel>
+                                        </Border>
+                                        <TextBlock Style="{StaticResource Body}" Margin="0,10,0,0">
+                                            <Run Text="You'll get:" FontWeight="SemiBold" />
+                                            <Run Text="{Binding YoullGet, Mode=OneWay}" />
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Expander>
                             </StackPanel>
-                        </RadioButton>
+                        </Border>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+            <!-- What's next -->
+            <ContentControl Style="{StaticResource Sticker}" Margin="0,16,0,8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="What's next?" Style="{StaticResource Heading2}" Margin="0,0,0,4" />
+                        <TextBlock Text="We'll guide you, one step at a time." Style="{StaticResource Body}" />
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="What's _next →" Style="{StaticResource AccentButton}" VerticalAlignment="Center"
+                            Command="{Binding DataContext.ShowWalkthroughCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
+                </Grid>
+            </ContentControl>
         </StackPanel>
 
-        <!-- Details of the selected path -->
-        <ItemsControl ItemsSource="{Binding Paths}" Focusable="False">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <Border Style="{StaticResource Card}" Visibility="{Binding IsSelected, Converter={StaticResource HasValueToVisibility}}">
-                        <StackPanel>
-                            <TextBlock Text="{Binding Title}" Style="{StaticResource Heading3}" Margin="0,0,0,6" />
-                            <TextBlock Text="{Binding Paragraph}" Style="{StaticResource Body}" />
-                            <Border Background="{DynamicResource GH.NoticeWarning}" BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="1"
-                                    CornerRadius="6" Padding="14,12" Margin="0,12,0,0"
-                                    Visibility="{Binding SecureBootNotice, Converter={StaticResource HasValueToVisibility}}">
-                                <StackPanel>
-                                    <TextBlock Text="Secure Boot needs to be turned off" Style="{StaticResource Strong}" />
-                                    <TextBlock Text="{Binding SecureBootNotice}" Style="{StaticResource Body}" Margin="0,4,0,8" />
-                                    <Border Visibility="{Binding Guide, Converter={StaticResource HasValueToVisibility}}">
-                                        <ContentPresenter Content="{Binding Guide}" ContentTemplate="{StaticResource LinkTemplate}" />
-                                    </Border>
-                                </StackPanel>
-                            </Border>
-                            <TextBlock Text="{Binding DownloadText}" Style="{StaticResource Secondary}" Margin="0,12,0,0" />
-                        </StackPanel>
-                    </Border>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <!-- Parts -->
+        <TextBlock Text="{Binding PartsHeading}" Style="{StaticResource Heading2}" />
+        <StackPanel Visibility="{Binding ComparingText, Converter={StaticResource HasValueToVisibility}}" Margin="0,0,0,10">
+            <TextBlock Text="{Binding ComparingText}" Style="{StaticResource Body}" />
+            <Button Content="Show my pick" Command="{Binding ShowChosenDistroCommand}" Style="{StaticResource LinkButton}" />
+        </StackPanel>
+        <ItemsControl ItemsSource="{Binding AttentionParts}" ItemTemplate="{StaticResource PartTemplate}" Focusable="False" />
+        <Expander Header="{Binding WorkingHeading}" Style="{StaticResource ShowMore}" Margin="0,4,0,12"
+                  Visibility="{Binding WorkingHeading, Converter={StaticResource HasValueToVisibility}}">
+            <ItemsControl ItemsSource="{Binding WorkingParts}" Margin="0,8,0,0" Focusable="False">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="0,0,0,1" Padding="0,6">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Style="{StaticResource Body}">
+                                    <Run Text="{Binding Title, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=": " /><Run Text="{Binding Name, Mode=OneWay}" Foreground="{DynamicResource GH.TextSecondary}" />
+                                </TextBlock>
+                                <ContentPresenter Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource RatingBadge}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Expander>
 
-        <!-- Compare distros -->
-        <TextBlock x:Name="CompareHeading" Text="Compare distros" Style="{StaticResource Heading2}" />
-        <TextBlock Text="Select a distro to see how each part of your PC works on it." Style="{StaticResource Secondary}" Margin="0,0,0,10" />
+        <!-- Things to test before installing -->
+        <Border Style="{StaticResource Card}" Padding="16,10" Visibility="{Binding CaveatsHeading, Converter={StaticResource HasValueToVisibility}}">
+            <Expander Header="{Binding CaveatsHeading}" Style="{StaticResource ShowMore}">
+                <StackPanel Margin="0,8,0,0">
+                    <TextBlock Text="We can't check these from Windows. Test them by trying Linux from a USB stick first. The steps show you how."
+                               Style="{StaticResource Body}" Margin="0,0,0,8" />
+                    <ItemsControl ItemsSource="{Binding Caveats}" Focusable="False">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Style="{StaticResource Body}" Margin="0,0,0,8">
+                                    <Run Text="{Binding Title, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=". " /><Run Text="{Binding WhatToTest, Mode=OneWay}" />
+                                </TextBlock>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Expander>
+        </Border>
+
+        <!-- Compare versions of Linux -->
+        <TextBlock x:Name="CompareHeading" Text="Compare versions of Linux" Style="{StaticResource Heading2}" />
         <ItemsControl ItemsSource="{Binding Distros}" Focusable="False" AutomationProperties.LabeledBy="{Binding ElementName=CompareHeading}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
@@ -258,74 +322,34 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <RadioButton GroupName="CompareDistro" IsChecked="{Binding IsSelected}" Margin="0,0,10,0"
-                                 AutomationProperties.Name="{Binding AccessibleName}">
-                        <StackPanel>
-                            <TextBlock Text="{Binding Name}" Style="{StaticResource Strong}" />
-                            <TextBlock Text="{Binding ScoreLine}" Style="{StaticResource Body}" />
-                            <TextBlock Text="{Binding ChosenLabel}" Style="{StaticResource Secondary}"
-                                       Visibility="{Binding ChosenLabel, Converter={StaticResource HasValueToVisibility}}" />
-                        </StackPanel>
-                    </RadioButton>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <!-- Components -->
-        <TextBlock Style="{StaticResource Heading2}">
-            <Run Text="How each part works on" />
-            <Run Text="{Binding DistroName, Mode=OneWay}" />
-        </TextBlock>
-        <TextBlock Text="{Binding ImportanceKey, Mode=OneTime}" Style="{StaticResource Secondary}" Margin="0,0,0,8" />
-        <ItemsControl ItemsSource="{Binding Groups}" Focusable="False">
-            <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                    <StackPanel>
-                        <TextBlock Text="{Binding Heading}" Style="{StaticResource Heading3}" />
-                        <ItemsControl ItemsSource="{Binding Components}" ItemTemplate="{StaticResource ComponentTemplate}" Focusable="False" />
-                    </StackPanel>
-                </DataTemplate>
-            </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-        <!-- Things to test from a live USB -->
-        <StackPanel Visibility="{Binding Caveats, Converter={StaticResource HasValueToVisibility}}">
-            <TextBlock Text="Test these with a live USB first" Style="{StaticResource Heading2}" />
-            <TextBlock Style="{StaticResource Secondary}" Margin="0,0,0,10"
-                       Text="These can't be checked from Windows. A live USB lets you try Linux without installing anything. Save your report for a step-by-step live-USB guide with a checklist for this PC." />
-            <ItemsControl ItemsSource="{Binding Caveats}" Focusable="False">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Style="{StaticResource Card}">
+                    <Border Style="{StaticResource Card}" Padding="14,10" Margin="0,0,10,0">
+                        <RadioButton GroupName="CompareDistro" IsChecked="{Binding IsSelected}" AutomationProperties.Name="{Binding AccessibleName}">
                             <StackPanel>
-                                <TextBlock Text="{Binding Title}" Style="{StaticResource Strong}" />
-                                <TextBlock Text="{Binding Why}" Style="{StaticResource Body}" Margin="0,4,0,0" />
-                                <TextBlock Style="{StaticResource Body}" Margin="0,6,0,0">
-                                    <Run Text="What to test:" FontWeight="SemiBold" />
-                                    <Run Text="{Binding WhatToTest, Mode=OneWay}" />
-                                </TextBlock>
+                                <TextBlock Text="{Binding Name}" Style="{StaticResource Strong}" />
+                                <TextBlock Text="{Binding ScoreLine}" Style="{StaticResource Body}" />
+                                <TextBlock Text="{Binding ChosenLabel}" Style="{StaticResource Secondary}" FontWeight="SemiBold"
+                                           Visibility="{Binding ChosenLabel, Converter={StaticResource HasValueToVisibility}}" />
                             </StackPanel>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>
+                        </RadioButton>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
 
-        <!-- Save the report -->
-        <TextBlock Text="Save or share your report" Style="{StaticResource Heading2}" />
-        <TextBlock Style="{StaticResource Body}" Margin="0,0,0,10" TextWrapping="Wrap"
-                   Text="Save everything on this page, for the path you chose, plus the live-USB guide. A web page opens in any browser and can be printed. The report has no serial numbers, user names or network addresses, so it's safe to share when asking for help." />
+        <!-- Save -->
+        <TextBlock Text="Save your results" Style="{StaticResource Heading2}" />
+        <TextBlock Text="Keep a copy to read on your phone or print. It includes every step." Style="{StaticResource Body}" Margin="0,0,0,10" />
         <StackPanel Orientation="Horizontal">
             <Button Content="Save _report…" Padding="24,6" HorizontalAlignment="Left" Command="{Binding SaveReportCommand}" />
-            <Button Content="Show in folder" Margin="12,0,0,0" Style="{StaticResource LinkButton}" Command="{Binding ShowSavedReportCommand}"
+            <Button Content="Show in folder" Margin="14,0,0,0" Style="{StaticResource LinkButton}" Command="{Binding ShowSavedReportCommand}"
                     Visibility="{Binding SavedPath, Converter={StaticResource HasValueToVisibility}}" />
         </StackPanel>
         <TextBlock Text="{Binding SaveStatus}" Style="{StaticResource Body}" Margin="0,8,0,0" infra:Accessibility.Announce="True"
                    Visibility="{Binding SaveStatus, Converter={StaticResource HasValueToVisibility}}" />
 
-        <!-- Footer -->
-        <StackPanel Margin="0,24,0,0">
-            <TextBlock Text="{Binding DataBuiltText}" Style="{StaticResource Secondary}" />
+        <!-- Footnote -->
+        <StackPanel Margin="0,32,0,0">
+            <TextBlock Text="{Binding Footnote}" Style="{StaticResource Secondary}" FontSize="14" />
             <Button Content="_Scan again" Margin="0,12,0,0" Padding="24,6" HorizontalAlignment="Left"
                     Command="{Binding DataContext.StartOverCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
         </StackPanel>
