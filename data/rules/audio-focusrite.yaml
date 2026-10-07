@@ -1,0 +1,22 @@
+rules:
+  # USB IDs from the kernel's Scarlett2 driver table (sound/usb/mixer_scarlett2.c). Sound itself
+  # uses the standard USB audio driver; the Scarlett2 driver adds the device's own settings and has
+  # been on by default since commit bc83058f5987 (September 2023), older than every kernel we rate.
+  - id: focusrite-scarlett2
+    title: Focusrite Scarlett, Clarett or Vocaster audio interface
+    match:
+      ids: [usb:1235:8203, usb:1235:8204, usb:1235:8201,
+            usb:1235:8211, usb:1235:8210, usb:1235:8212, usb:1235:8213, usb:1235:8214, usb:1235:8215,
+            usb:1235:8216, usb:1235:8217,
+            usb:1235:8218, usb:1235:8219, usb:1235:821a,
+            usb:1235:8206, usb:1235:8207, usb:1235:8208, usb:1235:820a, usb:1235:820b, usb:1235:820c]
+    confidence: high
+    ratings:
+      - rating: worksOutOfTheBox
+        explanation: This audio interface follows the standard USB audio rules, so {distro}'s Linux {kernelSeries} kernel plays and records sound with it right away. Its Focusrite Scarlett2 driver also handles the interface's own settings (like direct monitoring and input gain). Focusrite's Windows app isn't available on Linux.
+        summary: "Works right away. Focusrite's own settings app is Windows-only."
+    sources:
+      - title: Linux kernel - Focusrite Scarlett2 driver (supported models)
+        url: https://github.com/torvalds/linux/blob/master/sound/usb/mixer_scarlett2.c
+      - title: Linux kernel commit - Scarlett2 driver on by default
+        url: https://github.com/torvalds/linux/commit/bc83058f5987

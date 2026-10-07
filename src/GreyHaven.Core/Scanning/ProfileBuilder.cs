@@ -67,8 +67,29 @@ public static partial class ProfileBuilder
                 .OrderBy(c => Specificity(c.Category))
                 .ThenBy(c => HardwareIdParser.IsUsbInterface(c.Raw.HardwareIds) ? 1 : 0)
                 .First();
-            yield return ToComponent(best, members, 1);
+            yield return ToComponent(WithInterfaceClass(best, members), members, 1);
         }
+    }
+
+    /// <summary>
+    /// The entry chosen for a USB device may be the composite parent, which has no interface
+    /// class. Borrow the class from the interface that matches the device's category (e.g. the
+    /// audio interface of a USB microphone), so class-wide Linux drivers can be matched.
+    /// </summary>
+    private static Candidate WithInterfaceClass(Candidate best, List<Candidate> members)
+    {
+        if (best.Id.Bus != DeviceBus.Usb || best.Id.InterfaceClass is not null) return best;
+        var wanted = best.Category switch
+        {
+            ComponentCategory.AudioController => "01",
+            ComponentCategory.InputDevice => "03",
+            ComponentCategory.Webcam => "0e",
+            ComponentCategory.Bluetooth => "e0",
+            _ => null,
+        };
+        var ic = members.Select(m => m.Id.InterfaceClass)
+            .FirstOrDefault(c => c is not null && (wanted is null || c.StartsWith(wanted, StringComparison.Ordinal)));
+        return ic is null ? best : best with { Id = best.Id with { InterfaceClass = ic } };
     }
 
     /// <summary>Lower = more informative category when merging USB interface entries.</summary>

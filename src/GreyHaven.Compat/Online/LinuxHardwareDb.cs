@@ -64,11 +64,23 @@ public sealed partial class LinuxHardwareDbClient(HttpClient http, string? cache
         return $"{BaseUrl}?id={bus}:{key}";
     }
 
+    /// <summary>
+    /// Looks the device up. A board-specific page (with subsystem IDs) often doesn't exist even
+    /// when the chip itself is well known, so if it isn't found the general vendor:device page is
+    /// tried next (one more request, same rate limit).
+    /// </summary>
     public async Task<CommunityResult> LookupAsync(DeviceId id, CancellationToken cancellationToken = default)
     {
         var url = PageUrl(id);
         if (url is null) return new CommunityResult { Status = CommunityStatus.NotApplicable, FetchedAt = _time.GetUtcNow() };
 
+        var result = await LookupPageAsync(url, cancellationToken).ConfigureAwait(false);
+        if (result.Status != CommunityStatus.NotFound || !id.HasSubsystem) return result;
+        return await LookupPageAsync(PageUrl(id with { SubVendor = null, SubDevice = null })!, cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<CommunityResult> LookupPageAsync(string url, CancellationToken cancellationToken)
+    {
         if (TryReadCache(url) is { } cached) return cached;
         if (_sessionBlockedReason is not null) return Unavailable(url, _sessionBlockedReason);
 

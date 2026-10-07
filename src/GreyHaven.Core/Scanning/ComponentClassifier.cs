@@ -13,8 +13,15 @@ public static class ComponentClassifier
     private const string HidTouchpadUsage = "HID_DEVICE_UP:000D_U:0005";
     private const string HidTouchscreenUsage = "HID_DEVICE_UP:000D_U:0004";
 
+    // PCI base class 0x13: functions for the maker's own testing, which need no driver.
+    private const string NonEssentialInstrumentation = "13";
+
     public static ComponentCategory? Classify(RawPnpDevice device, DeviceId id)
     {
+        // Software-only devices and placeholder functions aren't parts Linux needs to support.
+        if (KnownDeviceIds.VirtualDevices.Contains(id.Key) || KnownDeviceIds.PlaceholderPciDevices.Contains(id.Key)) return null;
+        if (id.Bus == DeviceBus.Pci && id.BaseClass == NonEssentialInstrumentation) return null;
+
         var cls = device.PnpClass?.Trim().ToLowerInvariant() ?? "";
         return id.Bus switch
         {
@@ -72,6 +79,7 @@ public static class ComponentClassifier
         }
 
         if (KnownDeviceIds.FingerprintOnlyUsbVendors.Contains(id.Vendor)) return ComponentCategory.FingerprintReader;
+        if (KnownDeviceIds.AudioOnlyUsbVendors.Contains(id.Vendor)) return ComponentCategory.AudioController;
 
         return HardwareIdParser.FindUsbClass(device.CompatibleIds) switch
         {

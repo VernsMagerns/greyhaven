@@ -18,8 +18,9 @@ modules:
     role: ignore
     note: Legacy framebuffer driver for very old NVIDIA cards; not used by desktop distros.
   i2c_nvidia_gpu:
-    role: ignore
-    note: Drives the USB-C controller on some NVIDIA cards, not the GPU.
+    note: >-
+      Drives the USB-C port controller on NVIDIA cards with a USB-C port (e.g. RTX 20 series).
+      It claims NVIDIA's class 0C80 functions only, never the GPU itself.
   usbcore:
     role: ignore
     note: Core USB hub support.

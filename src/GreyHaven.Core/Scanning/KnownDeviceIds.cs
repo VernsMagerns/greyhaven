@@ -60,4 +60,30 @@ public static class KnownDeviceIds
     {
         "8086", "10de", "1002",
     };
+
+    /// <summary>
+    /// Software devices that pretend to be hardware, keyed like <c>DeviceId.Key</c>. They exist
+    /// only inside Windows, so they're left out of the scan.
+    /// </summary>
+    public static readonly IReadOnlySet<string> VirtualDevices = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "usb:0955:9000", // NVIDIA Virtual Audio Device (Wave Extensible), installed with NVIDIA's driver (nvvad.inf)
+    };
+
+    /// <summary>
+    /// AMD placeholder PCI functions on Ryzen 3000/Threadripper 3000 ("Starship/Matisse") that
+    /// have no driver on any OS (class 13, non-essential instrumentation). Listed in case Windows
+    /// doesn't report their class code.
+    /// </summary>
+    public static readonly IReadOnlySet<string> PlaceholderPciDevices = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "pci:1022:1485", // Starship/Matisse Reserved SPP
+        "pci:1022:148a", // Starship/Matisse PCIe Dummy Function
+    };
+
+    /// <summary>USB vendors that only make audio interfaces, used when a maker's driver hides the USB class.</summary>
+    public static readonly IReadOnlySet<string> AudioOnlyUsbVendors = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "1235", // Focusrite (Scarlett, Clarett, Vocaster)
+    };
 }

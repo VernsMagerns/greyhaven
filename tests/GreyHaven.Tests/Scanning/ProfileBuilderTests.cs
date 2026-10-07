@@ -46,6 +46,21 @@ public class ProfileBuilderTests
     }
 
     [Fact]
+    public void Merged_usb_device_keeps_the_interface_class_of_its_audio_interface()
+    {
+        RawPnpDevice[] devices =
+        [
+            new() { Name = "USB Audio Device", PnpClass = "MEDIA", HardwareIds = [@"USB\VID_1234&PID_0001&REV_0100"] },
+            new() { Name = "Speakers", PnpClass = "MEDIA", HardwareIds = [@"USB\VID_1234&PID_0001&REV_0100&MI_00"], CompatibleIds = [@"USB\Class_01&SubClass_01&Prot_20", @"USB\Class_01"] },
+            new() { Name = "HID", PnpClass = "HIDClass", HardwareIds = [@"USB\VID_1234&PID_0001&REV_0100&MI_03"], CompatibleIds = [@"USB\Class_03&SubClass_00&Prot_00", @"USB\Class_03"] },
+        ];
+
+        var dev = Assert.Single(Build(Snapshot(devices: devices)).Components, c => c.Id?.Bus == DeviceBus.Usb);
+        Assert.Equal(ComponentCategory.AudioController, dev.Category);
+        Assert.Equal("010120", dev.Id!.InterfaceClass);
+    }
+
+    [Fact]
     public void Identical_pci_devices_are_counted()
     {
         var p = Build(Snapshot(devices: [Pci("8086:1533", "020000", "Net"), Pci("8086:1533", "020000", "Net")]));

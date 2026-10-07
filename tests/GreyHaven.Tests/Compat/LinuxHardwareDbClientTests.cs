@@ -77,6 +77,22 @@ public class LinuxHardwareDbClientTests : IDisposable
     }
 
     [Fact]
+    public async Task Board_specific_page_falls_back_to_the_general_device_page()
+    {
+        // Few people share the exact same board, so pci:10de-1ad9-1462-c757 may have no page
+        // while pci:10de-1ad9 does.
+        var time = new FakeTimeProvider();
+        var handler = new FakeHandler(r => r.RequestUri!.Query.Count(ch => ch == '-') > 1 ? new HttpResponseMessage(HttpStatusCode.NotFound) : Html(DevicePage));
+        var lookup = new LinuxHardwareDbClient(new HttpClient(handler), null, time)
+            .LookupAsync(new DeviceId(DeviceBus.Pci, "10de", "1ad9", "1462", "c757"));
+        time.Advance(LinuxHardwareDbClient.MinInterval);
+        var r = await lookup.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Equal(CommunityStatus.Found, r.Status);
+        Assert.Equal(["https://linux-hardware.org/?id=pci:10de-1ad9-1462-c757", "https://linux-hardware.org/?id=pci:10de-1ad9"], handler.Requests.Select(u => u.ToString()));
+    }
+
+    [Fact]
     public async Task Requests_are_at_least_ten_seconds_apart()
     {
         var time = new FakeTimeProvider(DateTimeOffset.Parse("2026-10-05T00:00:00Z"));

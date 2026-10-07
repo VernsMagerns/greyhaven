@@ -128,6 +128,51 @@ public class RealDataTests
         Assert.All(r.Components.Where(c => c.Component.Category == ComponentCategory.UsbController), c => Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, c.For("mint").Rating));
     }
 
+    // ---- Parts from a real scan (Windows 11, MSI board, Ryzen 5 3600, RTX 2070 SUPER) ----
+
+    private static async Task<RatedComponent> RateDevices(params RawPnpDevice[] devices)
+    {
+        var raw = new RawSnapshot { CapturedAt = DateTimeOffset.UnixEpoch, System = new RawSystemData(), Devices = devices };
+        var r = await new RatingEngine(Data.Value).RateAsync(ProfileBuilder.Build(raw, "test"), new RatingOptions { UseOnlineLookups = false });
+        return Assert.Single(r.Components, c => c.Component.Category != ComponentCategory.Cpu);
+    }
+
+    [Fact]
+    public async Task Nvidia_usb_c_port_controller_works()
+    {
+        var c = await RateDevices(new RawPnpDevice
+        {
+            Name = "NVIDIA USB Type-C Port Policy Controller", PnpClass = "System", Present = true,
+            HardwareIds = [@"PCI\VEN_10DE&DEV_1AD9&SUBSYS_C7571462&REV_A1", @"PCI\VEN_10DE&DEV_1AD9&SUBSYS_C7571462", @"PCI\VEN_10DE&DEV_1AD9&CC_0C8000", @"PCI\VEN_10DE&DEV_1AD9&CC_0C80"],
+            CompatibleIds = [@"PCI\VEN_10DE&DEV_1AD9&REV_A1", @"PCI\VEN_10DE&DEV_1AD9", @"PCI\VEN_10DE&CC_0C8000", @"PCI\VEN_10DE&CC_0C80", @"PCI\VEN_10DE", @"PCI\CC_0C8000", @"PCI\CC_0C80"],
+        });
+        Assert.All(c.Ratings, x => Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, x.Rating));
+        Assert.Contains("i2c_nvidia_gpu", c.For("ubuntu").LinuxDriver);
+    }
+
+    [Fact]
+    public async Task Scarlett_solo_works_even_when_focusrites_driver_hides_the_usb_class()
+    {
+        var c = await RateDevices(new RawPnpDevice
+        {
+            Name = "Scarlett Solo USB", PnpClass = "USB", Present = true,
+            HardwareIds = [@"USB\VID_1235&PID_8211&REV_0626", @"USB\VID_1235&PID_8211"],
+            CompatibleIds = [@"USB\DevClass_EF&SubClass_02&Prot_01", @"USB\COMPOSITE"],
+        });
+        Assert.Equal(ComponentCategory.AudioController, c.Component.Category);
+        Assert.All(c.Ratings, x => Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, x.Rating));
+    }
+
+    [Fact]
+    public async Task Class_compliant_usb_audio_works_through_the_standard_driver()
+    {
+        var c = await RateDevices(
+            new RawPnpDevice { Name = "USB Audio Device", PnpClass = "MEDIA", Present = true, HardwareIds = [@"USB\VID_FFF0&PID_0001&REV_0100"] },
+            new RawPnpDevice { Name = "Speakers", PnpClass = "MEDIA", Present = true, HardwareIds = [@"USB\VID_FFF0&PID_0001&REV_0100&MI_00"], CompatibleIds = [@"USB\Class_01&SubClass_01&Prot_20"] });
+        Assert.All(c.Ratings, x => Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, x.Rating));
+        Assert.Contains("snd_usb_audio", c.For("ubuntu").LinuxDriver);
+    }
+
     // ---- Secure Boot paths (nvidia-desktop: Pop!_OS scores best but needs Secure Boot off) ----
 
     [Fact]

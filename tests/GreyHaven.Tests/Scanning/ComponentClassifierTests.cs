@@ -100,4 +100,33 @@ public class ComponentClassifierTests
     {
         Assert.Null(Classify(pnpClass, [hw]));
     }
+
+    // From a real scan (Windows 11, MSI board, Ryzen 5 3600, RTX 2070 SUPER, 2026-10).
+    [Fact]
+    public void Nvidia_virtual_audio_device_is_left_out()
+    {
+        Assert.Null(Classify("MEDIA", [@"USB\VID_0955&PID_9000"]));
+    }
+
+    [Theory]
+    [InlineData("1022:1485")] // Starship/Matisse Reserved SPP
+    [InlineData("1022:148A")] // Starship/Matisse PCIe Dummy Function
+    public void Amd_placeholder_functions_are_left_out(string vd)
+    {
+        Assert.Null(Classify("System", Pci(vd, "130000")));
+        Assert.Null(Classify("System", [$@"PCI\VEN_{vd[..4]}&DEV_{vd[5..]}"])); // even without a class code
+    }
+
+    [Fact]
+    public void Any_non_essential_instrumentation_function_is_left_out()
+    {
+        Assert.Null(Classify("System", Pci("1022:9999", "130000")));
+    }
+
+    [Fact]
+    public void Focusrite_interface_with_makers_driver_is_a_sound_device()
+    {
+        // Focusrite's own driver claims the whole device, so Windows shows no USB audio class.
+        Assert.Equal(ComponentCategory.AudioController, Classify("USB", [@"USB\VID_1235&PID_8211&REV_0626"], [@"USB\DevClass_EF&SubClass_02&Prot_01", @"USB\COMPOSITE"]));
+    }
 }
