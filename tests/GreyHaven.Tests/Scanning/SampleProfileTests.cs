@@ -14,7 +14,7 @@ public class SampleProfileTests
     public void All_expected_samples_are_present()
     {
         Assert.Equal(
-            ["broadcom-legacy-laptop", "intel-laptop", "intel-vmd-laptop", "nvidia-desktop", "snapdragon-arm-laptop"],
+            ["broadcom-legacy-laptop", "intel-laptop", "intel-vmd-laptop", "nvidia-desktop", "ryzen-rtx2070s-desktop", "snapdragon-arm-laptop"],
             SampleProfiles.List());
     }
 

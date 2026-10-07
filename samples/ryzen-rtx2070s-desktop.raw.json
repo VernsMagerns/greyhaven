@@ -1,0 +1,2137 @@
+{
+  "schemaVersion": 1,
+  "capturedAt": "2026-10-07T21:35:52.4373027+00:00",
+  "description": "Real scan shared by the maintainer (7 October 2026): custom desktop, MSI MS-7C02 motherboard, AMD Ryzen 5 3600, NVIDIA GeForce RTX 2070 SUPER, Focusrite Scarlett Solo, Windows 11 25H2 (which still calls itself \"Windows 10 Pro\" in the registry).",
+  "system": {
+    "firmwareType": 2,
+    "secureBootEnabled": 1,
+    "hiberbootEnabled": 0,
+    "bitLockerProtection": 2,
+    "windowsProductName": "Windows 10 Pro",
+    "windowsDisplayVersion": "25H2",
+    "windowsCurrentBuild": "26200",
+    "windowsUbr": 9457,
+    "windowsEditionId": "Professional",
+    "nativeMachine": 34404,
+    "chassisTypes": [
+      3
+    ],
+    "hasBattery": false,
+    "systemManufacturer": "Micro-Star International Co., Ltd",
+    "systemModel": "MS-7C02",
+    "systemDriveFreeBytes": 517262352384,
+    "systemDriveTotalBytes": 1999382769664,
+    "baseBoardManufacturer": "Micro-Star International Co., Ltd",
+    "readWarnings": []
+  },
+  "processors": [
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "AuthenticAMD",
+      "caption": "AMD64 Family 23 Model 113 Stepping 0",
+      "numberOfCores": 6,
+      "numberOfLogicalProcessors": 12
+    }
+  ],
+  "devices": [
+    {
+      "name": "Motherboard resources",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0C02",
+        "ACPI\\PNP0C02",
+        "*PNP0C02"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Upstream Switch Port",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_43C6&SUBSYS_02011B21&REV_01",
+        "PCI\\VEN_1022&DEV_43C6&SUBSYS_02011B21",
+        "PCI\\VEN_1022&DEV_43C6&CC_060400",
+        "PCI\\VEN_1022&DEV_43C6&CC_0604"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_43C6&REV_01",
+        "PCI\\VEN_1022&DEV_43C6",
+        "PCI\\VEN_1022&CC_060400",
+        "PCI\\VEN_1022&CC_0604",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060400&DT_5",
+        "PCI\\CC_060400",
+        "PCI\\CC_0604&DT_5",
+        "PCI\\CC_0604"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1444&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1444&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1444&REV_00",
+        "PCI\\VEN_1022&DEV_1444",
+        "PCI\\VEN_1022&DEV_1444&CC_060000",
+        "PCI\\VEN_1022&DEV_1444&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant consumer control device",
+      "manufacturer": "Microsoft",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_046D&PID_C52B&REV_1211&MI_01&Col02",
+        "HID\\VID_046D&PID_C52B&MI_01&Col02",
+        "HID\\VID_046D&UP:000C_U:0001",
+        "HID_DEVICE_SYSTEM_CONSUMER",
+        "HID_DEVICE_UP:000C_U:0001",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Input Device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "HidUsb",
+      "hardwareIds": [
+        "USB\\VID_0FD9&PID_008F&REV_0130",
+        "USB\\VID_0FD9&PID_008F"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_0FD9&Class_03&SubClass_00&Prot_00",
+        "USB\\COMPAT_VID_0FD9&Class_03&SubClass_00",
+        "USB\\COMPAT_VID_0FD9&Class_03",
+        "USB\\Class_03&SubClass_00&Prot_00",
+        "USB\\Class_03&SubClass_00",
+        "USB\\Class_03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "High Definition Audio Device",
+      "manufacturer": "Microsoft",
+      "pnpClass": "MEDIA",
+      "service": "HdAudAddService",
+      "hardwareIds": [
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0892&SUBSYS_1462EC02&REV_1003",
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0892&SUBSYS_1462EC02"
+      ],
+      "compatibleIds": [
+        "HDAUDIO\\FUNC_01&CTLR_VEN_1022&CTLR_DEV_1487&VEN_10EC&DEV_0892&REV_1003",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_1022&VEN_10EC&DEV_0892&REV_1003",
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0892&REV_1003",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_1022&CTLR_DEV_1487&VEN_10EC&DEV_0892",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_1022&VEN_10EC&DEV_0892",
+        "HDAUDIO\\FUNC_01&VEN_10EC&DEV_0892",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_1022&CTLR_DEV_1487&VEN_10EC",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_1022&VEN_10EC",
+        "HDAUDIO\\FUNC_01&VEN_10EC",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_1022&CTLR_DEV_1487",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_1022",
+        "HDAUDIO\\FUNC_01&GF&VEN_10EC&DEV_0892&SUBSYS_1462EC02&REV_1003",
+        "HDAUDIO\\FUNC_01"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Scarlett Solo USB",
+      "manufacturer": "Focusrite Audio Engineering, Ltd.",
+      "pnpClass": "Focusrite Audio",
+      "service": "FocusriteUsb",
+      "hardwareIds": [
+        "USB\\VID_1235&PID_8211&REV_0645",
+        "USB\\VID_1235&PID_8211"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_1235&DevClass_00&SubClass_00&Prot00",
+        "USB\\COMPAT_VID_1235&DevClass_00&SubClass_00",
+        "USB\\COMPAT_VID_1235&DevClass_00",
+        "USB\\DevClass_00&SubClass_00&Prot_00",
+        "USB\\DevClass_00&SubClass_00",
+        "USB\\DevClass_00",
+        "USB\\COMPOSITE"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD GPIO Controller",
+      "manufacturer": "Advanced Micro Devices, Inc.",
+      "pnpClass": "System",
+      "service": "amdgpio3",
+      "hardwareIds": [
+        "ACPI\\VEN_AMDI&DEV_F030",
+        "ACPI\\AMDIF030",
+        "*AMDIF030"
+      ],
+      "compatibleIds": [
+        "ACPI\\AMDIF030",
+        "AMDIF030"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Input Device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "HidUsb",
+      "hardwareIds": [
+        "USB\\VID_05AC&PID_024F&REV_0127&MI_01",
+        "USB\\VID_05AC&PID_024F&MI_01"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_05ac&Class_03&SubClass_01&Prot_02",
+        "USB\\COMPAT_VID_05ac&Class_03&SubClass_01",
+        "USB\\COMPAT_VID_05ac&Class_03",
+        "USB\\Class_03&SubClass_01&Prot_02",
+        "USB\\Class_03&SubClass_01",
+        "USB\\Class_03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "High precision event timer",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0103",
+        "ACPI\\PNP0103",
+        "*PNP0103"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Downstream Switch Port",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_43C7&SUBSYS_33061B21&REV_01",
+        "PCI\\VEN_1022&DEV_43C7&SUBSYS_33061B21",
+        "PCI\\VEN_1022&DEV_43C7&CC_060400",
+        "PCI\\VEN_1022&DEV_43C7&CC_0604"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_43C7&REV_01",
+        "PCI\\VEN_1022&DEV_43C7",
+        "PCI\\VEN_1022&CC_060400",
+        "PCI\\VEN_1022&CC_0604",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060400&DT_6",
+        "PCI\\CC_060400",
+        "PCI\\CC_0604&DT_6",
+        "PCI\\CC_0604"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1441&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1441&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1441&REV_00",
+        "PCI\\VEN_1022&DEV_1441",
+        "PCI\\VEN_1022&DEV_1441&CC_060000",
+        "PCI\\VEN_1022&DEV_1441&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Realtek PCIe GbE Family Controller",
+      "manufacturer": "Realtek",
+      "pnpClass": "Net",
+      "service": "rtcx21",
+      "hardwareIds": [
+        "PCI\\VEN_10EC&DEV_8168&SUBSYS_7C021462&REV_15",
+        "PCI\\VEN_10EC&DEV_8168&SUBSYS_7C021462",
+        "PCI\\VEN_10EC&DEV_8168&CC_020000",
+        "PCI\\VEN_10EC&DEV_8168&CC_0200"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10EC&DEV_8168&REV_15",
+        "PCI\\VEN_10EC&DEV_8168",
+        "PCI\\VEN_10EC&CC_020000",
+        "PCI\\VEN_10EC&CC_0200",
+        "PCI\\VEN_10EC",
+        "PCI\\CC_020000&DT_0",
+        "PCI\\CC_020000",
+        "PCI\\CC_0200&DT_0",
+        "PCI\\CC_0200"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD GPIO Controller",
+      "manufacturer": "Advanced Micro Devices, Inc",
+      "pnpClass": "System",
+      "service": "amdgpio2",
+      "hardwareIds": [
+        "ACPI\\VEN_AMDI&DEV_0030",
+        "ACPI\\AMDI0030",
+        "*AMDI0030"
+      ],
+      "compatibleIds": [
+        "ACPI\\AMDI0030",
+        "AMDI0030"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD PCI",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "System",
+      "service": "AMDPCIDev",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1485&SUBSYS_7C021462&REV_00",
+        "PCI\\VEN_1022&DEV_1485&SUBSYS_7C021462",
+        "PCI\\VEN_1022&DEV_1485&CC_130000",
+        "PCI\\VEN_1022&DEV_1485&CC_1300"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1485&REV_00",
+        "PCI\\VEN_1022&DEV_1485",
+        "PCI\\VEN_1022&CC_130000",
+        "PCI\\VEN_1022&CC_1300",
+        "PCI\\VEN_1022",
+        "PCI\\CC_130000&DT_0",
+        "PCI\\CC_130000",
+        "PCI\\CC_1300&DT_0",
+        "PCI\\CC_1300"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Motherboard resources",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0C02",
+        "ACPI\\PNP0C02",
+        "*PNP0C02"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "High Definition Audio Controller",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "service": "HDAudBus",
+      "hardwareIds": [
+        "PCI\\VEN_10DE&DEV_10F8&SUBSYS_87081043&REV_A1",
+        "PCI\\VEN_10DE&DEV_10F8&SUBSYS_87081043",
+        "PCI\\VEN_10DE&DEV_10F8&CC_040300",
+        "PCI\\VEN_10DE&DEV_10F8&CC_0403"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10DE&DEV_10F8&REV_A1",
+        "PCI\\VEN_10DE&DEV_10F8",
+        "PCI\\VEN_10DE&CC_040300",
+        "PCI\\VEN_10DE&CC_0403",
+        "PCI\\VEN_10DE",
+        "PCI\\CC_040300&DT_0",
+        "PCI\\CC_040300",
+        "PCI\\CC_0403&DT_0",
+        "PCI\\CC_0403"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Programmable interrupt controller",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0000",
+        "ACPI\\PNP0000",
+        "*PNP0000"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Root Port",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1483&SUBSYS_12341022&REV_00",
+        "PCI\\VEN_1022&DEV_1483&SUBSYS_12341022",
+        "PCI\\VEN_1022&DEV_1483&CC_060400",
+        "PCI\\VEN_1022&DEV_1483&CC_0604"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1483&REV_00",
+        "PCI\\VEN_1022&DEV_1483",
+        "PCI\\VEN_1022&CC_060400",
+        "PCI\\VEN_1022&CC_0604",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060400&DT_4",
+        "PCI\\CC_060400",
+        "PCI\\CC_0604&DT_4",
+        "PCI\\CC_0604"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Root Port",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1483&SUBSYS_12341022&REV_00",
+        "PCI\\VEN_1022&DEV_1483&SUBSYS_12341022",
+        "PCI\\VEN_1022&DEV_1483&CC_060400",
+        "PCI\\VEN_1022&DEV_1483&CC_0604"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1483&REV_00",
+        "PCI\\VEN_1022&DEV_1483",
+        "PCI\\VEN_1022&CC_060400",
+        "PCI\\VEN_1022&CC_0604",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060400&DT_4",
+        "PCI\\CC_060400",
+        "PCI\\CC_0604&DT_4",
+        "PCI\\CC_0604"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Root Port",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1483&SUBSYS_12341022&REV_00",
+        "PCI\\VEN_1022&DEV_1483&SUBSYS_12341022",
+        "PCI\\VEN_1022&DEV_1483&CC_060400",
+        "PCI\\VEN_1022&DEV_1483&CC_0604"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1483&REV_00",
+        "PCI\\VEN_1022&DEV_1483",
+        "PCI\\VEN_1022&CC_060400",
+        "PCI\\VEN_1022&CC_0604",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060400&DT_4",
+        "PCI\\CC_060400",
+        "PCI\\CC_0604&DT_4",
+        "PCI\\CC_0604"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Downstream Switch Port",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_43C7&SUBSYS_33061B21&REV_01",
+        "PCI\\VEN_1022&DEV_43C7&SUBSYS_33061B21",
+        "PCI\\VEN_1022&DEV_43C7&CC_060400",
+        "PCI\\VEN_1022&DEV_43C7&CC_0604"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_43C7&REV_01",
+        "PCI\\VEN_1022&DEV_43C7",
+        "PCI\\VEN_1022&CC_060400",
+        "PCI\\VEN_1022&CC_0604",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060400&DT_6",
+        "PCI\\CC_060400",
+        "PCI\\CC_0604&DT_6",
+        "PCI\\CC_0604"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant vendor-defined device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_046D&PID_C52B&REV_1211&MI_02&Col01",
+        "HID\\VID_046D&PID_C52B&MI_02&Col01",
+        "HID\\VID_046D&UP:FF00_U:0001",
+        "HID_DEVICE_UP:FF00_U:0001",
+        "HID_DEVICE_UPR:FF00-FFFF",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant system controller",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_046D&PID_C52B&REV_1211&MI_01&Col03",
+        "HID\\VID_046D&PID_C52B&MI_01&Col03",
+        "HID\\VID_046D&UP:0001_U:0080",
+        "HID_DEVICE_SYSTEM_CONTROL",
+        "HID_DEVICE_UP:0001_U:0080",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Root Port",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1484&SUBSYS_14627C02&REV_00",
+        "PCI\\VEN_1022&DEV_1484&SUBSYS_14627C02",
+        "PCI\\VEN_1022&DEV_1484&CC_060400",
+        "PCI\\VEN_1022&DEV_1484&CC_0604"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1484&REV_00",
+        "PCI\\VEN_1022&DEV_1484",
+        "PCI\\VEN_1022&CC_060400",
+        "PCI\\VEN_1022&CC_0604",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060400&DT_4",
+        "PCI\\CC_060400",
+        "PCI\\CC_0604&DT_4",
+        "PCI\\CC_0604"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Root Port",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1484&SUBSYS_14627C02&REV_00",
+        "PCI\\VEN_1022&DEV_1484&SUBSYS_14627C02",
+        "PCI\\VEN_1022&DEV_1484&CC_060400",
+        "PCI\\VEN_1022&DEV_1484&CC_0604"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1484&REV_00",
+        "PCI\\VEN_1022&DEV_1484",
+        "PCI\\VEN_1022&CC_060400",
+        "PCI\\VEN_1022&CC_0604",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060400&DT_4",
+        "PCI\\CC_060400",
+        "PCI\\CC_0604&DT_4",
+        "PCI\\CC_0604"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD USB 3.10 eXtensible Host Controller - 1.10 (Microsoft)",
+      "manufacturer": "Generic USB xHCI Host Controller",
+      "pnpClass": "USB",
+      "service": "USBXHCI",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_43D5&SUBSYS_11421B21&REV_01",
+        "PCI\\VEN_1022&DEV_43D5&SUBSYS_11421B21",
+        "PCI\\VEN_1022&DEV_43D5&CC_0C0330",
+        "PCI\\VEN_1022&DEV_43D5&CC_0C03"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_43D5&REV_01",
+        "PCI\\VEN_1022&DEV_43D5",
+        "PCI\\VEN_1022&CC_0C0330",
+        "PCI\\VEN_1022&CC_0C03",
+        "PCI\\VEN_1022",
+        "PCI\\CC_0C0330&DT_1",
+        "PCI\\CC_0C0330",
+        "PCI\\CC_0C03&DT_1",
+        "PCI\\CC_0C03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Downstream Switch Port",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_43C7&SUBSYS_33061B21&REV_01",
+        "PCI\\VEN_1022&DEV_43C7&SUBSYS_33061B21",
+        "PCI\\VEN_1022&DEV_43C7&CC_060400",
+        "PCI\\VEN_1022&DEV_43C7&CC_0604"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_43C7&REV_01",
+        "PCI\\VEN_1022&DEV_43C7",
+        "PCI\\VEN_1022&CC_060400",
+        "PCI\\VEN_1022&CC_0604",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060400&DT_6",
+        "PCI\\CC_060400",
+        "PCI\\CC_0604&DT_6",
+        "PCI\\CC_0604"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1446&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1446&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1446&REV_00",
+        "PCI\\VEN_1022&DEV_1446",
+        "PCI\\VEN_1022&DEV_1446&CC_060000",
+        "PCI\\VEN_1022&DEV_1446&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Input Device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "HidUsb",
+      "hardwareIds": [
+        "USB\\VID_05AC&PID_024F&REV_0127&MI_02",
+        "USB\\VID_05AC&PID_024F&MI_02"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_05ac&Class_03&SubClass_00&Prot_00",
+        "USB\\COMPAT_VID_05ac&Class_03&SubClass_00",
+        "USB\\COMPAT_VID_05ac&Class_03",
+        "USB\\Class_03&SubClass_00&Prot_00",
+        "USB\\Class_03&SubClass_00",
+        "USB\\Class_03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Communications Port (COM1)",
+      "manufacturer": "(Standard port types)",
+      "pnpClass": "Ports",
+      "service": "Serial",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0501",
+        "ACPI\\PNP0501",
+        "*PNP0501"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Input Device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "HidUsb",
+      "hardwareIds": [
+        "USB\\VID_046D&PID_C52B&REV_1211&MI_02",
+        "USB\\VID_046D&PID_C52B&MI_02"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_046d&Class_03&SubClass_00&Prot_00",
+        "USB\\COMPAT_VID_046d&Class_03&SubClass_00",
+        "USB\\COMPAT_VID_046d&Class_03",
+        "USB\\Class_03&SubClass_00&Prot_00",
+        "USB\\Class_03&SubClass_00",
+        "USB\\Class_03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard ISA bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "msisadrv",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_790E&SUBSYS_7C021462&REV_51",
+        "PCI\\VEN_1022&DEV_790E&SUBSYS_7C021462",
+        "PCI\\VEN_1022&DEV_790E&CC_060100",
+        "PCI\\VEN_1022&DEV_790E&CC_0601"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_790E&REV_51",
+        "PCI\\VEN_1022&DEV_790E",
+        "PCI\\VEN_1022&CC_060100",
+        "PCI\\VEN_1022&CC_0601",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060100",
+        "PCI\\CC_0601"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Input Device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "HidUsb",
+      "hardwareIds": [
+        "USB\\VID_046D&PID_C52B&REV_1211&MI_01",
+        "USB\\VID_046D&PID_C52B&MI_01"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_046d&Class_03&SubClass_01&Prot_02",
+        "USB\\COMPAT_VID_046d&Class_03&SubClass_01",
+        "USB\\COMPAT_VID_046d&Class_03",
+        "USB\\Class_03&SubClass_01&Prot_02",
+        "USB\\Class_03&SubClass_01",
+        "USB\\Class_03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Logitech USB Input Device",
+      "manufacturer": "Logitech (x64)",
+      "pnpClass": "HIDClass",
+      "service": "HidUsb",
+      "hardwareIds": [
+        "USB\\VID_046D&PID_C52B&REV_1211&MI_00",
+        "USB\\VID_046D&PID_C52B&MI_00"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_046d&Class_03&SubClass_01&Prot_01",
+        "USB\\COMPAT_VID_046d&Class_03&SubClass_01",
+        "USB\\COMPAT_VID_046d&Class_03",
+        "USB\\Class_03&SubClass_01&Prot_01",
+        "USB\\Class_03&SubClass_01",
+        "USB\\Class_03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Root Hub (USB 3.0)",
+      "manufacturer": "(Standard USB HUBs)",
+      "pnpClass": "USB",
+      "service": "USBHUB3",
+      "hardwareIds": [
+        "USB\\ROOT_HUB30&VID1022&PID43D5&REV0001",
+        "USB\\ROOT_HUB30&VID1022&PID43D5",
+        "USB\\ROOT_HUB30"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID Keyboard Device",
+      "manufacturer": "(Standard keyboards)",
+      "pnpClass": "Keyboard",
+      "service": "kbdhid",
+      "hardwareIds": [
+        "HID\\VID_05AC&PID_024F&REV_0127&MI_00",
+        "HID\\VID_05AC&PID_024F&MI_00",
+        "HID\\VID_05AC&UP:0001_U:0006",
+        "HID_DEVICE_SYSTEM_KEYBOARD",
+        "HID_DEVICE_UP:0001_U:0006",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1443&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1443&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1443&REV_00",
+        "PCI\\VEN_1022&DEV_1443",
+        "PCI\\VEN_1022&DEV_1443&CC_060000",
+        "PCI\\VEN_1022&DEV_1443&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1480&SUBSYS_7C021462&REV_00",
+        "PCI\\VEN_1022&DEV_1480&SUBSYS_7C021462",
+        "PCI\\VEN_1022&DEV_1480&CC_060000",
+        "PCI\\VEN_1022&DEV_1480&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1480&REV_00",
+        "PCI\\VEN_1022&DEV_1480",
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1482&REV_00",
+        "PCI\\VEN_1022&DEV_1482",
+        "PCI\\VEN_1022&DEV_1482&CC_060000",
+        "PCI\\VEN_1022&DEV_1482&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1482&REV_00",
+        "PCI\\VEN_1022&DEV_1482",
+        "PCI\\VEN_1022&DEV_1482&CC_060000",
+        "PCI\\VEN_1022&DEV_1482&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1482&REV_00",
+        "PCI\\VEN_1022&DEV_1482",
+        "PCI\\VEN_1022&DEV_1482&CC_060000",
+        "PCI\\VEN_1022&DEV_1482&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1482&REV_00",
+        "PCI\\VEN_1022&DEV_1482",
+        "PCI\\VEN_1022&DEV_1482&CC_060000",
+        "PCI\\VEN_1022&DEV_1482&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1482&REV_00",
+        "PCI\\VEN_1022&DEV_1482",
+        "PCI\\VEN_1022&DEV_1482&CC_060000",
+        "PCI\\VEN_1022&DEV_1482&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1482&REV_00",
+        "PCI\\VEN_1022&DEV_1482",
+        "PCI\\VEN_1022&DEV_1482&CC_060000",
+        "PCI\\VEN_1022&DEV_1482&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1482&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1482&REV_00",
+        "PCI\\VEN_1022&DEV_1482",
+        "PCI\\VEN_1022&DEV_1482&CC_060000",
+        "PCI\\VEN_1022&DEV_1482&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD SMBus",
+      "manufacturer": "Advanced Micro Devices, Inc",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_790B&SUBSYS_7C021462&REV_61",
+        "PCI\\VEN_1022&DEV_790B&SUBSYS_7C021462",
+        "PCI\\VEN_1022&DEV_790B&CC_0C0500",
+        "PCI\\VEN_1022&DEV_790B&CC_0C05"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_790B&REV_61",
+        "PCI\\VEN_1022&DEV_790B",
+        "PCI\\VEN_1022&CC_0C0500",
+        "PCI\\VEN_1022&CC_0C05",
+        "PCI\\VEN_1022",
+        "PCI\\CC_0C0500",
+        "PCI\\CC_0C05"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant vendor-defined device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_046D&PID_C52B&REV_1211&MI_02&Col02",
+        "HID\\VID_046D&PID_C52B&MI_02&Col02",
+        "HID\\VID_046D&UP:FF00_U:0002",
+        "HID_DEVICE_UP:FF00_U:0002",
+        "HID_DEVICE_UPR:FF00-FFFF",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant vendor-defined device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_046D&PID_C52B&REV_1211&MI_01&Col04",
+        "HID\\VID_046D&PID_C52B&MI_01&Col04",
+        "HID\\VID_046D&UP:FFBC_U:0088",
+        "HID_DEVICE_UP:FFBC_U:0088",
+        "HID_DEVICE_UPR:FF00-FFFF",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "System board",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0C01",
+        "ACPI\\PNP0C01",
+        "*PNP0C01"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft Windows Management Interface for ACPI",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "service": "WmiAcpi",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0C14",
+        "ACPI\\PNP0C14",
+        "*PNP0C14"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard SATA AHCI Controller",
+      "manufacturer": "Standard SATA AHCI Controller",
+      "pnpClass": "HDC",
+      "service": "storahci",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_43C8&SUBSYS_10621B21&REV_01",
+        "PCI\\VEN_1022&DEV_43C8&SUBSYS_10621B21",
+        "PCI\\VEN_1022&DEV_43C8&CC_010601",
+        "PCI\\VEN_1022&DEV_43C8&CC_0106"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_43C8&REV_01",
+        "PCI\\VEN_1022&DEV_43C8",
+        "PCI\\VEN_1022&CC_010601",
+        "PCI\\VEN_1022&CC_0106",
+        "PCI\\VEN_1022",
+        "PCI\\CC_010601&DT_1",
+        "PCI\\CC_010601",
+        "PCI\\CC_0106&DT_1",
+        "PCI\\CC_0106"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "High Definition Audio Controller",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "service": "HDAudBus",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1487&SUBSYS_EC021462&REV_00",
+        "PCI\\VEN_1022&DEV_1487&SUBSYS_EC021462",
+        "PCI\\VEN_1022&DEV_1487&CC_040300",
+        "PCI\\VEN_1022&DEV_1487&CC_0403"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1487&REV_00",
+        "PCI\\VEN_1022&DEV_1487",
+        "PCI\\VEN_1022&CC_040300",
+        "PCI\\VEN_1022&CC_0403",
+        "PCI\\VEN_1022",
+        "PCI\\CC_040300&DT_0",
+        "PCI\\CC_040300",
+        "PCI\\CC_0403&DT_0",
+        "PCI\\CC_0403"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Root Hub (USB 3.0)",
+      "manufacturer": "(Standard USB HUBs)",
+      "pnpClass": "USB",
+      "service": "USBHUB3",
+      "hardwareIds": [
+        "USB\\ROOT_HUB30&VID1022&PID149C&REV0000",
+        "USB\\ROOT_HUB30&VID1022&PID149C",
+        "USB\\ROOT_HUB30"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Input Device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "HidUsb",
+      "hardwareIds": [
+        "USB\\VID_05AC&PID_024F&REV_0127&MI_03",
+        "USB\\VID_05AC&PID_024F&MI_03"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_05ac&Class_03&SubClass_00&Prot_00",
+        "USB\\COMPAT_VID_05ac&Class_03&SubClass_00",
+        "USB\\COMPAT_VID_05ac&Class_03",
+        "USB\\Class_03&SubClass_00&Prot_00",
+        "USB\\Class_03&SubClass_00",
+        "USB\\Class_03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "NVIDIA High Definition Audio",
+      "manufacturer": "NVIDIA",
+      "pnpClass": "MEDIA",
+      "service": "NVHDA",
+      "hardwareIds": [
+        "HDAUDIO\\FUNC_01&VEN_10DE&DEV_0092&SUBSYS_10438708&REV_1001",
+        "HDAUDIO\\FUNC_01&VEN_10DE&DEV_0092&SUBSYS_10438708"
+      ],
+      "compatibleIds": [
+        "HDAUDIO\\FUNC_01&CTLR_VEN_10DE&CTLR_DEV_10F8&VEN_10DE&DEV_0092&REV_1001",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_10DE&VEN_10DE&DEV_0092&REV_1001",
+        "HDAUDIO\\FUNC_01&VEN_10DE&DEV_0092&REV_1001",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_10DE&CTLR_DEV_10F8&VEN_10DE&DEV_0092",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_10DE&VEN_10DE&DEV_0092",
+        "HDAUDIO\\FUNC_01&VEN_10DE&DEV_0092",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_10DE&CTLR_DEV_10F8&VEN_10DE",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_10DE&VEN_10DE",
+        "HDAUDIO\\FUNC_01&VEN_10DE",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_10DE&CTLR_DEV_10F8",
+        "HDAUDIO\\FUNC_01&CTLR_VEN_10DE",
+        "HDAUDIO\\FUNC_01&GF&VEN_10DE&DEV_0092&SUBSYS_10438708&REV_1001",
+        "HDAUDIO\\FUNC_01"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft Windows Management Interface for ACPI",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "service": "WmiAcpi",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0C14",
+        "ACPI\\PNP0C14",
+        "*PNP0C14"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI Express Root Complex",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "service": "pci",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0A08",
+        "ACPI\\PNP0A08",
+        "*PNP0A08"
+      ],
+      "compatibleIds": [
+        "*PNP0A03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant vendor-defined device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_05AC&PID_024F&REV_0127&MI_01&Col05",
+        "HID\\VID_05AC&PID_024F&MI_01&Col05",
+        "HID\\VID_05AC&UP:FFFF_U:0001",
+        "HID_DEVICE_UP:FFFF_U:0001",
+        "HID_DEVICE_UPR:FF00-FFFF",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1440&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1440&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1440&REV_00",
+        "PCI\\VEN_1022&DEV_1440",
+        "PCI\\VEN_1022&DEV_1440&CC_060000",
+        "PCI\\VEN_1022&DEV_1440&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "System timer",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0100",
+        "ACPI\\PNP0100",
+        "*PNP0100"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant mouse",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Mouse",
+      "service": "mouhid",
+      "hardwareIds": [
+        "HID\\VID_05AC&PID_024F&REV_0127&MI_01&Col04",
+        "HID\\VID_05AC&PID_024F&MI_01&Col04",
+        "HID\\VID_05AC&UP:0001_U:0002",
+        "HID_DEVICE_SYSTEM_MOUSE",
+        "HID_DEVICE_UP:0001_U:0002",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID Keyboard Device",
+      "manufacturer": "(Standard keyboards)",
+      "pnpClass": "Keyboard",
+      "service": "kbdhid",
+      "hardwareIds": [
+        "HID\\VID_05AC&PID_024F&REV_0127&MI_01&Col03",
+        "HID\\VID_05AC&PID_024F&MI_01&Col03",
+        "HID\\VID_05AC&UP:0001_U:0006",
+        "HID_DEVICE_SYSTEM_KEYBOARD",
+        "HID_DEVICE_UP:0001_U:0006",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "NVIDIA USB Type-C Port Policy Controller",
+      "manufacturer": "NVIDIA",
+      "pnpClass": "USB",
+      "service": "UcmCxUcsiNvppc",
+      "hardwareIds": [
+        "PCI\\VEN_10DE&DEV_1AD9&SUBSYS_87081043&REV_A1",
+        "PCI\\VEN_10DE&DEV_1AD9&SUBSYS_87081043",
+        "PCI\\VEN_10DE&DEV_1AD9&CC_0C8000",
+        "PCI\\VEN_10DE&DEV_1AD9&CC_0C80"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10DE&DEV_1AD9&REV_A1",
+        "PCI\\VEN_10DE&DEV_1AD9",
+        "PCI\\VEN_10DE&CC_0C8000",
+        "PCI\\VEN_10DE&CC_0C80",
+        "PCI\\VEN_10DE",
+        "PCI\\CC_0C8000&DT_0",
+        "PCI\\CC_0C8000",
+        "PCI\\CC_0C80&DT_0",
+        "PCI\\CC_0C80"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant system controller",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_05AC&PID_024F&REV_0127&MI_01&Col02",
+        "HID\\VID_05AC&PID_024F&MI_01&Col02",
+        "HID\\VID_05AC&UP:0001_U:0080",
+        "HID_DEVICE_SYSTEM_CONTROL",
+        "HID_DEVICE_UP:0001_U:0080",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant consumer control device",
+      "manufacturer": "Microsoft",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_05AC&PID_024F&REV_0127&MI_01&Col01",
+        "HID\\VID_05AC&PID_024F&MI_01&Col01",
+        "HID\\VID_05AC&UP:000C_U:0001",
+        "HID_DEVICE_SYSTEM_CONSUMER",
+        "HID_DEVICE_UP:000C_U:0001",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD PCI",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "System",
+      "service": "AMDPCIDev",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_148A&SUBSYS_7C021462&REV_00",
+        "PCI\\VEN_1022&DEV_148A&SUBSYS_7C021462",
+        "PCI\\VEN_1022&DEV_148A&CC_130000",
+        "PCI\\VEN_1022&DEV_148A&CC_1300"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_148A&REV_00",
+        "PCI\\VEN_1022&DEV_148A",
+        "PCI\\VEN_1022&CC_130000",
+        "PCI\\VEN_1022&CC_1300",
+        "PCI\\VEN_1022",
+        "PCI\\CC_130000&DT_0",
+        "PCI\\CC_130000",
+        "PCI\\CC_1300&DT_0",
+        "PCI\\CC_1300"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Trusted Platform Module 2.0",
+      "manufacturer": "(Standard)",
+      "pnpClass": "SecurityDevices",
+      "service": "TPM",
+      "hardwareIds": [
+        "ACPI\\VEN_MSFT&DEV_0101",
+        "ACPI\\MSFT0101",
+        "*MSFT0101"
+      ],
+      "compatibleIds": [
+        "ACPI\\MSFT0101",
+        "MSFT0101"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "ACPI Fixed Feature Button",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\FixedButton",
+        "*FixedButton"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Composite Device",
+      "manufacturer": "(Standard USB Host Controller)",
+      "pnpClass": "USB",
+      "service": "usbccgp",
+      "hardwareIds": [
+        "USB\\VID_046D&PID_C52B&REV_1211",
+        "USB\\VID_046D&PID_C52B"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00&Prot00",
+        "USB\\COMPAT_VID_046D&DevClass_00&SubClass_00",
+        "USB\\COMPAT_VID_046D&DevClass_00",
+        "USB\\DevClass_00&SubClass_00&Prot_00",
+        "USB\\DevClass_00&SubClass_00",
+        "USB\\DevClass_00",
+        "USB\\COMPOSITE"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant vendor-defined device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_046D&PID_C52B&REV_1211&MI_02&Col03",
+        "HID\\VID_046D&PID_C52B&MI_02&Col03",
+        "HID\\VID_046D&UP:FF00_U:0004",
+        "HID_DEVICE_UP:FF00_U:0004",
+        "HID_DEVICE_UPR:FF00-FFFF",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Microsoft Windows Management Interface for ACPI",
+      "manufacturer": "Microsoft",
+      "pnpClass": "System",
+      "service": "WmiAcpi",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0C14",
+        "ACPI\\PNP0C14",
+        "*PNP0C14"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1445&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1445&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1445&REV_00",
+        "PCI\\VEN_1022&DEV_1445",
+        "PCI\\VEN_1022&DEV_1445&CC_060000",
+        "PCI\\VEN_1022&DEV_1445&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Motherboard resources",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0C02",
+        "ACPI\\PNP0C02",
+        "*PNP0C02"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Root Hub (USB 3.0)",
+      "manufacturer": "(Standard USB HUBs)",
+      "pnpClass": "USB",
+      "service": "USBHUB3",
+      "hardwareIds": [
+        "USB\\ROOT_HUB30"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Composite Device",
+      "manufacturer": "(Standard USB Host Controller)",
+      "pnpClass": "USB",
+      "service": "usbccgp",
+      "hardwareIds": [
+        "USB\\VID_05AC&PID_024F&REV_0127",
+        "USB\\VID_05AC&PID_024F"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_05AC&DevClass_00&SubClass_00&Prot00",
+        "USB\\COMPAT_VID_05AC&DevClass_00&SubClass_00",
+        "USB\\COMPAT_VID_05AC&DevClass_00",
+        "USB\\DevClass_00&SubClass_00&Prot_00",
+        "USB\\DevClass_00&SubClass_00",
+        "USB\\DevClass_00",
+        "USB\\COMPOSITE"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID Keyboard Device",
+      "manufacturer": "(Standard keyboards)",
+      "pnpClass": "Keyboard",
+      "service": "kbdhid",
+      "hardwareIds": [
+        "HID\\VID_046D&PID_C52B&REV_1211&MI_00",
+        "HID\\VID_046D&PID_C52B&MI_00",
+        "HID\\VID_046D&UP:0001_U:0006",
+        "HID_DEVICE_SYSTEM_KEYBOARD",
+        "HID_DEVICE_UP:0001_U:0006",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "System speaker",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0800",
+        "ACPI\\PNP0800",
+        "*PNP0800"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "NVIDIA Virtual Audio Device (Wave Extensible) (WDM)",
+      "manufacturer": "NVIDIA",
+      "pnpClass": "MEDIA",
+      "service": "nvvad_WaveExtensible",
+      "hardwareIds": [
+        "USB\\VID_0955&PID_9000"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "ACPI Power Button",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0C0C",
+        "ACPI\\PNP0C0C",
+        "*PNP0C0C"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1442&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1442&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1442&REV_00",
+        "PCI\\VEN_1022&DEV_1442",
+        "PCI\\VEN_1022&DEV_1442&CC_060000",
+        "PCI\\VEN_1022&DEV_1442&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "MSI Software Component Interface",
+      "manufacturer": "Micro-Star INT'L CO., LTD.",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_MBAD&DEV_0001",
+        "ACPI\\MBAD0001",
+        "*MBAD0001"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Root Hub (USB 3.0)",
+      "manufacturer": "(Standard USB HUBs)",
+      "pnpClass": "USB",
+      "service": "USBHUB3",
+      "hardwareIds": [
+        "USB\\ROOT_HUB30&VID10DE&PID1AD8&REV00A1",
+        "USB\\ROOT_HUB30&VID10DE&PID1AD8",
+        "USB\\ROOT_HUB30"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Standard NVM Express Controller",
+      "manufacturer": "Standard NVM Express Controller",
+      "pnpClass": "SCSIAdapter",
+      "service": "stornvme",
+      "hardwareIds": [
+        "PCI\\VEN_15B7&DEV_5030&SUBSYS_503015B7&REV_01",
+        "PCI\\VEN_15B7&DEV_5030&SUBSYS_503015B7",
+        "PCI\\VEN_15B7&DEV_5030&CC_010802",
+        "PCI\\VEN_15B7&DEV_5030&CC_0108"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_15B7&DEV_5030&REV_01",
+        "PCI\\VEN_15B7&DEV_5030",
+        "PCI\\VEN_15B7&CC_010802",
+        "PCI\\VEN_15B7&CC_0108",
+        "PCI\\VEN_15B7",
+        "PCI\\CC_010802&DT_0",
+        "PCI\\CC_010802",
+        "PCI\\CC_0108&DT_0",
+        "PCI\\CC_0108"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Direct memory access controller",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0200",
+        "ACPI\\PNP0200",
+        "*PNP0200"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "NVIDIA USB 3.10 eXtensible Host Controller - 1.10 (Microsoft)",
+      "manufacturer": "Generic USB xHCI Host Controller",
+      "pnpClass": "USB",
+      "service": "USBXHCI",
+      "hardwareIds": [
+        "PCI\\VEN_10DE&DEV_1AD8&SUBSYS_87081043&REV_A1",
+        "PCI\\VEN_10DE&DEV_1AD8&SUBSYS_87081043",
+        "PCI\\VEN_10DE&DEV_1AD8&CC_0C0330",
+        "PCI\\VEN_10DE&DEV_1AD8&CC_0C03"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10DE&DEV_1AD8&REV_A1",
+        "PCI\\VEN_10DE&DEV_1AD8",
+        "PCI\\VEN_10DE&CC_0C0330",
+        "PCI\\VEN_10DE&CC_0C03",
+        "PCI\\VEN_10DE",
+        "PCI\\CC_0C0330&DT_0",
+        "PCI\\CC_0C0330",
+        "PCI\\CC_0C03&DT_0",
+        "PCI\\CC_0C03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant vendor-defined device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_05AC&PID_024F&REV_0127&MI_02",
+        "HID\\VID_05AC&PID_024F&MI_02",
+        "HID\\VID_05AC&UP:FF68_U:0061",
+        "HID_DEVICE_UP:FF68_U:0061",
+        "HID_DEVICE_UPR:FF00-FFFF",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant mouse",
+      "manufacturer": "Microsoft",
+      "pnpClass": "Mouse",
+      "service": "mouhid",
+      "hardwareIds": [
+        "HID\\VID_046D&PID_C52B&REV_1211&MI_01&Col01",
+        "HID\\VID_046D&PID_C52B&MI_01&Col01",
+        "HID\\VID_046D&UP:0001_U:0002",
+        "HID_DEVICE_SYSTEM_MOUSE",
+        "HID_DEVICE_UP:0001_U:0002",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "Motherboard resources",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0C02",
+        "ACPI\\PNP0C02",
+        "*PNP0C02"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD USB 3.10 eXtensible Host Controller - 1.10 (Microsoft)",
+      "manufacturer": "Generic USB xHCI Host Controller",
+      "pnpClass": "USB",
+      "service": "USBXHCI",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_149C&SUBSYS_7C021462&REV_00",
+        "PCI\\VEN_1022&DEV_149C&SUBSYS_7C021462",
+        "PCI\\VEN_1022&DEV_149C&CC_0C0330",
+        "PCI\\VEN_1022&DEV_149C&CC_0C03"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_149C&REV_00",
+        "PCI\\VEN_1022&DEV_149C",
+        "PCI\\VEN_1022&CC_0C0330",
+        "PCI\\VEN_1022&CC_0C03",
+        "PCI\\VEN_1022",
+        "PCI\\CC_0C0330&DT_0",
+        "PCI\\CC_0C0330",
+        "PCI\\CC_0C03&DT_0",
+        "PCI\\CC_0C03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "System CMOS/real time clock",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "ACPI\\VEN_PNP&DEV_0B00",
+        "ACPI\\PNP0B00",
+        "*PNP0B00"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD PSP 11.0 Device",
+      "manufacturer": "Advanced Micro Devices Inc.",
+      "pnpClass": "SecurityDevices",
+      "service": "amdpsp",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1486&SUBSYS_7C021462&REV_00",
+        "PCI\\VEN_1022&DEV_1486&SUBSYS_7C021462",
+        "PCI\\VEN_1022&DEV_1486&CC_108000",
+        "PCI\\VEN_1022&DEV_1486&CC_1080"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&DEV_1486&REV_00",
+        "PCI\\VEN_1022&DEV_1486",
+        "PCI\\VEN_1022&CC_108000",
+        "PCI\\VEN_1022&CC_1080",
+        "PCI\\VEN_1022",
+        "PCI\\CC_108000&DT_0",
+        "PCI\\CC_108000",
+        "PCI\\CC_1080&DT_0",
+        "PCI\\CC_1080"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "USB Input Device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "service": "HidUsb",
+      "hardwareIds": [
+        "USB\\VID_05AC&PID_024F&REV_0127&MI_00",
+        "USB\\VID_05AC&PID_024F&MI_00"
+      ],
+      "compatibleIds": [
+        "USB\\COMPAT_VID_05ac&Class_03&SubClass_01&Prot_01",
+        "USB\\COMPAT_VID_05ac&Class_03&SubClass_01",
+        "USB\\COMPAT_VID_05ac&Class_03",
+        "USB\\Class_03&SubClass_01&Prot_01",
+        "USB\\Class_03&SubClass_01",
+        "USB\\Class_03"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "NVIDIA GeForce RTX 2070 SUPER",
+      "manufacturer": "NVIDIA",
+      "pnpClass": "Display",
+      "service": "nvlddmkm",
+      "hardwareIds": [
+        "PCI\\VEN_10DE&DEV_1E84&SUBSYS_87081043&REV_A1",
+        "PCI\\VEN_10DE&DEV_1E84&SUBSYS_87081043",
+        "PCI\\VEN_10DE&DEV_1E84&CC_030000",
+        "PCI\\VEN_10DE&DEV_1E84&CC_0300"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_10DE&DEV_1E84&REV_A1",
+        "PCI\\VEN_10DE&DEV_1E84",
+        "PCI\\VEN_10DE&CC_030000",
+        "PCI\\VEN_10DE&CC_0300",
+        "PCI\\VEN_10DE",
+        "PCI\\CC_030000&DT_1",
+        "PCI\\CC_030000",
+        "PCI\\CC_0300&DT_1",
+        "PCI\\CC_0300"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "PCI standard host CPU bridge",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "System",
+      "hardwareIds": [
+        "PCI\\VEN_1022&DEV_1447&SUBSYS_00000000&REV_00",
+        "PCI\\VEN_1022&DEV_1447&SUBSYS_00000000",
+        "PCI\\VEN_1022&DEV_1447&REV_00",
+        "PCI\\VEN_1022&DEV_1447",
+        "PCI\\VEN_1022&DEV_1447&CC_060000",
+        "PCI\\VEN_1022&DEV_1447&CC_0600"
+      ],
+      "compatibleIds": [
+        "PCI\\VEN_1022&CC_060000",
+        "PCI\\VEN_1022&CC_0600",
+        "PCI\\VEN_1022",
+        "PCI\\CC_060000",
+        "PCI\\CC_0600"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant consumer control device",
+      "manufacturer": "Microsoft",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_0FD9&PID_008F&REV_0130",
+        "HID\\VID_0FD9&PID_008F",
+        "HID\\VID_0FD9&UP:000C_U:0001",
+        "HID_DEVICE_SYSTEM_CONSUMER",
+        "HID_DEVICE_UP:000C_U:0001",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "AMD Ryzen 5 3600 6-Core Processor              ",
+      "manufacturer": "Advanced Micro Devices",
+      "pnpClass": "Processor",
+      "service": "AmdPPM",
+      "hardwareIds": [
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "*AuthenticAMD_-_AMD64_Family_23_Model_113",
+        "ACPI\\AuthenticAMD_-_AMD64_Family_23",
+        "*AuthenticAMD_-_AMD64_Family_23",
+        "ACPI\\AuthenticAMD_-_AMD64",
+        "*AuthenticAMD_-_AMD64"
+      ],
+      "compatibleIds": [
+        "ACPI\\Processor"
+      ],
+      "configManagerErrorCode": 0,
+      "present": true
+    },
+    {
+      "name": "HID-compliant vendor-defined device",
+      "manufacturer": "(Standard system devices)",
+      "pnpClass": "HIDClass",
+      "hardwareIds": [
+        "HID\\VID_05AC&PID_024F&REV_0127&MI_03",
+        "HID\\VID_05AC&PID_024F&MI_03",
+        "HID\\VID_05AC&UP:FF13_U:0001",
+        "HID_DEVICE_UP:FF13_U:0001",
+        "HID_DEVICE_UPR:FF00-FFFF",
+        "HID_DEVICE"
+      ],
+      "compatibleIds": [],
+      "configManagerErrorCode": 0,
+      "present": true
+    }
+  ]
+}

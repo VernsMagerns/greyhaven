@@ -128,6 +128,61 @@ public class RealDataTests
         Assert.All(r.Components.Where(c => c.Component.Category == ComponentCategory.UsbController), c => Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, c.For("mint").Rating));
     }
 
+    // ---- The maintainer's real PC (samples/ryzen-rtx2070s-desktop.raw.json, 7 October 2026) ----
+
+    private const string RealPc = "ryzen-rtx2070s-desktop";
+
+    [Fact]
+    public async Task Real_pc_has_no_part_left_unchecked()
+    {
+        var r = await Rate(RealPc);
+        Assert.Empty(r.Components.Where(c => c.Ratings.Any(x => x.Rating == Core.Compatibility.Rating.Unknown)).Select(c => c.DisplayName));
+    }
+
+    [Fact]
+    public async Task Real_pc_leaves_out_software_and_placeholder_devices()
+    {
+        var keys = (await Rate(RealPc)).Components.Select(c => c.Component.Id?.Key).ToList();
+        Assert.DoesNotContain("usb:0955:9000", keys); // NVIDIA Virtual Audio Device
+        Assert.DoesNotContain("pci:1022:1485", keys); // AMD placeholder functions
+        Assert.DoesNotContain("pci:1022:148a", keys);
+    }
+
+    [Fact]
+    public async Task Real_pc_parts_that_used_to_say_not_sure()
+    {
+        var r = await Rate(RealPc);
+        var typeC = r.Components.Single(c => c.Component.Id?.Key == "pci:10de:1ad9");
+        Assert.All(typeC.Ratings, x => Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, x.Rating));
+        Assert.Equal(ComponentCategory.Chipset, typeC.Component.Category);
+
+        var scarlett = r.Components.Single(c => c.Component.Id?.Key == "usb:1235:8211");
+        Assert.Equal(ComponentCategory.AudioController, scarlett.Component.Category);
+        Assert.All(scarlett.Ratings, x => Assert.Equal(Core.Compatibility.Rating.WorksOutOfTheBox, x.Rating));
+        Assert.Contains("Scarlett2", scarlett.For("ubuntu").Explanation);
+    }
+
+    [Fact]
+    public async Task Real_pc_matches_what_the_tester_saw()
+    {
+        var r = await Rate(RealPc);
+        Assert.Equal(FormFactor.Desktop, r.Profile.System.FormFactor);
+        Assert.True(r.Profile.System.Windows.IsWindows11); // registry says "Windows 10 Pro"; build 26200 says 11
+        Assert.Empty(r.ContextNotes); // so no Windows 10 end-of-support note
+        Assert.Equal("ubuntu", r.SelectedDistroId);
+        Assert.Equal(98, r.Distros.Single(d => d.DistroId == "ubuntu").Score.Score);
+        Assert.Equal(Core.Compatibility.Rating.WorksWithExtraDriver, Rating(r, ComponentCategory.Gpu, "ubuntu").Rating);
+        Assert.Contains("msi.com", r.Recommendation.Get(PathKind.Advanced)!.SecureBootGuide!.Url);
+
+        var parts = new GreyHaven.Reports.PartsOverview(r, "ubuntu");
+        Assert.Equal("System chipset: 18 parts, all fine", parts.ChipsetLine);
+        Assert.Equal("15 parts work right away. 1 part needs one extra step after you install.", parts.Summary);
+
+        var sleep = r.LiveUsbGuides[0].Checks.Single(c => c.Title == "Sleep and wake").Test;
+        Assert.DoesNotContain("lid", sleep);
+        Assert.DoesNotContain("touchpad", sleep);
+    }
+
     // ---- Parts from a real scan (Windows 11, MSI board, Ryzen 5 3600, RTX 2070 SUPER) ----
 
     private static async Task<RatedComponent> RateDevices(params RawPnpDevice[] devices)

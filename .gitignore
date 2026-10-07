@@ -7,3 +7,6 @@ obj/
 TestResults/
 *.raw.local.json
 artifacts/
+
+# Raw scans dropped into the project folder for replaying (samples/ holds the checked-in copies)
+/greyhaven-raw*.json
