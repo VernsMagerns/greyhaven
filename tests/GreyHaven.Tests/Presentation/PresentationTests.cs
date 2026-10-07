@@ -209,7 +209,8 @@ public class ResultsViewModelTests
         Assert.Equal("Your PC is ready for Linux", vm.Headline);
         Assert.Equal("We suggest Ubuntu.", vm.Suggestion);
         Assert.Equal("98", vm.ScoreText);
-        Assert.Equal("16 parts work right away. 1 part needs one extra step after you install.", vm.HeadlineSummary);
+        Assert.Equal("14 parts work right away. 1 part needs one extra step after you install.", vm.HeadlineSummary);
+        Assert.Equal("System chipset: 2 parts, all fine. Show them", vm.ChipsetHeading); // not counted above
         Assert.Equal("Demo: this is a sample PC, not yours.", vm.DemoText);
         Assert.True(vm.HasPathChoice);
         Assert.Equal("Pick your version of Linux", vm.PathsHeading);
@@ -250,7 +251,7 @@ public class ResultsViewModelTests
         Assert.Equal("The Pop!_OS installer file made for NVIDIA graphics (about 4 GB). GreyHaven will put it on a USB stick for you.", advanced.YoullGet);
         Assert.StartsWith("Secure Boot is a safety setting.", advanced.SecureBootText);
         Assert.Empty(vm.AttentionParts); // graphics works out of the box on the NVIDIA ISO
-        Assert.Equal("All 17 parts work right away. Show them", vm.WorkingHeading);
+        Assert.Equal("All 15 parts work right away. Show them", vm.WorkingHeading);
     }
 
     [Fact]
@@ -353,8 +354,8 @@ public class ResultsViewModelTests
         gpu.FixCommands[0].CopyCommand.Execute(null);
         Assert.Equal(["sudo ubuntu-drivers install"], services.Copied);
 
-        Assert.Equal(16, vm.WorkingParts.Count);
-        Assert.Equal("16 parts work right away. Show them", vm.WorkingHeading);
+        Assert.Equal(14, vm.WorkingParts.Count);
+        Assert.Equal("14 parts work right away. Show them", vm.WorkingHeading);
     }
 
     [Fact]
@@ -369,14 +370,35 @@ public class ResultsViewModelTests
     }
 
     [Fact]
-    public async Task Other_report_notes_still_show_once()
+    public async Task Online_check_notes_are_a_footnote_not_a_box()
     {
         var report = await FakeServices.RealReport("intel-laptop");
-        report = report with { DataNotes = ["Online lookups were incomplete: linux-hardware.org could not be reached."] };
+        report = report with { DataNotes = ["Online lookups were incomplete: linux-hardware.org could not be reached. Ratings use GreyHaven's built-in data only."] };
         var vm = new ResultsViewModel(report, FakeServices.ForSample("intel-laptop"));
 
-        Assert.Single(vm.Notices, n => n.Message.Contains("could not be reached"));
+        Assert.DoesNotContain(vm.Notices, n => n.Message.Contains("could not be reached"));
         Assert.StartsWith("Checked with GreyHaven's built-in data from ", vm.Footnote);
+        Assert.EndsWith("The online check didn't finish, so a few parts may say \"Not sure\". linux-hardware.org could not be reached.", vm.Footnote);
+    }
+
+    [Fact]
+    public async Task Small_parts_nobody_could_check_are_folded_away_calmly()
+    {
+        var report = await FakeServices.RealReport("intel-laptop");
+        var minor = report.Components.First(c => c.Importance == Importance.Minor && c.Component.Category != ComponentCategory.Chipset);
+        report = report with
+        {
+            Components = report.Components.Select(c => c != minor ? c : c with
+            {
+                Ratings = c.Ratings.Select(x => x with { Rating = Rating.Unknown }).ToList(),
+            }).ToList(),
+        };
+        var vm = new ResultsViewModel(report, FakeServices.ForSample("intel-laptop"));
+
+        Assert.DoesNotContain(vm.AttentionParts, p => p.Name == minor.DisplayName);
+        Assert.Equal("1 small part couldn't be checked. It rarely matters. Show it", vm.UncheckedHeading);
+        Assert.EndsWith("1 small part couldn't be checked, which rarely matters.", vm.HeadlineSummary);
+        Assert.DoesNotContain("We couldn't check", vm.HeadlineSummary);
     }
 
     [Fact]

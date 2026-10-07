@@ -78,6 +78,14 @@ public class ReportExportTests
     }
 
     [Fact]
+    public async Task Chipset_parts_are_one_line_and_not_counted()
+    {
+        var md = ReportExporter.Render(await Rate("nvidia-desktop"), ReportFormat.Markdown);
+        Assert.Contains("System chipset: 2 parts, all fine", md);
+        Assert.Contains("14 parts work right away. 1 part needs one extra step", md);
+    }
+
+    [Fact]
     public async Task Arm_pcs_are_told_to_download_the_arm64_version()
     {
         var md = ReportExporter.Render(await Rate("snapdragon-arm-laptop"), ReportFormat.Markdown);

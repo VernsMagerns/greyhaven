@@ -25,6 +25,22 @@
             </Border>
         </DataTemplate>
 
+        <!-- One compact line per part, inside the folded-away groups. -->
+        <DataTemplate x:Key="PartRowTemplate">
+            <Border BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="0,0,0,1" Padding="0,6">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource Body}">
+                        <Run Text="{Binding Title, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=": " /><Run Text="{Binding Name, Mode=OneWay}" Foreground="{DynamicResource GH.TextSecondary}" />
+                    </TextBlock>
+                    <ContentPresenter Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource RatingBadge}" />
+                </Grid>
+            </Border>
+        </DataTemplate>
+
         <!-- A part that needs attention: one plain line, everything else behind "Show more". -->
         <DataTemplate x:Key="PartTemplate">
             <Border Style="{StaticResource Card}" Padding="18,14">
@@ -167,6 +183,9 @@
                     <TextBlock Text="{Binding Suggestion}" Style="{StaticResource Lead}" FontSize="20"
                                Visibility="{Binding Suggestion, Converter={StaticResource HasValueToVisibility}}" />
                     <TextBlock Text="{Binding HeadlineSummary}" Style="{StaticResource Body}" Margin="0,6,0,0" />
+                    <!-- The main next action, where people look first (testers missed the card further down). -->
+                    <Button Content="Show me how to switch →" Style="{StaticResource AccentButton}" HorizontalAlignment="Left" Margin="0,14,0,0"
+                            Command="{Binding DataContext.ShowWalkthroughCommand, RelativeSource={RelativeSource AncestorType=Window}}" />
                 </StackPanel>
                 <Grid Grid.Column="1" Width="128" Height="128" VerticalAlignment="Center" AutomationProperties.Name="{Binding ScoreAccessibleName}">
                     <Ellipse Fill="{DynamicResource GH.Shadow}" Margin="6,6,0,0" />
@@ -273,24 +292,21 @@
         <ItemsControl ItemsSource="{Binding AttentionParts}" ItemTemplate="{StaticResource PartTemplate}" Focusable="False" />
         <Expander Header="{Binding WorkingHeading}" Style="{StaticResource ShowMore}" Margin="0,4,0,12"
                   Visibility="{Binding WorkingHeading, Converter={StaticResource HasValueToVisibility}}">
-            <ItemsControl ItemsSource="{Binding WorkingParts}" Margin="0,8,0,0" Focusable="False">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="0,0,0,1" Padding="0,6">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <TextBlock Style="{StaticResource Body}">
-                                    <Run Text="{Binding Title, Mode=OneWay}" FontWeight="SemiBold" /><Run Text=": " /><Run Text="{Binding Name, Mode=OneWay}" Foreground="{DynamicResource GH.TextSecondary}" />
-                                </TextBlock>
-                                <ContentPresenter Grid.Column="1" Content="{Binding}" ContentTemplate="{StaticResource RatingBadge}" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+            <ItemsControl ItemsSource="{Binding WorkingParts}" ItemTemplate="{StaticResource PartRowTemplate}" Margin="0,8,0,0" Focusable="False" />
+        </Expander>
+        <Expander Header="{Binding UncheckedHeading}" Style="{StaticResource ShowMore}" Margin="0,0,0,12"
+                  Visibility="{Binding UncheckedHeading, Converter={StaticResource HasValueToVisibility}}">
+            <StackPanel Margin="0,8,0,0">
+                <TextBlock Text="{Binding UncheckedAdvice}" Style="{StaticResource Body}" Margin="0,0,0,6" />
+                <ItemsControl ItemsSource="{Binding UncheckedParts}" ItemTemplate="{StaticResource PartRowTemplate}" Focusable="False" />
+            </StackPanel>
+        </Expander>
+        <Expander Header="{Binding ChipsetHeading}" Style="{StaticResource ShowMore}" Margin="0,0,0,12"
+                  Visibility="{Binding ChipsetHeading, Converter={StaticResource HasValueToVisibility}}">
+            <StackPanel Margin="0,8,0,0">
+                <TextBlock Text="{Binding ChipsetAbout}" Style="{StaticResource Body}" Margin="0,0,0,6" />
+                <ItemsControl ItemsSource="{Binding ChipsetParts}" ItemTemplate="{StaticResource PartRowTemplate}" Focusable="False" />
+            </StackPanel>
         </Expander>
 
         <!-- Things to test before installing -->

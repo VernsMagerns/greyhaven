@@ -120,8 +120,7 @@ public sealed partial class ResultsViewModel : ObservableObject
             WhySwitchText = "Microsoft stopped supporting Windows 10 in October 2025. Security updates now need a special sign-up. Those updates end in October 2027.";
             WhySwitchLink = new LinkViewModel("Read Microsoft's page", why.Source.Url, services);
         }
-        var offline = report.DataNotes.Any(n => n.Contains("turned off", StringComparison.Ordinal));
-        Footnote = $"Checked with GreyHaven's built-in data from {report.Data.BuiltOn.ToString("d MMMM yyyy", CultureInfo.InvariantCulture)}.{(offline ? " The online check was off." : "")}";
+        Footnote = ReportBuilder.Footnote(report);
 
         var initial = Paths.FirstOrDefault(p => p.Kind == report.SelectedPath);
         if (initial is not null) initial.IsSelected = true; // also selects the distro and sets the headline
@@ -172,7 +171,7 @@ public sealed partial class ResultsViewModel : ObservableObject
         var d = chosen is null ? Report.Distros.OrderByDescending(x => x.Score.Score).First() : Report.Distros.First(x => x.DistroId == chosen);
         Headline = HasRecommendation ? PlainWords.Headline(d.Score.Score) : "We can't suggest a version of Linux yet";
         Suggestion = chosen is null ? null : $"We suggest {ReportBuilder.ShortName(Report, chosen)}.";
-        HeadlineSummary = PlainWords.PartsSummary(Report.Components.Select(c => c.For(d.DistroId).Rating).ToList());
+        HeadlineSummary = new PartsOverview(Report, d.DistroId).Summary;
         ScoreText = d.Score.Score.ToString(CultureInfo.InvariantCulture);
         ScoreAccessibleName = $"Score: {d.Score.Score} out of 100";
     }
@@ -193,6 +192,24 @@ public sealed partial class ResultsViewModel : ObservableObject
 
     [ObservableProperty]
     public partial string? WorkingHeading { get; private set; }
+
+    /// <summary>Small parts nobody could check: folded away, with a calm heading.</summary>
+    [ObservableProperty]
+    public partial IReadOnlyList<ComponentViewModel> UncheckedParts { get; private set; } = [];
+
+    [ObservableProperty]
+    public partial string? UncheckedHeading { get; private set; }
+
+    public string UncheckedAdvice => PartsOverview.UncheckedAdvice;
+
+    /// <summary>The system chipset as one line ("System chipset: 21 parts, all fine").</summary>
+    [ObservableProperty]
+    public partial IReadOnlyList<ComponentViewModel> ChipsetParts { get; private set; } = [];
+
+    [ObservableProperty]
+    public partial string? ChipsetHeading { get; private set; }
+
+    public string ChipsetAbout => PartsOverview.ChipsetAbout;
 
     /// <summary>Set when the user is comparing a distro other than the one their path uses.</summary>
     [ObservableProperty]
@@ -218,21 +235,21 @@ public sealed partial class ResultsViewModel : ObservableObject
 
     private void ShowDistro(string distroId, bool force)
     {
-        if (!force && SelectedDistroId == distroId && (AttentionParts.Count + WorkingParts.Count) > 0) return;
+        if (!force && SelectedDistroId == distroId && (AttentionParts.Count + WorkingParts.Count + UncheckedParts.Count + ChipsetParts.Count) > 0) return;
         SelectedDistroId = distroId;
         foreach (var d in Distros) d.IsSelected = d.DistroId == distroId;
         var name = ReportBuilder.ShortName(Report, distroId);
         PartsHeading = $"Your PC's parts on {name}";
 
-        var vms = Report.Components
-            .OrderBy(c => c.Importance)
-            .ThenBy(c => c.Component.Category)
-            .Select(c => new ComponentViewModel(c, distroId, Report, _services))
-            .ToList();
-        AttentionParts = vms.Where(v => v.Rating != Rating.WorksOutOfTheBox).ToList();
-        WorkingParts = vms.Where(v => v.Rating == Rating.WorksOutOfTheBox).ToList();
-        WorkingHeading = WorkingParts.Count == 0 ? null
-            : $"{(AttentionParts.Count == 0 ? "All " : "")}{WorkingParts.Count} {(WorkingParts.Count == 1 ? "part works" : "parts work")} right away. Show them";
+        var parts = new PartsOverview(Report, distroId);
+        List<ComponentViewModel> Vms(IEnumerable<RatedComponent> list) => list.Select(c => new ComponentViewModel(c, distroId, Report, _services)).ToList();
+        AttentionParts = Vms(parts.Attention);
+        WorkingParts = Vms(parts.Working);
+        WorkingHeading = parts.WorkingHeading;
+        UncheckedParts = Vms(parts.UncheckedSmall);
+        UncheckedHeading = parts.UncheckedHeading;
+        ChipsetParts = Vms(parts.Chipset);
+        ChipsetHeading = parts.ChipsetLine is { } line ? line + ". Show them" : null;
 
         ComparingText = Report.SelectedDistroId is { } chosen && chosen != distroId
             ? $"You're looking at {name}. Your pick is {ReportBuilder.ShortName(Report, chosen)}."
@@ -290,7 +307,8 @@ public sealed partial class ResultsViewModel : ObservableObject
         var scanNotes = report.Profile.Warnings.Where(w => !w.Contains("ARM processor", StringComparison.Ordinal)).ToList();
         if (scanNotes.Count > 0)
             notices.Add(new(NoticeKind.Info, "Some details couldn't be read", string.Join(" ", scanNotes)));
-        foreach (var note in report.DataNotes.Where(n => !n.Contains("turned off", StringComparison.Ordinal)))
+        // Notes about the online check go in the footnote, not here.
+        foreach (var note in report.DataNotes.Where(n => !n.StartsWith("Online lookups", StringComparison.Ordinal)))
             notices.Add(new(NoticeKind.Info, "About this report", note));
         return notices;
     }

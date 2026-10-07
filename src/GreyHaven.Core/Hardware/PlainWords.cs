@@ -54,17 +54,24 @@ public static class PlainWords
         _ => "Linux may not work well on this PC",
     };
 
-    /// <summary>"16 parts work right away. 1 part needs one extra step after you install."</summary>
-    public static string PartsSummary(IReadOnlyList<Rating> ratings)
+    /// <summary>
+    /// "16 parts work right away. 1 part needs one extra step after you install." Parts nobody
+    /// could check are only a worry when they're essential or important; small ones are mentioned calmly.
+    /// </summary>
+    public static string PartsSummary(IReadOnlyList<(Rating Rating, Importance Importance)> parts)
     {
-        int N(Rating r) => ratings.Count(x => x == r);
+        int N(Rating r) => parts.Count(x => x.Rating == r);
         static string P(int n, string one, string many) => $"{n} {(n == 1 ? one : many)}";
         var s = new List<string>();
         if (N(Compatibility.Rating.WorksOutOfTheBox) is > 0 and var ok) s.Add($"{P(ok, "part works", "parts work")} right away.");
         if (N(Compatibility.Rating.WorksWithExtraDriver) is > 0 and var x) s.Add($"{P(x, "part needs", "parts need")} one extra step after you install.");
         if (N(Compatibility.Rating.Partial) is > 0 and var p) s.Add($"{P(p, "part only partly works", "parts only partly work")}.");
         if (N(Compatibility.Rating.Unsupported) is > 0 and var u) s.Add($"{P(u, "part won't work", "parts won't work")}.");
-        if (N(Compatibility.Rating.Unknown) is > 0 and var k) s.Add($"We couldn't check {P(k, "part", "parts")}.");
+        var unknown = parts.Where(x => x.Rating == Compatibility.Rating.Unknown).ToList();
+        var big = unknown.Count(x => x.Importance != Importance.Minor);
+        var small = unknown.Count - big;
+        if (big > 0) s.Add($"We couldn't check {P(big, "important part", "important parts")}. Test {(big == 1 ? "it" : "them")} from the USB stick.");
+        if (small > 0) s.Add($"{P(small, "small part", "small parts")} couldn't be checked, which rarely matters.");
         return string.Join(" ", s);
     }
 

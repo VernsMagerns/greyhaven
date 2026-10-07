@@ -36,7 +36,13 @@ public sealed class CaveatInfo
     public string Title { get; set; } = "";
     public string Why { get; set; } = "";
     public string Test { get; set; } = "";
+    /// <summary>Optional wording for one kind of PC (keys: laptop, desktop), used instead of <see cref="Test"/>.</summary>
+    public Dictionary<string, string> TestByFormFactor { get; set; } = [];
     public CaveatCondition AppliesWhen { get; set; } = new();
+
+    /// <summary>The test wording for this kind of PC, e.g. no lid or touchpad on a desktop.</summary>
+    public string TestFor(string formFactor) =>
+        TestByFormFactor.TryGetValue(formFactor.ToLowerInvariant(), out var t) ? t : Test;
 }
 
 public sealed class CaveatCondition

@@ -6,7 +6,10 @@ caveats:
     title: Sleep and wake
     appliesWhen: { always: true }
     why: Whether a PC sleeps and wakes properly depends on firmware details that can't be checked from Windows.
-    test: In the live USB session, choose Suspend from the power menu (or close the lid), wait a minute, then wake the PC. Check that the screen, keyboard, touchpad, Wi-Fi and sound all come back.
+    test: In the live USB session, choose Suspend from the power menu, wait a minute, then wake the PC by pressing a key or the power button. Check that the screen, keyboard, mouse or touchpad, network and sound all come back.
+    testByFormFactor:
+      laptop: In the live USB session, choose Suspend from the power menu (or close the lid), wait a minute, then wake the PC. Check that the screen, keyboard, touchpad, Wi-Fi and sound all come back.
+      desktop: In the live USB session, choose Suspend from the power menu, wait a minute, then wake the PC by pressing a key or the power button. Check that the screen, keyboard, mouse, network and sound all come back.
 
   - id: hybridGraphics
     title: Switching between two graphics chips

@@ -323,6 +323,34 @@ public class RealDataTests
 
 public class PlainWordsTests
 {
+    [Fact]
+    public void Unchecked_small_parts_are_mentioned_calmly()
+    {
+        var s = PlainWords.PartsSummary([(Core.Compatibility.Rating.WorksOutOfTheBox, Importance.Critical), (Core.Compatibility.Rating.Unknown, Importance.Minor), (Core.Compatibility.Rating.Unknown, Importance.Minor)]);
+        Assert.Equal("1 part works right away. 2 small parts couldn't be checked, which rarely matters.", s);
+    }
+
+    [Fact]
+    public void Unchecked_important_parts_say_to_test_them()
+    {
+        var s = PlainWords.PartsSummary([(Core.Compatibility.Rating.Unknown, Importance.Important), (Core.Compatibility.Rating.Unknown, Importance.Minor)]);
+        Assert.Equal("We couldn't check 1 important part. Test it from the USB stick. 1 small part couldn't be checked, which rarely matters.", s);
+    }
+
+    [Theory]
+    [InlineData(FormFactor.Desktop, false)]
+    [InlineData(FormFactor.Laptop, true)]
+    public async Task Sleep_test_mentions_the_lid_and_touchpad_only_on_laptops(FormFactor formFactor, bool laptopWords)
+    {
+        var profile = await SampleProfiles.Open("nvidia-desktop").ScanAsync();
+        profile = profile with { System = profile.System with { FormFactor = formFactor } };
+        var r = await new RatingEngine(Data.Value).RateAsync(profile, new RatingOptions { UseOnlineLookups = false });
+
+        var sleep = r.LiveUsbGuides[0].Checks.Single(c => c.Title == "Sleep and wake").Test;
+        Assert.Equal(laptopWords, sleep.Contains("lid"));
+        Assert.Equal(laptopWords, sleep.Contains("touchpad"));
+    }
+
     private static readonly Lazy<GreyHaven.Compat.CompatibilityData> Data = new(() => GreyHaven.Compat.CompatibilityData.Load());
 
     [Fact]

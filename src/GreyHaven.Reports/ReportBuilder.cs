@@ -60,7 +60,7 @@ public static class ReportBuilder
         b.Add(new ScoreHeadline(
             hasPath ? PlainWords.Headline(distro.Score.Score) : "We can't suggest a version of Linux yet",
             hasPath && r.SelectedDistroId is { } chosen ? $"We suggest {ShortName(r, chosen)}." : null,
-            PlainWords.PartsSummary(r.Components.Select(c => c.For(distro.DistroId).Rating).ToList()),
+            new PartsOverview(r, distro.DistroId).Summary,
             distro.Score.Score));
         if (r.Profile.System.IsArm)
             b.Add(new Callout(CalloutKind.Warning, "ARM chip", Line("This PC has an ARM chip. Linux support for these PCs is still limited.")));
@@ -146,11 +146,8 @@ public static class ReportBuilder
         var name = ShortName(r, id);
         b.Add(new Heading(2, $"Your PC's parts on {name}"));
 
-        var ordered = r.Components.OrderBy(c => c.Importance).ThenBy(c => c.Component.Category).ToList();
-        var attention = ordered.Where(c => c.For(id).Rating != Rating.WorksOutOfTheBox).ToList();
-        var fine = ordered.Where(c => c.For(id).Rating == Rating.WorksOutOfTheBox).ToList();
-
-        foreach (var c in attention)
+        var parts = new PartsOverview(r, id);
+        foreach (var c in parts.Attention)
         {
             var rating = c.For(id);
             b.Add(new Heading(3, PartName(c)));
@@ -161,13 +158,12 @@ public static class ReportBuilder
             b.Add(new Details("Show more", PartMore(c, rating)));
         }
 
-        if (fine.Count > 0)
-            b.Add(new Details($"{(attention.Count == 0 ? "All " : "")}{fine.Count} {(fine.Count == 1 ? "part works" : "parts work")} right away. Show them",
-            [
-                new Table($"Parts that work right away on {name}", ["Part", "Rating"],
-                    fine.Select(c => Cells(Line(PartName(c)), [new RatingTag(Rating.WorksOutOfTheBox)])).ToList()),
-                .. fine.SelectMany(c => TechnicalBlocks(c, c.For(id), withHeading: true)),
-            ]));
+        if (parts.WorkingHeading is { } working)
+            b.Add(new Details(working, PartList($"Parts that work right away on {name}", parts.Working, id)));
+        if (parts.UncheckedHeading is { } unchecked_)
+            b.Add(new Details(unchecked_, [P(PartsOverview.UncheckedAdvice), .. PartList($"Small parts we couldn't check on {name}", parts.UncheckedSmall, id)]));
+        if (parts.ChipsetLine is { } chipset)
+            b.Add(new Details(chipset, [P(PartsOverview.ChipsetAbout), .. PartList($"System chipset parts on {name}", parts.Chipset, id)]));
 
         if (r.Caveats.Count > 0)
             b.Add(new Details($"{r.Caveats.Count} {(r.Caveats.Count == 1 ? "thing" : "things")} to test before you install",
@@ -176,6 +172,12 @@ public static class ReportBuilder
                 .. r.Caveats.Select(cv => P(new Strong(cv.Title + ". "), new Text(cv.WhatToTest))),
             ]));
     }
+
+    private static List<Block> PartList(string caption, IReadOnlyList<RatedComponent> parts, string distroId) =>
+    [
+        new Table(caption, ["Part", "Rating"], parts.Select(c => Cells(Line(PartName(c)), [new RatingTag(c.For(distroId).Rating)])).ToList()),
+        .. parts.SelectMany(c => TechnicalBlocks(c, c.For(distroId), withHeading: true)),
+    ];
 
     private static List<Block> PartMore(RatedComponent c, ComponentRating rating)
     {
@@ -289,12 +291,25 @@ public static class ReportBuilder
         ]));
     }
 
+    /// <summary>
+    /// The small print about where the ratings came from, including how the online check went.
+    /// Shared with the app, where it's a footnote rather than a box at the top.
+    /// </summary>
+    public static string Footnote(CompatibilityReport r)
+    {
+        var text = $"Checked with GreyHaven's built-in data from {r.Data.BuiltOn.ToString("d MMMM yyyy", En)}.";
+        if (r.DataNotes.Any(n => n.Contains("turned off", StringComparison.Ordinal))) return text + " The online check was off.";
+        var incomplete = r.DataNotes.FirstOrDefault(n => n.StartsWith("Online lookups were incomplete", StringComparison.Ordinal));
+        return incomplete is null
+            ? text
+            : text + " The online check didn't finish, so a few parts may say \"Not sure\". " + incomplete["Online lookups were incomplete: ".Length..].Split(" Ratings use", 2)[0];
+    }
+
     private static void Footer(CompatibilityReport r, List<Block> b)
     {
         b.Add(new Heading(2, "About this report"));
-        var offline = r.DataNotes.Any(n => n.Contains("turned off", StringComparison.Ordinal));
-        b.Add(P($"Checked with GreyHaven's built-in data from {r.Data.BuiltOn.ToString("d MMMM yyyy", En)}.{(offline ? " The online check was off." : "")}"));
-        var other = r.Profile.Warnings.Concat(r.DataNotes.Where(n => !n.Contains("turned off", StringComparison.Ordinal))).ToList();
+        b.Add(P(Footnote(r)));
+        var other = r.Profile.Warnings.ToList();
         if (other.Count > 0) b.Add(new ListBlock(ListKind.Bullets, other.Select(n => Line(n)).ToList()));
         b.Add(P("This report has part ID numbers and Windows settings only. It has no serial numbers, names or network addresses, so it's safe to share when asking for help."));
         var made = new List<Inline> { new Text("Made with GreyHaven, which checks how well a PC will work with Linux.") };

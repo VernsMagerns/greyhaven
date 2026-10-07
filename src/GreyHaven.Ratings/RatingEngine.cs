@@ -495,7 +495,7 @@ public sealed partial class RatingEngine(
             else applies = false;
 
             if (applies)
-                result.Add((new Caveat { Id = info.Id, Title = info.Title, Why = info.Why, WhatToTest = info.Test }, related));
+                result.Add((new Caveat { Id = info.Id, Title = info.Title, Why = info.Why, WhatToTest = info.TestFor(profile.System.FormFactor.ToString()) }, related));
         }
         return result;
     }
