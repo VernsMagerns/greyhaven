@@ -115,6 +115,31 @@ public class WalkthroughTests
         Assert.Contains("BitLocker recovery key", step.Tip);
     }
 
+    [Theory]
+    [InlineData("Professional", "BitLocker Drive Encryption")]
+    [InlineData("Core", "Device encryption")]               // Windows Home
+    public async Task Keeping_windows_with_encryption_on_turns_it_off_first(string edition, string where)
+    {
+        var r = await Rate("nvidia-desktop", p => p with { System = p.System with { BitLocker = BitLockerState.On, Windows = p.System.Windows with { Edition = edition } } });
+        var alongside = WalkthroughBuilder.Build(r).Single(s => s.Id == "install").Options.Single(o => o.Id == "alongside");
+        Assert.Contains(alongside.Steps, b => b is Callout { Title: "First, turn off drive encryption" });
+        Assert.Contains(alongside.Steps.OfType<PictureGuide>().First().Steps, st => st.Text.Contains(where, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task Installer_steps_use_each_installers_own_button_words()
+    {
+        var ubuntu = Text(WalkthroughBuilder.Build(await Rate("nvidia-desktop")).Single(s => s.Id == "install"));
+        Assert.Contains("click Restart now", ubuntu);
+        Assert.Contains("Install Ubuntu alongside Windows Boot Manager", ubuntu);
+        var mint = Text(WalkthroughBuilder.Build(await Rate("intel-laptop")).Single(s => s.Id == "install"));
+        Assert.Contains("click Continue", mint);
+        Assert.Contains("click Restart Now", mint);
+        var pop = Text(WalkthroughBuilder.Build((await Rate("nvidia-desktop")).WithPath(PathKind.Advanced)).Single(s => s.Id == "install"));
+        Assert.Contains("click Erase and Install", pop);
+        Assert.Contains("click Restart Device", pop);
+    }
+
     [Fact]
     public async Task Saved_report_includes_every_step()
     {

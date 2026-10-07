@@ -242,6 +242,7 @@ public static class WalkthroughBuilder
         var enough = free is null || free >= need;
         var giveGb = free is { } f ? Math.Max(30, Math.Min(100, (int)((f - WindowsKeepBytes) / Gb - 10) / 10 * 10)) : 60;
         var pop = path.DistroId == "pop-os";
+        var encrypted = s.BitLocker is not (BitLockerState.NotEncrypted or BitLockerState.Unknown);
 
         var alongsideLines = new List<string> { $"Each time your PC starts, you pick Windows or {name}." };
         alongsideLines.Add(free is { } fb
@@ -254,7 +255,8 @@ public static class WalkthroughBuilder
             : pop ? [new Callout(CalloutKind.Warning, "Pop!_OS can't set this up for you",
                 Line("You would shrink Windows yourself, then use the installer's Custom option. That's tricky for a first try. Ubuntu and Linux Mint can do it for you.")),
                 P(new Text("If you still want to: "), new Link("System76's support articles", "https://support.system76.com/"), new Text(" explain how."))]
-            : [new PictureGuide(InstallerSteps(path.DistroId, name, alongside: true, giveGb)),
+            : [.. encrypted ? TurnOffEncryption(s) : [],
+               new PictureGuide(InstallerSteps(path.DistroId, name, alongside: true, giveGb)),
                new Callout(CalloutKind.Tip, "What could go wrong?", Line("Plug in a laptop before you start. When the PC restarts, you'll see a menu. Pick Windows or Linux with the arrow keys, then press Enter."))];
 
         return Step("install", "Choose how to install",
@@ -273,54 +275,93 @@ public static class WalkthroughBuilder
         ]);
     }
 
-    /// <summary>Draft steps from the installers' documented screens; to be checked against real screenshots.</summary>
+    /// <summary>
+    /// Each distro's installer, step by step, matching the button labels on the real screens
+    /// (checked against the official guides' screenshots; see assets/illustrations/catalog.json).
+    /// </summary>
     private static IReadOnlyList<PictureStep> InstallerSteps(string distroId, string name, bool alongside, int giveGb)
     {
         PictureStep S(string text, string caption, string id) => new(text, caption, $"{distroId}-{id}");
-        var finish = new[]
+        const string again = "Start from the USB stick again, like in step 6.";
+        return distroId switch
         {
-            S("Type your name and a password.", "The account screen", "account"),
-            S("Wait while it installs, about 15 minutes.", "The install progress bar", "progress"),
-            S("When it's done, click Restart, then take out the USB stick.", "The Restart now button", "restart"),
-        };
-        if (distroId == "pop-os")
             // Pop!_OS has no automatic "alongside Windows" option, so only a clean install is offered.
-            return
+            "pop-os" =>
             [
-                S("The Pop!_OS installer opens by itself. If not, click Install Pop!_OS.", "The Pop!_OS installer welcome screen", "welcome"),
-                S("Pick your language and keyboard.", "The language list", "language"),
-                S("Choose Clean Install.", "The Clean Install option", "clean-install"),
-                S("Pick your drive, then click Erase and Install.", "The drive list with Erase and Install", "erase"),
-                S("If it asks about encrypting the drive, choosing Don't Encrypt is fine.", "The drive encryption screen", "encryption"),
-                .. finish,
-            ];
+                S($"{again} The installer opens by itself. Pick your language.", "The Pop!_OS installer's language list", "language"),
+                S("Pick your keyboard layout.", "The keyboard layout list", "keyboard"),
+                S("Choose Clean Install, then click Clean Install at the bottom right.", "Clean Install chosen, and the Clean Install button", "clean-install"),
+                S("Pick your drive, then click Erase and Install.", "The drive list and the Erase and Install button", "erase"),
+                S("Type your name, then a password.", "The user account screen", "account"),
+                S("When it asks about encryption, Don't Encrypt is fine.", "The Drive Encryption screen with Don't Encrypt", "encryption"),
+                S("When it's done, click Restart Device, then take out the USB stick.", "The Restart Device button", "restart"),
+            ],
+            "mint" =>
+            [
+                S($"{again} Then double-click Install Linux Mint on the desktop.", "The Install Linux Mint icon on the desktop", "install-icon"),
+                S("Pick your language, then click Continue.", "The language list and the Continue button", "language"),
+                S("Pick your keyboard layout, then click Continue.", "The keyboard layout screen", "keyboard"),
+                S("Connect to Wi-Fi, then click Continue.", "The wireless network list", "wifi"),
+                S("Tick Install multimedia codecs, then click Continue.", "The multimedia codecs box, ticked", "codecs"),
+                .. alongside
+                    ? new[]
+                    {
+                        S("Choose Install Linux Mint alongside Windows Boot Manager, then click Continue.", "Installation type with the alongside option chosen", "alongside"),
+                        S($"Drag the divider to give Linux Mint about {giveGb} GB, then click Install Now.", "The divider between Windows and Linux Mint", "divider"),
+                    }
+                    : new[]
+                    {
+                        S("Choose Erase disk and install Linux Mint, then click Continue.", "Installation type with Erase disk chosen", "erase"),
+                        S("Check it's the right disk, then click Continue to write the changes.", "The Write the changes to disks? box", "erase-check"),
+                    },
+                S("Pick your time zone, then click Continue.", "The Where are you? map", "timezone"),
+                S("Type your name and a password, then click Continue.", "The Who are you? screen", "account"),
+                S("When it's done, click Restart Now, then take out the USB stick.", "The Installation Complete box with Restart Now", "restart"),
+            ],
+            _ =>
+            [
+                S($"{again} The installer opens by itself. Pick your language, then click Next.", "The language list and the Next button", "language"),
+                S("Click Next on Accessibility. Pick your keyboard, then click Next.", "The keyboard layout screen", "keyboard"),
+                S("Connect to the internet, then click Next.", "The Connect to the internet screen", "internet"),
+                S($"Choose Install {name}, then click Next.", $"Install {name} chosen", "try-install"),
+                S("Choose Interactive installation, then click Next.", "Interactive installation chosen", "interactive"),
+                S("Keep Default selection, then click Next.", "Default selection chosen", "apps"),
+                S("Tick both boxes for extra software, then click Next.", "Both boxes ticked on Optimise your computer", "third-party"),
+                .. alongside
+                    ? new[]
+                    {
+                        S($"Choose Install {name} alongside Windows Boot Manager, then click Next.", "Disk setup with the alongside option chosen", "alongside"),
+                        S($"Drag the slider to give {name} about {giveGb} GB, then click Next.", "The slider between Windows and Ubuntu", "divider"),
+                    }
+                    : new[] { S($"Choose Erase disk and install {name}, then click Next.", "Disk setup with Erase disk chosen", "erase") },
+                S("Type your name and a password, then click Next.", "The Create your account screen", "account"),
+                S("Pick your time zone, then click Next.", "The time zone map", "timezone"),
+                S(alongside ? "Check your choices, then click Install." : "Check it says Erase disk, then click Install.", "Review your choices with the Install button", "review"),
+                S("When it's done, click Restart now, then take out the USB stick.", "The Restart now button", "restart"),
+            ],
+        };
+    }
 
-        var start = distroId == "mint"
-            ? S("Double-click Install Linux Mint on the desktop.", "The Install Linux Mint icon on the desktop", "install-icon")
-            : S($"Click Install {name} on the desktop.", $"The Install {name} button", "install-button");
-        var extras = distroId == "mint"
-            ? S("Tick the box to install multimedia codecs.", "The multimedia codecs box, ticked", "codecs")
-            : S("Tick the box to install extra software for graphics and Wi-Fi.", "The third-party software box, ticked", "third-party");
-        var disk = alongside
-            ? new[]
-            {
-                S($"Choose to install {name} alongside Windows.", "The installation type screen, \"alongside Windows\" chosen", "alongside"),
-                S($"Drag the divider to give {name} about {giveGb} GB.", "The divider between Windows and Linux", "divider"),
-            }
-            : new[]
-            {
-                S($"Choose Erase disk and install {name}.", "The installation type screen, \"Erase disk\" chosen", "erase"),
-                S("Check it shows the right drive, then continue.", "The drive name and size shown before erasing", "erase-check"),
-            };
+    /// <summary>Installers can't resize a drive that BitLocker (or Device encryption) protects, so it's turned off first.</summary>
+    private static IReadOnlyList<Block> TurnOffEncryption(SystemInfo s)
+    {
+        var home = s.Windows.Edition is { } e && e.StartsWith("Core", StringComparison.Ordinal);
+        var win11 = s.Windows.IsWindows11;
+        IReadOnlyList<PictureStep> steps = home
+            ? [
+                new($"In Windows, open {(win11 ? "Settings > Privacy & security > Device encryption" : "Settings > Update & Security > Device encryption")}.", "The Device encryption page in Settings", win11 ? "device-encryption-11" : "device-encryption-10"),
+                new("Turn Device encryption off, then click Turn off.", "The Device encryption switch turned off", "device-encryption-off"),
+                new("Wait until it says it's off. It can take an hour or more.", "Device encryption turning off", "encryption-wait"),
+              ]
+            : [
+                new("In Windows, open Control Panel, then BitLocker Drive Encryption.", "The BitLocker Drive Encryption page", "bitlocker-panel"),
+                new("Click Turn off BitLocker, then Turn off BitLocker again.", "The Turn off BitLocker button", "bitlocker-turn-off"),
+                new("Wait until it's done. It can take an hour or more.", "The Decrypting progress bar", "encryption-wait"),
+              ];
         return
         [
-            start,
-            S("Pick your language and keyboard.", "The language list", "language"),
-            S("Connect to Wi-Fi.", "The Wi-Fi list", "wifi"),
-            extras,
-            .. disk,
-            S("Pick your time zone.", "The time zone map", "timezone"),
-            .. finish,
+            new Callout(CalloutKind.Warning, "First, turn off drive encryption", Line("The installer can't make room for Linux while your drive is encrypted. Keep your recovery key safe.")),
+            new PictureGuide(steps),
         ];
     }
 

@@ -31,7 +31,8 @@ rules:
           - Restart when it finishes.
         ubuntu:
           - Open "Software & Updates" and go to the "Additional Drivers" tab.
-          - Select the NVIDIA driver marked "recommended" and click "Apply Changes".
+          # Ubuntu labels it "(proprietary, tested)"; Mint's Driver Manager says "(recommended)".
+          - Select the NVIDIA driver marked "proprietary, tested" and click "Apply Changes".
           - Restart when it finishes.
         pop-os:
           - Easiest option - install from Pop!_OS's NVIDIA ISO, which already includes the driver.
