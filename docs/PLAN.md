@@ -178,6 +178,11 @@ structured so more editions can be added as data, not code.
 UI rule (decided 2026-10-05): no "eyebrow" labels (small all-caps kicker text above
 headings); lead with the heading.
 
+Design (decided 2026-10-06): the "Market Day" look (Rubik + Lexend, cream/tomato/ink with sticker
+outlines and shadows; dark mode built up from a near-black slate), beginner wording at about a
+6th-grade level with details behind "Show more", and a guided 9-step "What's next" walkthrough
+that is also printed in the saved report. Prototyped in tools/ui-preview first.
+
 
 Each milestone ends with tests plus CLI output against sample profiles.
 

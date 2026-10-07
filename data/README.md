@@ -10,6 +10,7 @@ Improving ratings is a data change. You don't need to touch any C# code.
 | `caveats.yaml` | Things that can't be judged from Windows, with what to test from a live USB |
 | `secure-boot-guides.yaml` | PC and motherboard makers' official "turn Secure Boot off" instructions, matched by manufacturer/model |
 | `live-usb.yaml` | What to test in a live session, per kind of part, and the optional hw-probe upload |
+| `makers.yaml` | PC and motherboard makers: startup (boot) menu key and official support page, with sources |
 | `windows.yaml` | Windows 10 support dates for the report's context note, with Microsoft's page |
 | `dataset.yaml` | When the data was built (written by the index builder) |
 | `indexes/` | Generated. Device ID lists extracted from official distro packages. Don't edit by hand; see `tools/GreyHaven.IndexBuilder/README.md` |

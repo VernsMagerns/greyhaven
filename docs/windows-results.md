@@ -5,7 +5,7 @@ Fill this in as you go, then bring it back along with `greyhaven-raw.json` and
 Tick a box by changing `[ ]` to `[x]`. If something is wrong, leave it unticked and write what
 you saw under **Notes**. Short notes are fine ("text cut off at the right edge").
 
-The whole session takes **about 45 minutes**. More detail on any check is in
+The whole session takes **about 45 to 50 minutes**. More detail on any check is in
 [windows-validation.md](windows-validation.md), but you shouldn't need it.
 
 | | |
@@ -17,7 +17,7 @@ The whole session takes **about 45 minutes**. More detail on any check is in
 
 ---
 
-## Getting set up (about 8 minutes)
+## Getting set up (about 7 minutes)
 
 ### Download the test build from GitHub
 
@@ -106,7 +106,7 @@ If the GitHub download doesn't work, build it on the Linux PC and copy it across
 
 ---
 
-## S1. Scan (about 8 minutes)
+## S1. Scan (about 7 minutes)
 
 Compare what GreyHaven's scan (step 10) printed with what Windows says.
 
@@ -133,7 +133,7 @@ Compare what GreyHaven's scan (step 10) printed with what Windows says.
 
 &nbsp;
 
-## S2. Ratings (about 5 minutes)
+## S2. Ratings (about 4 minutes)
 
 Read `greyhaven-report.txt` (step 11).
 
@@ -141,36 +141,57 @@ Read `greyhaven-report.txt` (step 11).
       on Linux.
 - [ ] **S2.2** On Windows 10, near the top there's a short, calm note about Windows 10's end
       of support. On Windows 11 there's no such note.
+- [ ] **S2.3** The "Windows drive" line in the scan shows about the same free space as
+      Settings → System → Storage.
 
 **Notes** (anything that looked wrong, and why you think so):
 
 &nbsp;
 
-## U. Look and feel (about 7 minutes)
+## U. Look and feel (about 5 minutes)
 
-In demo mode (`--sample nvidia-desktop`) unless it says otherwise.
+In demo mode (`--sample nvidia-desktop`) unless it says otherwise. The look is called "Market
+Day": cream paper, tomato red, thick dark outlines and "sticker" shadows.
 
-- [ ] **U1** Start screen: a big "Scan my PC" button, a short explanation, a note about
-      privacy, and a checkbox for online lookups. No small all-capitals labels above
-      headings.
-- [ ] **U2** Results, from top to bottom: the score, the recommendation, the distro
-      comparison, the list of parts ("Needs your attention" first), then things to test with
-      a live USB.
-- [ ] **U3** The main view has no technical jargon. Device IDs, drivers and "confidence"
-      only appear after clicking a part's "Technical details".
-- [ ] **U4** "Easy: Ubuntu" is chosen at first. Choosing "Advanced: Pop!_OS" changes the
-      score, the parts list and "You'll download", and shows a Secure Boot notice. Its
-      how-to link opens MSI's Secure Boot page in your browser.
+- [ ] **U1** Start screen: "Will Linux work on your PC?", a short intro, a big "Scan my PC"
+      button, the online-check box, and a ticket picture on the right.
+- [ ] **U2** Results, from top to bottom: a slim "Demo" strip, a headline ("Your PC is ready
+      for Linux / We suggest Ubuntu") with the score in a red circle, "Why switch now?"
+      (closed), "Pick your version of Linux", "What's next?", the parts, things to test,
+      "Compare versions of Linux", "Save your results", and a small note at the bottom.
+- [ ] **U3** It reads simply. No device IDs, drivers or other jargon unless you open
+      "Show more" or "Technical details".
+- [ ] **U4** Choosing Pop!_OS changes the headline ("We suggest Pop!_OS"), the score and the
+      parts. Its "Show more" explains Secure Boot, links MSI's guide, and says what you'll get.
 - [ ] **U5** Copy buttons copy the exact command (paste into Notepad to check).
-- [ ] **U6** Source links open in your browser.
-- [ ] **U7** Make the window narrow, then wide. Nothing is cut off; text wraps onto new lines.
-- [ ] **U8** At 150% and 200% display scaling (Settings → System → Display → Scale), text is
-      sharp and nothing overlaps. Set it back afterwards.
-- [ ] **U9** Parts show an "Essential" or "Important" label, with a line under "How each
-      part works on…" explaining what they mean. The two sound controllers end in "(AMD)"
-      and "(NVIDIA)", and the two USB controllers end in "(1 of 2)" and "(2 of 2)".
-- [ ] **U10** On Windows 10, a calm "About Windows 10" note appears at the top of the results,
-      with a link to Microsoft's page.
+- [ ] **U6** Links open in your browser.
+- [ ] **U7** Make the window narrow, then wide, and try 150% display scaling (Settings → System
+      → Display → Scale). Nothing is cut off or overlaps.
+- [ ] **U8** Headings use a rounded, chunky font (Rubik) and text a clear, wide font (Lexend),
+      not the usual Windows font.
+- [ ] **U9** "Show more" and "Why switch now?" appear as grey bars with an arrow. Do they look
+      fine, or would you prefer plain red links like the browser preview? (Write which.)
+
+**Notes:**
+
+&nbsp;
+
+## W. The "What's next" walkthrough (about 6 minutes)
+
+Click **What's next →** on the results.
+
+- [ ] **W1** It shows "Step 1 of 9", a row of 9 bars (done green, current red), the step title
+      and a "What could go wrong?" tip. Next, Back, "All steps" and "Back to results" work.
+- [ ] **W2** Step 3, "Get Windows ready": only items for this PC (in demo mode: Fast Startup and
+      a BIOS update link to MSI). With Pop!_OS chosen, "Turn off Secure Boot" is added.
+- [ ] **W3** Step 6: in demo mode it says the startup menu key on MSI motherboards is **F11**.
+      With your real PC: is the key right for your PC? (If it says "We don't know", fine.)
+- [ ] **W4** Step 8: "Keep Windows too" shows your free space (real scan: compare with
+      Settings → System → Storage). Choosing "Replace Windows" shows a big warning; the steps
+      only appear after ticking the box. Switching away and back needs a fresh tick.
+- [ ] **W5** Picture steps show dashed boxes saying "Picture coming soon" with a caption.
+- [ ] **W6** Step 9 shows the graphics driver steps (on Ubuntu) and help links. "Finish" goes
+      back to the results.
 
 **Notes:**
 
@@ -178,69 +199,71 @@ In demo mode (`--sample nvidia-desktop`) unless it says otherwise.
 
 ## E. Saving the report (about 3 minutes)
 
-In demo mode, choose "Advanced: Pop!_OS" first.
-
 - [ ] **E1** "Save report…" opens a Save dialog in Documents, suggesting a name like
-      `greyhaven-report-2026-10-05.html`. After saving, "Report saved" appears, and "Show in
+      `greyhaven-report-2026-10-06.html`. After saving, "Report saved" appears, and "Show in
       folder" opens File Explorer with the file selected.
-- [ ] **E2** Double-click the saved file. It opens in your browser, follows the path you chose
-      (Pop!_OS), and looks right. Press Ctrl+P: the print preview is readable.
-- [ ] **E3** Saving as Markdown (.md) or JSON (.json) also works: pick the type under the file
-      name in the Save dialog.
+- [ ] **E2** Double-click the saved file. It opens in your browser and looks like the app
+      (same fonts and colours). It includes "Your steps to Linux" with all 9 steps.
+- [ ] **E3** Press Ctrl+P: the print preview is readable, with the steps' boxes to tick.
+- [ ] **E4** Saving as Markdown (.md) or JSON (.json) also works (pick the type in the dialog).
 
 **Notes:**
 
 &nbsp;
 
-## T. Light, dark and high contrast (about 4 minutes)
+## T. Light, dark and high contrast (about 3 minutes)
 
 - [ ] **T1** With "Appearance: Match Windows", the app follows Windows' light or dark mode,
       even if you change it while GreyHaven is open (Settings → Personalization → Colors).
-- [ ] **T2** Choosing "Light" or "Dark" overrides Windows. In dark mode the title bar is dark
-      too. Your choice is remembered after closing and reopening the app.
-- [ ] **T3** With a contrast theme on (Settings → Accessibility → Contrast themes),
-      everything is readable, and ratings still show their icon and words. Turn it off
-      afterwards.
+- [ ] **T2** "Dark" is a very dark slate blue-grey with light text; the title bar is dark too.
+      Your choice is remembered after closing and reopening the app.
+- [ ] **T3** With a contrast theme on (Settings → Accessibility → Contrast themes), everything is
+      readable, the ticket picture and shadows disappear, and ratings still show their words.
+      Turn it off afterwards.
 
 **Notes:**
 
 &nbsp;
 
-## K. Keyboard only (about 4 minutes)
+## K. Keyboard only (about 3 minutes)
 
 Put the mouse aside.
 
-- [ ] **K1** The Tab key reaches every control in a sensible order.
-- [ ] **K2** Space or Enter presses buttons. Arrow keys move between the Easy/Advanced choices
-      and between the distro cards. Space or Enter opens and closes a part.
-- [ ] **K3** Alt+S starts a scan. You can always see which control is selected (it's outlined).
-- [ ] **K4** After a scan, the selection starts at "Your results".
+- [ ] **K1** Tab reaches every control in a sensible order, including "Show more" and the
+      walkthrough buttons. You can always see which control is selected.
+- [ ] **K2** Space or Enter presses buttons and opens "Show more". Arrow keys move between the
+      version choices, the distro cards and the install choices.
+- [ ] **K3** Shortcuts: Alt+S scans, Alt+N opens "What's next", Alt+R saves the report.
+- [ ] **K4** After a scan, the selection starts at the headline. On each new step, it starts at
+      the step's title.
 
 **Notes:**
 
 &nbsp;
 
-## N. Screen reader (about 5 minutes)
+## N. Screen reader (about 4 minutes)
 
 Turn on Narrator with **Ctrl + Windows key + Enter** (same keys to turn it off).
 
-- [ ] **N1** Every button, checkbox, choice and part is read out with a sensible name.
-      Rating icons aren't read as strange symbols.
-- [ ] **N2** Pressing H jumps between headings: "Your results", "What GreyHaven recommends",
-      "Compare distros", "How each part works on…".
-- [ ] **N3** During a scan, Narrator reads the progress ("Checking how each part works on
-      Linux…").
-- [ ] **N4** A part is read like "Graphics: Works after an extra step. Essential part.
-      NVIDIA GeForce RTX 3070".
+- [ ] **N1** Every button, checkbox, choice and "Show more" is read with a sensible name, like
+      "Show more about Graphics: Needs one extra step. Essential part. NVIDIA GeForce RTX 3070".
+- [ ] **N2** Pressing H jumps between headings ("Your PC is ready for Linux", "Pick your version
+      of Linux", "What's next?", "Your PC's parts on Ubuntu"...).
+- [ ] **N3** During a scan, Narrator reads the progress. The score is read as "Score: 98 out
+      of 100".
+- [ ] **N4** In the walkthrough, each new step is read like "Step 3 of 9: Get Windows ready".
+      The row of progress bars is not read out.
 
 **Notes:**
 
 &nbsp;
 
-## G. Secure Boot guide links (about 3 minutes)
+## G. Links to click (about 3 minutes)
 
-These makers' websites block automated checks, so a person needs to open each one. For each
-link, tick it if the page opens and explains how to turn Secure Boot off.
+These makers' websites block automated checks, so a person needs to open each one. Tick it
+if the page opens and covers what it says.
+
+Secure Boot guides (explain how to turn Secure Boot off):
 
 - [ ] **G1** HP: https://support.hp.com/us-en/document/ish_6930187-6931079-16
 - [ ] **G2** Lenovo (Think models): https://support.lenovo.com/solutions/HT509044
@@ -248,6 +271,18 @@ link, tick it if the page opens and explains how to turn Secure Boot off.
 - [ ] **G4** Acer desktops: https://community.acer.com/en/kb/articles/87-enable-or-disable-secure-boot-on-an-acer-desktop
 - [ ] **G5** MSI motherboards: https://www.msi.com/faq/faq-11370
 - [ ] **G6** GIGABYTE motherboards (AMD): https://www.gigabyte.com/Support/Consumer/FAQ/4395
+
+Support pages (where to find BIOS updates):
+
+- [ ] **G7** Dell: https://www.dell.com/support/home
+- [ ] **G8** MSI: https://www.msi.com/support
+- [ ] **G9** GIGABYTE: https://www.gigabyte.com/Support
+- [ ] **G10** Acer: https://www.acer.com/support
+- [ ] **G11** Microsoft Surface: https://support.microsoft.com/surface
+
+Startup menu keys only found on other websites. If you own one of these, does the key work?
+Lenovo F12 (Novo button on some IdeaPads), ASUS Esc on laptops and F8 on desktops,
+GIGABYTE F12.
 
 **Notes** (if a page has moved, paste the new address):
 
