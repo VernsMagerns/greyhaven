@@ -186,4 +186,24 @@ public class JourneyTests
         Assert.StartsWith("<svg", svg);
         Assert.Contains("fill=\"#000000\"", svg);
     }
+
+    [Theory]
+    [MemberData(nameof(GreyHaven.Tests.Scanning.SampleProfileTests.SampleNames), MemberType = typeof(GreyHaven.Tests.Scanning.SampleProfileTests))]
+    public async Task Every_picture_the_journey_uses_is_drawn(string sample)
+    {
+        var r = await Rate(sample);
+        foreach (var path in r.Recommendation.Paths)
+            foreach (InstallChoice? choice in new InstallChoice?[] { null, InstallChoice.KeepWindows, InstallChoice.ReplaceWindows })
+            {
+                var steps = JourneyBuilder.Build(r.WithPath(path.Kind).WithInstall(choice));
+                IEnumerable<Block> All(IEnumerable<Block> bs) => bs.SelectMany(b => b is Details d ? All(d.Content).Prepend(b) : [b]);
+                var blocks = All(steps.SelectMany(s => s.Body
+                    .Concat(s.Tasks.SelectMany(t => t.How))
+                    .Concat(s.Restart is { } rs ? rs.AfterRestart.Concat(rs.Fallback) : [])));
+                var missing = blocks.OfType<PictureGuide>().SelectMany(g => g.Steps)
+                    .Where(st => st.PictureId is not null && !Illustrations.Exists(st.PictureId))
+                    .Select(st => st.PictureId).Distinct();
+                Assert.Empty(missing);
+            }
+    }
 }

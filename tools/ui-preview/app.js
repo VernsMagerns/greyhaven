@@ -86,14 +86,33 @@ function headline(score) {
   return "Linux may not work well on this PC";
 }
 
+// Same grouping as PartsOverview.cs: chipset in one line (not counted), small unchecked parts folded away calmly.
+function overview(id) {
+  const r = state.report;
+  const ordered = [...r.components].sort((a, b) =>
+    IMPORTANCE_ORDER[a.importance] - IMPORTANCE_ORDER[b.importance] ||
+    CATEGORY_ORDER.indexOf(a.component.category) - CATEGORY_ORDER.indexOf(b.component.category));
+  const quiet = c => ["worksOutOfTheBox", "unknown"].includes(ratingOn(c, id));
+  const chipset = ordered.filter(c => c.component.category === "chipset" && quiet(c));
+  const rest = ordered.filter(c => !chipset.includes(c));
+  const working = rest.filter(c => ratingOn(c, id) === "worksOutOfTheBox");
+  const unchecked = rest.filter(c => ratingOn(c, id) === "unknown" && c.importance === "minor");
+  const attention = rest.filter(c => ratingOn(c, id) !== "worksOutOfTheBox" && !unchecked.includes(c));
+  return { chipset, working, unchecked, attention };
+}
+
 function partsSummary(id) {
-  const n = r => state.report.components.filter(c => ratingOn(c, id) === r).length;
+  const o = overview(id);
+  const counted = [...o.working, ...o.attention, ...o.unchecked];
+  const n = r => counted.filter(c => ratingOn(c, id) === r).length;
   const s = [];
   if (n("worksOutOfTheBox")) s.push(`${plural(n("worksOutOfTheBox"), "part works", "parts work")} right away.`);
   if (n("worksWithExtraDriver")) s.push(`${plural(n("worksWithExtraDriver"), "part needs", "parts need")} one extra step after you install.`);
   if (n("partial")) s.push(`${plural(n("partial"), "part only partly works", "parts only partly work")}.`);
   if (n("unsupported")) s.push(`${plural(n("unsupported"), "part won't work", "parts won't work")}.`);
-  if (n("unknown")) s.push(`We couldn't check ${plural(n("unknown"), "part", "parts")}.`);
+  const big = counted.filter(c => ratingOn(c, id) === "unknown" && c.importance !== "minor").length;
+  if (big) s.push(`We couldn't check ${plural(big, "important part", "important parts")}. Test ${big === 1 ? "it" : "them"} from the USB stick.`);
+  if (o.unchecked.length) s.push(`${plural(o.unchecked.length, "small part", "small parts")} couldn't be checked, which rarely matters.`);
   return s.join(" ");
 }
 
@@ -192,6 +211,7 @@ function loadReport() {
   state.path = state.report.recommendation.defaultPath ?? null;
   state.distro = selectedDistroId() ?? state.report.distros[0].distroId;
   state.saved = null;
+  Object.assign(walk, { i: 0, install: null, done: {}, tasks: {}, usb: { stage: "waiting" }, restarted: false });
 }
 
 // ---- Results ---------------------------------------------------------------------------------
@@ -210,6 +230,7 @@ function showResults(focus) {
         <h1>${esc(paths.length ? headline(best.score.score) : "We can't suggest a version of Linux yet")}</h1>
         ${paths.length ? `<p class="suggest">We suggest <strong>${esc(distroName(chosen))}</strong>.</p>` : ""}
         <p>${esc(partsSummary(best.distroId))}</p>
+        ${paths.length ? `<p><button class="accent big" id="howto">Show me how to switch →</button></p>` : ""}
         ${r.profile.system.isArm ? `<p class="warn-line">This PC has an ARM chip. Linux support for these PCs is still limited.</p>` : ""}
       </div>
       <div class="score-pill" role="img" aria-label="Score: ${best.score.score} out of 100">
@@ -271,6 +292,7 @@ function showResults(focus) {
     state.distro = i.value; showResults(false); $(`input[name="distro"][value="${i.value}"]`).focus();
   }));
   $("#next").addEventListener("click", () => showWalkthrough(0));
+  $("#howto")?.addEventListener("click", () => showWalkthrough(0));
   $("#save").addEventListener("click", saveReport);
   $("#showsaved").addEventListener("click", () => window.open(state.saved.href, "_blank", "noopener"));
   $("#again").addEventListener("click", showStart);
@@ -304,6 +326,7 @@ function pathCard(p) {
 
 function choosePath(kind) {
   state.path = kind;
+  walk.install = null; walk.i = 0; walk.done = {}; walk.tasks = {};
   state.distro = selectedDistroId();
   state.saved = null;
   showResults(false);
@@ -316,17 +339,20 @@ const CATEGORY_ORDER = Object.keys(L["Of.ComponentCategory"]).filter(k => k !== 
 function renderParts() {
   const r = state.report;
   const id = state.distro;
-  const ordered = [...r.components].sort((a, b) =>
-    IMPORTANCE_ORDER[a.importance] - IMPORTANCE_ORDER[b.importance] ||
-    CATEGORY_ORDER.indexOf(a.component.category) - CATEGORY_ORDER.indexOf(b.component.category));
-  const attention = ordered.filter(c => ratingOn(c, id) !== "worksOutOfTheBox");
-  const works = ordered.filter(c => ratingOn(c, id) === "worksOutOfTheBox");
+  const { chipset, working: works, unchecked, attention } = overview(id);
   const name = c => c.component.count > 1 ? `${c.displayName} (×${c.component.count})` : c.displayName;
+  const rows = list => `<ul class="worklist">${list.map(c => `<li><span>${esc(category(c.component.category))}: <span class="secondary">${esc(name(c))}</span></span>${badge(ratingOn(c, id))}</li>`).join("")}</ul>`;
+  const unknownChipset = chipset.filter(c => ratingOn(c, id) === "unknown").length;
 
   $("#parts").innerHTML = `
     ${attention.map(c => part(c, c.ratings.find(x => x.distroId === id), name(c))).join("")}
-    ${works.length ? more(`${attention.length ? "" : "All "}${plural(works.length, "part works", "parts work")} right away. Show them`, `
-      <ul class="worklist">${works.map(c => `<li><span>${esc(category(c.component.category))}: <span class="secondary">${esc(name(c))}</span></span>${badge("worksOutOfTheBox")}</li>`).join("")}</ul>`) : ""}`;
+    ${works.length ? more(`${attention.length + unchecked.length ? "" : "All "}${plural(works.length, "part works", "parts work")} right away. Show them`, rows(works)) : ""}
+    ${unchecked.length ? more(`${plural(unchecked.length, "small part", "small parts")} couldn't be checked. ${unchecked.length === 1 ? "It rarely matters" : "They rarely matter"}. Show ${unchecked.length === 1 ? "it" : "them"}`,
+      `<p>These aren't parts you need to use your PC. If you use one of them, try it when you test Linux from the USB stick.</p>${rows(unchecked)}`) : ""}
+    ${chipset.length ? more(unknownChipset
+        ? `System chipset: ${plural(chipset.length, "part", "parts")}. ${chipset.length - unknownChipset} fine, ${unknownChipset} not checked (these rarely matter)`
+        : `System chipset: ${plural(chipset.length, "part", "parts")}, all fine`,
+      `<p>The chipset is the wiring on your PC's main board that connects everything else. Linux handles these parts by itself.</p>${rows(chipset)}`) : ""}`;
   $("#parts").querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
     navigator.clipboard?.writeText(b.dataset.copy).then(() => announce("Copied"), () => {});
   }));
@@ -375,8 +401,11 @@ function part(c, rating, name) {
 }
 
 function footnote(r) {
-  const offline = (r.dataNotes ?? []).some(n => n.includes("turned off"));
-  return `Checked with GreyHaven's built-in data from ${longDate(r.data.builtOn)}.${offline ? " The online check was off." : ""}`;
+  const notes = r.dataNotes ?? [];
+  const text = `Checked with GreyHaven's built-in data from ${longDate(r.data.builtOn)}.`;
+  if (notes.some(n => n.includes("turned off"))) return `${text} The online check was off.`;
+  const incomplete = notes.find(n => n.startsWith("Online lookups were incomplete"));
+  return incomplete ? `${text} The online check didn't finish, so a few parts may say "Not sure". ${incomplete.slice("Online lookups were incomplete: ".length).split(" Ratings use")[0]}` : text;
 }
 
 const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
@@ -454,7 +483,7 @@ function init() {
   state.samples = window.GH_DATA.samples;
   const picker = $("#sample");
   picker.innerHTML = state.samples.map(s => `<option value="${esc(s.sample)}">${esc(s.sample)}</option>`).join("");
-  picker.value = state.samples.some(s => s.sample === query.get("sample")) ? query.get("sample") : "nvidia-desktop";
+  picker.value = state.samples.some(s => s.sample === query.get("sample")) ? query.get("sample") : "ryzen-rtx2070s-desktop";
   picker.addEventListener("change", () => { state.sample = picker.value; showStart(); });
   state.sample = picker.value;
 
@@ -463,7 +492,7 @@ function init() {
   if (query.get("screen") === "walk" || query.get("screen") === "allsteps") {
     loadReport();
     if (state.report.recommendation.paths.some(p => p.kind === query.get("path"))) { state.path = query.get("path"); state.distro = selectedDistroId(); }
-    if (query.get("install")) { walk.install = query.get("install"); walk.confirmErase = query.get("confirm") === "1"; }
+    if (query.get("install")) walk.install = { keep: "keepWindows", replace: "replaceWindows" }[query.get("install")] ?? null;
     if (query.get("screen") === "allsteps") showAllSteps(); else showWalkthrough(Number(query.get("step") || 1) - 1);
     if (query.get("open") === "all") screen.querySelectorAll("details").forEach(d => (d.open = true));
     return;

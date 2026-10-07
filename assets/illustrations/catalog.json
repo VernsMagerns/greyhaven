@@ -3,6 +3,14 @@
   "alt": "The Advanced startup row in Windows Settings with its Restart now button highlighted.",
   "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
  },
+ "bios-msi-secure-boot": {
+  "alt": "A startup settings screen with the path Settings > Security > Secure Boot at the top and the Secure Boot setting (currently Enabled) highlighted.",
+  "checkedAgainst": "MSI Click BIOS 5 menu path (Settings > Security > Secure Boot), from search results; MSI's own FAQ blocks automated checks - confirm on a real MSI board"
+ },
+ "bios-msi-secure-boot-off": {
+  "alt": "The Secure Boot setting's list open, with Disabled highlighted. The bottom says F10: Save and restart.",
+  "checkedAgainst": "MSI Click BIOS 5 menu path (Settings > Security > Secure Boot), from search results; MSI's own FAQ blocks automated checks - confirm on a real MSI board"
+ },
  "bitlocker-panel": {
   "alt": "Control Panel's BitLocker Drive Encryption page for drive C with links including Back up your recovery key and Turn off BitLocker, Turn off BitLocker highlighted.",
   "checkedAgainst": "Ubuntu tutorial's Windows BitLocker screenshots"
@@ -10,6 +18,10 @@
  "bitlocker-turn-off": {
   "alt": "The Turn off BitLocker box with Turn off BitLocker and Cancel buttons, Turn off BitLocker highlighted.",
   "checkedAgainst": "Ubuntu tutorial's Windows BitLocker screenshots"
+ },
+ "boot-key-delete": {
+  "alt": "The top right of a keyboard with the Delete key highlighted.",
+  "checkedAgainst": "Generic drawing"
  },
  "boot-key-esc": {
   "alt": "The top row of a keyboard with the Esc key highlighted.",
@@ -274,5 +286,9 @@
  "use-a-device": {
   "alt": "Windows' blue Choose an option screen with Continue, Use a device, Troubleshoot and Turn off your PC, and Use a device highlighted.",
   "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
+ },
+ "use-a-device-list": {
+  "alt": "Windows' blue Use a device screen listing Windows Boot Manager, UEFI: USB stick and EFI Network, with the USB stick highlighted.",
+  "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation); the entries' names come from each PC's firmware"
  }
 }

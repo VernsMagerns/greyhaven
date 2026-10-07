@@ -27,6 +27,50 @@
             </Canvas>
         </Viewbox>
     </ControlTemplate>
+    <ControlTemplate x:Key="pic.bios-msi-secure-boot" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="320" Height="200">
+            <Rectangle Canvas.Left="0.0" Canvas.Top="0.0" Width="320.0" Height="200.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.page}" />
+            <Rectangle Canvas.Left="12.0" Canvas.Top="8.0" Width="296.0" Height="184.0" RadiusX="6" RadiusY="6" Fill="{DynamicResource GH.Ill.hdr}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.5" />
+            <Rectangle Canvas.Left="12.0" Canvas.Top="8.0" Width="296.0" Height="18.0" RadiusX="6" RadiusY="6" Fill="{DynamicResource GH.Ill.bar}" />
+            <Rectangle Canvas.Left="12.0" Canvas.Top="18.0" Width="296.0" Height="8.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.bar}" />
+            <TextBlock Canvas.Left="22.0" Canvas.Top="14.4" Width="270.0" TextAlignment="Left" FontSize="6.4" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="Settings &gt; Security &gt; Secure Boot" />
+            <Rectangle Canvas.Left="24.0" Canvas.Top="38.0" Width="272.0" Height="16.0" RadiusX="2" RadiusY="2" Fill="{DynamicResource GH.Ill.sel}" />
+            <TextBlock Canvas.Left="32.0" Canvas.Top="42.7" Width="49.0" TextAlignment="Left" FontSize="6.6" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="Secure Boot" />
+            <TextBlock Canvas.Left="200.0" Canvas.Top="42.7" Width="90.0" TextAlignment="Right" FontSize="6.6" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="[Enabled]" />
+            <Rectangle Canvas.Left="22.5" Canvas.Top="36.5" Width="275.0" Height="19.0" RadiusX="5" RadiusY="5" Stroke="{DynamicResource GH.Ill.hl}" StrokeThickness="2.2" />
+            <Path Data="M292 52 l0 11 l3 -3 l2.5 5 l2 -1 l-2.5 -5 l4.2 0 z" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+            <TextBlock Canvas.Left="32.0" Canvas.Top="62.7" Width="69.5" TextAlignment="Left" FontSize="6.6" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.hdrtxt}" Text="Secure Boot Mode" />
+            <TextBlock Canvas.Left="200.0" Canvas.Top="62.7" Width="90.0" TextAlignment="Right" FontSize="6.6" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.hdrtxt}" Text="[Standard]" />
+            <TextBlock Canvas.Left="32.0" Canvas.Top="82.7" Width="61.3" TextAlignment="Left" FontSize="6.6" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.hdrtxt}" Text="Key Management" />
+            <TextBlock Canvas.Left="200.0" Canvas.Top="82.7" Width="90.0" TextAlignment="Right" FontSize="6.6" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.hdrtxt}" Text="&gt;" />
+            <TextBlock Canvas.Left="60.0" Canvas.Top="176.3" Width="200.0" TextAlignment="Center" FontSize="6" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.hdrtxt}" Text="F10: Save and restart" />
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+    <ControlTemplate x:Key="pic.bios-msi-secure-boot-off" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="320" Height="200">
+            <Rectangle Canvas.Left="0.0" Canvas.Top="0.0" Width="320.0" Height="200.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.page}" />
+            <Rectangle Canvas.Left="12.0" Canvas.Top="8.0" Width="296.0" Height="184.0" RadiusX="6" RadiusY="6" Fill="{DynamicResource GH.Ill.hdr}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.5" />
+            <Rectangle Canvas.Left="12.0" Canvas.Top="8.0" Width="296.0" Height="18.0" RadiusX="6" RadiusY="6" Fill="{DynamicResource GH.Ill.bar}" />
+            <Rectangle Canvas.Left="12.0" Canvas.Top="18.0" Width="296.0" Height="8.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.bar}" />
+            <TextBlock Canvas.Left="22.0" Canvas.Top="14.4" Width="270.0" TextAlignment="Left" FontSize="6.4" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="Settings &gt; Security &gt; Secure Boot" />
+            <Rectangle Canvas.Left="24.0" Canvas.Top="38.0" Width="272.0" Height="16.0" RadiusX="2" RadiusY="2" Fill="{DynamicResource GH.Ill.sel}" />
+            <TextBlock Canvas.Left="32.0" Canvas.Top="42.7" Width="49.0" TextAlignment="Left" FontSize="6.6" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="Secure Boot" />
+            <TextBlock Canvas.Left="200.0" Canvas.Top="42.7" Width="90.0" TextAlignment="Right" FontSize="6.6" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="[Enabled]" />
+            <TextBlock Canvas.Left="32.0" Canvas.Top="62.7" Width="69.5" TextAlignment="Left" FontSize="6.6" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.hdrtxt}" Text="Secure Boot Mode" />
+            <TextBlock Canvas.Left="200.0" Canvas.Top="62.7" Width="90.0" TextAlignment="Right" FontSize="6.6" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.hdrtxt}" Text="[Standard]" />
+            <Rectangle Canvas.Left="196.0" Canvas.Top="58.0" Width="100.0" Height="32.0" RadiusX="3" RadiusY="3" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1" />
+            <TextBlock Canvas.Left="206.0" Canvas.Top="63.9" Width="84.0" TextAlignment="Left" FontSize="6.4" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="Enabled" />
+            <Rectangle Canvas.Left="198.0" Canvas.Top="74.0" Width="96.0" Height="14.0" RadiusX="2" RadiusY="2" Fill="{DynamicResource GH.Ill.sel}" />
+            <TextBlock Canvas.Left="206.0" Canvas.Top="77.9" Width="84.0" TextAlignment="Left" FontSize="6.4" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="Disabled" />
+            <Rectangle Canvas.Left="196.5" Canvas.Top="72.5" Width="99.0" Height="17.0" RadiusX="5" RadiusY="5" Stroke="{DynamicResource GH.Ill.hl}" StrokeThickness="2.2" />
+            <Path Data="M290 86 l0 11 l3 -3 l2.5 5 l2 -1 l-2.5 -5 l4.2 0 z" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+            <TextBlock Canvas.Left="60.0" Canvas.Top="176.3" Width="200.0" TextAlignment="Center" FontSize="6" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.hdrtxt}" Text="F10: Save and restart" />
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
     <ControlTemplate x:Key="pic.bitlocker-panel" TargetType="ContentControl">
         <Viewbox Stretch="Uniform">
             <Canvas Width="320" Height="200">
@@ -62,6 +106,31 @@
             <TextBlock Canvas.Left="130.6" Canvas.Top="131.2" Width="89.4" TextAlignment="Center" FontSize="6.5" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="Turn off BitLocker" />
             <Rectangle Canvas.Left="127.6" Canvas.Top="125.0" Width="95.4" Height="20.0" RadiusX="5" RadiusY="5" Stroke="{DynamicResource GH.Ill.hl}" StrokeThickness="2.2" />
             <Path Data="M216.0 140 l0 11 l3 -3 l2.5 5 l2 -1 l-2.5 -5 l4.2 0 z" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+    <ControlTemplate x:Key="pic.boot-key-delete" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="320" Height="200">
+            <Rectangle Canvas.Left="0.0" Canvas.Top="0.0" Width="320.0" Height="200.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.page}" />
+            <Rectangle Canvas.Left="10.0" Canvas.Top="64.0" Width="300.0" Height="72.0" RadiusX="8" RadiusY="8" Fill="{DynamicResource GH.Ill.bar}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.5" />
+            <Rectangle Canvas.Left="18.0" Canvas.Top="82.0" Width="36.0" Height="20.0" RadiusX="3" RadiusY="3" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.2" />
+            <TextBlock Canvas.Left="19.0" Canvas.Top="89.1" Width="34.0" TextAlignment="Center" FontSize="6.2" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="F9" />
+            <Rectangle Canvas.Left="59.5" Canvas.Top="82.0" Width="36.0" Height="20.0" RadiusX="3" RadiusY="3" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.2" />
+            <TextBlock Canvas.Left="60.5" Canvas.Top="89.1" Width="34.0" TextAlignment="Center" FontSize="6.2" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="F10" />
+            <Rectangle Canvas.Left="101.0" Canvas.Top="82.0" Width="36.0" Height="20.0" RadiusX="3" RadiusY="3" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.2" />
+            <TextBlock Canvas.Left="102.0" Canvas.Top="89.1" Width="34.0" TextAlignment="Center" FontSize="6.2" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="F11" />
+            <Rectangle Canvas.Left="142.5" Canvas.Top="82.0" Width="36.0" Height="20.0" RadiusX="3" RadiusY="3" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.2" />
+            <TextBlock Canvas.Left="143.5" Canvas.Top="89.1" Width="34.0" TextAlignment="Center" FontSize="6.2" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="F12" />
+            <Rectangle Canvas.Left="184.0" Canvas.Top="82.0" Width="36.0" Height="20.0" RadiusX="3" RadiusY="3" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.2" />
+            <TextBlock Canvas.Left="185.0" Canvas.Top="89.1" Width="34.0" TextAlignment="Center" FontSize="6.2" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="PrtSc" />
+            <Rectangle Canvas.Left="225.5" Canvas.Top="82.0" Width="36.0" Height="20.0" RadiusX="3" RadiusY="3" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.2" />
+            <TextBlock Canvas.Left="226.5" Canvas.Top="89.1" Width="34.0" TextAlignment="Center" FontSize="6.2" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="Insert" />
+            <Rectangle Canvas.Left="267.0" Canvas.Top="82.0" Width="36.0" Height="20.0" RadiusX="3" RadiusY="3" Fill="{DynamicResource GH.Ill.acc}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1.2" />
+            <TextBlock Canvas.Left="268.0" Canvas.Top="89.1" Width="34.0" TextAlignment="Center" FontSize="6.2" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.acctxt}" Text="Delete" />
+            <Rectangle Canvas.Left="264.5" Canvas.Top="79.5" Width="41.0" Height="25.0" RadiusX="5" RadiusY="5" Stroke="{DynamicResource GH.Ill.hl}" StrokeThickness="2.2" />
+            <Path Data="M299.0 100 l0 11 l3 -3 l2.5 5 l2 -1 l-2.5 -5 l4.2 0 z" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+            <TextBlock Canvas.Left="20.0" Canvas.Top="117.3" Width="280.0" TextAlignment="Center" FontSize="7" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="Press Delete again and again as the PC starts" />
             </Canvas>
         </Viewbox>
     </ControlTemplate>
@@ -1925,6 +1994,24 @@
             <TextBlock Canvas.Left="186.0" Canvas.Top="97.3" Width="73.4" TextAlignment="Left" FontSize="7" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.bluetxt}" Text="Turn off your PC" />
             <Rectangle Canvas.Left="157.0" Canvas.Top="49.0" Width="126.0" Height="34.0" RadiusX="5" RadiusY="5" Stroke="{DynamicResource GH.Ill.hl}" StrokeThickness="2.2" />
             <Path Data="M276 78 l0 11 l3 -3 l2.5 5 l2 -1 l-2.5 -5 l4.2 0 z" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+            </Canvas>
+        </Viewbox>
+    </ControlTemplate>
+    <ControlTemplate x:Key="pic.use-a-device-list" TargetType="ContentControl">
+        <Viewbox Stretch="Uniform">
+            <Canvas Width="320" Height="200">
+            <Rectangle Canvas.Left="0.0" Canvas.Top="0.0" Width="320.0" Height="200.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.page}" />
+            <Rectangle Canvas.Left="10.0" Canvas.Top="10.0" Width="300.0" Height="180.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.blue}" />
+            <TextBlock Canvas.Left="30.0" Canvas.Top="25.6" Width="85.8" TextAlignment="Left" FontSize="11" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.bluetxt}" Text="Use a device" />
+            <Rectangle Canvas.Left="30.0" Canvas.Top="52.0" Width="160.0" Height="24.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.blue}" Stroke="{DynamicResource GH.Ill.bluetxt}" StrokeThickness="0.6" />
+            <TextBlock Canvas.Left="52.0" Canvas.Top="60.4" Width="90.8" TextAlignment="Left" FontSize="7" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.bluetxt}" Text="Windows Boot Manager" />
+            <Rectangle Canvas.Left="30.0" Canvas.Top="82.0" Width="160.0" Height="24.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.sel}" Stroke="{DynamicResource GH.Ill.bluetxt}" StrokeThickness="0.6" />
+            <TextBlock Canvas.Left="52.0" Canvas.Top="90.3" Width="69.1" TextAlignment="Left" FontSize="7" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.txt}" Text="UEFI: USB stick" />
+            <Rectangle Canvas.Left="30.0" Canvas.Top="112.0" Width="160.0" Height="24.0" RadiusX="0" RadiusY="0" Fill="{DynamicResource GH.Ill.blue}" Stroke="{DynamicResource GH.Ill.bluetxt}" StrokeThickness="0.6" />
+            <TextBlock Canvas.Left="52.0" Canvas.Top="120.3" Width="51.7" TextAlignment="Left" FontSize="7" FontWeight="SemiBold" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.bluetxt}" Text="EFI Network" />
+            <Rectangle Canvas.Left="27.0" Canvas.Top="79.0" Width="166.0" Height="30.0" RadiusX="5" RadiusY="5" Stroke="{DynamicResource GH.Ill.hl}" StrokeThickness="2.2" />
+            <Path Data="M186 104 l0 11 l3 -3 l2.5 5 l2 -1 l-2.5 -5 l4.2 0 z" Fill="{DynamicResource GH.Ill.bg}" Stroke="{DynamicResource GH.Ill.ink}" StrokeThickness="1" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" />
+            <TextBlock Canvas.Left="25.0" Canvas.Top="170.3" Width="270.0" TextAlignment="Center" FontSize="6" FontWeight="Normal" FontFamily="{DynamicResource BodyFont}" Foreground="{DynamicResource GH.Ill.bluetxt}" Text="Names differ between PCs. Pick the one with USB or your stick's name." />
             </Canvas>
         </Viewbox>
     </ControlTemplate>

@@ -284,6 +284,30 @@ def pop_scenes():
         "Pop!_OS installer Continue Setting Up screen with the Restart Device button highlighted.", POP)
     return s
 
+def startup_settings(crumb, rows, target, choices=None):
+    """A motherboard's startup settings (BIOS) screen: a path at the top, settings with their
+    values, and optionally the little list that opens to change one. Drawn generically (no logos)."""
+    out = desk_bg() + [R(12, 8, 296, 184, "hdr", "ink", rx=6), R(12, 8, 296, 18, "bar", None, rx=6), R(12, 18, 296, 8, "bar"),
+                       T(22, 20.5, crumb, 6.4, "txt", 700, "start", 270)]
+    for i, (name, value) in enumerate(rows):
+        y = 40 + i * 20
+        on = i == target
+        if on: out.append(R(24, y - 2, 272, 16, "sel", None, rx=2))
+        out += [T(32, y + 9, name, 6.6, "txt" if on else "hdrtxt", 700 if on else 400), T(290, y + 9, f"[{value}]" if value else ">", 6.6, "txt" if on else "hdrtxt", 700 if on else 400, "end", 90)]
+        if on and not choices: out += ring(24, y - 2, 272, 16, pad=1.5)
+    if choices:
+        values, chosen = choices
+        y0 = 40 + target * 20 + 18
+        out.append(R(196, y0, 100, len(values) * 14 + 4, "bg", "ink", rx=3, sw=1))
+        for j, v in enumerate(values):
+            if j == chosen: out.append(R(198, y0 + 2 + j * 14, 96, 14, "sel", None, rx=2))
+            out.append(T(206, y0 + 12 + j * 14, v, 6.4, "txt", 700 if j == chosen else 400, "start", 84))
+        out += ring(198, y0 + 2 + chosen * 14, 96, 14, pad=1.5)
+    out.append(T(160, 182, "F10: Save and restart", 6, "hdrtxt", 400, "middle", 200))
+    return out
+
+BIOS_MSI = "MSI Click BIOS 5 menu path (Settings > Security > Secure Boot), from search results; MSI's own FAQ blocks automated checks - confirm on a real MSI board"
+
 def windows_scenes():
     s = {}
     s["usb-stick"] = (desk_bg() + [R(70, 80, 150, 48, "deco1", "ink", rx=10, sw=2), R(220, 90, 34, 28, "btn", "ink", rx=3, sw=2), R(228, 98, 6, 4, "ink"), R(240, 98, 6, 4, "ink"), T(145, 109, "8 GB or more", 11, "txt", 700, "middle", 140)],
@@ -301,6 +325,16 @@ def windows_scenes():
             if on: els += ring(x, 82, 20, 20, pad=2.5)
         els.append(T(160, 124, f"Press {label} again and again as the PC starts", 7, "txt", 600, "middle", 280))
         s[f"boot-key-{key}"] = (els, f"The top row of a keyboard with the {label} key highlighted.", "Generic drawing")
+    # Desktop keyboards: Delete (startup settings on most motherboards) sits right of the F keys.
+    keys = ["F9", "F10", "F11", "F12", "PrtSc", "Insert", "Delete"]
+    els = desk_bg() + [R(10, 64, 300, 72, "bar", "ink", rx=8)]
+    for i, k in enumerate(keys):
+        x = 18 + i * 41.5
+        on = k == "Delete"
+        els += [R(x, 82, 36, 20, "acc" if on else "bg", "ink", rx=3, sw=1.2), T(x + 18, 95, k, 6.2, "acctxt" if on else "txt", 700 if on else 400, "middle", 34)]
+        if on: els += ring(x, 82, 36, 20, pad=2.5)
+    els.append(T(160, 124, "Press Delete again and again as the PC starts", 7, "txt", 600, "middle", 280))
+    s["boot-key-delete"] = (els, "The top right of a keyboard with the Delete key highlighted.", "Generic drawing")
     s["boot-key-surface"] = (desk_bg() + [R(70, 50, 180, 110, "bg", "ink", rx=10, sw=2), R(80, 60, 160, 90, "bar", None, rx=4), R(108, 44, 22, 6, "acc", "ink", rx=2, sw=1), R(140, 44, 22, 6, "btn", "ink", rx=2, sw=1)] + ring(108, 44, 22, 6, pad=2) + [T(119, 38, "Volume down", 6, "txt", 700, "middle", 60), T(151, 30, "Power", 6, "txt", 400, "middle", 40), T(160, 180, "Hold volume down, then press power", 7, "txt", 600, "middle", 260)],
         "A Surface tablet's top edge with the volume-down button highlighted next to the power button.", "Microsoft: Boot Surface from a USB device")
     s["boot-menu"] = (desk_bg() + [R(20, 20, 280, 160, "blue", "ink", rx=4), T(160, 40, "Boot Menu", 9, "bluetxt", 700, "middle", 200), R(50, 54, 220, 14, "blue", "bluetxt", sw=0.8), T(58, 64, "Windows Boot Manager", 6.4, "bluetxt"), R(50, 72, 220, 14, "sel"), T(58, 82, "UEFI: USB Stick", 6.4, "txt", 700)] + ring(50, 72, 220, 14) + [T(160, 168, "Names differ between PCs. Pick the one with USB.", 6, "bluetxt", 400, "middle", 260)],
@@ -316,6 +350,13 @@ def windows_scenes():
         "The Advanced startup row in Windows Settings with its Restart now button highlighted.", WIN)
     s["use-a-device"] = (desk_bg() + [R(10, 10, 300, 180, "blue")] + [T(30, 36, "Choose an option", 11, "bluetxt", 400)] + flatten([[R(30 + (i % 2) * 130, 52 + (i // 2) * 34, 120, 28, "blue", "bluetxt", sw=0.6), T(56 + (i % 2) * 130, 70 + (i // 2) * 34, t, 7, "bluetxt", 600)] for i, t in enumerate(["Continue", "Use a device", "Troubleshoot", "Turn off your PC"])]) + ring(160, 52, 120, 28),
         "Windows' blue Choose an option screen with Continue, Use a device, Troubleshoot and Turn off your PC, and Use a device highlighted.", WIN)
+    # After "Use a device": Windows lists the firmware's boot entries as tiles. Names come from the
+    # PC's firmware and the stick, so the caption says to pick the one with USB or the stick's name.
+    devices = ["Windows Boot Manager", "UEFI: USB stick", "EFI Network"]
+    s["use-a-device-list"] = (desk_bg() + [R(10, 10, 300, 180, "blue"), T(30, 36, "Use a device", 11, "bluetxt", 400)]
+        + flatten([[R(30, 52 + i * 30, 160, 24, "sel" if i == 1 else "blue", "bluetxt", sw=0.6), T(52, 67 + i * 30, t, 7, "txt" if i == 1 else "bluetxt", 700 if i == 1 else 600)] for i, t in enumerate(devices)])
+        + ring(30, 82, 160, 24) + [T(160, 176, "Names differ between PCs. Pick the one with USB or your stick's name.", 6, "bluetxt", 400, "middle", 270)],
+        "Windows' blue Use a device screen listing Windows Boot Manager, UEFI: USB stick and EFI Network, with the USB stick highlighted.", WIN + "; the entries' names come from each PC's firmware")
     s["bitlocker-panel"] = (gtk_window("BitLocker Drive Encryption", [T(26, 44, "BitLocker Drive Encryption", 9, "txt", 700), T(26, 62, "Operating system drive", 7, "txt", 600), T(26, 78, "C: BitLocker on", 7, "txt", 700), T(170, 92, "Suspend protection", 6, "acc"), T(170, 104, "Back up your recovery key", 6, "acc"), T(170, 116, "Turn off BitLocker", 6, "acc", 700)] + ring(168, 109, 70, 9)),
         "Control Panel's BitLocker Drive Encryption page for drive C with links including Back up your recovery key and Turn off BitLocker, Turn off BitLocker highlighted.", "Ubuntu tutorial's Windows BitLocker screenshots")
     s["bitlocker-turn-off"] = (dialog("BitLocker Drive Encryption", ["Turn off BitLocker", "Your drive will be decrypted. This might", "take a long time."], [("Turn off BitLocker", "btn"), ("Cancel", "btn")], 0, icon="bold"),
@@ -330,6 +371,11 @@ def windows_scenes():
         "Windows 10 Settings on Update and Security, Device encryption, with a Turn off button.", WIN)
     s["device-encryption-off"] = (dialog("Turn off device encryption?", ["Your drive will be decrypted.", "This can take a while."], [("Turn off", "btn"), ("Cancel", "btn")], 0),
         "A box asking 'Turn off device encryption?' with Turn off and Cancel buttons, Turn off highlighted.", WIN)
+    msi = "Settings > Security > Secure Boot"
+    s["bios-msi-secure-boot"] = (startup_settings(msi, [("Secure Boot", "Enabled"), ("Secure Boot Mode", "Standard"), ("Key Management", "")], 0),
+        "A startup settings screen with the path Settings > Security > Secure Boot at the top and the Secure Boot setting (currently Enabled) highlighted.", BIOS_MSI)
+    s["bios-msi-secure-boot-off"] = (startup_settings(msi, [("Secure Boot", "Enabled"), ("Secure Boot Mode", "Standard")], 0, (["Enabled", "Disabled"], 1)),
+        "The Secure Boot setting's list open, with Disabled highlighted. The bottom says F10: Save and restart.", BIOS_MSI)
     return s
 
 def driver_scenes():

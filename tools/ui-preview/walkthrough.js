@@ -1,348 +1,325 @@
-// Design preview, round 3: the guided "What's next" walkthrough (9 steps, one per screen).
-// Uses helpers and state from app.js. Download and USB writing are SIMULATED here (milestone 6).
-// Preview-only data below (makers, disk space) is marked; it moves into the scan and data/ later.
+// Design preview, round 4 (Part B): the white-glove walkthrough in five parts.
+// Every word comes from the app's own JourneyBuilder (C#), exported by build.py as JSON. This file
+// only lays it out and SIMULATES what the app will really do: finding the USB stick,
+// downloading, checking and writing, and restarting. Nothing here touches your PC.
 "use strict";
 
-// PC and motherboard makers: boot menu key and official support (BIOS update) page.
-// Preview data, to become data/makers.yaml with sources; pages marked * block automated checks.
-const MAKERS = [
-  { match: ["dell"], name: "Dell", boot: "F12", support: "https://www.dell.com/support/home" },                 // *
-  { match: ["hp", "hewlett"], name: "HP", boot: "Esc, then F9", support: "https://support.hp.com/drivers" },
-  { match: ["lenovo"], name: "Lenovo", boot: "F12 (on some IdeaPads, the small Novo button)", support: "https://pcsupport.lenovo.com/" },
-  { match: ["asustek", "asus"], name: "ASUS", boot: { laptop: "Esc", desktop: "F8" }, support: "https://www.asus.com/support/download-center/" },
-  { match: ["acer"], name: "Acer", boot: "F12", support: "https://www.acer.com/support" },                      // *
-  { match: ["micro-star", "msi"], name: "MSI", boot: "F11", support: "https://www.msi.com/support" },            // *
-  { match: ["gigabyte"], name: "GIGABYTE", boot: "F12", support: "https://www.gigabyte.com/Support" },          // *
-  { match: ["asrock"], name: "ASRock", boot: "F11", support: "https://www.asrock.com/support/index.asp" },
-  { match: ["microsoft"], name: "Microsoft Surface", boot: "Hold the volume-down button, then press and let go of the power button", support: "https://support.microsoft.com/surface" }, // *
-];
+const walk = { i: 0, install: null, done: {}, tasks: {}, usb: { stage: "waiting" }, restarted: false };
 
-// Free space on the Windows drive. SIMULATED for the preview; the scan will read it.
-const DISK = {
-  "nvidia-desktop": { free: 412, total: 931 }, "intel-vmd-laptop": { free: 38, total: 237 },
-  "intel-laptop": { free: 180, total: 476 }, "broadcom-legacy-laptop": { free: 61, total: 238 },
-  "snapdragon-arm-laptop": { free: 300, total: 476 },
-};
-const LINUX_MIN_GB = 30, WINDOWS_KEEP_GB = 20;
+const INSTALL_KEY = { keepWindows: "keep", replaceWindows: "replace" };
+const pathKind = () => state.path ?? state.report.recommendation.paths[0]?.kind;
+const journey = () => window.GH_DATA.journeys[state.sample]?.[pathKind()]?.[INSTALL_KEY[walk.install] ?? "none"];
 
-const HELP = {
-  ubuntu: [["Ubuntu Discourse (questions and answers)", "https://discourse.ubuntu.com/"], ["Ask Ubuntu", "https://askubuntu.com/"]],
-  mint: [["Linux Mint forums", "https://forums.linuxmint.com/"]],
-  "pop-os": [["System76 support articles", "https://support.system76.com/"], ["Pop!_OS chat", "https://chat.pop-os.org/"]],
-};
+// App screens: parts 1-4, then one "after you restart" screen previewing part 5 (the guide).
+function screens() {
+  const j = journey();
+  const app = j.steps.filter(s => s.phase !== "onTheStick");
+  return [...app, { id: "after-restart", phase: "onTheStick", title: "After you restart", lead: "From here, you follow your guide on your phone or on paper." }];
+}
 
-const walk = { step: 0, install: null, confirmErase: false, downloaded: false, written: false, done: {} };
+// ---- Document blocks (same shapes as GreyHaven.Reports' Document.cs) --------------------------
+function inl(list) {
+  return (list ?? []).map(i => {
+    switch (i.type) {
+      case "strong": return `<strong>${esc(i.value)}</strong>`;
+      case "link": return /^https?:\/\//.test(i.url) ? `<a href="${esc(i.url)}" target="_blank" rel="noopener">${esc(i.label)}</a>` : esc(i.label);
+      case "code": return `<code>${esc(i.value)}</code>`;
+      case "rating": return badge(i.rating);
+      default: return esc(i.value);
+    }
+  }).join("");
+}
 
-function maker() {
-  const s = state.report.profile.system;
-  for (const field of [s.systemManufacturer, s.boardManufacturer]) {
-    const v = (field ?? "").toLowerCase();
-    const m = MAKERS.find(x => x.match.some(k => v.includes(k)));
-    if (m) return { ...m, fromBoard: field === s.boardManufacturer && field !== s.systemManufacturer };
+function blocks(list, key) {
+  return (list ?? []).map((b, n) => block(b, `${key}-${n}`)).join("");
+}
+
+function block(b, key) {
+  switch (b.type) {
+    case "heading": return `<h${Math.min(4, Math.max(2, b.level))}>${esc(b.text)}</h${Math.min(4, Math.max(2, b.level))}>`;
+    case "paragraph": return `<p>${inl(b.content)}</p>`;
+    case "callout": {
+      if (b.kind === "tip") return `<aside class="tip"><p class="strong">${esc(b.title)}</p><p>${inl(b.content)}</p></aside>`;
+      const cls = b.kind === "danger" ? "warn-box big-warn" : b.kind === "warning" ? "warn-box" : "note-box";
+      return `<div class="${cls}"><p class="strong">${esc(b.title)}</p><p>${inl(b.content)}</p></div>`;
+    }
+    case "list":
+      if (b.kind === "checkboxes") return checklist(key, b.items.map(inl));
+      return `<${b.kind === "numbered" ? "ol" : "ul"} class="steps">${b.items.map(it => `<li>${inl(it)}</li>`).join("")}</${b.kind === "numbered" ? "ol" : "ul"}>`;
+    case "commands": return b.lines.map(l => `<div class="command"><code>${esc(l)}</code></div>`).join("");
+    case "details": return more(b.summary, blocks(b.content, key));
+    case "pictures": return pictures(b.steps);
+    case "keyfact": return `<div class="card keycard"><p class="secondary">${esc(b.label)}</p><p class="bigkey">${esc(b.value)}</p></div>`;
+    case "table": return `<p>${b.rows.map(r => r.map(inl).join(" · ")).join("<br>")}</p>`;
+    default: return "";
   }
-  return null;
 }
-const bootKey = m => !m ? null : typeof m.boot === "string" ? m.boot : (state.report.profile.system.formFactor === "laptop" ? m.boot.laptop : m.boot.desktop);
-const isWin11 = () => state.report.profile.system.windows.isWindows11;
-const recoverySettings = () => isWin11() ? "Settings > System > Recovery" : "Settings > Update & Security > Recovery";
-const chosenPath = () => selectedPath() ?? state.report.recommendation.paths[0];
-const guideFor = id => state.report.liveUsbGuides.find(g => g.distroId === id);
 
-function tip(text) {
-  return `<aside class="tip"><p class="strong">What could go wrong?</p><p>${text}</p></aside>`;
-}
-function picture(caption) {
-  return `<figure class="picture"><div class="picture-frame" aria-hidden="true">${art("small")}</div>
-    <figcaption><span class="secondary small">Picture to come:</span> ${esc(caption)}</figcaption></figure>`;
-}
-function pictureSteps(items) {
-  return `<ol class="picture-steps">${items.map(([text, cap]) => `<li>${picture(cap ?? text)}<p>${esc(text)}</p></li>`).join("")}</ol>`;
-}
 function checklist(id, items) {
   return `<ul class="todo">${items.map((t, i) => {
-    const key = `${id}-${i}`;
-    return `<li><label><input type="checkbox" data-done="${key}" ${walk.done[key] ? "checked" : ""}> <span>${t}</span></label></li>`;
+    const k = `${id}-${i}`;
+    return `<li><label><input type="checkbox" data-done="${k}" ${walk.done[k] ? "checked" : ""}> <span>${t}</span></label></li>`;
   }).join("")}</ul>`;
 }
 
-// ---- The nine steps ---------------------------------------------------------------------------
-function steps() {
-  const p = chosenPath();
-  const name = distroName(p.distroId);
-  const s = state.report.profile.system;
-  const m = maker();
-  const g = guideFor(p.distroId);
-  const gb = INSTALLER_GB[`${p.distroId}/${p.editionId}`] ?? 6;
-  return [
-    { title: "Back up your files", body: () => `
-        <p>First, save a copy of anything you'd hate to lose.</p>
-        ${checklist("backup", [
-          "Photos, videos and music",
-          "Documents and downloads",
-          "Passwords saved in your web browser (or sign in to sync them)",
-          "Game saves and app settings you care about",
-        ])}
-        ${more("Easy ways to back up", `
-          <p><strong>An external drive.</strong> Plug it in. Copy your Documents, Pictures, Videos, Music and Desktop folders onto it.</p>
-          <p><strong>Cloud storage.</strong> OneDrive, Google Drive or Dropbox can keep a copy online.</p>
-          <p>Then open a few files from the backup on another device, to make sure they work.</p>`)}
-        ${tip("Trying Linux from a USB stick won't touch your files. Installing can, if you pick the wrong option. A backup means a mistake costs you nothing.")}` },
-
-    { title: "Get a USB stick", body: () => `
-        <p>You need a USB stick that holds <strong>at least 8 GB</strong>. The ${esc(name)} installer file is about ${gb} GB.</p>
-        <div class="warn-box"><p class="strong">Everything on the stick will be erased.</p><p>Use an empty stick, or copy its files somewhere safe first.</p></div>
-        ${picture("A USB stick, with \"8 GB or more\" printed on it")}
-        ${tip("Some cheap or old sticks fail while being written. If that happens, GreyHaven will tell you. Try a different stick.")}` },
-
-    { title: "Get Windows ready", body: () => {
-        const items = [];
-        if (s.fastStartup === "enabled") items.push(`
-          <strong>Turn off Fast Startup.</strong> With it on, Windows never fully shuts down. Then Linux can't safely use your drive.
-          ${more("How", `<ol class="steps"><li>Open Control Panel, then <em>Power Options</em>.</li><li>Click <em>Choose what the power buttons do</em>.</li>
-            <li>Click <em>Change settings that are currently unavailable</em>.</li><li>Untick <em>Turn on fast startup</em>, then <em>Save changes</em>.</li></ol>
-            <p class="secondary small">A later version of GreyHaven will do this for you, with an undo button.</p>`)}`);
-        if (s.bitLocker !== "notEncrypted" && s.bitLocker !== "unknown") items.push(`
-          <strong>Save your BitLocker key.</strong> BitLocker locks your files so only you can read them. Windows may ask for its key after you change settings.
-          ${more("How", `<p>Go to <a href="https://aka.ms/myrecoverykey" target="_blank" rel="noopener">aka.ms/myrecoverykey</a> and sign in. Write the key on paper.</p>`)}`);
-        if (p.requirements?.includes("turnOffSecureBoot")) items.push(`
-          <strong>Turn off Secure Boot.</strong> ${esc(SECURE_BOOT)} ${esc(name)} won't start while it's on.
-          ${more("How", `<p>You change it in your PC's startup settings (sometimes called the BIOS).</p>
-            ${p.secureBootGuide?.url ? `<p><a href="${esc(p.secureBootGuide.url)}" target="_blank" rel="noopener">Follow ${esc(p.secureBootGuide.title.split(" - ")[0])}'s guide</a></p>` : ""}`)}`);
-        if (["intelVmd", "intelRstRaid", "raid"].includes(s.storageMode)) items.push(`
-          <strong>Change a storage setting.</strong> Your drive is set up in a way Linux can't use. It needs to be switched to "AHCI".
-          ${more("Why this needs care", `<p>Switching it the wrong way can stop Windows from starting. GreyHaven will give you a careful, step-by-step guide for this.</p>`)}`);
-        items.push(m ? `
-          <strong>Check for a BIOS update (optional).</strong> ${esc(m.name)} sometimes fixes startup problems with updates.
-          ${more("How", `<p><a href="${esc(m.support)}" target="_blank" rel="noopener">Open ${esc(m.name)}'s support page</a>${m.fromBoard ? " (the maker of your motherboard)" : ""}. Look up your model. If there's a BIOS update, follow their steps.</p>
-            <p>Keep the PC plugged in. Never turn it off during an update.</p>`)}` : `
-          <strong>Check for a BIOS update (optional).</strong> Your PC maker sometimes fixes startup problems with updates.
-          ${more("How", `<p>Search your PC maker's website for your model and "BIOS update". Keep the PC plugged in, and never turn it off during an update.</p>`)}`);
-        return `<p>Tick each one when it's done. These are just for this PC.</p>
-          ${checklist("windows", items)}
-          ${tip(s.bitLocker !== "notEncrypted" && s.bitLocker !== "unknown"
-            ? "If Windows asks for a BitLocker recovery key after you change a setting, type the key you saved. Then everything works as before."
-            : "Can't find a setting? Menus look different on every PC. Follow your PC maker's guide, and skip the optional items if you're unsure.")}`;
-      } },
-
-    { title: "Download the Linux installer file", body: () => `
-        <p>GreyHaven downloads the ${esc(name)} installer file for you (about ${gb} GB).</p>
-        <p>Then it checks the file is genuine. That means nobody has changed it on the way to you.</p>
-        <div class="card sim">
-          <p class="secondary small">Simulated in this preview.</p>
-          <div class="progress-fill"><span style="width:${walk.downloaded ? 100 : 0}%"></span></div>
-          <p id="dlstatus">${walk.downloaded ? "✓ Downloaded and checked. This is the real file." : "Ready to download."}</p>
-          <button class="accent" id="download" ${walk.downloaded ? "disabled" : ""}>Download and check</button>
-        </div>
-        ${tip("Slow internet? It can take a while; you can leave it running. If the check ever fails, GreyHaven throws the file away and tries again. It never uses a bad file.")}` },
-
-    { title: "Put it on the USB stick", body: () => `
-        <p>Plug in your USB stick. GreyHaven writes the installer file onto it.</p>
-        <div class="card sim">
-          <p class="secondary small">Simulated in this preview.</p>
-          <label class="option distro selected"><input type="radio" checked> <span><span class="strong">SanDisk USB stick, 16 GB</span><br><span class="secondary">The only USB stick plugged in</span></span></label>
-          <div class="warn-box"><p class="strong">This erases everything on the SanDisk stick.</p></div>
-          <div class="progress-fill"><span style="width:${walk.written ? 100 : 0}%"></span></div>
-          <p id="wrstatus">${walk.written ? "✓ Done. The stick is ready." : "Takes about 10 minutes."}</p>
-          <button class="accent" id="write" ${walk.written ? "disabled" : ""}>Erase the stick and write</button>
-        </div>
-        <p class="secondary small">GreyHaven only lists USB sticks. It never shows your PC's own drives.</p>
-        ${tip("Afterwards, Windows may say <em>You need to format the disk</em>. Click <strong>Cancel</strong>. That's normal: Windows just can't read Linux sticks.")}` },
-
-    { title: "Start your PC from the USB stick", body: () => {
-        const key = bootKey(m);
-        return `
-        <p>Leave the USB stick plugged in.</p>
-        ${key ? `
-          <div class="card keycard"><p class="secondary">On ${esc(m.name)} ${m.fromBoard ? "motherboards" : "PCs"}, the startup menu key is</p><p class="bigkey">${esc(key)}</p></div>
-          ${pictureSteps([
-            ["Restart your PC.", "The Windows restart button"],
-            [`As soon as the screen goes dark, press ${key.includes("Hold") ? "and hold as shown" : key} again and again.`, `A keyboard with the ${key} key marked`],
-            ["Pick your USB stick from the list.", "A startup menu listing a USB stick"],
-          ])}
-          ${more("If that doesn't work", fallbackBoot())}` : `
-          <p>We don't know the startup menu key for this PC. This way always works:</p>
-          ${fallbackBoot()}`}
-        ${tip(`Windows starts as normal? You pressed the key too late. Try again, pressing it the moment the PC turns on. USB stick not listed? Try a USB port on the back of the PC.${p.requirements?.includes("turnOffSecureBoot") ? " A red <em>Secure Boot violation</em> message means Secure Boot is still on (see step 3)." : ""}`)}`;
-      } },
-
-    { title: "Try Linux without installing", body: () => `
-        <p>Choose <strong>Try ${esc(name)}</strong> when it asks. Nothing is installed, and your files aren't touched.</p>
-        <p>Check these things work:</p>
-        ${checklist("try", g.checks.map(c => `<strong>${esc(c.title)}.</strong> ${esc(c.test)}`))}
-        ${g.expectedInLiveSession.length ? `<p class="secondary">${g.expectedInLiveSession.map(esc).join(" ")}</p>` : ""}
-        <p>Done? Shut down from the power menu, remove the stick, and Windows starts as before.</p>
-        ${tip("Everything is a bit slow, because it's running from the USB stick. That's normal. Something didn't work? Note it down. GreyHaven's report can help you find out why.")}` },
-
-    { title: "Choose how to install", body: installStep },
-
-    { title: "After installing", body: () => {
-        const id = p.distroId;
-        const fixes = state.report.components
-          .map(c => ({ c, r: c.ratings.find(x => x.distroId === id) }))
-          .filter(x => x.r.rating !== "worksOutOfTheBox" && x.r.fix);
-        return `
-        <p>Welcome to ${esc(name)}! A few last things.</p>
-        <h3>1. Install updates</h3>
-        <p>Open <strong>${id === "mint" ? "Update Manager" : id === "pop-os" ? "COSMIC Store" : "Software Updater"}</strong> and install everything it offers. Then restart.</p>
-        ${fixes.map((x, i) => `
-          <h3>${i + 2}. Set up your ${esc(noun(x.c.component.category))}</h3>
-          <p>${esc(x.c.displayName)} needs one extra step. Follow the pictures. Don't download drivers from websites: that can break your setup.</p>
-          ${pictureSteps(x.r.fix.steps.map(st => [st]))}
-          ${x.r.fix.secureBootAdvice ? `<p class="note-box">${esc(x.r.fix.secureBootAdvice)}</p>` : ""}`).join("")}
-        <h3>Where to get help</h3>
-        <ul>${(HELP[id] ?? []).map(([t, u]) => `<li><a href="${esc(u)}" target="_blank" rel="noopener">${esc(t)}</a></li>`).join("")}</ul>
-        <p class="secondary">Tip: when you ask for help, share your GreyHaven report. It lists your parts without any personal details.</p>
-        ${tip("Screen stays black after the graphics step? Restart and wait a minute. Still black? Ask in the help forums and share your report. People see this a lot and can help quickly.")}`;
-      } },
-  ];
+// Pictures: the app's real drawings. Click (or Enter) to enlarge; Escape or Close to go back.
+function pictures(steps) {
+  const cat = window.GH_DATA.pictures;
+  return `<ol class="picture-steps">${steps.map(st => {
+    const id = st.pictureId;
+    const pic = id && cat[id]
+      ? `<button class="pic-zoom" data-pic="${esc(id)}" aria-label="Enlarge picture: ${esc(cat[id].alt)}"><img src="pics/${esc(id)}.svg" alt=""></button>`
+      : `<div class="picture-frame placeholder" role="img" aria-label="Picture coming soon: ${esc(st.pictureCaption)}"><span>Picture coming soon</span></div>`;
+    return `<li><figure class="picture">${pic}<figcaption class="secondary small">${esc(st.pictureCaption)}</figcaption></figure><p class="strong">${esc(st.text)}</p></li>`;
+  }).join("")}</ol>`;
 }
 
-function fallbackBoot() {
-  return pictureSteps([
-    [`In Windows, open ${recoverySettings()}.`, `Windows ${isWin11() ? "11" : "10"} Recovery settings`],
-    ["Next to Advanced startup, click Restart now.", "The Restart now button"],
-    ["On the blue screen, choose Use a device, then your USB stick.", "The blue Use a device menu"],
-  ]);
+function openPicture(btn) {
+  const id = btn.dataset.pic, alt = window.GH_DATA.pictures[id].alt;
+  let d = $("#zoom");
+  if (!d) {
+    d = document.createElement("dialog");
+    d.id = "zoom";
+    d.className = "zoom";
+    d.setAttribute("aria-label", "Enlarged picture");
+    d.innerHTML = `<button class="plain zoom-close" id="zoomclose">Close picture</button><img alt=""><p class="zoom-caption"></p>`;
+    document.body.append(d);
+    $("#zoomclose").addEventListener("click", () => d.close());
+    d.addEventListener("click", e => { if (e.target === d) d.close(); }); // tap outside the picture
+  }
+  $("img", d).src = `pics/${id}.svg`;
+  $("img", d).alt = alt;
+  $(".zoom-caption", d).textContent = alt;
+  d.onclose = () => btn.focus();
+  d.showModal();
+  $("#zoomclose").focus();
 }
 
-// ---- Step 8: install alongside Windows, or replace it -----------------------------------------
-function installStep() {
-  const p = chosenPath();
-  const name = distroName(p.distroId);
-  const disk = DISK[state.sample] ?? { free: 100, total: 500 };
-  const canShare = disk.free >= LINUX_MIN_GB + WINDOWS_KEEP_GB;
-  const give = Math.max(LINUX_MIN_GB, Math.min(100, Math.floor((disk.free - WINDOWS_KEEP_GB - 10) / 10) * 10));
-  const pop = p.distroId === "pop-os";
-  const choice = walk.install;
-  return `
-    <p>Happy with how Linux worked? Now choose how to install it.</p>
+// ---- Screens ----------------------------------------------------------------------------------
+const CHECK_ICON = { ok: ["✓", "c-works", "Good"], attention: ["!", "c-partial", "Note"], blocker: ["✗", "c-unsupported", "Can't do this yet"] };
+
+function chooseScreen(s) {
+  return `${blocks(s.body, s.id)}
     <div class="paths" role="radiogroup" aria-label="How to install">
-      <label class="option${choice === "alongside" ? " selected" : ""}"><span class="path-label"><input type="radio" name="install" value="alongside" ${choice === "alongside" ? "checked" : ""}>
-        <span><span class="path-head strong">Keep Windows too</span>
-        <span class="path-line">Each time your PC starts, you pick Windows or ${esc(name)}.</span>
-        <span class="path-line ${canShare ? "" : "c-partial strong"}">${canShare
-          ? `You have ${disk.free} GB free. Give ${esc(name)} about ${give} GB.`
-          : `You only have ${disk.free} GB free. You need at least ${LINUX_MIN_GB + WINDOWS_KEEP_GB} GB.`}</span>
-        <span class="secondary small">Free space: simulated in this preview.</span></span></span></label>
-      <label class="option${choice === "replace" ? " selected" : ""}"><span class="path-label"><input type="radio" name="install" value="replace" ${choice === "replace" ? "checked" : ""}>
-        <span><span class="path-head strong">Replace Windows</span>
-        <span class="path-line">${esc(name)} uses the whole drive. Windows and everything on the drive is erased.</span></span></span></label>
-    </div>
-    <div id="installsteps">${choice ? installSteps(choice, name, pop, canShare, give, disk) : ""}</div>`;
-}
-
-function installSteps(choice, name, pop, canShare, give, disk) {
-  if (choice === "alongside" && !canShare) return `
-    <div class="warn-box"><p class="strong">There isn't enough free space yet.</p>
-    <p>Free up at least ${LINUX_MIN_GB + WINDOWS_KEEP_GB - disk.free} GB in Windows (Settings > System > Storage), then scan again. Or choose Replace Windows.</p></div>`;
-  if (choice === "alongside" && pop) return `
-    <div class="warn-box"><p class="strong">Pop!_OS can't set this up for you.</p>
-    <p>You would shrink Windows yourself, then use the installer's Custom option. That's tricky for a first try. Ubuntu and Linux Mint can do it for you. To use one of those, go back and pick Ubuntu.</p></div>
-    ${more("I still want Pop!_OS next to Windows", `<p><a href="https://support.system76.com/" target="_blank" rel="noopener">System76's support articles</a> explain how.</p>`)}`;
-  if (choice === "replace" && !walk.confirmErase) return `
-    <div class="warn-box big-warn">
-      <p class="strong">This erases Windows and every file on this drive.</p>
-      <p>Your photos, documents, games and programs will be gone. Only continue if your backup is done.</p>
-      <label class="check"><input type="checkbox" id="confirmerase"> <span>I understand everything on this drive will be erased, and I've backed up my files.</span></label>
+      ${s.choices.map(c => {
+        const on = walk.install === c.choice;
+        return `<label class="option${on ? " selected" : ""}${c.possible ? "" : " disabled"}"><span class="path-label">
+          <input type="radio" name="install" value="${c.choice}" ${on ? "checked" : ""} ${c.possible ? "" : "disabled"}>
+          <span><span class="path-head"><span class="strong">${esc(c.title)}</span>${c.recommended ? `<span class="tag">Suggested</span>` : ""}</span>
+          ${c.lines.map(l => `<span class="path-line">${esc(l)}</span>`).join("")}
+          <ul class="checks-list">${c.checks.map(k => {
+            const [g, cls, word] = CHECK_ICON[k.state];
+            return `<li><span class="glyph ${cls}" aria-hidden="true">${g}</span><span><span class="visually-hidden">${word}: </span>${esc(k.text)}</span></li>`;
+          }).join("")}</ul></span></span></label>`;
+      }).join("")}
     </div>`;
-  const steps = installerSteps(choice, name, give);
-  return `
-    <h3>Install ${esc(name)}, step by step</h3>
-    <p class="secondary small">Draft: we'll check each step against the real installer screens.</p>
-    ${pictureSteps(steps)}
-    ${tip(choice === "replace"
-      ? "Plug in a laptop before you start. If the power goes off while installing, start again from the USB stick."
-      : "Plug in a laptop before you start. When the PC restarts, you'll see a menu. Pick Windows or Linux with the arrow keys and press Enter.")}`;
 }
 
-function installerSteps(choice, name, give) {
-  const alongside = choice === "alongside";
-  const startStep = state.report.recommendation.paths.length && chosenPath().distroId === "mint"
-    ? ["Double-click Install Linux Mint on the desktop.", "The Install Linux Mint icon on the desktop"]
-    : [`Click Install ${name} on the desktop.`, `The Install ${name} button`];
-  const disk = alongside
-    ? [[`Choose Install ${name} alongside Windows.`, "The installation type screen with 'alongside Windows' chosen"],
-       [`Drag the divider to give ${name} about ${give} GB.`, "The divider between Windows and Linux"]]
-    : [[`Choose Erase disk and install ${name}.`, "The installation type screen with 'Erase disk' chosen"],
-       ["Check it shows the right drive, then continue.", "The drive name and size shown before erasing"]];
-  return [
-    startStep,
-    ["Pick your language and keyboard.", "The language list"],
-    ["Connect to Wi-Fi.", "The Wi-Fi list"],
-    ["Tick the box to install extra software for graphics and Wi-Fi.", "The third-party software checkbox, ticked"],
-    ...disk,
-    ["Pick your time zone, then type your name and a password.", "The account screen"],
-    ["Click Install, then wait about 15 minutes.", "The install progress bar"],
-    ["When it's done, click Restart, then take out the USB stick.", "The Restart now button"],
-  ];
+function taskCard(t, stepId) {
+  const k = `${stepId}-${t.id}`;
+  const st = walk.tasks[k] ?? (t.done ? "already" : "todo");
+  let action = "";
+  if (st === "already") action = `<p class="c-works strong"><span aria-hidden="true">✓</span> Already done on your PC.</p>`;
+  else if (st === "done") action = `
+    <p class="c-works strong"><span aria-hidden="true">✓</span> Done.</p>
+    <p class="secondary">${esc(t.undo ?? "")}</p>
+    ${t.action === "oneClick" ? `<button class="plain" data-undo="${k}">Undo</button>` : ""}`;
+  else if (st === "confirm") action = `
+    <div class="note-box" role="group" aria-label="Check before GreyHaven changes this">
+      <p>${esc(t.confirm)}</p>
+      <p class="secondary small">Windows will ask for permission. Simulated in this preview.</p>
+      <div class="row"><button class="accent" data-yes="${k}">Yes, do it</button><button class="plain" data-no="${k}">Cancel</button></div>
+    </div>`;
+  else if (t.action === "oneClick") action = `
+    <button class="accent" data-ask="${k}">${esc(t.buttonLabel)}</button>
+    ${blocks(t.how, k)}`;
+  else action = `
+    ${blocks(t.how, k)}
+    <label class="check"><input type="checkbox" data-manual="${k}"> <span>I've done this</span></label>`;
+  return `<article class="card task">
+    <h2 class="task-title">${esc(t.title)}${t.action === "oneClick" && st === "todo" ? `<span class="tag">GreyHaven can do this</span>` : ""}</h2>
+    <p>${esc(t.why)}</p>${action}</article>`;
 }
 
-// ---- Screen ---------------------------------------------------------------------------------
-function showWalkthrough(step) {
-  rerender = () => showWalkthrough(walk.step);
-  walk.step = Math.max(0, Math.min(8, step ?? walk.step));
-  const all = steps();
-  const s = all[walk.step];
+function tasksScreen(s) {
+  return `${s.tasks.map(t => taskCard(t, s.id)).join("")}${blocks(s.body, s.id)}`;
+}
+
+// The USB stick: one screen that finds the stick, then downloads, checks, writes and checks again.
+const USB_STAGES = ["Downloading", "Checking the file", "Writing to the stick", "Checking the stick"];
+function usbScreen(s) {
+  const u = walk.usb, plan = s.usb;
+  const gb = plan.installerBytes ? (plan.installerBytes / 1e9).toFixed(1) : "6";
+  const widget = {
+    waiting: `
+      <p class="strong" aria-live="polite">Looking for USB sticks… Plug one in.</p>
+      <div class="sim-controls"><span class="secondary small">Preview only:</span>
+        <button class="plain" data-plug="16">Plug in a 16 GB stick</button>
+        <button class="plain" data-plug="4">Plug in a 4 GB stick</button></div>`,
+    small: `
+      <div class="warn-box"><p class="strong">This stick is too small: Kingston DataTraveler, 4 GB.</p>
+      <p>You need one that holds at least 8 GB. Unplug it and plug in a bigger one.</p></div>
+      <div class="sim-controls"><span class="secondary small">Preview only:</span><button class="plain" data-plug="16">Swap for a 16 GB stick</button></div>`,
+    found: `
+      <div class="option selected stick"><span class="strong">SanDisk Ultra</span> <span class="secondary">USB stick · 16 GB</span></div>
+      <div class="warn-box big-warn"><p class="strong">This erases everything on the SanDisk Ultra (16 GB).</p>
+        <label class="check"><input type="checkbox" id="usbconfirm" ${u.confirm ? "checked" : ""}> <span>I understand everything on this stick will be erased.</span></label></div>
+      <button class="accent big" id="usbgo" ${u.confirm ? "" : "disabled"}>Make my USB stick</button>`,
+    working: `
+      <ol class="stages">${USB_STAGES.map((t, n) => `<li class="${n < u.stageIndex ? "done" : n === u.stageIndex ? "now" : ""}">
+        <span aria-hidden="true">${n < u.stageIndex ? "✓" : n === u.stageIndex ? "●" : "○"}</span> ${t}${n === 0 && u.stageIndex === 0 ? ` <span class="secondary">(${(u.pct / 100 * gb).toFixed(1)} of ${gb} GB)</span>` : ""}</li>`).join("")}</ol>
+      <div class="progress-fill" role="progressbar" aria-label="${USB_STAGES[u.stageIndex]}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${u.pct}"><span style="width:${u.pct}%"></span></div>
+      <p class="secondary small">${esc(plan.verification)}</p>
+      <button class="plain" id="usbcancel">Cancel</button>`,
+    stopped: `
+      <div class="note-box"><p class="strong">Stopped.</p><p>Nothing on your PC changed. The stick isn't ready, so make it again when you're ready.</p></div>
+      <button class="accent" id="usbagain">Start again</button>`,
+    done: `
+      <div class="done-box"><p class="bigdone"><span aria-hidden="true">✓</span> Your USB stick is ready.</p>
+      <p>The file was checked before and after writing. Leave the stick plugged in.</p></div>`,
+  }[u.stage];
+  return `${blocks(s.body, s.id)}<section class="card sim" aria-label="Your USB stick">${widget}</section>
+    ${plan.verificationSources?.length ? `<p class="secondary small">How the check works: ${plan.verificationSources.map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.title)}</a>`).join(" · ")}</p>` : ""}`;
+}
+
+function runUsb() {
+  const u = walk.usb;
+  u.stage = "working"; u.stageIndex = 0; u.pct = 0;
+  const lengths = [40, 10, 35, 15];
+  u.timer = setInterval(() => {
+    u.pct = Math.min(100, u.pct + 100 / lengths[u.stageIndex] * 1.5);
+    if (u.pct >= 100) {
+      u.stageIndex++; u.pct = 0;
+      if (u.stageIndex < USB_STAGES.length) announce(USB_STAGES[u.stageIndex]);
+    }
+    if (u.stageIndex >= USB_STAGES.length) { clearInterval(u.timer); u.stage = "done"; announce("Your USB stick is ready."); }
+    // Keep going in the background, but only redraw while the USB screen is showing.
+    if (screen.querySelector('[aria-label="Your USB stick"]')) showWalkthrough(walk.i, false);
+  }, 120);
+}
+
+function guideScreen(s) {
+  const j = journey(), g = s.guide;
+  const comingSoon = s.body.filter(b => b.type === "callout" && b.title === "Phone code coming soon");
+  const local = j.qr.url.includes("//localhost");
+  return `${blocks(s.body.filter(b => !comingSoon.includes(b)), s.id)}
+    <div class="guide-handoff">
+      <figure class="qr"><div class="qr-code" role="img" aria-label="QR code that opens your guide on a phone">${j.qr.svg}</div>
+        <figcaption>Scan with your phone's camera</figcaption></figure>
+      <div>
+        <p class="strong">Or keep it another way:</p>
+        <p><button class="plain" id="printguide">Print the guide</button></p>
+        <p><a href="${esc(j.phoneGuide)}" target="_blank" rel="noopener">Open the guide</a> <span class="secondary small">(to save it, or to see it as your phone will)</span></p>
+        ${g.onWindowsDrive ? `<p class="secondary small">Also saved in ${esc(g.onWindowsDrive)} on your Windows drive.</p>` : ""}
+      </div>
+    </div>
+    <p class="preview-note-inline secondary small">Preview: this QR code opens <code>${esc(j.qr.url)}</code>.
+      ${local ? "A phone can't open \"localhost\": rebuild with <code>--serve --lan</code> to try it on your phone." : "Your phone must be on the same Wi-Fi as this laptop."}
+      In the app, the code works once GreyHaven's website is live. Until then the app says:
+      ${comingSoon.map(b => `“${esc(b.content.map(x => x.value).join(""))}”`).join("")}</p>`;
+}
+
+function restartScreen(s) {
+  const r = s.restart;
+  const ticked = r.finalChecks.every((_, n) => walk.done[`restart-final-${n}`]);
+  return `${blocks(s.body, s.id)}
+    <h2>Before you restart</h2>
+    ${checklist("restart-final", r.finalChecks.map(esc))}
+    <button class="accent big" id="restartnow" ${ticked ? "" : "disabled"} aria-describedby="restarthint">${esc(r.buttonLabel)}</button>
+    <p id="restarthint" class="secondary small">${ticked ? "GreyHaven restarts your PC to Windows' blue Advanced startup menu. No administrator password needed." : "Tick each item first."}</p>
+    ${walk.restarted ? `<div class="note-box" role="status"><p class="strong">Simulated: your PC would restart now.</p><p>This is what you'll see:</p></div>` : `<h2>What you'll see</h2>`}
+    ${blocks(r.afterRestart, "restart-after")}
+    ${more("USB stick not in the list?", blocks(r.fallback, "restart-fallback"))}`;
+}
+
+function afterRestartScreen() {
+  const steps = journey().steps.filter(s => s.phase === "onTheStick");
+  return `<p>These steps are in your guide. GreyHaven can't help on screen once your PC restarts, so here's a look ahead.</p>
+    <ol class="ahead">${steps.map(s => `<li><span class="strong">${esc(s.title)}.</span> ${esc(s.lead)}</li>`).join("")}</ol>
+    ${steps.map(s => more(`Read “${s.title}”`, `<p class="strong">${esc(s.lead)}</p>${blocks(s.body, `ahead-${s.id}`)}${s.tip ? block({ type: "callout", kind: "tip", title: "What could go wrong?", content: [{ type: "text", value: s.tip }] }) : ""}`)).join("")}
+    <p><a href="${esc(journey().phoneGuide)}" target="_blank" rel="noopener">Open the whole guide</a></p>`;
+}
+
+// ---- Navigation -------------------------------------------------------------------------------
+function canGoOn(s) {
+  if (s.id === "choose") return walk.install !== null && s.choices.find(c => c.choice === walk.install)?.possible;
+  if (s.checklistRequired) return s.body.filter(b => b.type === "list" && b.kind === "checkboxes")
+    .every(b => b.items.every((_, i) => walk.done[`${s.id}-${s.body.indexOf(b)}-${i}`]));
+  if (s.id === "usb") return walk.usb.stage === "done";
+  return true;
+}
+
+function blockedHint(s) {
+  if (s.id === "choose") return "Choose how to install to go on.";
+  if (s.checklistRequired) return "Tick every item to go on.";
+  if (s.id === "usb") return "Make your USB stick to go on.";
+  return "";
+}
+
+function showWalkthrough(index, focus = true) {
+  rerender = () => showWalkthrough(walk.i, false);
+  if (walk.install === null) walk.install = journey().suggestedInstall ?? null;
+  const all = screens();
+  walk.i = Math.max(0, Math.min(all.length - 1, index ?? walk.i));
+  const s = all[walk.i];
+  const phases = journey().phases;
+  const phaseNo = phases.findIndex(p => p.phase === s.phase);
+  const next = all[walk.i + 1];
+  const ok = canGoOn(s);
+  const body = {
+    choose: chooseScreen, windows: tasksScreen, "startup-settings": tasksScreen, usb: usbScreen,
+    guide: guideScreen, restart: restartScreen, "after-restart": afterRestartScreen,
+  }[s.id]?.(s) ?? blocks(s.body, s.id);
+
   screen.innerHTML = `
     ${demoBanner()}
-    <nav class="walk-top" aria-label="Walkthrough">
-      <button class="linkbutton" id="toresults">← Back to results</button>
-      <button class="linkbutton" id="allsteps">See all steps on one page</button>
-    </nav>
-    <p class="stepcount">Step ${walk.step + 1} of ${all.length}</p>
-    <div class="steps-bar" role="progressbar" aria-label="Walkthrough progress" aria-valuemin="1" aria-valuemax="${all.length}" aria-valuenow="${walk.step + 1}">
-      ${all.map((_, i) => `<span class="${i < walk.step ? "done" : i === walk.step ? "now" : ""}"></span>`).join("")}
-    </div>
+    <nav class="walk-top" aria-label="Walkthrough"><button class="linkbutton" id="toresults">← Back to results</button></nav>
+    <ol class="phases" aria-label="Your progress">${phases.map((p, n) => `
+      <li class="${n < phaseNo ? "done" : n === phaseNo ? "now" : ""}"${n === phaseNo ? ` aria-current="step"` : ""}>
+        <span class="phase-no" aria-hidden="true">${n < phaseNo ? "✓" : n + 1}</span><span class="phase-name">${esc(p.name)}</span>
+        <span class="visually-hidden">${n < phaseNo ? " (done)" : n === phaseNo ? " (you are here)" : ""}</span></li>`).join("")}</ol>
     <h1>${esc(s.title)}</h1>
-    <div class="step-body">${s.body()}</div>
+    <p class="lead">${esc(s.lead)}</p>
+    <div class="step-body">${body}</div>
+    ${s.tip ? block({ type: "callout", kind: "tip", title: "What could go wrong?", content: [{ type: "text", value: s.tip }] }) : ""}
     <div class="walk-nav">
-      ${walk.step > 0 ? `<button class="plain" id="prev">← Back</button>` : "<span></span>"}
-      ${walk.step < all.length - 1
-        ? `<button class="accent big" id="nextstep">Next: ${esc(all[walk.step + 1].title)} →</button>`
-        : `<button class="accent big" id="finish">Finish</button>`}
+      ${walk.i > 0 ? `<button class="plain" id="prev">← Back</button>` : "<span></span>"}
+      ${next ? `<button class="accent big" id="nextstep" ${ok ? "" : "disabled"} aria-describedby="nexthint">Next: ${esc(next.title)} →</button>`
+             : `<button class="accent big" id="finish">Done</button>`}
     </div>
-    <details class="more"><summary>All steps</summary><div class="more-body"><ol>${all.map((x, i) =>
-      `<li>${i === walk.step ? `<strong>${esc(x.title)}</strong>` : `<button class="linkbutton" data-go="${i}">${esc(x.title)}</button>`}</li>`).join("")}</ol></div></details>`;
+    <p id="nexthint" class="secondary small walk-hint">${ok ? "" : esc(blockedHint(s))}</p>`;
 
   $("#toresults").addEventListener("click", () => showResults(true));
-  $("#allsteps").addEventListener("click", showAllSteps);
-  $("#prev")?.addEventListener("click", () => showWalkthrough(walk.step - 1));
-  $("#nextstep")?.addEventListener("click", () => showWalkthrough(walk.step + 1));
+  $("#prev")?.addEventListener("click", () => showWalkthrough(walk.i - 1));
+  $("#nextstep")?.addEventListener("click", () => showWalkthrough(walk.i + 1));
   $("#finish")?.addEventListener("click", () => showResults(true));
-  screen.querySelectorAll("[data-go]").forEach(b => b.addEventListener("click", () => showWalkthrough(Number(b.dataset.go))));
-  screen.querySelectorAll("[data-done]").forEach(c => c.addEventListener("change", () => (walk.done[c.dataset.done] = c.checked)));
-  screen.querySelectorAll('input[name="install"]').forEach(i => i.addEventListener("change", () => { walk.install = i.value; walk.confirmErase = false; showWalkthrough(walk.step); $(`input[name="install"][value="${i.value}"]`).focus(); }));
-  $("#confirmerase")?.addEventListener("change", e => { if (e.target.checked) { walk.confirmErase = true; showWalkthrough(walk.step); } });
-  $("#download")?.addEventListener("click", () => simulate("download", "dlstatus", "Downloading…", "✓ Downloaded and checked. This is the real file.", () => (walk.downloaded = true)));
-  $("#write")?.addEventListener("click", () => simulate("write", "wrstatus", "Writing… don't remove the stick.", "✓ Done. The stick is ready.", () => (walk.written = true)));
-  const h = $("h1", screen); h.tabIndex = -1; h.focus();
-  announce(`Step ${walk.step + 1} of ${all.length}: ${s.title}`);
+  screen.querySelectorAll("[data-done]").forEach(c => c.addEventListener("change", () => {
+    walk.done[c.dataset.done] = c.checked;
+    const id = c.dataset.done;
+    showWalkthrough(walk.i, false);
+    $(`[data-done="${id}"]`)?.focus();
+  }));
+  screen.querySelectorAll('input[name="install"]').forEach(i => i.addEventListener("change", () => {
+    walk.install = i.value; walk.done = {}; walk.tasks = {};
+    showWalkthrough(walk.i, false);
+    $(`input[name="install"][value="${i.value}"]`).focus();
+  }));
+  screen.querySelectorAll(".pic-zoom").forEach(b => b.addEventListener("click", () => openPicture(b)));
+  const act = (attr, fn) => screen.querySelectorAll(`[${attr}]`).forEach(b => b.addEventListener("click", () => { fn(b.getAttribute(attr)); }));
+  act("data-ask", k => { walk.tasks[k] = "confirm"; showWalkthrough(walk.i, false); $(`[data-yes="${k}"]`)?.focus(); });
+  act("data-no", k => { walk.tasks[k] = "todo"; showWalkthrough(walk.i, false); $(`[data-ask="${k}"]`)?.focus(); });
+  act("data-yes", k => { walk.tasks[k] = "done"; announce("Done."); showWalkthrough(walk.i, false); $(`[data-undo="${k}"]`)?.focus(); });
+  act("data-undo", k => { walk.tasks[k] = "todo"; announce("Undone."); showWalkthrough(walk.i, false); $(`[data-ask="${k}"]`)?.focus(); });
+  screen.querySelectorAll("[data-manual]").forEach(c => c.addEventListener("change", () => (walk.tasks[c.dataset.manual] = c.checked ? "manual-done" : "todo")));
+  act("data-plug", size => { walk.usb = { stage: size === "4" ? "small" : "found", confirm: false }; announce(size === "4" ? "This stick is too small." : "Found a USB stick: SanDisk Ultra, 16 GB."); showWalkthrough(walk.i, false); });
+  $("#usbconfirm")?.addEventListener("change", e => { walk.usb.confirm = e.target.checked; showWalkthrough(walk.i, false); $("#usbconfirm").focus(); });
+  $("#usbgo")?.addEventListener("click", () => { runUsb(); $("#usbcancel")?.focus(); });
+  $("#usbcancel")?.addEventListener("click", () => { clearInterval(walk.usb.timer); walk.usb = { stage: "stopped" }; announce("Stopped."); showWalkthrough(walk.i, false); $("#usbagain")?.focus(); });
+  $("#usbagain")?.addEventListener("click", () => { walk.usb = { stage: "found", confirm: false }; showWalkthrough(walk.i, false); });
+  $("#printguide")?.addEventListener("click", () => { const w = window.open(journey().phoneGuide, "_blank"); w?.addEventListener("load", () => w.print()); });
+  $("#restartnow")?.addEventListener("click", () => { walk.restarted = true; announce("Simulated restart."); showWalkthrough(walk.i, false); });
+  if (focus) { const h = $("h1", screen); h.tabIndex = -1; h.focus(); announce(`${phases[phaseNo].name}: ${s.title}`); }
 }
 
-function simulate(buttonId, statusId, during, after, done) {
-  const btn = $(`#${buttonId}`), status = $(`#${statusId}`), bar = btn.parentElement.querySelector(".progress-fill span");
-  btn.disabled = true;
-  status.textContent = during;
-  let pct = 0;
-  const t = setInterval(() => {
-    pct += 10;
-    bar.style.width = `${pct}%`;
-    if (pct >= 100) { clearInterval(t); done(); status.textContent = after; announce(after); }
-  }, 150);
-}
-
-// All steps on one page: what the saved report will include, for printing or a phone.
-function showAllSteps() {
-  rerender = showAllSteps;
-  const all = steps();
-  screen.innerHTML = `
-    ${demoBanner()}
-    <nav class="walk-top"><button class="linkbutton" id="back">← Back to the steps</button>
-      <button class="linkbutton" onclick="window.print()">Print</button></nav>
-    <h1>Your steps to Linux</h1>
-    <p>This page is also in your saved report, so you can keep it on your phone while your PC restarts.</p>
-    ${all.map((s, i) => `<section class="card printstep"><h2>Step ${i + 1}. ${esc(s.title)}</h2>${s.body()}</section>`).join("")}`;
-  screen.querySelectorAll("details").forEach(d => (d.open = true));
-  $("#back").addEventListener("click", () => showWalkthrough(walk.step));
-  const h = $("h1", screen); h.tabIndex = -1; h.focus();
-}
+// Old shortcut (?screen=allsteps): the take-along guide covers this now.
+function showAllSteps() { showWalkthrough(screens().length - 1); }

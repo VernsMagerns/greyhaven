@@ -267,7 +267,7 @@ public static class JourneyBuilder
                 [
                     new PictureStep($"Restart your PC. As it starts, press {key} again and again.", $"A keyboard with the {key} key marked", Illustrations.BootKeyId(key)),
                     new PictureStep($"Go to {where}.", $"{m.Name}'s startup settings with {where.Split(" > ").Last()} chosen", $"bios-{m.Name.ToLowerInvariant()}-secure-boot"),
-                    new PictureStep("Set Secure Boot to Disabled. Press F10, then choose Yes to save and restart.", "Secure Boot set to Disabled", null),
+                    new PictureStep("Set Secure Boot to Disabled. Press F10, then choose Yes to save and restart.", "Secure Boot set to Disabled", $"bios-{m.Name.ToLowerInvariant()}-secure-boot-off"),
                 ]));
             }
             if (c.Path.SecureBootGuide is { } g)
@@ -418,9 +418,9 @@ public static class JourneyBuilder
                     new PictureGuide(
                     [
                         new PictureStep("Your PC restarts to a blue screen. Click Use a device.", "The blue \"Choose an option\" screen with Use a device", "use-a-device"),
-                        new PictureStep("Click your USB stick. Its name often starts with \"UEFI\" or the stick's brand.", "A list of devices with the USB stick", "boot-menu"),
-                        new PictureStep($"Your PC starts from the stick. Follow your guide from here.", $"The {c.Name} start screen", null),
+                        new PictureStep("Click your USB stick. Its name often has \"USB\" or the stick's brand in it.", "The \"Use a device\" list with the USB stick", "use-a-device-list"),
                     ]),
+                    P($"Your PC then starts from the stick. If a menu with {c.Name} appears, press Enter on the first choice. Then follow your guide."),
                 ], fallback),
             };
     }
@@ -495,7 +495,7 @@ public static class JourneyBuilder
     {
         JourneyPhase.GetReady => "Get ready",
         JourneyPhase.MakeUsb => "Make your USB stick",
-        JourneyPhase.TakeGuide => "Take the guide with you",
+        JourneyPhase.TakeGuide => "Take your guide",
         JourneyPhase.Restart => "Restart",
         _ => "On the USB stick",
     };
