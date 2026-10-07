@@ -66,6 +66,14 @@ internal sealed class ThemeManager : IDisposable
             }
         }
 
+        // Walkthrough pictures (GH.Ill.*): their own light/dark colours; hidden in High Contrast.
+        foreach (var (name, (light, dark)) in IllustrationColours.All)
+        {
+            var brush = (SolidColorBrush)new BrushConverter().ConvertFromInvariantString(IsDark ? dark : light)!;
+            brush.Freeze();
+            palette[$"GH.Ill.{name}"] = brush;
+        }
+
         // Decorative pictures use brand colours, so they're hidden in High Contrast.
         palette["GH.DecorVisibility"] = highContrast ? Visibility.Collapsed : Visibility.Visible;
 

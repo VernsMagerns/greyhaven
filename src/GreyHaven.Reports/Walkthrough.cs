@@ -184,7 +184,7 @@ public static class WalkthroughBuilder
             body.Add(new PictureGuide(
             [
                 new PictureStep("Restart your PC.", "The Windows restart button", "restart"),
-                new PictureStep(isInstruction ? m.BootMenuKey + "." : $"As soon as the screen goes dark, press {m.BootMenuKey} again and again.", $"A keyboard with the {m.BootMenuKey} key marked", "boot-key"),
+                new PictureStep(isInstruction ? m.BootMenuKey + "." : $"As soon as the screen goes dark, press {m.BootMenuKey} again and again.", $"A keyboard with the {m.BootMenuKey} key marked", Illustrations.BootKeyId(m.BootMenuKey)),
                 new PictureStep("Pick your USB stick from the list.", "A startup menu listing a USB stick", "boot-menu"),
             ]));
             if (m.BootMenuNote is not null) body.Add(P(m.BootMenuNote));

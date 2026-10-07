@@ -179,23 +179,41 @@ public static class BlockView
         for (var n = 0; n < g.Steps.Count; n++)
         {
             var step = g.Steps[n];
-            var frame = new Grid { Height = 120, Margin = new Thickness(0, 0, 0, 6) };
-            var dash = new Rectangle { StrokeThickness = 2, StrokeDashArray = [4, 3], RadiusX = 12, RadiusY = 12 };
-            dash.SetResourceReference(Shape.StrokeProperty, "GH.CardBorder");
-            dash.SetResourceReference(Shape.FillProperty, "GH.CommandBackground");
-            frame.Children.Add(dash);
-            frame.Children.Add(new TextBlock
-            {
-                Text = $"Picture coming soon:\n{step.PictureCaption}", Style = Style(scope, "Secondary"), FontSize = 12,
-                TextAlignment = TextAlignment.Center, VerticalAlignment = VerticalAlignment.Center, Margin = new Thickness(10),
-            });
-            AutomationProperties.SetName(frame, $"Picture coming soon: {step.PictureCaption}");
-            var card = new StackPanel { Width = 220, Margin = new Thickness(0, 0, 16, 12) };
-            card.Children.Add(frame);
+            var card = new StackPanel { Width = 230, Margin = new Thickness(0, 0, 16, 14) };
+            card.Children.Add(Picture(scope, step));
+            card.Children.Add(new TextBlock { Text = step.PictureCaption, Style = Style(scope, "Secondary"), FontSize = 12, Margin = new Thickness(0, 4, 0, 2) });
             card.Children.Add(new TextBlock { Text = $"{n + 1}. {step.Text}", Style = Style(scope, "Strong") });
             wrap.Children.Add(card);
         }
         return wrap;
+    }
+
+    /// <summary>The drawing for a step (Illustrations.xaml), with its alt text; a placeholder if none exists yet.</summary>
+    private static FrameworkElement Picture(FrameworkElement scope, PictureStep step)
+    {
+        FrameworkElement picture;
+        if (step.PictureId is { } id && scope.TryFindResource($"pic.{id}") is ControlTemplate template)
+        {
+            var frame = new Border { CornerRadius = new CornerRadius(12), BorderThickness = new Thickness(2), ClipToBounds = true };
+            frame.SetResourceReference(Border.BorderBrushProperty, "GH.CardBorder");
+            frame.Child = new ContentControl { Template = template, Focusable = false };
+            picture = frame;
+            AutomationProperties.SetName(picture, Illustrations.Alt(id) ?? step.PictureCaption);
+        }
+        else
+        {
+            var grid = new Grid { Height = 140 };
+            var dash = new Rectangle { StrokeThickness = 2, StrokeDashArray = [4, 3], RadiusX = 12, RadiusY = 12 };
+            dash.SetResourceReference(Shape.StrokeProperty, "GH.CardBorder");
+            dash.SetResourceReference(Shape.FillProperty, "GH.CommandBackground");
+            grid.Children.Add(dash);
+            grid.Children.Add(new TextBlock { Text = "Picture coming soon", Style = Style(scope, "Secondary"), FontSize = 12, HorizontalAlignment = HorizontalAlignment.Center, VerticalAlignment = VerticalAlignment.Center });
+            picture = grid;
+            AutomationProperties.SetName(picture, $"Picture coming soon: {step.PictureCaption}");
+        }
+        // Pictures use brand colours, so they're hidden in High Contrast; the caption and step stay.
+        picture.SetResourceReference(UIElement.VisibilityProperty, "GH.DecorVisibility");
+        return picture;
     }
 
     private static UIElement KeyFact(FrameworkElement scope, KeyFact k)

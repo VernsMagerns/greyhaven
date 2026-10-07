@@ -97,7 +97,11 @@ try
     Find("Get Windows ready");
     CheckNames("walkthrough step 3");
     Shot("07-walkthrough-step3-light.png");
-    for (var i = 0; i < 5; i++) FindStarting(ControlType.Button, "Next:").AsButton().Invoke();
+    for (var i = 0; i < 3; i++) FindStarting(ControlType.Button, "Next:").AsButton().Invoke();
+    Find("Start your PC from the USB stick");
+    CheckNames("walkthrough step 6");
+    Shot("07b-walkthrough-step6-pictures-light.png");
+    for (var i = 0; i < 2; i++) FindStarting(ControlType.Button, "Next:").AsButton().Invoke();
     Find("Choose how to install");
     FindStarting(ControlType.RadioButton, "Replace Windows").AsRadioButton().IsChecked = true;
     CheckNames("walkthrough step 8");

@@ -1,0 +1,278 @@
+{
+ "advanced-startup": {
+  "alt": "The Advanced startup row in Windows Settings with its Restart now button highlighted.",
+  "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
+ },
+ "bitlocker-panel": {
+  "alt": "Control Panel's BitLocker Drive Encryption page for drive C with links including Back up your recovery key and Turn off BitLocker, Turn off BitLocker highlighted.",
+  "checkedAgainst": "Ubuntu tutorial's Windows BitLocker screenshots"
+ },
+ "bitlocker-turn-off": {
+  "alt": "The Turn off BitLocker box with Turn off BitLocker and Cancel buttons, Turn off BitLocker highlighted.",
+  "checkedAgainst": "Ubuntu tutorial's Windows BitLocker screenshots"
+ },
+ "boot-key-esc": {
+  "alt": "The top row of a keyboard with the Esc key highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "boot-key-esc-f9": {
+  "alt": "The top row of a keyboard with the Esc then F9 key highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "boot-key-f10": {
+  "alt": "The top row of a keyboard with the F10 key highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "boot-key-f11": {
+  "alt": "The top row of a keyboard with the F11 key highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "boot-key-f12": {
+  "alt": "The top row of a keyboard with the F12 key highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "boot-key-f8": {
+  "alt": "The top row of a keyboard with the F8 key highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "boot-key-surface": {
+  "alt": "A Surface tablet's top edge with the volume-down button highlighted next to the power button.",
+  "checkedAgainst": "Microsoft: Boot Surface from a USB device"
+ },
+ "boot-menu": {
+  "alt": "A startup (boot) menu listing Windows Boot Manager and a USB stick, with the USB stick highlighted.",
+  "checkedAgainst": "Generic drawing; every PC maker's menu looks different"
+ },
+ "device-encryption-10": {
+  "alt": "Windows 10 Settings on Update and Security, Device encryption, with a Turn off button.",
+  "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
+ },
+ "device-encryption-11": {
+  "alt": "Windows 11 Settings on Privacy and security, Device encryption, with its switch.",
+  "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
+ },
+ "device-encryption-off": {
+  "alt": "A box asking 'Turn off device encryption?' with Turn off and Cancel buttons, Turn off highlighted.",
+  "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
+ },
+ "encryption-wait": {
+  "alt": "A Decrypting progress box showing drive C three-quarters done.",
+  "checkedAgainst": "Ubuntu tutorial's Windows BitLocker screenshots"
+ },
+ "mint-account": {
+  "alt": "Linux Mint installer Who are you? screen with boxes for your name, computer name, username and password, and Continue highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-alongside": {
+  "alt": "Linux Mint installer Installation type screen with 'Install Linux Mint alongside Windows Boot Manager' chosen.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-codecs": {
+  "alt": "Linux Mint installer Multimedia codecs screen with 'Install multimedia codecs' ticked and Continue highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-divider": {
+  "alt": "Linux Mint installer screen with a bar shared between Windows and Linux Mint, a divider to drag, and an Install Now button.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-erase": {
+  "alt": "Linux Mint installer Installation type screen with 'Erase disk and install Linux Mint' chosen and its warning.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-erase-check": {
+  "alt": "Linux Mint's 'Write the changes to disks?' box with Go Back and Continue buttons, Continue highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-gpu-1": {
+  "alt": "The Linux Mint menu with 'driver' typed in the search box and Driver Manager highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-gpu-2": {
+  "alt": "Linux Mint's Driver Manager with the NVIDIA driver marked 'recommended' chosen and the Apply Changes button highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots (Hardware drivers page)"
+ },
+ "mint-gpu-3": {
+  "alt": "A Linux power menu with Restart highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "mint-install-icon": {
+  "alt": "The Linux Mint desktop with an 'Install Linux Mint' disc icon at the top left.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-keyboard": {
+  "alt": "Linux Mint installer Keyboard layout screen with English (US) chosen and Continue highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-language": {
+  "alt": "Linux Mint installer Welcome screen with a list of languages, English chosen, and Quit, Back and Continue buttons with Continue highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-restart": {
+  "alt": "Linux Mint's Installation Complete box with Continue Testing and Restart Now buttons, Restart Now highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-timezone": {
+  "alt": "Linux Mint installer Where are you? screen with a world map and your city, and Continue highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-wifi": {
+  "alt": "Linux Mint installer Wireless screen with a home Wi-Fi network chosen and Continue highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots"
+ },
+ "mint-wifi-1": {
+  "alt": "A laptop connected to the internet with a network cable or a phone's USB cable.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "mint-wifi-2": {
+  "alt": "Linux Mint's Driver Manager with the Broadcom driver chosen and Apply Changes highlighted.",
+  "checkedAgainst": "Linux Mint installer, from the official Linux Mint Installation Guide screenshots (Hardware drivers page)"
+ },
+ "mint-wifi-3": {
+  "alt": "A Linux power menu with Restart highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "pop-os-account": {
+  "alt": "Pop!_OS installer Create User Account screen with Full Name and User Name boxes and the Next button highlighted.",
+  "checkedAgainst": "Pop!_OS 24.04 installer, from System76's 'Install Pop!_OS' article screenshots"
+ },
+ "pop-os-clean-install": {
+  "alt": "Pop!_OS installer Install screen with Clean Install chosen and the Clean Install button highlighted at the bottom right.",
+  "checkedAgainst": "Pop!_OS 24.04 installer, from System76's 'Install Pop!_OS' article screenshots"
+ },
+ "pop-os-encryption": {
+  "alt": "Pop!_OS installer Drive Encryption screen with Don't Encrypt and Set Password buttons, Don't Encrypt highlighted.",
+  "checkedAgainst": "Pop!_OS 24.04 installer, from System76's 'Install Pop!_OS' article screenshots"
+ },
+ "pop-os-erase": {
+  "alt": "Pop!_OS installer Select a drive screen with your drive chosen and the red Erase and Install button highlighted.",
+  "checkedAgainst": "Pop!_OS 24.04 installer, from System76's 'Install Pop!_OS' article screenshots"
+ },
+ "pop-os-gpu-1": {
+  "alt": "The Pop!_OS download page with a normal Download button and a Download (NVIDIA) button, the NVIDIA one highlighted.",
+  "checkedAgainst": "System76 Pop!_OS download page layout"
+ },
+ "pop-os-gpu-2": {
+  "alt": "A terminal window with a command typed and the password prompt.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "pop-os-keyboard": {
+  "alt": "Pop!_OS installer Keyboard Layout screen with English (US) chosen and Select highlighted.",
+  "checkedAgainst": "Pop!_OS 24.04 installer, from System76's 'Install Pop!_OS' article screenshots"
+ },
+ "pop-os-language": {
+  "alt": "Pop!_OS installer Select Language screen with English chosen and the Select button highlighted.",
+  "checkedAgainst": "Pop!_OS 24.04 installer, from System76's 'Install Pop!_OS' article screenshots"
+ },
+ "pop-os-restart": {
+  "alt": "Pop!_OS installer Continue Setting Up screen with the Restart Device button highlighted.",
+  "checkedAgainst": "Pop!_OS 24.04 installer, from System76's 'Install Pop!_OS' article screenshots"
+ },
+ "pop-os-wifi-1": {
+  "alt": "A laptop connected to the internet with a network cable or a phone's USB cable.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "pop-os-wifi-2": {
+  "alt": "A terminal window with a command typed and the password prompt.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "recovery-10": {
+  "alt": "Windows 10 Settings on Update and Security, Recovery, showing Reset this PC and Advanced startup with a Restart now button.",
+  "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
+ },
+ "recovery-11": {
+  "alt": "Windows 11 Settings on System, Recovery, showing Reset this PC, Go back and Advanced startup with a Restart now button.",
+  "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
+ },
+ "restart": {
+  "alt": "The Windows Start menu's power button with its menu open and Restart highlighted.",
+  "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
+ },
+ "ubuntu-account": {
+  "alt": "Ubuntu installer Create your account screen with boxes for your name, computer name, username and password, and Next highlighted.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-alongside": {
+  "alt": "Ubuntu installer Disk setup screen with 'Install Ubuntu alongside Windows Boot Manager' chosen.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04); the alongside wording is from third-party 24.04 guides"
+ },
+ "ubuntu-apps": {
+  "alt": "Ubuntu installer Applications screen with Default selection chosen and Next highlighted.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-divider": {
+  "alt": "Ubuntu installer screen with a bar split between Windows and Ubuntu and a slider between them to drag.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04); slider layout from third-party 24.04 guides"
+ },
+ "ubuntu-erase": {
+  "alt": "Ubuntu installer Disk setup screen with 'Erase disk and install Ubuntu' chosen.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-gpu-1": {
+  "alt": "The Software & Updates window with its tabs, and the Additional Drivers tab highlighted.",
+  "checkedAgainst": "Software & Updates layout from Ubuntu 24.04 (reference screenshots)"
+ },
+ "ubuntu-gpu-2": {
+  "alt": "The Additional Drivers tab listing NVIDIA drivers, with the one marked 'proprietary, tested' chosen and the Apply Changes button highlighted.",
+  "checkedAgainst": "Software & Updates layout from Ubuntu 24.04 (reference screenshots)"
+ },
+ "ubuntu-gpu-3": {
+  "alt": "A Linux power menu with Restart highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "ubuntu-interactive": {
+  "alt": "Ubuntu installer screen with Interactive installation chosen.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-internet": {
+  "alt": "Ubuntu installer Connect to the internet screen with three choices and the Next button highlighted.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-keyboard": {
+  "alt": "Ubuntu installer Keyboard layout screen with English (US) chosen and the Next button highlighted.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-language": {
+  "alt": "Ubuntu installer window titled Welcome, with a list of languages, English chosen, and a Next button at the bottom right.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-restart": {
+  "alt": "Ubuntu installer Installation complete screen with Continue testing and a green Restart now button.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-review": {
+  "alt": "Ubuntu installer Review your choices screen listing the disk setup, with a green Install button at the bottom right.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-third-party": {
+  "alt": "Ubuntu installer Optimise your computer screen with both boxes ticked: third-party software for graphics and Wi-Fi, and support for additional media formats.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-timezone": {
+  "alt": "Ubuntu installer time zone screen with a world map and a dot on your location.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-try-install": {
+  "alt": "Ubuntu installer screen 'What do you want to do with Ubuntu?' with Install Ubuntu chosen.",
+  "checkedAgainst": "Ubuntu Desktop installer, from the official 'Install Ubuntu Desktop' tutorial screenshots (24.04 layout; check against 26.04)"
+ },
+ "ubuntu-wifi-1": {
+  "alt": "A laptop connected to the internet with a network cable or a phone's USB cable.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "ubuntu-wifi-2": {
+  "alt": "The Additional Drivers tab with the Broadcom wireless driver chosen and Apply Changes highlighted.",
+  "checkedAgainst": "Software & Updates layout from Ubuntu 24.04 (reference screenshots)"
+ },
+ "ubuntu-wifi-3": {
+  "alt": "A Linux power menu with Restart highlighted.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "usb-stick": {
+  "alt": "A USB stick with '8 GB or more' written on it.",
+  "checkedAgainst": "Generic drawing"
+ },
+ "use-a-device": {
+  "alt": "Windows' blue Choose an option screen with Continue, Use a device, Troubleshoot and Turn off your PC, and Use a device highlighted.",
+  "checkedAgainst": "Windows Settings and startup screens (layout from Microsoft's documentation)"
+ }
+}

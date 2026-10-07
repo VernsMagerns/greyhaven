@@ -86,7 +86,14 @@ public static class HtmlReportWriter
             case PictureGuide g:
                 sb.AppendLine("<ol class=\"pictures\">");
                 foreach (var s in g.Steps)
-                    sb.AppendLine($"<li><figure><div class=\"frame\" role=\"img\" aria-label=\"Picture coming soon: {E(s.PictureCaption)}\"><span>Picture coming soon:<br>{E(s.PictureCaption)}</span></div></figure><p>{E(s.Text)}</p></li>");
+                {
+                    // The SVG carries its own alt text (role="img" + aria-label). Under forced colours
+                    // it's hidden and the caption remains.
+                    var picture = Illustrations.Svg(s.PictureId) is { } svg
+                        ? $"<div class=\"pic\">{svg}</div>"
+                        : $"<div class=\"frame\" role=\"img\" aria-label=\"Picture coming soon: {E(s.PictureCaption)}\"><span>Picture coming soon</span></div>";
+                    sb.AppendLine($"<li><figure>{picture}<figcaption>{E(s.PictureCaption)}</figcaption></figure><p>{E(s.Text)}</p></li>");
+                }
                 sb.AppendLine("</ol>");
                 break;
             case ListBlock l when l.Kind == ListKind.Checkboxes:
@@ -203,6 +210,8 @@ public static class HtmlReportWriter
             ol.pictures li>p{font-weight:600}
             ol.pictures li>p::before{content:counter(pic) ". ";font-family:Rubik,sans-serif}
             ol.pictures figure{margin:0}
+            .pic svg{display:block;width:100%;height:auto;border-radius:12px;border:2px solid var(--border)}
+            figcaption{font-size:.8rem;color:var(--text-secondary);margin-top:.25rem}
             .frame{display:grid;place-items:center;text-align:center;min-height:7.5rem;padding:.5rem;background:var(--command);border:2px dashed var(--border);border-radius:12px;color:var(--text-secondary);font-size:.85rem}
             .table-wrap{overflow-x:auto}
             table{border-collapse:collapse;width:100%;margin:.5rem 0 1rem}
@@ -220,7 +229,7 @@ public static class HtmlReportWriter
             summary{cursor:pointer;color:var(--accent);font-weight:600}
             .more{margin-top:.5rem;padding-left:1rem;border-left:3px solid var(--border)}
             @media (max-width:40rem){section.headline{grid-template-columns:1fr}main{margin:0;border-radius:0}}
-            @media (forced-colors: active){.rating,.callout,.score{forced-color-adjust:auto}.score{border:2px solid CanvasText}main,section.headline,.callout{box-shadow:none}}
+            @media (forced-colors: active){.pic{display:none}.rating,.callout,.score{forced-color-adjust:auto}.score{border:2px solid CanvasText}main,section.headline,.callout{box-shadow:none}}
 
             """;
     }

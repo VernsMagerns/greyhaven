@@ -149,3 +149,67 @@ public class WalkthroughTests
         Assert.Contains("What could go wrong?", html);
     }
 }
+
+public class IllustrationTests
+{
+    private static readonly Lazy<CompatibilityData> Data = new(() => CompatibilityData.Load());
+
+    private static async Task<CompatibilityReport> Rate(string sample, Func<HardwareProfile, HardwareProfile>? change = null)
+    {
+        var profile = await SampleProfiles.Open(sample).ScanAsync();
+        if (change is not null) profile = change(profile);
+        return await new RatingEngine(Data.Value).RateAsync(profile, new RatingOptions { UseOnlineLookups = false });
+    }
+
+    private static IEnumerable<PictureStep> Pictures(IEnumerable<Block> blocks) => blocks.SelectMany(b => b switch
+    {
+        PictureGuide g => g.Steps,
+        Details d => Pictures(d.Content),
+        _ => [],
+    });
+
+    /// <summary>Every picture any walkthrough can ask for has been drawn: every sample, path, install choice, encryption and Windows version.</summary>
+    [Fact]
+    public async Task Every_walkthrough_picture_exists()
+    {
+        var ids = new HashSet<string>();
+        foreach (var sample in SampleProfiles.List())
+            foreach (var bitLocker in new[] { BitLockerState.NotEncrypted, BitLockerState.On })
+                foreach (var (build, edition) in new[] { (19045, "Professional"), (26100, "Core") })
+                {
+                    var r = await Rate(sample, p => p with { System = p.System with { BitLocker = bitLocker, Windows = p.System.Windows with { Build = build, Edition = edition } } });
+                    foreach (var path in r.Recommendation.Paths)
+                        foreach (var step in WalkthroughBuilder.Build(r.WithPath(path.Kind)))
+                            foreach (var pic in Pictures(step.Body.Concat(step.Options.SelectMany(o => o.Steps))))
+                                ids.Add(pic.PictureId!);
+                }
+        foreach (var maker in Data.Value.Makers.Makers)
+            foreach (var key in new[] { maker.BootMenuKey, maker.BootMenuKeyLaptop, maker.BootMenuKeyDesktop }.OfType<string>())
+                ids.Add(Illustrations.BootKeyId(key));
+
+        Assert.All(ids, id => Assert.True(Illustrations.Exists(id), $"No picture for '{id}'"));
+        Assert.All(ids, id => Assert.False(string.IsNullOrWhiteSpace(Illustrations.Alt(id)), $"'{id}' needs alt text"));
+    }
+
+    [Fact]
+    public void Pictures_use_no_logos_and_have_titles()
+    {
+        foreach (var id in Illustrations.Ids)
+        {
+            var svg = Illustrations.Svg(id)!;
+            Assert.Contains("<title>", svg);
+            Assert.Contains("role=\"img\"", svg);
+            Assert.DoesNotContain("<image", svg); // drawn shapes and text only: no embedded logos or photos
+            Assert.Contains("prefers-color-scheme: dark", svg);
+        }
+    }
+
+    [Fact]
+    public async Task Report_embeds_pictures_with_captions()
+    {
+        var html = ReportExporter.Render(await Rate("nvidia-desktop"), ReportFormat.Html);
+        Assert.Contains("<div class=\"pic\"><svg", html);
+        Assert.Contains("<figcaption>", html);
+        Assert.DoesNotContain("Picture coming soon", html);
+    }
+}
