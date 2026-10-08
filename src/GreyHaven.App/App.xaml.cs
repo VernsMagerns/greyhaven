@@ -33,6 +33,7 @@ public partial class App : Application
             : () => SampleProfiles.Open(sample);
 
         var data = new Lazy<CompatibilityData>(() => CompatibilityData.Load());
+        var sounds = new Infrastructure.SoundEffects();
         var services = new AppServices(
             scanner,
             data,
@@ -42,13 +43,16 @@ public partial class App : Application
             CopyToClipboard,
             ChooseSaveLocation,
             ShowInFolder,
-            sample);
+            sample,
+            sounds.Play);
 
         Infrastructure.BlockView.Open = Open;
         Infrastructure.BlockView.Copy = CopyToClipboard;
 
         // Demo mode (--sample) always uses DemoSwitchServices inside MainViewModel: nothing is ever written.
         var vm = new MainViewModel(services, new Infrastructure.WindowsSwitchServices(data));
+        sounds.Enabled = vm.SoundsOn;
+        vm.PropertyChanged += (_, e) => { if (e.PropertyName == nameof(vm.SoundsOn)) sounds.Enabled = vm.SoundsOn; };
         _themes = new ThemeManager(this);
         _themes.Apply(vm.Theme);
         vm.IsDarkNow = _themes.IsDark;

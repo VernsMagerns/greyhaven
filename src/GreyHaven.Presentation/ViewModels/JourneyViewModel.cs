@@ -83,6 +83,13 @@ public sealed partial class TaskViewModel : ObservableObject
     [RelayCommand] private void Ask() { State = "confirm"; Message = null; }
     [RelayCommand] private void CancelConfirm() => State = "todo";
 
+    /// <summary>Done or problem; nothing when they said No to Windows' prompt (that's their choice, not a problem).</summary>
+    private void Sound(HelperMessage result)
+    {
+        if (result.Kind == HelperMessage.Ok) _owner.Services.Play(SoundCue.Done);
+        else if (result.Kind != HelperMessage.Refused) _owner.Services.Play(SoundCue.Problem);
+    }
+
     [RelayCommand]
     private async Task DoItAsync()
     {
@@ -91,6 +98,7 @@ public sealed partial class TaskViewModel : ObservableObject
         var result = await _owner.Switch.RunElevatedAsync(action, null, null, CancellationToken.None);
         Message = result.Text;
         State = result.Kind == HelperMessage.Ok ? "done" : "todo";
+        Sound(result);
         OnPropertyChanged(nameof(CanUndo));
         _owner.Refresh();
     }
@@ -102,6 +110,7 @@ public sealed partial class TaskViewModel : ObservableObject
         var result = await _owner.Switch.RunElevatedAsync(HelperAction.FastStartupOn, null, null, CancellationToken.None);
         Message = result.Text;
         State = result.Kind == HelperMessage.Ok ? "todo" : "done";
+        Sound(result);
         OnPropertyChanged(nameof(CanUndo));
         _owner.Refresh();
     }
@@ -212,6 +221,7 @@ public sealed partial class UsbViewModel : ObservableObject
         _cts = new CancellationTokenSource();
         State = "working";
         Message = null;
+        _owner.Services.Play(SoundCue.Start);
         try
         {
             var source = _owner.Switch.InstallerFor(_owner.DistroId, _owner.EditionId)
@@ -226,6 +236,7 @@ public sealed partial class UsbViewModel : ObservableObject
             PermissionNote = null;
             Message = result.Kind == HelperMessage.Ok ? null : result.Text; // "ready" is already the big heading
             State = result.Kind == HelperMessage.Ok ? "done" : result.Kind == HelperMessage.Refused && _cts.IsCancellationRequested ? "stopped" : "failed";
+            if (State is "done" or "failed") _owner.Services.Play(State == "done" ? SoundCue.Done : SoundCue.Problem);
         }
         catch (OperationCanceledException)
         {
@@ -235,6 +246,7 @@ public sealed partial class UsbViewModel : ObservableObject
         catch (Exception ex) when (ex is InstallerCheckException or HttpRequestException or IOException)
         {
             State = "failed";
+            _owner.Services.Play(SoundCue.Problem);
             Message = ex is HttpRequestException ? "The download didn't work. Check your internet connection and try again." : ex.Message;
         }
         finally

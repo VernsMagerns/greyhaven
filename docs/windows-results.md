@@ -200,7 +200,12 @@ as the PC starts, and pick the stick. Note what happened:
 
 - [ ] In GreyHaven's walkthrough, use **Tab** to reach a picture and press **Enter**: it
       enlarges; **Escape** closes it and the picture has focus again.
-- [ ] Appearance → **Dark**: the walkthrough and apps section look right.
+- [ ] The **moon/sun** button at the top right switches light and dark: the walkthrough and
+      apps section look right in both.
+- [ ] **Sounds:** ticking a checkbox makes a soft tick; scanning, making the USB stick and
+      "Turn off Fast Startup" make a soft sound when they start and finish. Not too loud or
+      annoying? The **speaker** button next to the moon/sun turns them off, and they stay off
+      after restarting GreyHaven.
 - [ ] Optional: restart and press **Delete** as the PC starts to open the startup settings
       (BIOS). Is Secure Boot under **Settings > Security > Secure Boot**? Look only, change
       nothing, then exit without saving. Path you saw: ______

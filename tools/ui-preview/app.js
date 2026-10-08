@@ -64,6 +64,25 @@ themeBox.value = query.get("theme") || recall("gh-theme") || "system";
 brandBox.addEventListener("change", () => { applyLook(); rerender(); });
 $("#themetoggle").addEventListener("click", () => { themeBox.value = darkNow() ? "light" : "dark"; applyLook(); });
 $("#hc").addEventListener("change", applyLook);
+
+// Sound effects: the same files as the app (tools/sounds/build.py), quiet, with an on/off button.
+let soundsOn = recall("gh-sounds") !== "off";
+const SOUNDS = Object.fromEntries(["tick", "start", "done", "problem"].map(n => [n, Object.assign(new Audio(`sounds/${n}.wav`), { preload: "auto" })]));
+function sound(name) {
+  if (!soundsOn) return;
+  const a = SOUNDS[name];
+  try { a.currentTime = 0; a.play()?.catch(() => {}); } catch { /* sounds are never needed */ }
+}
+function showSoundToggle() {
+  const t = $("#soundtoggle");
+  t.textContent = soundsOn ? "🔊" : "🔇";
+  t.setAttribute("aria-label", soundsOn ? "Turn sounds off" : "Turn sounds on");
+  t.title = t.getAttribute("aria-label");
+}
+$("#soundtoggle").addEventListener("click", () => { soundsOn = !soundsOn; remember("gh-sounds", soundsOn ? "on" : "off"); showSoundToggle(); sound("tick"); });
+showSoundToggle();
+// Ticking a checkbox in the app window ticks.
+$("#screen").addEventListener("change", e => { if (e.target.matches?.('input[type="checkbox"]') && e.target.checked) sound("tick"); });
 $("#hc").checked = query.get("theme") === "hc";
 if (themeBox.value === "hc") themeBox.value = "system";
 applyLook();
@@ -205,6 +224,7 @@ async function scan(stay) {
   $("#cancel").addEventListener("click", () => { cancelled = true; showStart(); announce("Stopped."); });
   focusHeading();
   announce("Looking at the parts inside your PC");
+  sound("start");
   loadReport();
   if (stay === true) return;
   await new Promise(r => setTimeout(r, 900));
@@ -214,6 +234,7 @@ async function scan(stay) {
   await new Promise(r => setTimeout(r, 900));
   if (cancelled) return;
   showResults(true);
+  sound("done");
 }
 
 function loadReport() {

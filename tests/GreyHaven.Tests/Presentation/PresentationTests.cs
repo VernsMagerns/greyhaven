@@ -98,6 +98,8 @@ internal sealed class FakeServices : IAppServices
     public void ShowInFolder(string path) => Shown.Add(path);
     private static readonly Lazy<GameSearch> Games = new(() => new GameSearch(GreyHaven.Compat.CompatibilityData.Load().Apps));
     public IReadOnlyList<GameMatch> SearchGames(string query) => Games.Value.Search(query);
+    public List<SoundCue> Played { get; } = [];
+    public void Play(SoundCue cue) => Played.Add(cue);
 
     public sealed class MemorySettings : ISettingsStore
     {
@@ -134,6 +136,19 @@ public class MainViewModelTests
         Assert.Equal(Screen.Results, vm.Screen);
         Assert.NotNull(vm.Results);
         Assert.True(services.LastOnline); // default setting
+        Assert.Equal([SoundCue.Start, SoundCue.Done], services.Played);
+    }
+
+    [Fact]
+    public void Sounds_are_on_by_default_and_the_toggle_is_remembered()
+    {
+        var services = FakeServices.ForSample("nvidia-desktop");
+        var vm = new MainViewModel(services);
+        Assert.True(vm.SoundsOn);
+        Assert.Equal("Turn sounds off", vm.SoundToggleName);
+        vm.ToggleSoundsCommand.Execute(null);
+        Assert.False(services.Store.Saved.Sounds);
+        Assert.False(new MainViewModel(services).SoundsOn);
     }
 
     [Fact]

@@ -21,6 +21,7 @@ public sealed partial class MainViewModel : ObservableObject
         var settings = services.Settings.Load();
         Theme = settings.Theme;
         UseOnlineLookups = settings.UseOnlineLookups;
+        SoundsOn = settings.Sounds;
         CancelScanCommand = ScanCommand.CreateCancelCommand();
     }
 
@@ -89,8 +90,26 @@ public sealed partial class MainViewModel : ObservableObject
 
     partial void OnUseOnlineLookupsChanged(bool value) => SaveSettings();
 
+    /// <summary>Sound effects on or off (the speaker button next to light/dark). The app reads this before playing.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SoundToggleGlyph), nameof(SoundToggleName))]
+    public partial bool SoundsOn { get; set; }
+
+    partial void OnSoundsOnChanged(bool value) => SaveSettings();
+
+    /// <summary>A speaker (Segoe MDL2 Volume / Mute).</summary>
+    public string SoundToggleGlyph => SoundsOn ? "\uE767" : "\uE74F";
+    public string SoundToggleName => SoundsOn ? "Turn sounds off" : "Turn sounds on";
+
+    [RelayCommand]
+    private void ToggleSounds()
+    {
+        SoundsOn = !SoundsOn;
+        _services.Play(SoundCue.Tick); // only heard when turning on
+    }
+
     private void SaveSettings() =>
-        _services.Settings.Save(new AppSettings { Theme = Theme, UseOnlineLookups = UseOnlineLookups });
+        _services.Settings.Save(new AppSettings { Theme = Theme, UseOnlineLookups = UseOnlineLookups, Sounds = SoundsOn });
 
     public System.Windows.Input.ICommand CancelScanCommand { get; }
 
@@ -102,6 +121,7 @@ public sealed partial class MainViewModel : ObservableObject
         ErrorMessage = null;
         ErrorDetails = null;
         ProgressText = null;
+        _services.Play(SoundCue.Start);
         try
         {
             StatusText = "Looking at the parts inside your PC…";
@@ -118,6 +138,7 @@ public sealed partial class MainViewModel : ObservableObject
 
             Results = new ResultsViewModel(report, _services);
             Screen = Screen.Results;
+            _services.Play(SoundCue.Done);
         }
         catch (OperationCanceledException)
         {
@@ -129,6 +150,7 @@ public sealed partial class MainViewModel : ObservableObject
             ErrorMessage = "Something went wrong while checking your PC. Nothing on your PC was changed. You can try again.";
             ErrorDetails = $"{ex.GetType().Name}: {ex.Message}";
             Screen = Screen.Error;
+            _services.Play(SoundCue.Problem);
         }
         finally
         {

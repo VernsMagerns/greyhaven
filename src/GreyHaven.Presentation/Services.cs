@@ -15,7 +15,12 @@ public sealed record AppSettings
     public ThemeChoice Theme { get; init; } = ThemeChoice.System;
     /// <summary>Allow online lookups (device IDs to linux-hardware.org, distro release feeds).</summary>
     public bool UseOnlineLookups { get; init; } = true;
+    /// <summary>Quiet sound effects (ticks, start, done, problem). On unless turned off.</summary>
+    public bool Sounds { get; init; } = true;
 }
+
+/// <summary>GreyHaven's sound effects (assets/sounds, made by tools/sounds/build.py).</summary>
+public enum SoundCue { Tick, Start, Done, Problem }
 
 public interface ISettingsStore
 {
@@ -75,6 +80,8 @@ public interface IAppServices
     ISettingsStore Settings { get; }
     /// <summary>"Check a game": searches GreyHaven's bundled game data, on this PC.</summary>
     IReadOnlyList<GameMatch> SearchGames(string query);
+    /// <summary>Plays a sound effect, if sounds are on.</summary>
+    void Play(SoundCue cue);
 }
 
 /// <summary>Real implementation; the WPF app supplies the scanner and the Windows-specific bits.</summary>
@@ -87,12 +94,14 @@ public sealed class AppServices(
     Action<string> copy,
     Func<string, string?> chooseSaveLocation,
     Action<string> showInFolder,
-    string? demoSample) : IAppServices
+    string? demoSample,
+    Action<SoundCue>? play = null) : IAppServices
 {
     public string? DemoSample => demoSample;
     public ISettingsStore Settings => settings;
     private readonly Lazy<GameSearch> _games = new(() => new GameSearch(data.Value.Apps));
     public IReadOnlyList<GameMatch> SearchGames(string query) => _games.Value.Search(query);
+    public void Play(SoundCue cue) => play?.Invoke(cue);
 
     public Task<HardwareProfile> ScanAsync(CancellationToken cancellationToken) =>
         Task.Run(() => scannerFactory().ScanAsync(cancellationToken), cancellationToken);

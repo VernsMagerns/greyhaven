@@ -262,3 +262,4 @@ dialog.zoom img { display: block; width: 100%; height: auto; max-height: 80vh; o
 /* ---- Check a game */
 .gamequery { font: inherit; width: min(100%, 420px); padding: 8px 10px; border: var(--border-width) solid var(--gh-card-border);
   border-radius: var(--radius-small); background: var(--gh-card); color: var(--gh-text); }
+.toggles { display: inline-flex; gap: 8px; }

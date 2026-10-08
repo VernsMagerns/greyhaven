@@ -208,6 +208,8 @@ def main():
     # The walkthrough (Part B): every path and install choice. The QR code always opens the
     # hosted phone guide (GreyHavenInfo.PhoneGuideSite); "Open the guide" opens a local copy of
     # the same public page, with the same "#" part, so it works before the site is deployed.
+    (ui / "sounds").mkdir()
+    for f in (ROOT / "assets/sounds").glob("*.wav"): shutil.copy(f, ui / "sounds" / f.name)
     pics = ui / "pics"
     pics.mkdir()
     for f in (ROOT / "assets/illustrations").glob("*.svg"): shutil.copy(f, pics / f.name)

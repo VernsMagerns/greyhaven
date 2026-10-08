@@ -205,6 +205,7 @@ function usbScreen(s) {
 function runUsb() {
   const u = walk.usb;
   u.stage = "working"; u.stageIndex = 0; u.pct = 0;
+  sound("start");
   const lengths = [40, 10, 35, 15];
   u.timer = setInterval(() => {
     u.pct = Math.min(100, u.pct + 100 / lengths[u.stageIndex] * 1.5);
@@ -212,7 +213,7 @@ function runUsb() {
       u.stageIndex++; u.pct = 0;
       if (u.stageIndex < USB_STAGES.length) announce(USB_STAGES[u.stageIndex]);
     }
-    if (u.stageIndex >= USB_STAGES.length) { clearInterval(u.timer); u.stage = "done"; announce("Your USB stick is ready."); }
+    if (u.stageIndex >= USB_STAGES.length) { clearInterval(u.timer); u.stage = "done"; announce("Your USB stick is ready."); sound("done"); }
     // Keep going in the background, but only redraw while the USB screen is showing.
     if (screen.querySelector('[aria-label="Your USB stick"]')) showWalkthrough(walk.i, false);
   }, 120);
@@ -323,7 +324,7 @@ function showWalkthrough(index, focus = true) {
   const act = (attr, fn) => screen.querySelectorAll(`[${attr}]`).forEach(b => b.addEventListener("click", () => { fn(b.getAttribute(attr)); }));
   act("data-ask", k => { walk.tasks[k] = "confirm"; showWalkthrough(walk.i, false); $(`[data-yes="${k}"]`)?.focus(); });
   act("data-no", k => { walk.tasks[k] = "todo"; showWalkthrough(walk.i, false); $(`[data-ask="${k}"]`)?.focus(); });
-  act("data-yes", k => { walk.tasks[k] = "done"; announce("Done."); showWalkthrough(walk.i, false); $(`[data-undo="${k}"]`)?.focus(); });
+  act("data-yes", k => { walk.tasks[k] = "done"; announce("Done."); sound("done"); showWalkthrough(walk.i, false); $(`[data-undo="${k}"]`)?.focus(); });
   act("data-undo", k => { walk.tasks[k] = "todo"; announce("Undone."); showWalkthrough(walk.i, false); $(`[data-ask="${k}"]`)?.focus(); });
   screen.querySelectorAll("[data-manual]").forEach(c => c.addEventListener("change", () => (walk.tasks[c.dataset.manual] = c.checked ? "manual-done" : "todo")));
   act("data-plug", size => { walk.usb = { stage: size === "4" ? "small" : "found", confirm: false }; announce(size === "4" ? "This stick is too small." : "Found a USB stick: SanDisk Ultra, 16 GB."); showWalkthrough(walk.i, false); });
