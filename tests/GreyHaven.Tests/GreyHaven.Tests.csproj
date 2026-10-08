@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\src\GreyHaven.Ratings\GreyHaven.Ratings.csproj" />
     <ProjectReference Include="..\..\src\GreyHaven.Presentation\GreyHaven.Presentation.csproj" />
     <ProjectReference Include="..\..\src\GreyHaven.Reports\GreyHaven.Reports.csproj" />
+    <ProjectReference Include="..\..\src\GreyHaven.Media\GreyHaven.Media.csproj" />
     <ProjectReference Include="..\..\tools\GreyHaven.IndexBuilder\GreyHaven.IndexBuilder.csproj" />
   </ItemGroup>
   <ItemGroup>
@@ -25,5 +26,6 @@
     <None Include="..\..\docs\secure-boot.md" Link="docs\secure-boot.md" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\samples\*.json" Link="samples\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="Fixtures\**\*.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Fixtures\media\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

@@ -126,6 +126,8 @@ public sealed class DistroEdition
     public int? IsoBuild { get; set; }
     /// <summary>Size in bytes of the official installer file (ISO), shown to users before downloading.</summary>
     public long? InstallerBytes { get; set; }
+    /// <summary>Where GreyHaven downloads the installer and how it checks it.</summary>
+    public DownloadInfo? Download { get; set; }
 }
 
 /// <summary>How to detect a newer release of a distro. See DistroReleaseChecker.</summary>
@@ -144,4 +146,19 @@ public sealed class SourceLink
     public List<string> Distros { get; set; } = [];
 
     public bool AppliesTo(string distroId) => Distros.Count == 0 || Distros.Contains(distroId);
+}
+
+/// <summary>An edition's download: a file with a signed checksum list, or (Pop!_OS) System76's build API.</summary>
+public sealed class DownloadInfo
+{
+    public string? File { get; set; }
+    public string? Url { get; set; }
+    public string? Checksums { get; set; }
+    public string? Signature { get; set; }
+    /// <summary>Public key file, relative to data/.</summary>
+    public string? Key { get; set; }
+    /// <summary>The key's full fingerprint, as the distro publishes it. A key file that doesn't match is refused.</summary>
+    public string? KeyFingerprint { get; set; }
+    /// <summary>Pop!_OS: https://api.pop-os.org/builds/... returns the ISO address and its SHA-256.</summary>
+    public string? Api { get; set; }
 }

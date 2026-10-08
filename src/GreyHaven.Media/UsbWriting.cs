@@ -1,0 +1,84 @@
+namespace GreyHaven.Media;
+
+/// <summary>A disk as Windows describes it. Filled by the Windows code (WMI MSFT_Disk / Win32_DiskDrive).</summary>
+/// <param name="Number">Windows' disk number (\\.\PhysicalDriveN).</param>
+/// <param name="IsUsb">Bus type is USB.</param>
+/// <param name="IsRemovableMedia">Windows calls it removable (most USB sticks; some fast ones say "fixed").</param>
+/// <param name="HoldsWindows">It has the Windows, boot or system partition, or a page file.</param>
+public sealed record DiskInfo(int Number, string Model, long SizeBytes, bool IsUsb, bool IsRemovableMedia, bool HoldsWindows, bool IsReadOnly, bool IsOffline);
+
+/// <summary>Whether a disk may be written, and what to tell the person if not.</summary>
+public sealed record StickCheck(bool CanUse, string? Problem, string? Warning);
+
+/// <summary>
+/// The rules for which disks GreyHaven will ever write. Checked in the app (to list sticks) and
+/// again inside the elevated helper, right before writing, which never trusts the app's word.
+/// </summary>
+public static class UsbSafety
+{
+    public const long MinimumBytes = 8L * 1000 * 1000 * 1000 * 95 / 100;   // "8 GB" sticks hold a little less
+    /// <summary>Bigger than this is almost certainly an external drive, not a stick.</summary>
+    public const long MaximumBytes = 256L * 1000 * 1000 * 1000;
+
+    /// <summary>Only USB disks are shown at all; the rest are never listed.</summary>
+    public static bool IsListed(DiskInfo d) => d.IsUsb && !d.HoldsWindows;
+
+    public static StickCheck Check(DiskInfo d, long imageBytes)
+    {
+        if (!d.IsUsb) return new(false, "This isn't a USB drive.", null);
+        if (d.HoldsWindows) return new(false, "Windows is on this drive.", null);
+        if (d.IsReadOnly) return new(false, "This stick is write-protected. Some sticks have a small lock switch on the side.", null);
+        if (d.IsOffline) return new(false, "Windows has this drive switched off (offline).", null);
+        if (d.SizeBytes > MaximumBytes) return new(false, $"This drive holds {Gb(d.SizeBytes)}. That's an external drive, not a USB stick, so GreyHaven won't erase it.", null);
+        if (d.SizeBytes < Math.Max(MinimumBytes, imageBytes))
+            return new(false, $"This stick is too small: {Gb(d.SizeBytes)}. You need one that holds at least {Gb(Math.Max(8_000_000_000, imageBytes))}.", null);
+        return new(true, null, d.IsRemovableMedia ? null : "Windows calls this a hard drive rather than a stick. Make sure it's the one you want to erase.");
+    }
+
+    public static string Gb(long bytes) => $"{Math.Round(bytes / 1e9):0} GB";
+}
+
+/// <summary>Writes an installer image to a disk and reads it back. The disk is anything with a sector size (a file in tests).</summary>
+public static class ImageWriter
+{
+    public const string Writing = "Writing to the stick";
+    public const string Verifying = "Checking the stick";
+
+    /// <summary>
+    /// Copies <paramref name="image"/> to the start of <paramref name="disk"/> in sector-aligned
+    /// chunks (the last one padded with zeros), then reads back the image's length and compares
+    /// its SHA-256 with <paramref name="expectedSha256"/>. Throws if they differ.
+    /// </summary>
+    public static async Task WriteAndVerifyAsync(Stream image, long imageLength, Stream disk, int sectorSize, string expectedSha256,
+        IProgress<MediaProgress>? progress, CancellationToken ct)
+    {
+        if (sectorSize <= 0 || (sectorSize & (sectorSize - 1)) != 0) throw new ArgumentException("Sector size must be a power of two.", nameof(sectorSize));
+        var chunk = 4 << 20; // a multiple of every sector size
+        var buffer = new byte[chunk];
+        long done = 0;
+        disk.Position = 0;
+        while (done < imageLength)
+        {
+            ct.ThrowIfCancellationRequested();
+            var want = (int)Math.Min(chunk, imageLength - done);
+            var got = 0;
+            while (got < want)
+            {
+                var n = await image.ReadAsync(buffer.AsMemory(got, want - got), ct).ConfigureAwait(false);
+                if (n == 0) throw new IOException("The installer file ended early.");
+                got += n;
+            }
+            var aligned = (got + sectorSize - 1) / sectorSize * sectorSize;
+            if (aligned > got) Array.Clear(buffer, got, aligned - got);
+            await disk.WriteAsync(buffer.AsMemory(0, aligned), ct).ConfigureAwait(false);
+            done += got;
+            progress?.Report(new MediaProgress(Writing, done, imageLength));
+        }
+        await disk.FlushAsync(ct).ConfigureAwait(false);
+
+        disk.Position = 0;
+        var sha = await Checksums.Sha256Async(disk, imageLength, new Progress<long>(d => progress?.Report(new MediaProgress(Verifying, d, imageLength))), ct).ConfigureAwait(false);
+        if (sha != expectedSha256)
+            throw new IOException("The stick doesn't read back exactly what was written. It may be faulty. Try another stick.");
+    }
+}

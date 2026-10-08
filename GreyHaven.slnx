@@ -4,6 +4,7 @@
     <Project Path="src/GreyHaven.Cli/GreyHaven.Cli.csproj" />
     <Project Path="src/GreyHaven.Compat/GreyHaven.Compat.csproj" />
     <Project Path="src/GreyHaven.Core/GreyHaven.Core.csproj" />
+    <Project Path="src/GreyHaven.Media/GreyHaven.Media.csproj" />
     <Project Path="src/GreyHaven.Presentation/GreyHaven.Presentation.csproj" />
     <Project Path="src/GreyHaven.Ratings/GreyHaven.Ratings.csproj" />
     <Project Path="src/GreyHaven.Reports/GreyHaven.Reports.csproj" />

@@ -130,6 +130,15 @@ distros:
         name: Cinnamon
         isoKernel: mint-6.14.0-37
         installerBytes: 3091660800   # linuxmint-22.3-cinnamon-64bit.iso, mirrors.edge.kernel.org, 2026-10-05
+        # Checked 2026-10-07: the key's fingerprint matches Linux Mint's Installation Guide and it
+        # verifies sha256sum.txt.gpg ("Good signature").
+        download:
+          file: linuxmint-22.3-cinnamon-64bit.iso
+          url: https://mirrors.edge.kernel.org/linuxmint/stable/22.3/linuxmint-22.3-cinnamon-64bit.iso
+          checksums: https://mirrors.edge.kernel.org/linuxmint/stable/22.3/sha256sum.txt
+          signature: https://mirrors.edge.kernel.org/linuxmint/stable/22.3/sha256sum.txt.gpg
+          key: keys/linuxmint-iso.asc
+          keyFingerprint: 27DEB15644C6B3CF3BD7D291300F846BA25BAE09
     updatesKernel: mint-6.14.0-37
     liveUsb:
       makeUsb:
@@ -165,6 +174,15 @@ distros:
         name: Desktop
         isoKernel: ubuntu-7.0.0-30
         installerBytes: 6482409472   # ubuntu-26.04.1-desktop-amd64.iso, releases.ubuntu.com, 2026-10-05
+        # Checked 2026-10-07: the key's fingerprint matches Ubuntu's "How to verify" tutorial and it
+        # verifies SHA256SUMS.gpg ("Good signature").
+        download:
+          file: ubuntu-26.04.1-desktop-amd64.iso
+          url: https://releases.ubuntu.com/26.04.1/ubuntu-26.04.1-desktop-amd64.iso
+          checksums: https://releases.ubuntu.com/26.04.1/SHA256SUMS
+          signature: https://releases.ubuntu.com/26.04.1/SHA256SUMS.gpg
+          key: keys/ubuntu-cdimage.asc
+          keyFingerprint: 843938DF228D22F7B3742BC0D94AA3F0EFE21092
     updatesKernel: ubuntu-7.0.0-30
     liveUsb:
       makeUsb:
@@ -200,11 +218,16 @@ distros:
         isoKernel: pop-6.16.3
         isoBuild: 20
         installerBytes: 2955067392   # api.pop-os.org/builds/24.04/intel, 2026-10-05
+        # System76 publishes a SHA-256 checksum (over HTTPS) but no signature.
+        download:
+          api: https://api.pop-os.org/builds/24.04/intel
       - id: nvidia
         name: NVIDIA ISO
         isoKernel: pop-7.0.11
         isoBuild: 28
         installerBytes: 3934945280   # api.pop-os.org/builds/24.04/nvidia, 2026-10-05
+        download:
+          api: https://api.pop-os.org/builds/24.04/nvidia
         selectWhen: nvidiaGpu
         preinstalledDrivers: [nvidia]
     updatesKernel: pop-7.1.5

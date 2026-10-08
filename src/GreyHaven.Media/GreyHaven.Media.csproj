@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Downloading, checking and writing the Linux installer. Cross-platform, so it's tested on Linux;
+       only raw disk access (in GreyHaven.Helper) is Windows-specific. -->
+  <ItemGroup>
+    <ProjectReference Include="..\GreyHaven.Core\GreyHaven.Core.csproj" />
+    <PackageReference Include="BouncyCastle.Cryptography" Version="2.7.0" />
+  </ItemGroup>
+</Project>
