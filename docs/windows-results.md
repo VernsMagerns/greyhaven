@@ -218,6 +218,40 @@ Anything confusing, slow, too wordy or missing:
 
 ---
 
+## 10. Afterwards: your real switch (Ubuntu, Keep Windows too)
+
+Make the stick again if you erased it, then follow the phone guide from "Install Ubuntu". The
+guide was checked against Ubuntu 26.04's own install tutorial and the installer's text
+(26.04.1). Things I'm **not fully sure of**, to watch for:
+
+1. **Opening the installer after Try Ubuntu.** The desktop icon may start again at the
+   language screen, and may or may not show "Try or install" again. Either way, follow it
+   through to Disk setup.
+2. **The Disk setup option's exact name.** The installer builds it from what it finds:
+   expect **Install Ubuntu alongside Windows Boot Manager**. If it says something else with
+   "alongside" in it, that's the one. If there's **no** alongside option, stop and tell me:
+   don't pick Erase disk.
+3. **The divider screen picks the largest partition on the drive by itself.** If you have
+   more than one drive, check it's resizing the drive and partition you expect (the Windows
+   one, usually the biggest). Write down what it showed.
+4. **Optimise your computer** should say "NVIDIA graphics card detected". Tick both boxes. The
+   26.04 installer has a "Configure Secure Boot" screen, but it's switched off in its code, so
+   you shouldn't be asked for a security key. If you are, choose a key you'll remember and
+   note it down.
+5. **After installing**, the NVIDIA driver is probably already installed (you were online
+   and ticked the box). Check Software & Updates → Additional Drivers. A blue **Enroll MOK**
+   screen at restart is unlikely, because Ubuntu's driver is signed. If it appears anyway,
+   choose Enroll MOK → Continue and type the password.
+6. **The boot menu.** After installing, the PC should show a menu (Ubuntu / Windows Boot
+   Manager). If it goes straight to Ubuntu or straight to Windows, note which.
+7. **The Windows clock** may be a few hours off the first time you go back to Windows. The
+   guide says how to fix it. Tell me if it happens, so I know the tip is right.
+8. **"Use a device"** depends on your MSI firmware. If the stick wasn't listed in session 2,
+   use F11. If F11 does nothing either, MSI's "Fast Boot" setting may be skipping the
+   keyboard at startup. Tell me rather than changing settings blind.
+
+Note anything else that differed from the guide's words or pictures.
+
 ## Bringing results back
 
 1. Copy **`greyhaven-raw.json`** (from step 2) into the project folder on the Linux laptop
