@@ -129,6 +129,13 @@ public class MediaTests
             Assert.Equal(content, await File.ReadAllBytesAsync(path));
             Assert.Equal(1_000_000, fake.Requests.Single().Headers.Range!.Ranges.First().From);
 
+            // Not enough room on the drive: a plain message, and nothing is written.
+            var big = new ResolvedInstaller("https://x/z.iso", "z.iso", sha, null, CheckKind.SignedChecksum);
+            var full = await Assert.ThrowsAsync<InstallerCheckException>(() => InstallerDownloader.DownloadAsync(
+                new HttpClient(new FakeHttp(_ => new(HttpStatusCode.OK) { Content = new ByteArrayContent(content) })), big, dir, null, CancellationToken.None, freeBytes: 100_000_000));
+            Assert.Contains("needs about 1 GB free", full.Message);
+            Assert.False(File.Exists(Path.Combine(dir, "z.iso.part")));
+
             // A file that isn't the official one is deleted.
             var bad = new ResolvedInstaller("https://x/y.iso", "y.iso", new string('0', 64), null, CheckKind.SignedChecksum);
             await Assert.ThrowsAsync<InstallerCheckException>(() => InstallerDownloader.DownloadAsync(new HttpClient(new FakeHttp(_ => new(HttpStatusCode.OK) { Content = new ByteArrayContent(content) })), bad, dir, null, CancellationToken.None));

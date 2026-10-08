@@ -52,6 +52,12 @@ public sealed class WindowsSwitchServices(Lazy<CompatibilityData> data) : ISwitc
         catch (System.ComponentModel.Win32Exception) { return false; }
     }
 
+    public void RemoveDownload(string path)
+    {
+        try { File.Delete(path); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { } // it can be deleted by hand; nothing depends on it
+    }
+
     public string? SaveGuide(string html)
     {
         try

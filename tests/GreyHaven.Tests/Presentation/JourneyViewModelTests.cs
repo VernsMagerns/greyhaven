@@ -35,6 +35,8 @@ internal sealed class FakeSwitch : ISwitchServices
     }
     public bool RestartToAdvancedStartup() { Restarts++; return true; }
     public string? SaveGuide(string html) { Saved = html; return @"C:\Users\x\Documents\GreyHaven\GreyHaven guide.html"; }
+    public List<string> Removed { get; } = [];
+    public void RemoveDownload(string path) => Removed.Add(path);
 }
 
 public class JourneyViewModelTests
@@ -128,6 +130,7 @@ public class JourneyViewModelTests
         Assert.Equal((4, "SanDisk Ultra", 16_008_609_792L, new string('b', 64)), (request!.Disk!.Value, request.Model, request.Size!.Value, request.Sha256));
         Assert.True(usb.IsDone);
         Assert.True(vm.CanGoOn);
+        Assert.Equal([@"C:\Users\x\AppData\Local\GreyHaven\downloads\x.iso"], sw.Removed); // its space can go to Linux
     }
 
     [Fact]

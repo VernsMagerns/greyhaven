@@ -71,6 +71,15 @@ public sealed record MediaProgress(string Stage, long Done, long? Total)
 /// <summary>Downloads the installer to a folder, resuming a partial download, and checks its fingerprint.</summary>
 public static class InstallerDownloader
 {
+    /// <summary>Room left over after the download, so Windows doesn't run completely out of space.</summary>
+    public const long SpareBytes = 500_000_000;
+
+    private static long FreeSpace(string folder)
+    {
+        try { return new DriveInfo(Path.GetPathRoot(Path.GetFullPath(folder))!).AvailableFreeSpace; }
+        catch (Exception ex) when (ex is IOException or ArgumentException or UnauthorizedAccessException) { return long.MaxValue; } // can't tell: let Windows decide
+    }
+
     public const string Downloading = "Downloading";
     public const string Checking = "Checking the file";
 
@@ -78,7 +87,9 @@ public static class InstallerDownloader
     /// Returns the path of a checked file. An existing complete file is checked, not downloaded
     /// again. A file whose fingerprint doesn't match is deleted, and an exception says so.
     /// </summary>
-    public static async Task<string> DownloadAsync(HttpClient http, ResolvedInstaller installer, string folder, IProgress<MediaProgress>? progress, CancellationToken ct)
+    /// <param name="freeBytes">Free space where the file goes; read from the drive when null (tests pass a value).</param>
+    public static async Task<string> DownloadAsync(HttpClient http, ResolvedInstaller installer, string folder, IProgress<MediaProgress>? progress, CancellationToken ct,
+        long? freeBytes = null)
     {
         Directory.CreateDirectory(folder);
         var path = Path.Combine(folder, installer.FileName);
@@ -92,6 +103,9 @@ public static class InstallerDownloader
             if (have > 0 && response.StatusCode != System.Net.HttpStatusCode.PartialContent) have = 0; // server ignored the range: start again
             response.EnsureSuccessStatusCode();
             var total = (response.Content.Headers.ContentLength is { } len ? len + have : installer.Bytes);
+            if (total is { } t && t - have + SpareBytes > (freeBytes ?? FreeSpace(folder)))
+                throw new InstallerCheckException(
+                    $"Your Windows drive needs about {Math.Ceiling((t - have + SpareBytes) / 1e9):0} GB free for the download. Free up some space (for example, empty the Recycle Bin), then try again.");
             await using (var file = new FileStream(part, have > 0 ? FileMode.Append : FileMode.Create, FileAccess.Write, FileShare.None, 1 << 20, useAsync: true))
             await using (var body = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false))
             {

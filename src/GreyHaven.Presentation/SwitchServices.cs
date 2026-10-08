@@ -20,6 +20,8 @@ public interface ISwitchServices
     bool RestartToAdvancedStartup();
     /// <summary>Saves the person's guide as Documents\GreyHaven\GreyHaven guide.html; returns the path, or null if it couldn't.</summary>
     string? SaveGuide(string html);
+    /// <summary>Deletes the downloaded installer once the stick is checked, so its space can go to Linux.</summary>
+    void RemoveDownload(string path);
 }
 
 /// <summary>Demo mode: a pretend 16 GB stick, a quick pretend download and write. Never touches a disk.</summary>
@@ -29,6 +31,7 @@ public sealed class DemoSwitchServices(TimeSpan? step = null) : ISwitchServices
     public bool IsDemo => true;
     public List<HelperAction> Elevated { get; } = [];
     public string? SavedGuide { get; private set; }
+    public void RemoveDownload(string path) { }
 
     public Task<IReadOnlyList<DiskInfo>> ListUsbSticksAsync(CancellationToken ct) =>
         Task.FromResult<IReadOnlyList<DiskInfo>>([new DiskInfo(9, "SanDisk Ultra (pretend)", 16_008_609_792, true, true, false, false, false)]);

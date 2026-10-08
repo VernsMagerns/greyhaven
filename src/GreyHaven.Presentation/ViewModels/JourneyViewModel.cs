@@ -237,6 +237,7 @@ public sealed partial class UsbViewModel : ObservableObject
             Message = result.Kind == HelperMessage.Ok ? null : result.Text; // "ready" is already the big heading
             State = result.Kind == HelperMessage.Ok ? "done" : result.Kind == HelperMessage.Refused && _cts.IsCancellationRequested ? "stopped" : "failed";
             if (State is "done" or "failed") _owner.Services.Play(State == "done" ? SoundCue.Done : SoundCue.Problem);
+            if (State == "done") _owner.Switch.RemoveDownload(path); // checked on the stick; free the 6 GB for Linux
         }
         catch (OperationCanceledException)
         {
