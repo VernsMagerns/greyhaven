@@ -145,6 +145,15 @@ ol.picture-steps li > p { margin-top: 6px; font-weight: 600; }
 .bigkey { font-family: var(--gh-font-heading); font-size: 40px; font-weight: 800; margin: 0; }
 .sim .progress-fill { height: 12px; border: 2px solid var(--gh-card-border); border-radius: 999px; overflow: hidden; margin: 12px 0 6px; }
 .sim .progress-fill span { display: block; height: 100%; width: 0; background: var(--gh-works); transition: width .15s; }
+/* ---- Your apps (Part C) ---------------------------------------------------------------------- */
+ul.applist { list-style: none; padding: 0; margin: 0 0 12px; }
+li.app { border-bottom: 1px solid var(--gh-card-border); padding: 10px 0; }
+.app-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+ul.alts { margin: 4px 0 6px; padding-left: 20px; }
+ul.alts li { margin: 4px 0; }
+li.app .check { margin: 6px 0 0; }
+li.app code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 13px; overflow-wrap: anywhere; }
+
 /* ---- Part B walkthrough ----------------------------------------------------------------------- */
 ol.phases { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; list-style: none; padding: 0; margin: 0 0 18px; }
 ol.phases li { display: flex; gap: 8px; align-items: center; padding: 8px 10px; border: 2px solid var(--gh-card-border); border-radius: var(--radius-small); background: var(--gh-card); font-size: 14px; line-height: 1.2; }

@@ -29,7 +29,7 @@ const screen = $("#screen");
 const announce = text => { $("#live").textContent = ""; setTimeout(() => ($("#live").textContent = text), 50); };
 const query = new URLSearchParams(location.search);
 
-const state = { sample: null, samples: [], report: null, path: null, distro: null, saved: null };
+const state = { sample: null, samples: [], report: null, path: null, distro: null, saved: null, mustHave: new Set() };
 let rerender = () => {};
 
 // ---- Look (brand) and appearance ------------------------------------------------------------
@@ -212,6 +212,8 @@ function loadReport() {
   state.distro = selectedDistroId() ?? state.report.distros[0].distroId;
   state.saved = null;
   Object.assign(walk, { i: 0, install: null, done: {}, tasks: {}, usb: { stage: "waiting" }, restarted: false });
+  state.mustHave = new Set();
+  state.appsOpen = false;
 }
 
 // ---- Results ---------------------------------------------------------------------------------
@@ -230,6 +232,7 @@ function showResults(focus) {
         <h1>${esc(paths.length ? headline(best.score.score) : "We can't suggest a version of Linux yet")}</h1>
         ${paths.length ? `<p class="suggest">We suggest <strong>${esc(distroName(chosen))}</strong>.</p>` : ""}
         <p>${esc(partsSummary(best.distroId))}</p>
+        ${mustHaveProblems().length ? `<p class="warn-line"><strong>${plural(mustHaveProblems().length, "app you need", "apps you need")}</strong> won't work on Linux. Keep Windows too, so you can still use ${mustHaveProblems().length === 1 ? "it" : "them"}.</p>` : ""}
         ${paths.length ? `<p><button class="accent big" id="howto">Show me how to switch →</button></p>` : ""}
         ${r.profile.system.isArm ? `<p class="warn-line">This PC has an ARM chip. Linux support for these PCs is still limited.</p>` : ""}
       </div>
@@ -260,6 +263,8 @@ function showResults(focus) {
 
     <h2>Your PC's parts on ${esc(distroName(state.distro))}</h2>
     <div id="parts"></div>
+
+    <div id="apps"></div>
 
     ${r.caveats.length ? more(`${plural(r.caveats.length, "thing", "things")} to test before you install`, `
       <p>We can't check ${r.caveats.length === 1 ? "this" : "these"} from Windows. Test ${r.caveats.length === 1 ? "it" : "them"} by trying Linux from a USB stick first.</p>
@@ -297,6 +302,7 @@ function showResults(focus) {
   $("#showsaved").addEventListener("click", () => window.open(state.saved.href, "_blank", "noopener"));
   $("#again").addEventListener("click", showStart);
   renderParts();
+  renderApps();
   renderSaved();
   if (focus) focusHeading();
 }
@@ -355,6 +361,61 @@ function renderParts() {
       `<p>The chipset is the wiring on your PC's main board that connects everything else. Linux handles these parts by itself.</p>${rows(chipset)}`) : ""}`;
   $("#parts").querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
     navigator.clipboard?.writeText(b.dataset.copy).then(() => announce("Copied"), () => {});
+  }));
+}
+
+// ---- Your apps (Part C) -------------------------------------------------------------------------
+// Same words as the app: everything comes from JourneyJson (AppRater, LinuxAppInstalls, AppWords).
+const appData = () => window.GH_DATA.journeys[state.sample]?.[state.path ?? state.report.recommendation.paths[0]?.kind]?.none;
+const APP_BADGE = {
+  works: ["✓", "works"], worksWithLayer: ["⚙︎", "extrastep"], useWeb: ["↗", "extrastep"],
+  wontWork: ["✗", "unsupported"], notNeeded: ["–", "works"], notSure: ["?", "unknown"],
+};
+const CLOSENESS = { same: "Does the same job", close: "Very close", partial: "Does part of it" };
+function mustHaveProblems() {
+  const d = appData();
+  return d ? d.apps.filter(a => state.mustHave.has(a.name) && a.mustHaveWarning) : [];
+}
+function getLine(g) {
+  if (!g) return "";
+  const where = g.link ? `<a href="${esc(g.link)}" target="_blank" rel="noopener">${esc(g.where)}</a>` : esc(g.where);
+  return `<p class="small">Get it: ${where}${g.command ? ` <span class="secondary">or type</span> <code>${esc(g.command)}</code>` : ""}</p>`;
+}
+function appRow(a) {
+  const [glyph, colour] = APP_BADGE[a.verdict];
+  const id = `must-${a.name.replace(/[^a-z0-9]/gi, "")}`;
+  return `<li class="app">
+    <div class="app-head"><span class="strong">${esc(a.name)}</span>
+      <span class="badge c-${colour}"><span class="glyph" aria-hidden="true">${glyph}</span>${esc(a.verdictText)}${a.layer ? ` (${esc(a.layer)})` : ""}</span></div>
+    <p>${esc(a.summary)}</p>
+    ${a.linux && a.verdict === "works" ? getLine(a.linux.get) : ""}
+    ${a.webUrl ? `<p class="small"><a href="${esc(a.webUrl)}" target="_blank" rel="noopener">Open ${esc(a.name)} on the web</a></p>` : ""}
+    ${a.hardware.map(h => `<p class="small secondary">Uses your ${esc(h)}</p>`).join("")}
+    ${a.alternatives.length ? `<ul class="alts">${a.alternatives.map(x => `<li><span class="strong">${esc(x.name)}</span> <span class="tag">${esc(CLOSENESS[x.closeness])}</span>
+        <br>${esc(x.note)}${getLine(x.get)}${x.hardware.map(h => `<span class="small secondary">Uses your ${esc(h)}</span>`).join("")}</li>`).join("")}</ul>` : ""}
+    ${a.sources.length ? `<p class="small secondary">Source: ${a.sources.map(s => `<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`).join(" · ")}</p>` : ""}
+    <label class="check small"><input type="checkbox" id="${id}" data-must="${esc(a.name)}" ${state.mustHave.has(a.name) ? "checked" : ""}> <span>I need this app</span></label>
+    ${state.mustHave.has(a.name) && a.mustHaveWarning ? `<p class="warn-line" role="status">${esc(a.mustHaveWarning)}</p>` : ""}
+  </li>`;
+}
+function renderApps() {
+  const d = appData();
+  const el = $("#apps");
+  if (!d || !d.apps.length) { el.innerHTML = ""; return; }
+  const groups = {};
+  for (const a of d.apps) (groups[a.category] ??= []).push(a);
+  el.innerHTML = `
+    <h2>Your apps</h2>
+    <p>${esc(d.appSummary)}</p>
+    <p class="secondary small">Your app list stays on your PC. It's checked against GreyHaven's own list, and left out of saved reports unless you choose.</p>
+    ${more(`Show your ${d.apps.length} apps`, Object.entries(groups).map(([cat, list]) =>
+      `<h3>${esc(cat)}</h3><ul class="applist">${list.map(appRow).join("")}</ul>`).join(""), state.appsOpen)}`;
+  $("details", el).addEventListener("toggle", e => (state.appsOpen = e.target.open));
+  el.querySelectorAll("[data-must]").forEach(c => c.addEventListener("change", () => {
+    if (c.checked) state.mustHave.add(c.dataset.must); else state.mustHave.delete(c.dataset.must);
+    const id = c.id;
+    showResults(false);
+    $(`#${id}`)?.focus();
   }));
 }
 
@@ -491,6 +552,7 @@ function init() {
   if (query.get("screen") === "working") { scan(true); return; }
   if (query.get("screen") === "walk" || query.get("screen") === "allsteps") {
     loadReport();
+    for (const m of query.getAll("must")) state.mustHave.add(m);
     if (state.report.recommendation.paths.some(p => p.kind === query.get("path"))) { state.path = query.get("path"); state.distro = selectedDistroId(); }
     if (query.get("install")) walk.install = { keep: "keepWindows", replace: "replaceWindows" }[query.get("install")] ?? null;
     if (query.get("screen") === "allsteps") showAllSteps(); else showWalkthrough(Number(query.get("step") || 1) - 1);
@@ -499,6 +561,8 @@ function init() {
   }
   if (query.get("screen") === "results") {
     loadReport();
+    for (const m of query.getAll("must")) state.mustHave.add(m);
+    state.appsOpen = query.get("apps") === "open";
     if (state.report.recommendation.paths.some(p => p.kind === query.get("path"))) { state.path = query.get("path"); state.distro = selectedDistroId(); }
     showResults(true);
     if (query.get("open") === "all") screen.querySelectorAll("details").forEach(d => (d.open = true));

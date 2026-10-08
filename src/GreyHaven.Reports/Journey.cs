@@ -468,12 +468,84 @@ public static class JourneyBuilder
         var old = WalkthroughBuilder.AfterInstalling(c.R, c.Path, c.Name);
         var body = old.Body.ToList();
         var help = body.FindIndex(b => b is Heading { Text: "Where to get help" });
-        body.InsertRange(help < 0 ? body.Count : help,
-        [
-            new Heading(3, "Install your apps"),
-            P("Your personal list of apps, with where to get each one, will appear here."),
-        ]);
+        body.InsertRange(help < 0 ? body.Count : help, InstallYourApps(c.R, c.Path.DistroId));
         return Step("after", JourneyPhase.OnTheStick, "After installing", $"A few last things to make {c.Name} yours.", body, old.Tip);
+    }
+
+    /// <summary>
+    /// The person's own list of Linux apps to install, with where to get each on their distro, and
+    /// one optional block of commands that installs them all. Private: only in the app and the
+    /// printed or saved copy, never on the public phone guide.
+    /// </summary>
+    public static IReadOnlyList<Block> InstallYourApps(CompatibilityReport r, string distroId)
+    {
+        var blocks = new List<Block> { new Heading(3, "Install your apps") };
+        var picks = new List<(Core.Apps.LinuxApp App, string For)>();
+        var web = new List<(string Name, string Url)>();
+        foreach (var a in r.Apps)
+        {
+            switch (a.Verdict)
+            {
+                case Core.Apps.AppVerdict.Works or Core.Apps.AppVerdict.WorksWithLayer when a.Linux is not null:
+                    picks.Add((a.Linux, a.Name));
+                    break;
+                case Core.Apps.AppVerdict.UseWeb when a.WebUrl is not null:
+                    web.Add((a.Name, a.WebUrl));
+                    if (a.Alternatives.FirstOrDefault(x => x.App is not null) is { App: { } webAlt }) picks.Add((webAlt, a.Name));
+                    break;
+                case Core.Apps.AppVerdict.WontWork when a.Alternatives.FirstOrDefault() is { } alt:
+                    if (alt.App is not null) picks.Add((alt.App, a.Name));
+                    else if (alt.WebUrl is not null) web.Add((alt.WebName ?? a.Name, alt.WebUrl));
+                    break;
+            }
+        }
+        var apps = picks.GroupBy(p => p.App.Id).Select(g => (App: g.First().App, For: string.Join(", ", g.Select(x => x.For).Distinct()))).ToList();
+        if (apps.Count == 0 && web.Count == 0)
+        {
+            blocks.Add(P("GreyHaven didn't find any apps to set up. You can find more in " + Core.Apps.LinuxAppInstalls.StoreName(distroId) + "."));
+            return blocks;
+        }
+
+        var items = new List<IReadOnlyList<Inline>>();
+        var installs = apps.Select(x => (x.App, x.For, Get: Core.Apps.LinuxAppInstalls.For(x.App, distroId))).ToList();
+        foreach (var (app, forApp, get) in installs)
+        {
+            var line = new List<Inline> { new Strong(app.Name), new Text(app.Name == forApp ? ": " : $" (instead of {forApp}): ") };
+            line.Add(get.Link is { } link ? new Link(get.Where, link) : new Text(get.Where));
+            line.Add(new Text("."));
+            items.Add(line);
+        }
+        foreach (var (name, url) in web)
+            items.Add([new Strong(name), new Text(": "), new Link("open the website", url), new Text(". Add it to your browser's bookmarks.")]);
+        blocks.Add(P($"Tick each one once it's set up. In {Core.Apps.LinuxAppInstalls.StoreName(distroId)}, search for the app's name and click Install."));
+        blocks.Add(new ListBlock(ListKind.Checkboxes, items));
+
+        // One step, for people happy to use a terminal: each line is readable before it's run.
+        var commands = new List<string>();
+        var flatpaks = installs.Where(i => i.Get.Command?.StartsWith("flatpak install", StringComparison.Ordinal) == true).Select(i => i.App.Flathub!).ToList();
+        var snaps = installs.Where(i => i.Get.Command?.StartsWith("sudo snap install", StringComparison.Ordinal) == true && !i.App.Classic).Select(i => i.App.Snap!).ToList();
+        var classic = installs.Where(i => i.Get.Command?.StartsWith("sudo snap install", StringComparison.Ordinal) == true && i.App.Classic).Select(i => i.Get.Command!).ToList();
+        var apts = installs.Where(i => i.Get.Command?.StartsWith("sudo apt install", StringComparison.Ordinal) == true).Select(i => i.App.Apt!).ToList();
+        if (apts.Count > 0) commands.Add($"sudo apt install -y {string.Join(" ", apts)}");
+        if (flatpaks.Count > 0)
+        {
+            // Ubuntu doesn't include Flatpak; these are flathub.org/setup/Ubuntu's own steps.
+            if (distroId == "ubuntu")
+            {
+                commands.Add("sudo apt install -y flatpak");
+                commands.Add("sudo flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo");
+            }
+            commands.Add($"flatpak install -y flathub {string.Join(" ", flatpaks)}");
+        }
+        if (snaps.Count > 0) commands.Add($"sudo snap install {string.Join(" ", snaps)}");
+        commands.AddRange(classic);
+        if (commands.Count > 0)
+            blocks.Add(new Details("Or install them all at once",
+            [
+                P("Open a terminal, paste these lines and press Enter. They only install the apps above, from the official app stores. Apps that come from a website aren't included."),
+                new CommandBlock(commands),
+            ]));
+        return blocks;
     }
 
     /// <summary>Plain names for the phases, for the progress bar.</summary>

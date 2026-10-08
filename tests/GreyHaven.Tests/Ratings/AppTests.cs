@@ -185,4 +185,44 @@ public class AppTests
         Assert.True(apps.AntiCheat.Count > 1000);
         Assert.True(apps.ProtonDb.Count > 10_000);
     }
+
+    // ---- Where to get apps, the install list and must-have apps -----------------------------
+
+    [Fact]
+    public void Each_distro_gets_its_own_app_store()
+    {
+        var l = Data.Value.Apps.LinuxApps;
+        Assert.Equal(new LinuxAppInstall("App Center", "https://snapcraft.io/obs-studio", "sudo snap install obs-studio"), LinuxAppInstalls.For(l["obs-studio"], "ubuntu"));
+        Assert.Equal(new LinuxAppInstall("Software Manager", "https://flathub.org/apps/com.obsproject.Studio", "flatpak install -y flathub com.obsproject.Studio"), LinuxAppInstalls.For(l["obs-studio"], "mint"));
+        Assert.Equal("COSMIC Store", LinuxAppInstalls.For(l["obs-studio"], "pop-os").Where);
+        Assert.Equal("sudo snap install code --classic", LinuxAppInstalls.For(l["vscode"], "ubuntu").Command);
+        // Mint hides unverified Flathub listings, so Chrome comes from Google's website there.
+        Assert.Equal("Download it from the website", LinuxAppInstalls.For(l["chrome"], "mint").Where);
+        Assert.Equal("Already installed", LinuxAppInstalls.For(l["firefox"], "ubuntu").Where);
+        Assert.Equal("Open it in your web browser", LinuxAppInstalls.For(l["photopea"], "mint").Where);
+    }
+
+    [Fact]
+    public async Task Install_list_is_personal_and_one_step_commands_are_readable()
+    {
+        var profile = await SampleProfiles.Open("nvidia-desktop").ScanAsync();
+        var r = await new RatingEngine(Data.Value).RateAsync(profile, new RatingOptions { UseOnlineLookups = false });
+        var md = MarkdownReportWriter.Write(new ReportDocument("t", JourneyBuilder.InstallYourApps(r, "ubuntu").ToList()));
+        Assert.Contains("OpenWhispr", md);
+        Assert.Contains("(instead of FluidVox)", md);
+        var commands = JourneyBuilder.InstallYourApps(r, "ubuntu").OfType<Details>().Single().Content.OfType<CommandBlock>().Single().Lines;
+        Assert.Equal("sudo apt install -y flatpak", commands[1]); // Ubuntu needs Flatpak set up first
+        Assert.All(commands, c => Assert.Matches(@"^(sudo )?(apt|snap|flatpak) ", c));
+        // The public phone guide never has the list.
+        var pub = string.Concat(GreyHaven.Ratings.PhoneGuideSite.Pages(Data.Value).Select(p => HtmlReportWriter.Write(PublicGuideBuilder.Build(p))));
+        Assert.DoesNotContain("OpenWhispr", pub);
+    }
+
+    [Fact]
+    public void Must_have_apps_that_wont_work_say_keep_windows()
+    {
+        Assert.Contains("Keep Windows too", AppWords.MustHaveWarning(Rate("VALORANT")));
+        Assert.Null(AppWords.MustHaveWarning(Rate("OBS Studio")));
+        Assert.Null(AppWords.MustHaveWarning(Rate("ELDEN RING", AppSource.Steam, "1245620")));
+    }
 }

@@ -99,6 +99,19 @@ public static class AppWords
         _ => "Other apps",
     };
 
+    /// <summary>
+    /// What to say when the person marks this app "must have" and it won't run on Linux the way
+    /// they use it now; null when it's fine. Keeping Windows too is the way to keep using it.
+    /// </summary>
+    public static string? MustHaveWarning(RatedApp a) => a.Verdict switch
+    {
+        AppVerdict.WontWork => $"{a.Name} won't work on Linux. Keep Windows too, so you can still use it: each time your PC starts, you pick one.",
+        AppVerdict.WorksWithLayer when a.Confidence is Compatibility.Confidence.Low =>
+            $"{a.Name} may not work well on Linux. Keep Windows too, so you can still use it if it doesn't.",
+        AppVerdict.NotSure => $"We don't know if {a.Name} works on Linux. Keep Windows too until you've tried it.",
+        _ => null,
+    };
+
     /// <summary>"38 apps work. 6 have alternatives. 2 won't work." (plus a calm line for unknown apps).</summary>
     public static string Summary(IReadOnlyList<RatedApp> apps)
     {

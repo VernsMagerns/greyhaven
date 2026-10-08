@@ -98,6 +98,16 @@ function openPicture(btn) {
 // ---- Screens ----------------------------------------------------------------------------------
 const CHECK_ICON = { ok: ["✓", "c-works", "Good"], attention: ["!", "c-partial", "Note"], blocker: ["✗", "c-unsupported", "Can't do this yet"] };
 
+// Apps marked "I need this" that won't run on Linux: keeping Windows is the way to keep them.
+function mustHaveChecks(choice) {
+  const problems = mustHaveProblems();
+  if (!problems.length) return [];
+  const names = joinAnd(problems.map(a => a.name));
+  return choice === "keepWindows"
+    ? [{ state: "ok", text: `You can still use ${names} on Windows.` }]
+    : [{ state: "attention", text: `${names} won't work on Linux, and replacing Windows removes ${problems.length === 1 ? "it" : "them"}.` }];
+}
+
 function chooseScreen(s) {
   return `${blocks(s.body, s.id)}
     <div class="paths" role="radiogroup" aria-label="How to install">
@@ -105,9 +115,9 @@ function chooseScreen(s) {
         const on = walk.install === c.choice;
         return `<label class="option${on ? " selected" : ""}${c.possible ? "" : " disabled"}"><span class="path-label">
           <input type="radio" name="install" value="${c.choice}" ${on ? "checked" : ""} ${c.possible ? "" : "disabled"}>
-          <span><span class="path-head"><span class="strong">${esc(c.title)}</span>${c.recommended ? `<span class="tag">Suggested</span>` : ""}</span>
+          <span><span class="path-head"><span class="strong">${esc(c.title)}</span>${(c.recommended || (c.choice === "keepWindows" && c.possible && mustHaveProblems().length)) ? `<span class="tag">Suggested</span>` : ""}</span>
           ${c.lines.map(l => `<span class="path-line">${esc(l)}</span>`).join("")}
-          <ul class="checks-list">${c.checks.map(k => {
+          <ul class="checks-list">${[...c.checks, ...mustHaveChecks(c.choice)].map(k => {
             const [g, cls, word] = CHECK_ICON[k.state];
             return `<li><span class="glyph ${cls}" aria-hidden="true">${g}</span><span><span class="visually-hidden">${word}: </span>${esc(k.text)}</span></li>`;
           }).join("")}</ul></span></span></label>`;
