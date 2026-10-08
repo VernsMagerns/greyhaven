@@ -4,7 +4,7 @@
 guide at **https://greyhaven-guide.pages.dev/** (`GreyHavenInfo.PhoneGuideSite`), a free
 Cloudflare Pages site deployed by `.github/workflows/phone-guide.yml` on every push to `main`.
 
-**Status (8 October 2026):** live. The maintainer set up the account, token and secrets, ran the
+**Status (7 October 2026):** live. The maintainer set up the account, token and secrets, ran the
 workflow, and scanned the QR code on a phone over mobile data. QR codes use the page address
 without ".html" (Cloudflare Pages redirects "x.html" to "x"), so there's no redirect.
 
