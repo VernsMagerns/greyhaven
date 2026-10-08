@@ -211,7 +211,7 @@ public sealed partial class UsbViewModel : ObservableObject
                 r => r with { Disk = stick.Disk.Number, Model = stick.Disk.Model, Size = stick.Disk.SizeBytes, Image = path, Sha256 = installer.Sha256 },
                 new Progress<HelperMessage>(m => Report(new MediaProgress(m.Stage ?? "", m.Done, m.Total))), _cts.Token);
             PermissionNote = null;
-            Message = result.Text;
+            Message = result.Kind == HelperMessage.Ok ? null : result.Text; // "ready" is already the big heading
             State = result.Kind == HelperMessage.Ok ? "done" : result.Kind == HelperMessage.Refused && _cts.IsCancellationRequested ? "stopped" : "failed";
         }
         catch (OperationCanceledException)
