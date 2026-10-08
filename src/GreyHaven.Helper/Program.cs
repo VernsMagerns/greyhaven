@@ -111,6 +111,7 @@ internal static class Program
         using var volumes = RawDisk.LockVolumes(disk.Info.Number);
         await using var raw = RawDisk.Open(disk.Info.Number, disk.Info.SizeBytes, disk.SectorSize);
         await using var source = new FileStream(image.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 1 << 20, useAsync: true);
+        ImageWriter.ClearEnd(raw, disk.Info.SizeBytes, disk.SectorSize);
         var progress = new Progress<MediaProgress>(p => send(new HelperMessage(HelperMessage.Progress, p.Stage, p.Done, p.Total)));
         await ImageWriter.WriteAndVerifyAsync(source, image.Length, raw, disk.SectorSize, r.Sha256!, progress, ct);
         raw.RefreshLayout();

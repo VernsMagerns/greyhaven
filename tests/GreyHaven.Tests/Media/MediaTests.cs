@@ -14,6 +14,20 @@ public class MediaTests
     // ---- Signatures and checksums (real files from releases.ubuntu.com and kernel.org, 2026-10-07) ----
 
     [Fact]
+    public void The_end_of_the_stick_is_cleared_but_nothing_before_it()
+    {
+        var disk = new MemoryStream(Enumerable.Repeat((byte)0xAB, 3 << 20).ToArray());
+        ImageWriter.ClearEnd(disk, disk.Length, 512);
+        var bytes = disk.ToArray();
+        Assert.All(bytes[^ImageWriter.EndWipeBytes..], b => Assert.Equal(0, b));
+        Assert.Equal(0xAB, bytes[^(ImageWriter.EndWipeBytes + 1)]);
+
+        var tiny = new MemoryStream(new byte[4096]);               // smaller than the wipe: all of it, nothing past the end
+        ImageWriter.ClearEnd(tiny, tiny.Length, 512);
+        Assert.Equal(4096, tiny.Length);
+    }
+
+    [Fact]
     public void Real_signed_checksum_lists_verify_with_the_pinned_keys()
     {
         Assert.True(Signatures.Verify(File.ReadAllBytes(Fixture("ubuntu-SHA256SUMS")), File.ReadAllBytes(Fixture("ubuntu-SHA256SUMS.gpg")), Key("ubuntu-cdimage.asc"), UbuntuKey));

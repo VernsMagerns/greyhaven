@@ -57,6 +57,24 @@ public static class ImageWriter
     public const string Writing = "Writing to the stick";
     public const string Verifying = "Checking the stick";
 
+    /// <summary>How much of the end of the stick is cleared before writing.</summary>
+    public const int EndWipeBytes = 1 << 20;
+
+    /// <summary>
+    /// Zeros the last megabyte of the stick. A stick that was GPT-formatted keeps a backup copy of
+    /// its old partition table there, which the installer image doesn't overwrite; some PCs' startup
+    /// menus then show the stick as damaged or not at all. Rufus clears it the same way.
+    /// </summary>
+    public static void ClearEnd(Stream disk, long diskLength, int sectorSize)
+    {
+        if (sectorSize <= 0 || (sectorSize & (sectorSize - 1)) != 0) throw new ArgumentException("Sector size must be a power of two.", nameof(sectorSize));
+        var length = (int)Math.Min(EndWipeBytes, diskLength / sectorSize * sectorSize);
+        var start = (diskLength - length) / sectorSize * sectorSize;
+        disk.Position = start;
+        disk.Write(new byte[length]);
+        disk.Flush();
+    }
+
     /// <summary>
     /// Copies <paramref name="image"/> to the start of <paramref name="disk"/> in sector-aligned
     /// chunks (the last one padded with zeros), then reads back the image's length and compares
