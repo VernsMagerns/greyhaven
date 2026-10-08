@@ -133,13 +133,15 @@ try
 
     // A picture, enlarged, then closed with Escape.
     FindStarting(ControlType.Button, "Enlarge picture:").AsButton().Invoke();
-    var picture = Retry.WhileNull(() => app.GetAllTopLevelWindows(automation).FirstOrDefault(w => w.Title == "Picture"), timeout).Result
+    // It's a dialog owned by the main window, so it's one of the window's modal windows.
+    var picture = Retry.WhileNull(() => window.ModalWindows.FirstOrDefault(w => w.Title == "Picture"), timeout).Result
                   ?? throw new InvalidOperationException("The enlarged picture didn't open.");
     Thread.Sleep(500);
     Capture.Element(picture).ToFile(Path.Combine(outDir, "08c-picture-enlarged-light.png"));
     Console.WriteLine("saved 08c-picture-enlarged-light.png");
     FlaUI.Core.Input.Keyboard.Type(FlaUI.Core.WindowsAPI.VirtualKeyShort.ESCAPE);
-    Retry.WhileTrue(() => app.GetAllTopLevelWindows(automation).Any(w => w.Title == "Picture"), timeout);
+    if (!Retry.WhileTrue(() => window.ModalWindows.Any(w => w.Title == "Picture"), timeout).Success)
+        problems.Add("Escape didn't close the enlarged picture.");
 
     Next();
     Find("After you restart");

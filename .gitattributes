@@ -1,0 +1,4 @@
+# Signed files must keep their exact bytes (no line-ending conversion on Windows checkouts),
+# or their signatures stop matching.
+tests/GreyHaven.Tests/Fixtures/media/* -text
+data/keys/*.asc -text
