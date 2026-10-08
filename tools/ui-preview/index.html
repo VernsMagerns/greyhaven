@@ -22,6 +22,7 @@
     <strong>Design preview — not the real app.</strong>
     <label>Look <select id="brand"></select></label>
     <label>Sample PC <select id="sample"></select></label>
+    <label><input type="checkbox" id="hc"> High contrast (simulated)</label>
     <a href="../index.html">Preview index</a>
   </div>
   <p id="brandnote" class="preview-note"></p>
@@ -30,15 +31,7 @@
 <div class="window">
   <header class="topbar">
     <span class="appname">GreyHaven</span>
-    <span class="appearance">
-      <label for="theme"><u>A</u>ppearance</label>
-      <select id="theme">
-        <option value="system">Match Windows</option>
-        <option value="light">Light</option>
-        <option value="dark">Dark</option>
-        <option value="hc">High contrast (simulated)</option>
-      </select>
-    </span>
+    <button id="themetoggle" class="icon-toggle" type="button"></button>
   </header>
   <main id="screen" class="content" tabindex="-1"></main>
 </div>

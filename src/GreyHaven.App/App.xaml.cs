@@ -51,7 +51,8 @@ public partial class App : Application
         var vm = new MainViewModel(services, new Infrastructure.WindowsSwitchServices(data));
         _themes = new ThemeManager(this);
         _themes.Apply(vm.Theme);
-        vm.ThemeChanged += (_, theme) => _themes.Apply(theme);
+        vm.IsDarkNow = _themes.IsDark;
+        vm.ThemeChanged += (_, theme) => { _themes.Apply(theme); vm.IsDarkNow = _themes.IsDark; };
 
         var window = new MainWindow { DataContext = vm };
         window.SourceInitialized += (_, _) => _themes.ApplyTitleBar(window);

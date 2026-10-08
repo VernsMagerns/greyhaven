@@ -1,6 +1,7 @@
 <Window x:Class="GreyHaven.App.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:infra="clr-namespace:GreyHaven.App.Infrastructure"
         xmlns:views="clr-namespace:GreyHaven.App.Views"
         Title="{Binding WindowTitle}"
         Width="1000" Height="840" MinWidth="560" MinHeight="480"
@@ -14,14 +15,11 @@
         <Grid DockPanel.Dock="Top" Margin="24,12,24,4">
             <TextBlock Text="GreyHaven" FontFamily="{StaticResource HeadingFont}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"
                        Foreground="{DynamicResource GH.Text}" />
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Label x:Name="AppearanceLabel" Content="_Appearance" Target="{Binding ElementName=ThemeBox}"
-                       VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{DynamicResource GH.Text}" />
-                <ComboBox x:Name="ThemeBox" MinWidth="160"
-                          ItemsSource="{Binding ThemeOptions}" DisplayMemberPath="Label" SelectedValuePath="Value"
-                          SelectedValue="{Binding Theme}"
-                          AutomationProperties.LabeledBy="{Binding ElementName=AppearanceLabel}" />
-            </StackPanel>
+            <!-- Light/dark: one icon button. High Contrast always follows Windows. -->
+            <Button HorizontalAlignment="Right" Command="{Binding ToggleThemeCommand}" Padding="10,6" MinWidth="40" MinHeight="36"
+                    AutomationProperties.Name="{Binding ThemeToggleName}" ToolTip="{Binding ThemeToggleName}">
+                <infra:DecorativeText Text="{Binding ThemeToggleGlyph}" FontFamily="{StaticResource IconFont}" FontSize="18" />
+            </Button>
         </Grid>
 
         <ScrollViewer x:Name="Scroller" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">

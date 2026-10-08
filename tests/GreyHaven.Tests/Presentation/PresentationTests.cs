@@ -188,7 +188,19 @@ public class MainViewModelTests
 
         Assert.Equal(ThemeChoice.Dark, applied);
         Assert.Equal(ThemeChoice.Dark, services.Store.Saved.Theme);
-        Assert.Equal(3, vm.ThemeOptions.Count);
+    }
+
+    [Fact]
+    public void Theme_toggle_flips_light_and_dark_and_names_what_it_does()
+    {
+        var vm = new MainViewModel(FakeServices.ForSample("intel-laptop")) { IsDarkNow = false };
+        Assert.Equal("Switch to dark mode", vm.ThemeToggleName);
+        vm.ToggleThemeCommand.Execute(null);
+        Assert.Equal(ThemeChoice.Dark, vm.Theme);
+        vm.IsDarkNow = true; // the app reports back
+        Assert.Equal("Switch to light mode", vm.ThemeToggleName);
+        vm.ToggleThemeCommand.Execute(null);
+        Assert.Equal(ThemeChoice.Light, vm.Theme);
     }
 
     [Fact]

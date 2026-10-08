@@ -148,14 +148,12 @@ try
     CheckNames("walkthrough: after you restart");
 
     // Dark theme, on the walkthrough and back on the results.
-    var theme = window.FindFirstDescendant(cf => cf.ByControlType(ControlType.ComboBox))?.AsComboBox()
-                ?? throw new InvalidOperationException("Appearance box not found.");
-    theme.Select("Dark");
+    FindStarting(ControlType.Button, "Switch to dark mode").AsButton().Invoke();
     Shot("09-walkthrough-after-restart-dark.png");
     FindStarting(ControlType.Button, "← Back to results").AsButton().Invoke();
     Find("Your PC is ready for Linux");
     Shot("05-results-dark.png");
-    theme.Select("Match Windows");
+    FindStarting(ControlType.Button, "Switch to light mode").AsButton().Invoke();
 }
 catch (Exception ex)
 {

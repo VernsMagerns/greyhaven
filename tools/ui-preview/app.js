@@ -34,7 +34,9 @@ let rerender = () => {};
 
 // ---- Look (brand) and appearance ------------------------------------------------------------
 const brandBox = $("#brand");
-const themeBox = $("#theme");
+// Light/dark: one toggle, like the app. Until it's used, it follows the system. "hc" is preview-only.
+const themeBox = { value: "system" };
+const darkNow = () => themeBox.value === "dark" || (themeBox.value === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
 const BRANDS = window.GH_BRANDS;
 brandBox.innerHTML = BRANDS.map(b => `<option value="${esc(b.id)}">${esc(b.name)}</option>`).join("") + `<option value="classic">Today's look</option>`;
 
@@ -44,7 +46,12 @@ function recall(key) { try { return localStorage.getItem(key); } catch { return 
 function applyLook() {
   const root = document.documentElement;
   root.dataset.brand = brandBox.value;
-  if (themeBox.value === "system") delete root.dataset.theme; else root.dataset.theme = themeBox.value;
+  if ($("#hc").checked) root.dataset.theme = "hc";
+  else if (themeBox.value === "system") delete root.dataset.theme; else root.dataset.theme = themeBox.value;
+  const t = $("#themetoggle");
+  t.textContent = darkNow() ? "☀" : "☾";
+  t.setAttribute("aria-label", darkNow() ? "Switch to light mode" : "Switch to dark mode");
+  t.title = t.getAttribute("aria-label");
   const b = BRANDS.find(x => x.id === brandBox.value);
   $("#brandnote").innerHTML = b
     ? `<strong>${esc(b.name)}:</strong> ${esc(b.tagline)} Fonts: ${esc(b.headingFont.family)} and ${esc(b.bodyFont.family)} (both ${esc(b.bodyFont.licence)}). Pictures: ${esc(b.illustration)}`
@@ -55,7 +62,10 @@ function applyLook() {
 brandBox.value = query.get("brand") || recall("gh-brand") || "market"; // chosen 2026-10-06
 themeBox.value = query.get("theme") || recall("gh-theme") || "system";
 brandBox.addEventListener("change", () => { applyLook(); rerender(); });
-themeBox.addEventListener("change", applyLook);
+$("#themetoggle").addEventListener("click", () => { themeBox.value = darkNow() ? "light" : "dark"; applyLook(); });
+$("#hc").addEventListener("change", applyLook);
+$("#hc").checked = query.get("theme") === "hc";
+if (themeBox.value === "hc") themeBox.value = "system";
 applyLook();
 
 // ---- Words: distro names and plain-language helpers ------------------------------------------

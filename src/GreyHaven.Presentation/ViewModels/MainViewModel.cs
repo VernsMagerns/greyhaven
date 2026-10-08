@@ -7,8 +7,6 @@ namespace GreyHaven.Presentation.ViewModels;
 
 public enum Screen { Start, Working, Results, Walkthrough, Error }
 
-public sealed record ThemeOption(ThemeChoice Value, string Label);
-
 /// <summary>Top-level state: start screen, scanning, results or error, plus app settings.</summary>
 public sealed partial class MainViewModel : ObservableObject
 {
@@ -27,13 +25,6 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     public string WindowTitle => _services.DemoSample is { } s ? $"GreyHaven - demo ({s})" : "GreyHaven";
-
-    public IReadOnlyList<ThemeOption> ThemeOptions { get; } =
-    [
-        new(ThemeChoice.System, "Match Windows"),
-        new(ThemeChoice.Light, "Light"),
-        new(ThemeChoice.Dark, "Dark"),
-    ];
 
     public string? DemoText => _services.DemoSample is null ? null : "Demo: this is a sample PC, not yours.";
 
@@ -82,6 +73,19 @@ public sealed partial class MainViewModel : ObservableObject
         SaveSettings();
         ThemeChanged?.Invoke(this, value);
     }
+
+    /// <summary>Whether the app is dark right now (the app reports it: "Match Windows" depends on Windows).</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ThemeToggleGlyph), nameof(ThemeToggleName))]
+    public partial bool IsDarkNow { get; set; }
+
+    /// <summary>A moon in light mode (switch to dark), a sun in dark mode (Segoe MDL2 Assets, on every Windows).</summary>
+    public string ThemeToggleGlyph => IsDarkNow ? "\uE706" : "\uE708";
+    public string ThemeToggleName => IsDarkNow ? "Switch to light mode" : "Switch to dark mode";
+
+    /// <summary>The light/dark toggle. Until it's first used, GreyHaven follows Windows.</summary>
+    [RelayCommand]
+    private void ToggleTheme() => Theme = IsDarkNow ? ThemeChoice.Light : ThemeChoice.Dark;
 
     partial void OnUseOnlineLookupsChanged(bool value) => SaveSettings();
 
