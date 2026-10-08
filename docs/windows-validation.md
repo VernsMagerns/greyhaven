@@ -71,3 +71,28 @@ next" walkthrough), **E** (saving the report), **T** (themes and high contrast),
 Added by milestones 5 (safe fixes), 6 (USB creator) and 8 (installer). Test on both Windows 10
 and Windows 11 (one can be a VM, see [windows-versions.md](windows-versions.md)), especially
 installing, the Start menu entry and uninstalling.
+
+## Switching: apps, helper, USB stick, restart (Part D, 2026-10-07)
+
+Checked in session 2 (docs/windows-results.md, steps 2 to 8). Only real Windows can show these:
+
+- **App scan without admin:** uninstall lists (HKLM 64/32-bit, HKCU), Store packages for this
+  user (display names resolved with SHLoadIndirectString), Steam libraries, Epic manifests.
+  The user name never appears in `--dump-raw`.
+- **Elevated helper:** `GreyHaven.Helper.exe` starts with one UAC prompt per action; the app's
+  pipe (current user only) accepts the elevated process; "No" on the prompt is handled.
+- **Fast Startup off/on** via `HiberbootEnabled` takes effect (Control Panel agrees).
+- **USB stick listing** (WMI `MSFT_Disk`, bus type 7): sticks appear and disappear within a few
+  seconds; internal drives and the Windows drive never appear; a stick Windows calls "fixed"
+  still shows (with a warning).
+- **Writing:** locking and dismounting the stick's volumes; unbuffered writes and read-back to
+  `\\.\PhysicalDriveN`; the written Ubuntu stick starts the PC; Windows' "format the disk"
+  prompt is expected afterwards.
+- **Download:** resume after Cancel; signed checksum check passes for the real Ubuntu file.
+- **Restart:** `shutdown /r /o /t 0` works for a standard user and opens "Choose an option";
+  whether "Use a device" lists the stick on the MSI board, and what it's called.
+- **BitLocker off** (`manage-bde -off`) is not tested in session 2 (the maintainer's PC isn't
+  encrypted); test it on a VM with BitLocker before release.
+- **MSI startup settings:** Secure Boot at Settings > Security > Secure Boot (confirms the
+  search-only source in data/makers.yaml).
+- **Ubuntu 26.04 live session:** the installer icon's name (the guide says it starts with "Install").
