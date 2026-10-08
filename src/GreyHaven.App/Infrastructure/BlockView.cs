@@ -206,8 +206,13 @@ public static class BlockView
             var frame = new Border { CornerRadius = new CornerRadius(12), BorderThickness = new Thickness(2), ClipToBounds = true };
             frame.SetResourceReference(Border.BorderBrushProperty, "GH.CardBorder");
             frame.Child = new ContentControl { Template = template, Focusable = false };
-            picture = frame;
-            AutomationProperties.SetName(picture, Illustrations.Alt(id) ?? step.PictureCaption);
+            // Click (or Enter/Space) to see it big; Escape or Close returns here.
+            var alt = Illustrations.Alt(id) ?? step.PictureCaption;
+            var zoom = new Button { Content = frame, Padding = new Thickness(0), BorderThickness = new Thickness(0), Background = Brushes.Transparent, Cursor = System.Windows.Input.Cursors.Hand };
+            zoom.Template = ZoomButtonTemplate();
+            AutomationProperties.SetName(zoom, $"Enlarge picture: {alt}");
+            zoom.Click += (_, _) => PictureWindow.Show(Window.GetWindow(zoom), template, alt, zoom);
+            picture = zoom;
         }
         else
         {
@@ -223,6 +228,21 @@ public static class BlockView
         // Pictures use brand colours, so they're hidden in High Contrast; the caption and step stay.
         picture.SetResourceReference(UIElement.VisibilityProperty, "GH.DecorVisibility");
         return picture;
+    }
+
+    /// <summary>A flat button: just its content, with a visible focus ring.</summary>
+    private static ControlTemplate ZoomButtonTemplate()
+    {
+        var border = new FrameworkElementFactory(typeof(Border), "Ring");
+        border.SetValue(Border.BorderThicknessProperty, new Thickness(3));
+        border.SetValue(Border.BorderBrushProperty, Brushes.Transparent);
+        border.SetValue(Border.CornerRadiusProperty, new CornerRadius(14));
+        border.AppendChild(new FrameworkElementFactory(typeof(ContentPresenter)));
+        var template = new ControlTemplate(typeof(Button)) { VisualTree = border };
+        var focused = new Trigger { Property = UIElement.IsKeyboardFocusedProperty, Value = true };
+        focused.Setters.Add(new Setter(Border.BorderBrushProperty, new DynamicResourceExtension("GH.Text"), "Ring"));
+        template.Triggers.Add(focused);
+        return template;
     }
 
     private static UIElement KeyFact(FrameworkElement scope, KeyFact k)

@@ -494,6 +494,6 @@ public sealed partial class RestartViewModel : ObservableObject
         if (_owner.Switch.IsDemo) { Message = "Demo: your PC would restart now, to Windows' blue \"Choose an option\" screen."; return; }
         Message = _owner.Switch.RestartToAdvancedStartup()
             ? "Restarting…"
-            : "Windows didn't restart. Open Settings > System > Recovery and click Restart now next to Advanced startup.";
+            : "Windows didn't restart. Follow \"If GreyHaven can't restart your PC\" below to do it from Settings.";
     }
 }

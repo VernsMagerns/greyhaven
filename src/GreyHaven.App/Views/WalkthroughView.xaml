@@ -233,6 +233,9 @@
             <Expander Header="USB stick not in the list?" Style="{StaticResource ShowMore}">
                 <StackPanel infra:BlockView.Blocks="{Binding Plan.Fallback}" Margin="0,8,0,0" />
             </Expander>
+            <Expander Header="If GreyHaven can't restart your PC" Style="{StaticResource ShowMore}">
+                <StackPanel infra:BlockView.Blocks="{Binding Plan.Manual}" Margin="0,8,0,0" />
+            </Expander>
         </StackPanel>
 
         <!-- ===== After you restart: a look at the guide ===== -->

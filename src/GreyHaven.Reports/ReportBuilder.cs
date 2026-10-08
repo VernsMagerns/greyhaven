@@ -260,6 +260,7 @@ public static class ReportBuilder
                     b.Add(P($"Then click \"{rs.ButtonLabel}\" in GreyHaven."));
                     b.AddRange(rs.AfterRestart);
                     b.Add(new Details("USB stick not in the list?", rs.Fallback));
+                    b.Add(new Details("If GreyHaven can't restart your PC", rs.Manual));
                 }
                 if (s.Tip is not null) b.Add(new Callout(CalloutKind.Tip, "What could go wrong?", Line(s.Tip)));
             }

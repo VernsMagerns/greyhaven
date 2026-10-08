@@ -55,7 +55,8 @@ public sealed record UsbPlan(string DistroName, string EditionName, long? Instal
 /// <param name="FinalChecks">Ticked before the restart button is enabled.</param>
 /// <param name="AfterRestart">What the person will see, picture by picture.</param>
 /// <param name="Fallback">If "Use a device" doesn't list the stick: the maker's startup menu key.</param>
-public sealed record RestartPlan(IReadOnlyList<string> FinalChecks, string ButtonLabel, IReadOnlyList<Block> AfterRestart, IReadOnlyList<Block> Fallback);
+/// <param name="Manual">If GreyHaven can't restart the PC: the same thing by hand, in this Windows version's Settings.</param>
+public sealed record RestartPlan(IReadOnlyList<string> FinalChecks, string ButtonLabel, IReadOnlyList<Block> AfterRestart, IReadOnlyList<Block> Fallback, IReadOnlyList<Block> Manual);
 
 /// <param name="PhoneUrl">The public phone guide (only once the repository is public), or null.</param>
 /// <param name="OnWindowsDrive">Where the guide is also saved, if the live session can read it.</param>
@@ -416,7 +417,7 @@ public static class JourneyBuilder
                         new PictureStep("Click your USB stick. Its name often has \"USB\" or the stick's brand in it.", "The \"Use a device\" list with the USB stick", "use-a-device-list"),
                     ]),
                     P($"Your PC then starts from the stick. If a menu with {c.Name} appears, press Enter on the first choice. Then follow your guide."),
-                ], fallback),
+                ], fallback, [WalkthroughBuilder.AdvancedStartup(c.R)]),
             };
     }
 

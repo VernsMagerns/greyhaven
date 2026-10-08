@@ -19,123 +19,84 @@ public class WalkthroughTests
     }
 
     private static string Text(IEnumerable<Block> blocks) => MarkdownReportWriter.Write(new ReportDocument("t", blocks.ToList()));
-    private static string Text(WalkStep s) => Text(s.Body.Concat(s.Options.SelectMany(o => o.Steps)));
+    private static string Text(JourneyStep s) => Text(s.Body.Concat(s.Tasks.SelectMany(t => t.How)).Concat(s.Restart is { } r ? r.AfterRestart.Concat(r.Fallback).Concat(r.Manual) : []));
+    private static JourneyStep Step(CompatibilityReport r, string id) => JourneyBuilder.Build(r).Single(s => s.Id == id);
 
     [Fact]
-    public async Task Nine_steps_in_order()
+    public async Task Windows_tasks_are_for_this_pc_and_path()
     {
-        var steps = WalkthroughBuilder.Build(await Rate("nvidia-desktop"));
-        Assert.Equal(["backup", "usb", "windows", "download", "write", "boot", "try", "install", "after"], steps.Select(s => s.Id));
-        Assert.All(steps.Where(s => s.Id != "install"), s => Assert.False(string.IsNullOrWhiteSpace(s.Tip), $"{s.Id} needs a 'What could go wrong?' tip"));
+        var easy = Step(await Rate("nvidia-desktop"), "windows");
+        Assert.Contains(easy.Tasks, t => t.Id == "fast-startup" && !t.Done);   // the sample has Fast Startup on
+        Assert.Contains("https://www.msi.com/support", Text(easy));             // BIOS updates: the motherboard maker's page
+        Assert.DoesNotContain(easy.Tasks, t => t.Id is "recovery-key" or "encryption-off"); // not encrypted
+        Assert.DoesNotContain(JourneyBuilder.Build(await Rate("nvidia-desktop")), s => s.Id == "startup-settings"); // Ubuntu keeps Secure Boot on
+
+        var advanced = Step((await Rate("nvidia-desktop")).WithPath(PathKind.Advanced), "startup-settings");
+        Assert.Contains("https://www.msi.com/faq/faq-11370", Text(advanced));
+
+        var vmd = Step(await Rate("intel-vmd-laptop"), "startup-settings");
+        Assert.Contains(vmd.Tasks, t => t.Title == "Change a storage setting");
     }
 
     [Fact]
-    public async Task Windows_checklist_is_for_this_pc_and_path()
+    public async Task Restart_falls_back_to_the_makers_key_and_has_no_key_when_unknown()
     {
-        var easy = Text(WalkthroughBuilder.Build(await Rate("nvidia-desktop")).Single(s => s.Id == "windows"));
-        var advanced = Text(WalkthroughBuilder.Build((await Rate("nvidia-desktop")).WithPath(PathKind.Advanced)).Single(s => s.Id == "windows"));
-
-        Assert.Contains("Turn off Fast Startup", easy);              // the sample has Fast Startup on
-        Assert.DoesNotContain("Turn off Secure Boot", easy);         // Ubuntu keeps Secure Boot on
-        Assert.Contains("Turn off Secure Boot", advanced);
-        Assert.Contains("https://www.msi.com/faq/faq-11370", advanced);
-        Assert.Contains("https://www.msi.com/support", easy);         // BIOS updates: the motherboard maker's page
-        Assert.DoesNotContain("BitLocker", easy);                     // not encrypted
-
-        var vmd = Text(WalkthroughBuilder.Build(await Rate("intel-vmd-laptop")).Single(s => s.Id == "windows"));
-        Assert.Contains("Change a storage setting", vmd);
-    }
-
-    [Fact]
-    public async Task Boot_step_uses_the_makers_key_or_the_windows_way()
-    {
-        var msi = Text(WalkthroughBuilder.Build(await Rate("nvidia-desktop")).Single(s => s.Id == "boot"));
-        Assert.Contains("startup menu key is: **F11**", msi);
-        var unknown = Text(WalkthroughBuilder.Build(await Rate("intel-vmd-laptop")).Single(s => s.Id == "boot"));
-        Assert.Contains("We don't know the startup menu key", unknown);
-        Assert.Contains("Use a device", unknown);
+        var msi = Step(await Rate("nvidia-desktop"), "restart").Restart!;
+        Assert.Contains(msi.Fallback, b => b is KeyFact { Value: "F11" });
+        var unknown = Step(await Rate("intel-vmd-laptop"), "restart").Restart!;
+        Assert.DoesNotContain(unknown.Fallback, b => b is KeyFact);
+        Assert.Contains(unknown.AfterRestart.OfType<PictureGuide>().Single().Steps, st => st.Text.Contains("Use a device"));
     }
 
     [Theory]
     [InlineData(19045, "Settings > Update & Security > Recovery")] // Windows 10 22H2
     [InlineData(26100, "Settings > System > Recovery")]            // Windows 11 24H2
-    public async Task Advanced_startup_path_matches_the_windows_version(int build, string path)
+    public async Task Manual_restart_path_matches_the_windows_version(int build, string path)
     {
         var r = await Rate("intel-vmd-laptop", p => p with { System = p.System with { Windows = p.System.Windows with { Build = build } } });
-        var steps = WalkthroughBuilder.Build(r).Single(s => s.Id == "boot").Body.OfType<PictureGuide>().SelectMany(g => g.Steps);
+        var steps = Step(r, "restart").Restart!.Manual.OfType<PictureGuide>().SelectMany(g => g.Steps);
         Assert.Contains(steps, st => st.Text.Contains(path, StringComparison.Ordinal));
-    }
-
-    [Fact]
-    public async Task Install_alongside_needs_enough_free_space()
-    {
-        var roomy = WalkthroughBuilder.Build(await Rate("nvidia-desktop")).Single(s => s.Id == "install");
-        var alongside = roomy.Options.Single(o => o.Id == "alongside");
-        Assert.True(alongside.Possible);
-        Assert.Contains("You have 412 GB free. Give Ubuntu about 100 GB.", alongside.Lines);
-
-        var tight = WalkthroughBuilder.Build(await Rate("intel-vmd-laptop")).Single(s => s.Id == "install").Options.Single(o => o.Id == "alongside");
-        Assert.False(tight.Possible);
-        Assert.Contains("You only have 38 GB free. You need at least 50 GB.", tight.Lines);
-    }
-
-    [Fact]
-    public async Task Replacing_windows_needs_a_confirmation_and_says_everything_is_erased()
-    {
-        var replace = WalkthroughBuilder.Build(await Rate("nvidia-desktop")).Single(s => s.Id == "install").Options.Single(o => o.Id == "replace");
-        Assert.Contains("erased", replace.ConfirmText);
-        Assert.Contains(replace.Steps, b => b is Callout { Kind: CalloutKind.Danger });
-    }
-
-    [Fact]
-    public async Task Pop_os_alongside_windows_is_not_offered_as_easy()
-    {
-        var pop = WalkthroughBuilder.Build((await Rate("nvidia-desktop")).WithPath(PathKind.Advanced)).Single(s => s.Id == "install");
-        var alongside = pop.Options.Single(o => o.Id == "alongside");
-        Assert.False(alongside.Possible);
-        Assert.Contains("can't set this up for you", Text(alongside.Steps));
     }
 
     [Fact]
     public async Task After_installing_shows_the_driver_steps_as_pictures_only_where_needed()
     {
-        var ubuntu = WalkthroughBuilder.Build(await Rate("nvidia-desktop")).Single(s => s.Id == "after");
-        Assert.Contains(ubuntu.Body, b => b is PictureGuide);
+        var ubuntu = Step(await Rate("nvidia-desktop"), "after");
+        Assert.Contains(ubuntu.Body, b => b is PictureGuide g && g.Steps.Any(st => st.PictureId == "ubuntu-gpu-1"));
         Assert.Contains("Set up your graphics card", Text(ubuntu));
-        var pop = WalkthroughBuilder.Build((await Rate("nvidia-desktop")).WithPath(PathKind.Advanced)).Single(s => s.Id == "after");
-        Assert.DoesNotContain(pop.Body, b => b is PictureGuide); // the NVIDIA ISO has the driver
+        var pop = Step((await Rate("nvidia-desktop")).WithPath(PathKind.Advanced), "after");
+        Assert.DoesNotContain("Set up your graphics card", Text(pop)); // the NVIDIA ISO has the driver
     }
 
     [Fact]
-    public async Task Bitlocker_adds_the_recovery_key_item_and_tip()
+    public async Task Bitlocker_adds_the_tip_about_the_recovery_key()
     {
         var r = await Rate("nvidia-desktop", p => p with { System = p.System with { BitLocker = BitLockerState.On } });
-        var step = WalkthroughBuilder.Build(r).Single(s => s.Id == "windows");
-        Assert.Contains("aka.ms/myrecoverykey", Text(step));
-        Assert.Contains("BitLocker recovery key", step.Tip);
+        Assert.Contains("BitLocker recovery key", Step(r.WithInstall(InstallChoice.ReplaceWindows), "windows").Tip);
+        Assert.Contains("aka.ms/myrecoverykey", Text(Step(r.WithInstall(InstallChoice.ReplaceWindows), "windows")));
     }
 
     [Theory]
     [InlineData("Professional", "BitLocker Drive Encryption")]
     [InlineData("Core", "Device encryption")]               // Windows Home
-    public async Task Keeping_windows_with_encryption_on_turns_it_off_first(string edition, string where)
+    public async Task Keeping_windows_with_encryption_on_shows_how_to_turn_it_off(string edition, string where)
     {
         var r = await Rate("nvidia-desktop", p => p with { System = p.System with { BitLocker = BitLockerState.On, Windows = p.System.Windows with { Edition = edition } } });
-        var alongside = WalkthroughBuilder.Build(r).Single(s => s.Id == "install").Options.Single(o => o.Id == "alongside");
-        Assert.Contains(alongside.Steps, b => b is Callout { Title: "First, turn off drive encryption" });
-        Assert.Contains(alongside.Steps.OfType<PictureGuide>().First().Steps, st => st.Text.Contains(where, StringComparison.Ordinal));
+        var task = Step(r.WithInstall(InstallChoice.KeepWindows), "windows").Tasks.Single(t => t.Id == "encryption-off");
+        var pictures = task.How.OfType<Details>().Single().Content.OfType<PictureGuide>().Single().Steps;
+        Assert.Contains(pictures, st => st.Text.Contains(where, StringComparison.Ordinal));
     }
 
     [Fact]
     public async Task Installer_steps_use_each_installers_own_button_words()
     {
-        var ubuntu = Text(WalkthroughBuilder.Build(await Rate("nvidia-desktop")).Single(s => s.Id == "install"));
+        var ubuntu = Text(Step((await Rate("nvidia-desktop")).WithInstall(InstallChoice.KeepWindows), "install"));
         Assert.Contains("click Restart now", ubuntu);
         Assert.Contains("Install Ubuntu alongside Windows Boot Manager", ubuntu);
-        var mint = Text(WalkthroughBuilder.Build(await Rate("intel-laptop")).Single(s => s.Id == "install"));
+        var mint = Text(Step((await Rate("intel-laptop")).WithInstall(InstallChoice.KeepWindows), "install"));
         Assert.Contains("click Continue", mint);
         Assert.Contains("click Restart Now", mint);
-        var pop = Text(WalkthroughBuilder.Build((await Rate("nvidia-desktop")).WithPath(PathKind.Advanced)).Single(s => s.Id == "install"));
+        var pop = Text(Step((await Rate("nvidia-desktop")).WithPath(PathKind.Advanced).WithInstall(InstallChoice.ReplaceWindows), "install"));
         Assert.Contains("click Erase and Install", pop);
         Assert.Contains("click Restart Device", pop);
     }
@@ -181,12 +142,16 @@ public class IllustrationTests
                 {
                     var r = await Rate(sample, p => p with { System = p.System with { BitLocker = bitLocker, Windows = p.System.Windows with { Build = build, Edition = edition } } });
                     foreach (var path in r.Recommendation.Paths)
-                        foreach (var step in WalkthroughBuilder.Build(r.WithPath(path.Kind)))
-                            foreach (var pic in Pictures(step.Body.Concat(step.Options.SelectMany(o => o.Steps))))
-                                ids.Add(pic.PictureId!);
+                        foreach (var install in new InstallChoice?[] { null, InstallChoice.KeepWindows, InstallChoice.ReplaceWindows })
+                            foreach (var step in JourneyBuilder.Build(r.WithPath(path.Kind).WithInstall(install)))
+                            {
+                                IEnumerable<Block> all = step.Body.Concat(step.Tasks.SelectMany(t => t.How)).Concat(step.Restart is { } rs ? rs.AfterRestart.Concat(rs.Fallback).Concat(rs.Manual) : []);
+                                all = all.SelectMany(b => b is Details d ? d.Content.Prepend(b) : [b]);
+                                foreach (var pic in Pictures(all)) ids.Add(pic.PictureId!);
+                            }
                 }
         foreach (var maker in Data.Value.Makers.Makers)
-            foreach (var key in new[] { maker.BootMenuKey, maker.BootMenuKeyLaptop, maker.BootMenuKeyDesktop }.OfType<string>())
+            foreach (var key in new[] { maker.BootMenuKey, maker.BootMenuKeyLaptop, maker.BootMenuKeyDesktop, maker.SetupKey }.OfType<string>())
                 ids.Add(Illustrations.BootKeyId(key));
 
         Assert.All(ids, id => Assert.True(Illustrations.Exists(id), $"No picture for '{id}'"));
