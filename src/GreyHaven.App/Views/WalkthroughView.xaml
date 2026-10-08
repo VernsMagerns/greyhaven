@@ -203,24 +203,17 @@
             </StackPanel>
         </Border>
 
-        <!-- ===== Take your guide ===== -->
-        <Grid DataContext="{Binding Guide}" Visibility="{Binding Converter={StaticResource HasValueToVisibility}}" Margin="0,8,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <StackPanel Visibility="{Binding QrModules, Converter={StaticResource HasValueToVisibility}}" Margin="0,0,24,0">
-                <Border BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="2" CornerRadius="8" Background="White" Padding="4">
-                    <infra:QrCodeView Modules="{Binding QrModules}" Width="200" Height="200" AutomationProperties.Name="QR code that opens your guide on a phone" />
-                </Border>
-                <TextBlock Text="Scan with your phone's camera" Style="{StaticResource Strong}" HorizontalAlignment="Center" Margin="0,6,0,0" />
-            </StackPanel>
-            <StackPanel Grid.Column="1" VerticalAlignment="Center">
-                <TextBlock Text="Or keep it another way:" Style="{StaticResource Strong}" />
-                <Button Content="Open the guide to print or save it" Command="{Binding OpenGuideCommand}" HorizontalAlignment="Left" Padding="20,6" Margin="0,8" />
-                <TextBlock Text="{Binding SavedText}" Style="{StaticResource Secondary}" TextWrapping="Wrap" Visibility="{Binding SavedText, Converter={StaticResource HasValueToVisibility}}" />
-            </StackPanel>
-        </Grid>
+        <!-- ===== Take your guide: one big code, then keep clicking Next ===== -->
+        <StackPanel DataContext="{Binding Guide}" Visibility="{Binding Converter={StaticResource HasValueToVisibility}}" Margin="0,8,0,0" HorizontalAlignment="Left">
+            <Border Visibility="{Binding QrModules, Converter={StaticResource HasValueToVisibility}}" HorizontalAlignment="Left"
+                    BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="2" CornerRadius="8" Background="White" Padding="6">
+                <infra:QrCodeView Modules="{Binding QrModules}" Width="260" Height="260" AutomationProperties.Name="QR code that opens your guide on a phone" />
+            </Border>
+            <Button Content="Can't scan it? Open the guide to print it" Command="{Binding OpenGuideCommand}" Style="{StaticResource LinkButton}"
+                    HorizontalAlignment="Left" Margin="0,10,0,2" />
+            <TextBlock Text="{Binding SavedText}" Style="{StaticResource Secondary}" TextWrapping="Wrap" MaxWidth="520" HorizontalAlignment="Left"
+                       Visibility="{Binding SavedText, Converter={StaticResource HasValueToVisibility}}" />
+        </StackPanel>
 
         <!-- ===== Restart into your USB stick ===== -->
         <StackPanel DataContext="{Binding Restart}" Visibility="{Binding Converter={StaticResource HasValueToVisibility}}">

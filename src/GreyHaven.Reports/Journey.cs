@@ -339,15 +339,16 @@ public static class JourneyBuilder
     {
         var phone = PhoneGuideUrl(c.R);
         var onDrive = c.Encrypted || c.StorageNeedsChange ? null : $@"Documents\GreyHaven\{GuideFileName}";
+        // Kept short on purpose: one thing to do, then carry on clicking Next.
         var body = new List<Block>
         {
-            P("When your PC restarts, GreyHaven closes. Your guide shows you every step from there: trying Linux, installing it, and setting it up."),
+            phone is not null
+                ? P("Scan the code with your phone's camera. Your guide opens on your phone, so you can follow it after your PC restarts.")
+                : P("Open the guide and print it, or keep it open on another device, so you can follow it after your PC restarts."),
+            P(new Strong("Then click Next."), new Text(" GreyHaven still shows you what happens after the restart before you do it.")),
         };
-        if (phone is not null) body.Add(P("Scan the code with your phone's camera. The guide opens in your phone's browser, on Wi-Fi or mobile data."));
-        if (onDrive is not null)
-            body.Add(P(new Text("A copy is also saved on your Windows drive, in "), new Strong(onDrive), new Text(". You can open it from Linux too: open Files, click your Windows drive, then go to that folder.")));
         return Step("guide", JourneyPhase.TakeGuide, "Take the guide with you",
-            "Put the next steps on your phone or on paper, so you can follow them while your PC restarts.",
+            "Put the next steps on your phone.",
             body, null)
             with { Guide = new GuideHandoff(phone, onDrive) };
     }

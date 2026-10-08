@@ -186,6 +186,8 @@ ol.stages li.done { color: var(--gh-works); }
 .bigdone { font-family: var(--gh-font-heading); font-size: 26px; font-weight: 800; color: var(--gh-works); margin: 4px 0 8px; }
 .guide-handoff { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; margin: 16px 0; }
 .qr { margin: 0; text-align: center; }
+.guide-handoff.simple { display: block; }
+.qr-code.big svg { width: 260px; height: 260px; max-width: 100%; }
 .qr-code svg { display: block; width: 200px; height: 200px; border: var(--border-width) solid var(--gh-card-border); border-radius: var(--radius-small); }
 .qr figcaption { font-weight: 700; margin-top: 6px; }
 .preview-note-inline { border: 1px dashed var(--gh-card-border); border-radius: var(--radius-small); padding: 8px 10px; }

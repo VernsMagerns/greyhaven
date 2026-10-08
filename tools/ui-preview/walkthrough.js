@@ -222,14 +222,10 @@ function guideScreen(s) {
   const j = journey();
   if (!j.qr) return `${blocks(s.body, s.id)}<div class="note-box"><p>Choose how to install first (part 1), so the guide shows the right steps.</p></div>`;
   return `${blocks(s.body, s.id)}
-    <div class="guide-handoff">
-      <figure class="qr"><div class="qr-code" role="img" aria-label="QR code that opens your guide on a phone">${j.qr.svg}</div>
-        <figcaption>Scan with your phone's camera</figcaption></figure>
-      <div>
-        <p class="strong">Or keep it another way:</p>
-        <p><button class="plain" id="printguide">Print the guide</button></p>
-        <p><a href="${esc(j.phoneGuide)}" target="_blank" rel="noopener">Open the guide</a> <span class="secondary small">(to save it, or to see it as your phone will)</span></p>
-      </div>
+    <div class="guide-handoff simple">
+      <div class="qr-code big" role="img" aria-label="QR code that opens your guide on a phone">${j.qr.svg}</div>
+      <p><button class="linkbutton" id="printguide">Can't scan it? Print the guide</button>
+        · <a href="${esc(j.phoneGuide)}" target="_blank" rel="noopener">Open it</a></p>
     </div>
     <p class="preview-note-inline secondary small">Preview: the QR code opens <code>${esc(j.qr.url)}</code>, the hosted guide.
       Everything after "#" stays on the phone. "Open the guide" shows a local copy of the same page.</p>`;

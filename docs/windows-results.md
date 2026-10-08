@@ -153,14 +153,15 @@ How long did it take? Download: ___ min. Writing and checking: ___ min.
 
 ## 6. Part 3: Take your guide (about 5 minutes)
 
-- [ ] A QR code is shown, and "Saved on your Windows drive: …\Documents\GreyHaven\GreyHaven guide.html".
+- [ ] The screen is simple: one big QR code, "Then click Next…", and a small "Saved on your
+      Windows drive: …\Documents\GreyHaven\GreyHaven guide.html" line.
 - [ ] **Turn Wi-Fi off on your phone** and scan the code: the guide opens over mobile data.
 - [ ] On the phone: "PC didn't start from the USB stick?" says **F11**; step 2 suggests about
       the right number of GB; step 3 shows the **NVIDIA** steps; there's **no touchpad** check
       (it's a desktop); "Install your apps" only says where your list is.
 - [ ] Tap a picture: it fills the screen; **Close picture** (or tapping outside, or Back)
       returns.
-- [ ] **Open the guide to print or save it** opens your copy in the browser. It has your
+- [ ] **Can't scan it? Open the guide to print it** opens your copy in the browser. It has your
       **Install your apps** checklist (with where to get each app on Ubuntu).
 
 **Notes:**
