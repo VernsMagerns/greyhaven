@@ -26,6 +26,8 @@ namespace GreyHaven.Cli
               greyhaven samples                List bundled sample profiles
               greyhaven check-releases         Check for distro releases newer than the bundled data
               greyhaven qr <text>              Print a QR code as SVG (used by the design preview)
+              greyhaven check-game <name>      Does a game run on Linux? (ProtonDB dump and anti-cheat list)
+              greyhaven game-index --out <file>   Every game's rating as JSON (used by the design preview)
               greyhaven phone-guide-site --out <dir>   Build the public phone guide website
 
             Options for scan:
@@ -68,6 +70,16 @@ namespace GreyHaven.Cli
                     return 0;
                 }
 
+                if (args[0] == "check-game")
+                {
+                    if (args.Length < 2) throw new CliException("Usage: greyhaven check-game <name>");
+                    var matches = new GameSearch(CompatibilityData.Load().Apps).Search(string.Join(' ', args.Skip(1)));
+                    if (matches.Count == 0) Console.WriteLine("No game by that name in GreyHaven's list.");
+                    foreach (var m in matches)
+                        Console.WriteLine($"{m.Rating.Name}: {Core.Apps.AppWords.Verdict(m.Rating.Verdict)}. {m.Rating.Summary}{(m.ProtonDbUrl is { } u ? $"\n    {u}" : "")}");
+                    return 0;
+                }
+
                 if (args[0] == "qr")
                 {
                     if (args.Length != 2) throw new CliException("Usage: greyhaven qr <text>");
@@ -83,6 +95,7 @@ namespace GreyHaven.Cli
                     "samples" => ListSamples(opts),
                     "check-releases" => await CheckReleasesAsync(opts),
                     "phone-guide-site" => PhoneGuideSite(opts),
+                    "game-index" => GameIndex(opts),
                     _ => Fail($"Unknown command '{args[0]}'.\n\n{Usage}"),
                 };
             }
@@ -162,6 +175,22 @@ namespace GreyHaven.Cli
             var data = CompatibilityData.Load(opts.DataDir);
             var files = PhoneGuideSiteWriter.Write(opts.Out[0], Ratings.PhoneGuideSite.Pages(data));
             Console.WriteLine($"Wrote {files.Count} files to {opts.Out[0]}: {string.Join(", ", files)}");
+            return 0;
+        }
+
+        /// <summary>[name, verdict, colour, summary, link, reports, anti-cheat] for every game: the preview's "Check a game".</summary>
+        private static int GameIndex(Options opts)
+        {
+            if (opts.Out.Count != 1) throw new CliException("Give the output file with --out <file>.");
+            var search = new GameSearch(CompatibilityData.Load(opts.DataDir).Apps);
+            var rows = search.All().Select(x => new object?[]
+            {
+                x.Match.Rating.Name, Core.Apps.AppWords.Verdict(x.Match.Rating.Verdict) + (x.Match.Rating.Layer is { } l ? $" ({l})" : ""),
+                x.Match.Rating.Verdict.ToString(), x.Match.Rating.Summary,
+                x.Match.ProtonDbUrl ?? x.Match.Rating.Sources.FirstOrDefault()?.Url, x.Reports, x.AntiCheat,
+            });
+            File.WriteAllText(opts.Out[0], System.Text.Json.JsonSerializer.Serialize(rows));
+            Console.WriteLine($"Wrote {search.All().Count()} games to {opts.Out[0]}");
             return 0;
         }
 

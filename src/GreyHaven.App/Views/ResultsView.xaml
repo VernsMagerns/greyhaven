@@ -396,6 +396,42 @@
             </Expander>
         </StackPanel>
 
+        <!-- Check a game: any game, from the bundled ProtonDB dump and anti-cheat list (nothing sent anywhere). -->
+        <StackPanel DataContext="{Binding Games}" Margin="0,0,0,12" AutomationProperties.Name="Check a game">
+            <TextBlock Text="Check a game" Style="{StaticResource Heading2}" />
+            <TextBlock Text="See whether a game runs on Linux before you switch. Type its name." Style="{StaticResource Body}" />
+            <TextBox Text="{Binding Query, UpdateSourceTrigger=PropertyChanged, Delay=250}" MaxWidth="420" HorizontalAlignment="Left" Margin="0,8,0,4"
+                     AutomationProperties.Name="Game name" AutomationProperties.HelpText="Results appear below as you type." />
+            <TextBlock Text="{Binding Message}" Style="{StaticResource Secondary}" infra:Accessibility.Announce="True"
+                       Visibility="{Binding Message, Converter={StaticResource HasValueToVisibility}}" />
+            <ItemsControl ItemsSource="{Binding Results}" Focusable="False">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="{DynamicResource GH.CardBorder}" BorderThickness="0,0,0,1" Padding="0,8" AutomationProperties.Name="{Binding AccessibleName}">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Name}" Style="{StaticResource Strong}" TextWrapping="Wrap" />
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                        <infra:DecorativeText Text="{Binding Glyph}" FontFamily="{StaticResource IconFont}" FontSize="15" VerticalAlignment="Center"
+                                                              Foreground="{Binding ColourKey, Converter={StaticResource PaletteBrush}}" />
+                                        <TextBlock Text="{Binding Verdict}" Margin="6,0,0,0" FontWeight="SemiBold" Foreground="{Binding ColourKey, Converter={StaticResource PaletteBrush}}" />
+                                    </StackPanel>
+                                </Grid>
+                                <TextBlock Text="{Binding Summary}" Style="{StaticResource Body}" />
+                                <Button Content="{Binding Link.Title}" Command="{Binding Link.OpenCommand}" Style="{StaticResource LinkButton}" HorizontalAlignment="Left"
+                                        Visibility="{Binding Link, Converter={StaticResource HasValueToVisibility}}" />
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="{Binding Sources}" Style="{StaticResource Secondary}" FontSize="13" TextWrapping="Wrap" Margin="0,6,0,0" />
+        </StackPanel>
+
         <!-- Things to test before installing -->
         <Border Style="{StaticResource Card}" Padding="16,10" Visibility="{Binding CaveatsHeading, Converter={StaticResource HasValueToVisibility}}">
             <Expander Header="{Binding CaveatsHeading}" Style="{StaticResource ShowMore}">

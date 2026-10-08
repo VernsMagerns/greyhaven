@@ -227,6 +227,9 @@ public sealed partial class ResultsViewModel : ObservableObject
     // ---- Your apps ------------------------------------------------------------------------------
 
     public bool HasApps => Report.Apps.Count > 0;
+    /// <summary>"Check a game": any game, installed or not.</summary>
+    public GameCheckViewModel Games => _games ??= new GameCheckViewModel(_services);
+    private GameCheckViewModel? _games;
     public string AppsSummary => Core.Apps.AppWords.Summary(Report.Apps);
     public string AppsHeading => $"Show your {Report.Apps.Count} apps";
     public string AppsPrivacy => "Your app list stays on your PC. It's checked against GreyHaven's own list, and left out of saved reports unless you choose.";

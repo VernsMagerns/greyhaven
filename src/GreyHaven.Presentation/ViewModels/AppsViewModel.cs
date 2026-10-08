@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using GreyHaven.Core.Apps;
+using GreyHaven.Ratings;
 
 namespace GreyHaven.Presentation.ViewModels;
 
@@ -17,13 +18,7 @@ public sealed partial class AppViewModel : ObservableObject
         _mustHaveChanged = mustHaveChanged;
         Name = app.Name;
         Verdict = AppWords.Verdict(app.Verdict) + (app.Layer is { } l ? $" ({l})" : "");
-        (Glyph, ColourKey) = app.Verdict switch
-        {
-            AppVerdict.Works or AppVerdict.NotNeeded => ("", "Works"),
-            AppVerdict.WorksWithLayer or AppVerdict.UseWeb => ("", "ExtraStep"),
-            AppVerdict.WontWork => ("", "Unsupported"),
-            _ => ("", "Unknown"),
-        };
+        (Glyph, ColourKey) = Look(app.Verdict);
         Summary = app.Summary;
         if (app.Linux is { } linux && app.Verdict == AppVerdict.Works)
         {
@@ -41,6 +36,15 @@ public sealed partial class AppViewModel : ObservableObject
         Source = app.Sources.FirstOrDefault();
         IsMustHave = mustHave;
     }
+
+    /// <summary>The icon and colour for a verdict (also used by "Check a game").</summary>
+    public static (string Glyph, string ColourKey) Look(AppVerdict verdict) => verdict switch
+    {
+        AppVerdict.Works or AppVerdict.NotNeeded => ("", "Works"),
+        AppVerdict.WorksWithLayer or AppVerdict.UseWeb => ("", "ExtraStep"),
+        AppVerdict.WontWork => ("", "Unsupported"),
+        _ => ("", "Unknown"),
+    };
 
     public RatedApp App { get; }
     public string Name { get; }
@@ -68,3 +72,39 @@ public sealed partial class AppViewModel : ObservableObject
 }
 
 public sealed record AppGroupViewModel(string Name, IReadOnlyList<AppViewModel> Apps);
+
+/// <summary>One game found by "Check a game".</summary>
+public sealed class GameResultViewModel(GameMatch match, IAppServices services)
+{
+    public string Name { get; } = match.Rating.Name;
+    public string Verdict { get; } = AppWords.Verdict(match.Rating.Verdict) + (match.Rating.Layer is { } l ? $" ({l})" : "");
+    public string Glyph { get; } = AppViewModel.Look(match.Rating.Verdict).Glyph;
+    public string ColourKey { get; } = AppViewModel.Look(match.Rating.Verdict).ColourKey;
+    public string Summary { get; } = match.Rating.Summary;
+    /// <summary>ProtonDB's page for the game (opens in the browser), or the anti-cheat list's page.</summary>
+    public LinkViewModel? Link { get; } = match.ProtonDbUrl is { } url ? new LinkViewModel($"{match.Rating.Name} on ProtonDB", url, services)
+        : match.Rating.Sources.FirstOrDefault() is { Url: { } u } src ? new LinkViewModel(src.Title, u, services) : null;
+    public string AccessibleName => $"{Name}: {Verdict}. {Summary}";
+}
+
+/// <summary>
+/// "Check a game": type a name, see whether it runs on Linux, from ProtonDB's report dump and
+/// Are We Anti-Cheat Yet (bundled with GreyHaven; nothing is sent anywhere).
+/// </summary>
+public sealed partial class GameCheckViewModel(IAppServices services) : ObservableObject
+{
+    [ObservableProperty] public partial string Query { get; set; } = "";
+    [ObservableProperty] public partial IReadOnlyList<GameResultViewModel> Results { get; private set; } = [];
+    [ObservableProperty] public partial string? Message { get; private set; }
+
+    partial void OnQueryChanged(string value)
+    {
+        var text = value.Trim();
+        Results = text.Length < GameSearch.MinimumLength ? [] : services.SearchGames(text).Select(m => new GameResultViewModel(m, services)).ToList();
+        Message = text.Length < GameSearch.MinimumLength ? null
+            : Results.Count == 0 ? $"No game called \"{text}\" in GreyHaven's list. Check the spelling, or search ProtonDB's website."
+            : Results.Count == 1 ? "1 game found." : $"{Results.Count} games found.";
+    }
+
+    public string Sources => "From ProtonDB player reports (Open Database License) and Are We Anti-Cheat Yet. Click a game's link to read the reports.";
+}

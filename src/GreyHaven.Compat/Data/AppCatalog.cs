@@ -18,6 +18,8 @@ public sealed partial class AppCatalog
     /// <summary>Steam app ID → (reports, % works, % without tweaks).</summary>
     public IReadOnlyDictionary<string, (int Reports, int Works, int WithoutTweaks)> ProtonDb { get; init; } = new Dictionary<string, (int, int, int)>();
     public string? ProtonDbDump { get; init; }
+    /// <summary>Steam app ID → the game's name in the newest ProtonDB report (for "Check a game").</summary>
+    public IReadOnlyDictionary<string, string> ProtonDbTitles { get; init; } = new Dictionary<string, string>();
 
     private static readonly string[] Verdicts = ["native", "layer", "web", "wontWork", "notNeeded"];
     private static readonly string[] Closeness = ["same", "close", "partial"];
@@ -49,6 +51,9 @@ public sealed partial class AppCatalog
             AntiCheat = games,
             ProtonDb = proton,
             ProtonDbDump = pdb.RootElement.TryGetProperty("dump", out var d) ? d.GetString() : null,
+            ProtonDbTitles = pdb.RootElement.TryGetProperty("titles", out var t)
+                ? t.EnumerateObject().ToDictionary(p => p.Name, p => p.Value.GetString()!)
+                : new Dictionary<string, string>(),
         };
         catalog.Validate();
         return catalog;

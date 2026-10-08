@@ -38,6 +38,10 @@ online check turned off.
 | **Online check** (the "Also check online for parts we don't know" box on the first screen, on by default; you can untick it) | linux-hardware.org | The ID number of each part GreyHaven doesn't recognise, one at a time, like `pci:8086-2723`. Nothing else about your PC. |
 | Online check | Linux Mint's download mirror (mirrors.edge.kernel.org), Ubuntu (changelogs.ubuntu.com) and System76 (api.pop-os.org) | Nothing about you or your PC: GreyHaven just reads their lists of new versions, so it can tell you if its information is out of date. |
 
+**"Check a game"** sends nothing: the game names you type are searched in data that ships with
+GreyHaven (ProtonDB's published report dump and the Are We Anti-Cheat Yet list). Only if you
+click a game's link does your web browser open that game's page on protondb.com.
+
 As with any website, the services above see your internet (IP) address and that the request
 comes from "GreyHaven" and its version. GreyHaven doesn't control what they do with it; see
 their own privacy policies.

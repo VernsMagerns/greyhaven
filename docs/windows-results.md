@@ -86,6 +86,10 @@ Click **Scan my PC**.
       search for one of your app names: **not found**. Save again **with** "Include my apps"
       ticked: now it's there, under "Your apps".
 
+- [ ] **Check a game** (under Your apps): type a few games you play or want to play. Results
+      appear as you type, with a rating and a link that opens the game's ProtonDB page in your
+      browser. Note any that look wrong:
+
 **Apps that look wrong, or missing apps you'd expect:**
 
 **Notes:**

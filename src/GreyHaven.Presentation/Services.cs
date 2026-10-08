@@ -73,6 +73,8 @@ public interface IAppServices
     /// <summary>Shows a file the user just saved, selected in File Explorer.</summary>
     void ShowInFolder(string path);
     ISettingsStore Settings { get; }
+    /// <summary>"Check a game": searches GreyHaven's bundled game data, on this PC.</summary>
+    IReadOnlyList<GameMatch> SearchGames(string query);
 }
 
 /// <summary>Real implementation; the WPF app supplies the scanner and the Windows-specific bits.</summary>
@@ -89,6 +91,8 @@ public sealed class AppServices(
 {
     public string? DemoSample => demoSample;
     public ISettingsStore Settings => settings;
+    private readonly Lazy<GameSearch> _games = new(() => new GameSearch(data.Value.Apps));
+    public IReadOnlyList<GameMatch> SearchGames(string query) => _games.Value.Search(query);
 
     public Task<HardwareProfile> ScanAsync(CancellationToken cancellationToken) =>
         Task.Run(() => scannerFactory().ScanAsync(cancellationToken), cancellationToken);

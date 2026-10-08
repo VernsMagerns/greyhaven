@@ -57,6 +57,7 @@ def protondb(dump, date):
         reports = json.load(tar.extractfile(member))
     cutoff = (date - datetime.timedelta(days=730))
     per = defaultdict(lambda: [0, 0, 0])  # reports, works, works without tweaks
+    titles = {}  # appid -> (newest timestamp, title), for the "Check a game" search
     for r in reports:
         try:
             appid = str(r["app"]["steam"]["appId"])
@@ -65,6 +66,9 @@ def protondb(dump, date):
         except (KeyError, TypeError, ValueError):
             continue
         if not appid.isdigit() or when < cutoff or when > date: continue
+        title = (r["app"].get("title") or "").strip()
+        if title and (appid not in titles or int(r["timestamp"]) > titles[appid][0]):
+            titles[appid] = (int(r["timestamp"]), title)
         verdict = resp.get("verdict")
         if verdict not in ("yes", "no"): continue
         c = per[appid]
@@ -79,6 +83,7 @@ def protondb(dump, date):
         "window": "reports from the 730 days before dumpDate",
         "fields": ["reports", "percentWorks", "percentWithoutTweaks"],
         "games": games,
+        "titles": {a: titles[a][1] for a in games if a in titles},
     }
     with gzip.open(OUT / "protondb-summary.json.gz", "wt", encoding="utf-8", compresslevel=9) as f:
         json.dump(doc, f, separators=(",", ":"))

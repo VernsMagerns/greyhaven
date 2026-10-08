@@ -96,6 +96,8 @@ internal sealed class FakeServices : IAppServices
     public List<string> Shown { get; } = [];
     public string? ChooseSaveLocation(string suggestedFileName) { SuggestedName = suggestedFileName; return SaveLocation; }
     public void ShowInFolder(string path) => Shown.Add(path);
+    private static readonly Lazy<GameSearch> Games = new(() => new GameSearch(GreyHaven.Compat.CompatibilityData.Load().Apps));
+    public IReadOnlyList<GameMatch> SearchGames(string query) => Games.Value.Search(query);
 
     public sealed class MemorySettings : ISettingsStore
     {
@@ -214,6 +216,25 @@ public class MainViewModelTests
 
 public class ResultsViewModelTests
 {
+    [Fact]
+    public async Task Check_a_game_searches_as_you_type_and_links_to_protondb()
+    {
+        var services = FakeServices.ForSample("nvidia-desktop");
+        var games = new ResultsViewModel(await FakeServices.RealReport("nvidia-desktop"), services).Games;
+        games.Query = "e";
+        Assert.Empty(games.Results);
+        Assert.Null(games.Message);
+        games.Query = "Elden Ring";
+        var first = games.Results[0];
+        Assert.Equal("ELDEN RING", first.Name);
+        Assert.Equal("ExtraStep", first.ColourKey);
+        first.Link!.OpenCommand.Execute(null);
+        Assert.Equal("https://www.protondb.com/app/1245620", services.Opened.Single());
+        games.Query = "zzqx no such game";
+        Assert.Empty(games.Results);
+        Assert.Contains("No game called", games.Message);
+    }
+
     [Fact]
     public async Task Nvidia_desktop_leads_with_a_plain_headline_and_the_easy_path()
     {

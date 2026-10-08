@@ -277,6 +277,7 @@ function showResults(focus) {
     <div id="parts"></div>
 
     <div id="apps"></div>
+    <section id="games" aria-labelledby="games-h"></section>
 
     ${r.caveats.length ? more(`${plural(r.caveats.length, "thing", "things")} to test before you install`, `
       <p>We can't check ${r.caveats.length === 1 ? "this" : "these"} from Windows. Test ${r.caveats.length === 1 ? "it" : "them"} by trying Linux from a USB stick first.</p>
@@ -316,6 +317,7 @@ function showResults(focus) {
   $("#again").addEventListener("click", showStart);
   renderParts();
   renderApps();
+  renderGames();
   renderSaved();
   if (focus) focusHeading();
 }
@@ -448,6 +450,53 @@ function renderApps() {
     showResults(false);
     $(`#${id}`)?.focus();
   }));
+}
+
+// ---- Check a game ---------------------------------------------------------------------------
+// Rows come from "greyhaven game-index" (GameSearch + AppRater, the same words as the app):
+// [name, verdict text, verdict, summary, link, reports, anti-cheat]. Ranking matches GameSearch.Search.
+const VERDICT_KEY = { Works: "works", WorksWithLayer: "worksWithLayer", UseWeb: "useWeb", WontWork: "wontWork", NotNeeded: "notNeeded", NotSure: "notSure" };
+const norm = s => s.replace(/[®™©]/g, "").replace(/\([^)]*\)|\[[^\]]*\]/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+let gameKeys;
+function searchGames(q) {
+  const games = window.GH_GAMES || [];
+  gameKeys ??= games.map(g => norm(g[0]));
+  q = norm(q);
+  if (q.length < 2) return [];
+  const words = q.split(" ");
+  const hits = [];
+  games.forEach((g, i) => {
+    const k = gameKeys[i];
+    const rank = k === q ? 0 : k.startsWith(q) ? 1 : words.every(w => k.includes(w)) ? 2 : -1;
+    if (rank >= 0) hits.push([rank, g]);
+  });
+  hits.sort((a, b) => a[0] - b[0] || (b[1][6] - a[1][6]) || b[1][5] - a[1][5] || a[1][0].localeCompare(b[1][0]));
+  return hits.slice(0, 8).map(h => h[1]);
+}
+function gameRow([name, text, verdict, summary, link]) {
+  const [glyph, colour] = APP_BADGE[VERDICT_KEY[verdict]];
+  const label = link?.includes("protondb.com") ? `${name} on ProtonDB` : "Are We Anti-Cheat Yet";
+  return `<li class="app"><div class="app-head"><span class="strong">${esc(name)}</span>
+      <span class="badge c-${colour}"><span class="glyph" aria-hidden="true">${glyph}</span>${esc(text)}</span></div>
+    <p>${esc(summary)}</p>${link ? `<p class="small"><a href="${esc(link)}" target="_blank" rel="noopener">${esc(label)}</a></p>` : ""}</li>`;
+}
+function renderGames() {
+  const el = $("#games");
+  el.innerHTML = `<h2 id="games-h">Check a game</h2>
+    <p>See whether a game runs on Linux before you switch. Type its name.</p>
+    <p><input type="search" id="gamequery" class="gamequery" aria-label="Game name" aria-describedby="gamemsg" autocomplete="off" value="${esc(state.gameQuery ?? "")}"></p>
+    <p id="gamemsg" class="secondary small" aria-live="polite"></p>
+    <ul class="applist" id="gameresults"></ul>
+    <p class="secondary small">From ProtonDB player reports (Open Database License) and Are We Anti-Cheat Yet. Click a game's link to read the reports.</p>`;
+  const input = $("#gamequery"), show = () => {
+    const q = input.value.trim(); state.gameQuery = input.value;
+    const hits = searchGames(q);
+    $("#gameresults").innerHTML = hits.map(gameRow).join("");
+    $("#gamemsg").textContent = q.length < 2 ? "" : !hits.length ? `No game called "${q}" in GreyHaven's list. Check the spelling, or search ProtonDB's website.` : hits.length === 1 ? "1 game found." : `${hits.length} games found.`;
+  };
+  let timer;
+  input.addEventListener("input", () => { clearTimeout(timer); timer = setTimeout(show, 250); });
+  show();
 }
 
 // One short line per rating; the full explanation is behind "Show more".
