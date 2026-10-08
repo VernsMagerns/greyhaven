@@ -285,7 +285,7 @@ public class ResultsViewModelTests
             Assert.Matches(@"^greyhaven-report-\d{4}-\d{2}-\d{2}\.html$", services.SuggestedName);
             var saved = await File.ReadAllTextAsync(path);
             Assert.Contains("Your PC's parts on Pop!\\_OS", saved);
-            Assert.Contains("Step 9 of 9", saved);
+            Assert.Contains("Part 5 of 5: On the USB stick", saved);
             Assert.Equal($"Report saved: {Path.GetFileName(path)}", vm.SaveStatus);
             vm.ShowSavedReportCommand.Execute(null);
             Assert.Equal([path], services.Shown);

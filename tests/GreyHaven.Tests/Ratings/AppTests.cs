@@ -171,6 +171,10 @@ public class AppTests
             var with = Path.Combine(dir, "with.json");
             await ReportExporter.SaveAsync(r, with, includeApps: true);
             Assert.Contains("OpenWhispr", await File.ReadAllTextAsync(with));
+            var withMd = Path.Combine(dir, "with.md");
+            await ReportExporter.SaveAsync(r, withMd, includeApps: true);
+            Assert.Contains("## Your apps", await File.ReadAllTextAsync(withMd));
+            Assert.DoesNotContain("## Your apps", await File.ReadAllTextAsync(Path.Combine(dir, "report.md")));
         }
         finally { Directory.Delete(dir, true); }
     }

@@ -72,9 +72,9 @@ public class ReportExportTests
         var r = (await Rate("nvidia-desktop")).WithPath(PathKind.Advanced);
         var md = ReportExporter.Render(r, ReportFormat.Markdown);
         Assert.Contains("Your PC's parts on Pop!\\_OS", md);
-        Assert.Contains("Pick the NVIDIA ISO", md);
+        Assert.Contains("Pop!\\_OS (NVIDIA ISO)", md);
         Assert.Contains("turn Secure Boot off first", md);
-        Assert.Contains("System76 - Live Disk Creation", md);
+        Assert.Contains("System76 - Pop!\\_OS download information", md);
     }
 
     [Fact]

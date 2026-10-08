@@ -144,8 +144,10 @@ public class WalkthroughTests
     public async Task Saved_report_includes_every_step()
     {
         var html = ReportExporter.Render(await Rate("nvidia-desktop"), ReportFormat.Html);
-        Assert.Contains("Step 1 of 9: Back up your files", html);
-        Assert.Contains("Step 9 of 9: After installing", html);
+        Assert.Contains("Part 1 of 5: Get ready", html);
+        Assert.Contains("How do you want to install Linux?", html);
+        Assert.Contains("Part 5 of 5: On the USB stick", html);
+        Assert.Contains("After installing", html);
         Assert.Contains("What could go wrong?", html);
     }
 }

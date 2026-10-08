@@ -25,6 +25,7 @@ public static class ReportBuilder
         Header(r, distro, blocks);
         YourLinux(r, blocks);
         Parts(r, distro, blocks);
+        Apps(r, blocks);
         Steps(r, blocks);
         Compare(r, blocks);
         YourPc(r.Profile, blocks);
@@ -220,25 +221,67 @@ public static class ReportBuilder
         yield return P(string.Join(" · ", facts));
     }
 
+    /// <summary>
+    /// The whole journey, part by part, as the app shows it. Interactive bits (GreyHaven's
+    /// buttons) are described in words. Phase 5 is what the person follows on the USB stick.
+    /// </summary>
     private static void Steps(CompatibilityReport r, List<Block> b)
     {
-        var steps = WalkthroughBuilder.Build(r);
+        var steps = JourneyBuilder.Build(r);
         if (steps.Count == 0) return;
         b.Add(new Heading(2, "Your steps to Linux"));
         b.Add(P("Keep this page on your phone, or print it, while your PC restarts."));
-        for (var i = 0; i < steps.Count; i++)
+        foreach (var phase in steps.GroupBy(s => s.Phase))
         {
-            var s = steps[i];
-            b.Add(new Heading(3, $"Step {i + 1} of {steps.Count}: {s.Title}"));
-            b.AddRange(s.Body);
-            foreach (var o in s.Options)
+            b.Add(new Heading(3, $"Part {(int)phase.Key} of 5: {JourneyBuilder.PhaseName(phase.Key)}"));
+            foreach (var s in phase)
             {
-                b.Add(new Heading(4, $"If you choose: {o.Title}"));
-                foreach (var line in o.Lines) b.Add(P(line));
-                if (o.ConfirmText is not null) b.Add(new ListBlock(ListKind.Checkboxes, [Line(o.ConfirmText)]));
-                b.AddRange(o.Steps);
+                b.Add(new Heading(4, s.Title));
+                b.Add(P(new Strong(s.Lead)));
+                foreach (var c in s.Choices)
+                {
+                    var chosen = r.SelectedInstall == c.Choice;
+                    b.Add(P(new Strong(c.Title + (chosen ? " (your choice)" : c.Recommended ? " (suggested)" : "") + ". "), new Text(string.Join(" ", c.Lines))));
+                    b.Add(new ListBlock(ListKind.Bullets, c.Checks.Select(k => Line((k.State switch { CheckState.Ok => "✓ ", CheckState.Attention => "! ", _ => "✗ " }) + k.Text)).ToList()));
+                }
+                b.AddRange(s.Body);
+                foreach (var t in s.Tasks)
+                {
+                    b.Add(P(new Strong(t.Title + (t.Done ? " (already done)" : "") + ". "), new Text(t.Why)));
+                    if (t.Done) continue;
+                    if (t.Action == PrepAction.OneClick) b.Add(P($"GreyHaven can do this for you: \"{t.ButtonLabel}\". {t.Undo}"));
+                    b.AddRange(t.How);
+                }
+                if (s.Usb is { } usb)
+                    b.Add(P([new Text("How the download is checked: "), .. usb.VerificationSources.Select(SourceLink), new Text(".")]));
+                if (s.Restart is { } rs)
+                {
+                    b.Add(new ListBlock(ListKind.Checkboxes, rs.FinalChecks.Select(Line).ToList()));
+                    b.Add(P($"Then click \"{rs.ButtonLabel}\" in GreyHaven."));
+                    b.AddRange(rs.AfterRestart);
+                    b.Add(new Details("USB stick not in the list?", rs.Fallback));
+                }
+                if (s.Tip is not null) b.Add(new Callout(CalloutKind.Tip, "What could go wrong?", Line(s.Tip)));
             }
-            if (s.Tip is not null) b.Add(new Callout(CalloutKind.Tip, "What could go wrong?", Line(s.Tip)));
+        }
+    }
+
+    /// <summary>Only when the person chose "Include my apps" (otherwise the list is removed before saving).</summary>
+    private static void Apps(CompatibilityReport r, List<Block> b)
+    {
+        if (r.Apps.Count == 0) return;
+        b.Add(new Heading(2, "Your apps"));
+        b.Add(P(Core.Apps.AppWords.Summary(r.Apps)));
+        foreach (var group in r.Apps.GroupBy(a => Core.Apps.AppWords.Category(a.Category)))
+        {
+            var rows = group.Select(a =>
+            {
+                var notes = new List<Inline> { new Text(a.Summary) };
+                foreach (var alt in a.Alternatives)
+                    notes.Add(new Text($" Instead: {alt.App?.Name ?? alt.WebName} ({alt.Closeness switch { "same" => "does the same job", "close" => "very close", _ => "does part of it" }})."));
+                return Cells(Line(a.Name), Line(Core.Apps.AppWords.Verdict(a.Verdict)), notes);
+            }).ToList();
+            b.Add(new Table(group.Key, ["App", "On Linux", "Notes"], rows));
         }
     }
 

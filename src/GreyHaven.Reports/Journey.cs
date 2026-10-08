@@ -307,7 +307,7 @@ public static class JourneyBuilder
         };
         var stick = g.InstallerBytes is { } bytes && bytes + 500_000_000 > MinimumStickBytes ? 16 : 8;
         return Step("usb", JourneyPhase.MakeUsb, "Make your USB stick",
-            $"GreyHaven gets {c.Name} and puts it on a USB stick for you.",
+            $"GreyHaven gets {c.Name} ({g.EditionName}) and puts it on a USB stick for you.",
             [
                 P(new Text("Plug in a USB stick that holds "), new Strong($"at least {stick} GB"), new Text(size is null ? "." : $". The {c.Name} file is {size}.")),
                 new Callout(CalloutKind.Danger, "Everything on the stick will be erased", Line("Use an empty stick, or copy its files somewhere safe first. GreyHaven only lists USB sticks, never your PC's own drives.")),
