@@ -88,30 +88,68 @@ try
     FindStarting(ControlType.Group, "Show more about Graphics").Patterns.ExpandCollapse.Pattern.Expand();
     Shot("04-part-show-more-light.png");
 
-    // The walkthrough: step 1, step 3 (this PC's Windows checklist), step 8 (install choice).
-    FindStarting(ControlType.Button, "What's next").AsButton().Invoke();
+    // Your apps (the demo sample's made-up list), with VALORANT marked as needed.
+    FindStarting(ControlType.Group, "Show your").Patterns.ExpandCollapse.Pattern.Expand();
+    FindStarting(ControlType.CheckBox, "I need VALORANT").AsCheckBox().IsChecked = true;
+    CheckNames("results with apps");
+    Shot("04b-results-apps-light.png");
+
+    // The walkthrough, from the button under the headline. Demo mode: nothing is written or restarted.
+    FindStarting(ControlType.Button, "Show me how to switch").AsButton().Invoke();
+    Find("How do you want to install Linux?");
+    CheckNames("walkthrough: install choice");
+    Shot("06-walkthrough-choose-light.png");
+    void Next() => FindStarting(ControlType.Button, "Next:").AsButton().Invoke();
+    Next();
     Find("Back up your files");
-    CheckNames("walkthrough step 1");
-    Shot("06-walkthrough-step1-light.png");
-    for (var i = 0; i < 2; i++) FindStarting(ControlType.Button, "Next:").AsButton().Invoke();
+    Next();
     Find("Get Windows ready");
-    CheckNames("walkthrough step 3");
-    Shot("07-walkthrough-step3-light.png");
-    for (var i = 0; i < 3; i++) FindStarting(ControlType.Button, "Next:").AsButton().Invoke();
-    Find("Start your PC from the USB stick");
-    CheckNames("walkthrough step 6");
-    Shot("07b-walkthrough-step6-pictures-light.png");
-    for (var i = 0; i < 2; i++) FindStarting(ControlType.Button, "Next:").AsButton().Invoke();
-    Find("Choose how to install");
-    FindStarting(ControlType.RadioButton, "Replace Windows").AsRadioButton().IsChecked = true;
-    CheckNames("walkthrough step 8");
-    Shot("08-walkthrough-install-replace-light.png");
+    FindStarting(ControlType.Button, "Turn off Fast Startup").AsButton().Invoke();
+    Find("Yes, do it");
+    CheckNames("walkthrough: Windows tasks");
+    Shot("07-walkthrough-windows-confirm-light.png");
+    Find("Yes, do it").AsButton().Invoke();
+    Find("✓ Done.");
+    Next();
+    Find("Make your USB stick");
+    FindStarting(ControlType.CheckBox, "I understand everything on the").AsCheckBox().IsChecked = true;
+    Find("Make my USB stick").AsButton().Invoke();
+    Find("✓ Your USB stick is ready.");
+    CheckNames("walkthrough: USB stick");
+    Shot("07b-walkthrough-usb-done-light.png");
+    Next();
+    Find("Take the guide with you");
+    Find("QR code that opens your guide on a phone");
+    CheckNames("walkthrough: guide");
+    Shot("08-walkthrough-guide-light.png");
+    Next();
+    Find("Restart into your USB stick");
+    foreach (var c in window.FindAllDescendants(cf => cf.ByControlType(ControlType.CheckBox)).Select(e => e.AsCheckBox()))
+        if (c.IsChecked != true) c.IsChecked = true;
+    FindStarting(ControlType.Button, "Restart into your USB stick").AsButton().Invoke();
+    FindStarting(ControlType.Text, "Demo: your PC would restart now");
+    CheckNames("walkthrough: restart");
+    Shot("08b-walkthrough-restart-light.png");
+
+    // A picture, enlarged, then closed with Escape.
+    FindStarting(ControlType.Button, "Enlarge picture:").AsButton().Invoke();
+    var picture = Retry.WhileNull(() => app.GetAllTopLevelWindows(automation).FirstOrDefault(w => w.Title == "Picture"), timeout).Result
+                  ?? throw new InvalidOperationException("The enlarged picture didn't open.");
+    Thread.Sleep(500);
+    Capture.Element(picture).ToFile(Path.Combine(outDir, "08c-picture-enlarged-light.png"));
+    Console.WriteLine("saved 08c-picture-enlarged-light.png");
+    FlaUI.Core.Input.Keyboard.Type(FlaUI.Core.WindowsAPI.VirtualKeyShort.ESCAPE);
+    Retry.WhileTrue(() => app.GetAllTopLevelWindows(automation).Any(w => w.Title == "Picture"), timeout);
+
+    Next();
+    Find("After you restart");
+    CheckNames("walkthrough: after you restart");
 
     // Dark theme, on the walkthrough and back on the results.
     var theme = window.FindFirstDescendant(cf => cf.ByControlType(ControlType.ComboBox))?.AsComboBox()
                 ?? throw new InvalidOperationException("Appearance box not found.");
     theme.Select("Dark");
-    Shot("09-walkthrough-dark.png");
+    Shot("09-walkthrough-after-restart-dark.png");
     FindStarting(ControlType.Button, "← Back to results").AsButton().Invoke();
     Find("Your PC is ready for Linux");
     Shot("05-results-dark.png");
