@@ -5,7 +5,10 @@ namespace GreyHaven.Media;
 /// <param name="IsUsb">Bus type is USB.</param>
 /// <param name="IsRemovableMedia">Windows calls it removable (most USB sticks; some fast ones say "fixed").</param>
 /// <param name="HoldsWindows">It has the Windows, boot or system partition, or a page file.</param>
-public sealed record DiskInfo(int Number, string Model, long SizeBytes, bool IsUsb, bool IsRemovableMedia, bool HoldsWindows, bool IsReadOnly, bool IsOffline);
+/// <param name="Drives">Its drive letters, e.g. "E:", or null if Windows shows none.</param>
+/// <param name="UsedBytes">Space used on those drives, or null if Windows can't read them.</param>
+public sealed record DiskInfo(int Number, string Model, long SizeBytes, bool IsUsb, bool IsRemovableMedia, bool HoldsWindows, bool IsReadOnly, bool IsOffline,
+    string? Drives = null, long? UsedBytes = null);
 
 /// <summary>Whether a disk may be written, and what to tell the person if not.</summary>
 public sealed record StickCheck(bool CanUse, string? Problem, string? Warning);
@@ -36,6 +39,16 @@ public static class UsbSafety
     }
 
     public static string Gb(long bytes) => $"{Math.Round(bytes / 1e9):0} GB";
+
+    /// <summary>"E:, 3.2 GB used" / "E:, empty" / "Windows can't show what's on it": what's on the stick now (it will be erased).</summary>
+    public static string Contents(DiskInfo d)
+    {
+        if (d.UsedBytes is not { } used) return "Windows can't show what's on it.";
+        var amount = used < 50_000_000 ? "empty" : used < 10_000_000_000
+            ? string.Create(System.Globalization.CultureInfo.InvariantCulture, $"{used / 1e9:0.0} GB used")
+            : $"{Gb(used)} used";
+        return d.Drives is { } drives ? $"{drives} {amount}" : char.ToUpperInvariant(amount[0]) + amount[1..];
+    }
 }
 
 /// <summary>Writes an installer image to a disk and reads it back. The disk is anything with a sector size (a file in tests).</summary>

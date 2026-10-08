@@ -125,10 +125,13 @@ GreyHaven, start it again, scan, and go back to **Get Windows ready**:
 **This erases the spare stick.** Unplug any other USB sticks and external drives first, so
 there's no doubt which one is used.
 
-- [ ] Before plugging it in: the screen says "Looking for USB sticks… Plug one in.", and your
-      PC's own drives are **not** listed.
+- [ ] Before plugging it in: the screen says "No USB stick is plugged in. Plug yours in now…",
+      and your PC's own drives are **not** listed.
 - [ ] Plug in the spare stick: within a few seconds it appears with its name and size, and
-      it's selected.
+      it's selected. Under it is what's on it now (e.g. "E: 3.2 GB used"). Does that match
+      File Explorer?
+- [ ] Optional, if you have a second stick: plug it in too. The one you just plugged in becomes
+      selected, and the erase tick is cleared. Unplug it again before going on.
 - [ ] Unplug it: it disappears. Plug it back in: it's back.
 - [ ] **Make my USB stick** stays greyed out until you tick "I understand everything on the
       … stick will be erased", which names the stick.

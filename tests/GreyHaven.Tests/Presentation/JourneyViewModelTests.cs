@@ -115,17 +115,36 @@ public class JourneyViewModelTests
         await usb.RefreshSticksAsync();                                           // the regular re-check keeps the tick
         Assert.True(usb.CanStart);
         sw.Sticks.Add(new DiskInfo(6, "Other stick", 32_000_000_000, true, true, false, false, false));
-        await usb.RefreshSticksAsync();                                           // a new stick appears: same choice, still ticked
-        Assert.Equal("SanDisk Ultra, 16 GB", usb.Selected!.Name);
-        Assert.True(usb.CanStart);
+        await usb.RefreshSticksAsync();                                           // a stick just plugged in is suggested, with a fresh tick
+        Assert.Equal("Other stick, 32 GB", usb.Selected!.Name);
+        Assert.False(usb.CanStart);
         sw.Sticks.RemoveAt(1);
-        await usb.RefreshSticksAsync();
+        await usb.RefreshSticksAsync();                                           // it's gone: back to the first one
+        Assert.Equal("SanDisk Ultra, 16 GB", usb.Selected!.Name);
+        usb.Confirmed = true;
         await usb.StartCommand.ExecuteAsync(null);
         var (action, request) = sw.Elevated.Single();
         Assert.Equal(HelperAction.WriteUsb, action);
         Assert.Equal((4, "SanDisk Ultra", 16_008_609_792L, new string('b', 64)), (request!.Disk!.Value, request.Model, request.Size!.Value, request.Sha256));
         Assert.True(usb.IsDone);
         Assert.True(vm.CanGoOn);
+    }
+
+    [Fact]
+    public async Task With_several_sticks_in_at_the_start_the_newest_is_suggested_and_contents_are_shown()
+    {
+        var (vm, sw) = await Start();
+        sw.Sticks.Clear();
+        sw.Sticks.Add(new DiskInfo(7, "Kingston", 32_000_000_000, true, true, false, false, false, "F:", 3_240_000_000));
+        sw.Sticks.Add(new DiskInfo(3, "SanDisk", 16_000_000_000, true, true, false, false, false, "E:", 0));
+        GoTo(vm, JourneyScreen.Usb);
+        await vm.Usb!.RefreshSticksAsync();
+        Assert.Equal("Kingston, 32 GB", vm.Usb.Selected!.Name);
+        Assert.Equal(["F: 3.2 GB used", "E: empty"], vm.Usb.Sticks.Select(s => s.Contents));
+        sw.Sticks[0] = sw.Sticks[0] with { Drives = null, UsedBytes = null };
+        await vm.Usb.RefreshSticksAsync();
+        Assert.Equal("Windows can't show what's on it.", vm.Usb.Sticks[0].Contents);
+        Assert.Equal("Kingston, 32 GB", vm.Usb.Selected!.Name);
     }
 
     [Fact]

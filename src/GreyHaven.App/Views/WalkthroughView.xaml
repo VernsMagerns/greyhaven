@@ -151,7 +151,7 @@
         <Border Style="{StaticResource Card}" DataContext="{Binding Usb}" AutomationProperties.Name="Your USB stick"
                 Visibility="{Binding Converter={StaticResource HasValueToVisibility}}">
             <StackPanel>
-                <TextBlock Text="Looking for USB sticks… Plug one in." Style="{StaticResource Strong}" infra:Accessibility.Announce="True"
+                <TextBlock Text="No USB stick is plugged in. Plug yours in now: it shows up here by itself." Style="{StaticResource Strong}" TextWrapping="Wrap" infra:Accessibility.Announce="True"
                            Visibility="{Binding State, Converter={StaticResource EqualsToVisibility}, ConverterParameter=waiting}" />
                 <StackPanel Visibility="{Binding State, Converter={StaticResource EqualsToVisibility}, ConverterParameter=choose}">
                     <ItemsControl ItemsSource="{Binding Sticks}" Focusable="False">
@@ -159,7 +159,9 @@
                             <DataTemplate>
                                 <StackPanel Margin="0,0,0,8">
                                     <RadioButton GroupName="Stick" Content="{Binding Name}" FontWeight="SemiBold" IsEnabled="{Binding Check.CanUse}"
-                                                 IsChecked="{Binding IsSelected}" AutomationProperties.Name="{Binding Name}" />
+                                                 IsChecked="{Binding IsSelected}" AutomationProperties.Name="{Binding Name}"
+                                                 AutomationProperties.HelpText="{Binding Contents}" />
+                                    <TextBlock Text="{Binding Contents}" Style="{StaticResource Secondary}" Margin="28,2,0,0" />
                                     <TextBlock Text="{Binding Problem}" Style="{StaticResource Body}" Foreground="{DynamicResource GH.Unsupported}" Margin="28,2,0,0"
                                                Visibility="{Binding Problem, Converter={StaticResource HasValueToVisibility}}" />
                                     <TextBlock Text="{Binding Warning}" Style="{StaticResource Body}" Foreground="{DynamicResource GH.Partial}" Margin="28,2,0,0"

@@ -155,6 +155,13 @@ function tasksScreen(s) {
   return `${s.tasks.map(t => taskCard(t, s.id)).join("")}${blocks(s.body, s.id)}`;
 }
 
+// Pretend sticks for the preview; the newest one plugged in is picked.
+const USB_STICKS = [
+  { name: "SanDisk Ultra", gb: 16, contents: "E: 3.2 GB used" },
+  { name: "Kingston DataTraveler", gb: 32, contents: "F: empty" },
+];
+function stickName(u) { const k = USB_STICKS[u.pick ?? (u.count || 1) - 1]; return `${k.name} (${k.gb} GB)`; }
+
 // The USB stick: one screen that finds the stick, then downloads, checks, writes and checks again.
 const USB_STAGES = ["Downloading", "Checking the file", "Writing to the stick", "Checking the stick"];
 function usbScreen(s) {
@@ -162,7 +169,7 @@ function usbScreen(s) {
   const gb = plan.installerBytes ? (plan.installerBytes / 1e9).toFixed(1) : "6";
   const widget = {
     waiting: `
-      <p class="strong" aria-live="polite">Looking for USB sticks… Plug one in.</p>
+      <p class="strong" aria-live="polite">No USB stick is plugged in. Plug yours in now: it shows up here by itself.</p>
       <div class="sim-controls"><span class="secondary small">Preview only:</span>
         <button class="plain" data-plug="16">Plug in a 16 GB stick</button>
         <button class="plain" data-plug="4">Plug in a 4 GB stick</button></div>`,
@@ -171,8 +178,11 @@ function usbScreen(s) {
       <p>You need one that holds at least 8 GB. Unplug it and plug in a bigger one.</p></div>
       <div class="sim-controls"><span class="secondary small">Preview only:</span><button class="plain" data-plug="16">Swap for a 16 GB stick</button></div>`,
     found: `
-      <div class="option selected stick"><span class="strong">SanDisk Ultra</span> <span class="secondary">USB stick · 16 GB</span></div>
-      <div class="warn-box big-warn"><p class="strong">This erases everything on the SanDisk Ultra (16 GB).</p>
+      <div role="radiogroup" aria-label="USB sticks">${USB_STICKS.slice(0, u.count || 1).map((k, n) => `
+        <label class="option stick ${n === (u.pick ?? (u.count || 1) - 1) ? "selected" : ""}"><input type="radio" name="stick" data-stick="${n}" ${n === (u.pick ?? (u.count || 1) - 1) ? "checked" : ""}>
+          <span><span class="strong">${k.name}</span> <span class="secondary">USB stick · ${k.gb} GB</span><br><span class="secondary small">${k.contents}</span></span></label>`).join("")}</div>
+      ${(u.count || 1) < 2 ? `<div class="sim-controls"><span class="secondary small">Preview only:</span><button class="plain" id="plugsecond">Plug in a second stick</button></div>` : ""}
+      <div class="warn-box big-warn"><p class="strong">This erases everything on the ${stickName(u)}.</p>
         <label class="check"><input type="checkbox" id="usbconfirm" ${u.confirm ? "checked" : ""}> <span>I understand everything on this stick will be erased.</span></label></div>
       <button class="accent big" id="usbgo" ${u.confirm ? "" : "disabled"}>Make my USB stick</button>`,
     working: `
@@ -318,6 +328,8 @@ function showWalkthrough(index, focus = true) {
   act("data-undo", k => { walk.tasks[k] = "todo"; announce("Undone."); showWalkthrough(walk.i, false); $(`[data-ask="${k}"]`)?.focus(); });
   screen.querySelectorAll("[data-manual]").forEach(c => c.addEventListener("change", () => (walk.tasks[c.dataset.manual] = c.checked ? "manual-done" : "todo")));
   act("data-plug", size => { walk.usb = { stage: size === "4" ? "small" : "found", confirm: false }; announce(size === "4" ? "This stick is too small." : "Found a USB stick: SanDisk Ultra, 16 GB."); showWalkthrough(walk.i, false); });
+  $("#plugsecond")?.addEventListener("click", () => { walk.usb = { stage: "found", confirm: false, count: 2 }; announce("Found a USB stick: Kingston DataTraveler, 32 GB. It's selected."); showWalkthrough(walk.i, false); });
+  screen.querySelectorAll("[data-stick]").forEach(r => r.addEventListener("change", () => { walk.usb.pick = +r.dataset.stick; walk.usb.confirm = false; showWalkthrough(walk.i, false); screen.querySelector(`[data-stick="${r.dataset.stick}"]`).focus(); }));
   $("#usbconfirm")?.addEventListener("change", e => { walk.usb.confirm = e.target.checked; showWalkthrough(walk.i, false); $("#usbconfirm").focus(); });
   $("#usbgo")?.addEventListener("click", () => { runUsb(); $("#usbcancel")?.focus(); });
   $("#usbcancel")?.addEventListener("click", () => { clearInterval(walk.usb.timer); walk.usb = { stage: "stopped" }; announce("Stopped."); showWalkthrough(walk.i, false); $("#usbagain")?.focus(); });

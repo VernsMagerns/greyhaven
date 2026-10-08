@@ -22,6 +22,7 @@ public static class WindowsDisks
         var storage = new ManagementScope(@"\\.\root\Microsoft\Windows\Storage");
         var pageFileDisks = PageFileDisks(storage);
         var removable = RemovableDiskNumbers();
+        var drives = DriveLetters(storage);
         var disks = new List<WindowsDisk>();
         using var searcher = new ManagementObjectSearcher(storage, new ObjectQuery(
             "SELECT Number, FriendlyName, Size, BusType, IsSystem, IsBoot, IsReadOnly, IsOffline, LogicalSectorSize FROM MSFT_Disk"));
@@ -36,7 +37,9 @@ public static class WindowsDisks
                 removable.Contains(number),
                 d["IsSystem"] is true || d["IsBoot"] is true || pageFileDisks.Contains(number),
                 d["IsReadOnly"] is true,
-                d["IsOffline"] is true);
+                d["IsOffline"] is true,
+                drives.TryGetValue(number, out var letters) ? string.Join(" ", letters.Select(l => $"{l}:")) : null,
+                drives.TryGetValue(number, out letters) ? UsedBytes(letters) : null);
             disks.Add(new WindowsDisk(info, Convert.ToInt32(d["LogicalSectorSize"] ?? 512, System.Globalization.CultureInfo.InvariantCulture)));
         }
         return disks.OrderBy(d => d.Info.Number).ToList();
@@ -52,6 +55,38 @@ public static class WindowsDisks
             .Where(d => (d["MediaType"] as string)?.Contains("Removable", StringComparison.OrdinalIgnoreCase) == true)
             .Select(d => Convert.ToInt32(d["Index"], System.Globalization.CultureInfo.InvariantCulture))
             .ToHashSet();
+    }
+
+    /// <summary>Drive letters by disk number, from MSFT_Partition.</summary>
+    private static Dictionary<int, List<char>> DriveLetters(ManagementScope storage)
+    {
+        var result = new Dictionary<int, List<char>>();
+        using var parts = new ManagementObjectSearcher(storage, new ObjectQuery("SELECT DiskNumber, DriveLetter FROM MSFT_Partition"));
+        foreach (var p in parts.Get().Cast<ManagementBaseObject>())
+            if (p["DriveLetter"] is char c && char.IsAsciiLetter(c))
+            {
+                var n = Convert.ToInt32(p["DiskNumber"], System.Globalization.CultureInfo.InvariantCulture);
+                (result.TryGetValue(n, out var l) ? l : result[n] = []).Add(char.ToUpperInvariant(c));
+            }
+        return result;
+    }
+
+    /// <summary>Total space used on the drives, or null if any can't be read (no file system Windows knows).</summary>
+    private static long? UsedBytes(List<char> letters)
+    {
+        long used = 0;
+        foreach (var l in letters)
+        {
+            try
+            {
+                var d = new DriveInfo($"{l}:\\");
+                if (!d.IsReady) return null;
+                used += d.TotalSize - d.TotalFreeSpace;
+            }
+            catch (IOException) { return null; }
+            catch (UnauthorizedAccessException) { return null; }
+        }
+        return used;
     }
 
     /// <summary>Disks with a page file on one of their partitions (e.g. "D:\pagefile.sys").</summary>

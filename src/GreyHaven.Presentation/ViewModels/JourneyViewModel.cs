@@ -116,6 +116,8 @@ public sealed partial class StickViewModel(DiskInfo disk, StickCheck check, Acti
     public DiskInfo Disk { get; } = disk;
     public StickCheck Check { get; } = check;
     public string Name => $"{Disk.Model}, {UsbSafety.Gb(Disk.SizeBytes)}";
+    /// <summary>What's on it now, e.g. "E: 3.2 GB used".</summary>
+    public string Contents => UsbSafety.Contents(Disk);
     public string? Problem => Check.Problem;
     public string? Warning => Check.Warning;
 
@@ -132,6 +134,9 @@ public sealed partial class UsbViewModel : ObservableObject
     private readonly JourneyViewModel _owner;
     private readonly UsbPlan _plan;
     private CancellationTokenSource? _cts;
+    /// <summary>When each stick was first seen (by disk number), to suggest the newest one.</summary>
+    private readonly Dictionary<int, long> _seen = new();
+    private long _poll;
 
     public UsbViewModel(UsbPlan plan, JourneyViewModel owner)
     {
@@ -186,9 +191,17 @@ public sealed partial class UsbViewModel : ObservableObject
         if (disks.SequenceEqual(Sticks.Select(s => s.Disk)) && State != "waiting") return;
 
         var previous = Selected?.Disk;
+        // Sticks already in at the first look count by disk number (Windows numbers new disks upwards).
+        var first = _poll++ == 0;
+        var arrived = disks.Where(d => !_seen.ContainsKey(d.Number)).ToList();
+        foreach (var d in arrived) _seen[d.Number] = first ? d.Number : 1_000_000 + _poll;
+        foreach (var gone in _seen.Keys.Except(disks.Select(d => d.Number)).ToList()) _seen.Remove(gone);
+
         Sticks = disks.Select(d => new StickViewModel(d, UsbSafety.Check(d, ImageBytes), s => Selected = s)).ToList();
-        // Keep the choice if the same stick is still there; otherwise pick the only usable one.
-        Selected = Sticks.FirstOrDefault(s => s.Disk == previous) ?? (Sticks.Count(s => s.Check.CanUse) == 1 ? Sticks.First(s => s.Check.CanUse) : null);
+        var newest = Sticks.Where(s => s.Check.CanUse).MaxBy(s => _seen[s.Disk.Number]);
+        // A stick just plugged in is the one they mean; otherwise keep the choice (its erase tick too).
+        Selected = !first && arrived.Any(a => a == newest?.Disk) ? newest
+            : Sticks.FirstOrDefault(s => s.Disk.Number == previous?.Number) ?? newest;
         State = Sticks.Count == 0 ? "waiting" : "choose";
     }
 
