@@ -119,6 +119,19 @@ distros:
     website: https://linuxmint.com
     tieBreakRank: 1
     audience: Its desktop looks and works much like Windows, which makes it a gentle first step for people new to Linux.
+    # "What's the difference?" pop-up. Checked 2026-10-07; sources below.
+    about:
+      summary: Linux Mint is built on Ubuntu, with a desktop called Cinnamon that looks and works much like Windows.
+      pros:
+        - Feels familiar, with a taskbar and a start menu like Windows.
+        - Supported with updates until April 2029.
+        - Its Driver Manager sets up NVIDIA's driver in a few clicks.
+      cons:
+        - It uses an older Linux (6.14) than Ubuntu 26.04, so the very newest hardware can be less well supported.
+        - Its app store hides apps that aren't verified by their makers, so a few popular ones come from their own websites.
+      sources:
+        - title: Linux Mint - All versions (22.3 supported until April 2029)
+          url: https://www.linuxmint.com/download_all.php
     driverTool: Driver Manager
     driverPackageSet: ubuntu-24.04
     fingerprintSet: libfprint-1.94.7
@@ -163,6 +176,19 @@ distros:
     website: https://ubuntu.com/desktop
     tieBreakRank: 2
     audience: It is the most widely used Linux desktop, so most guides and troubleshooting answers online are written for it.
+    about:
+      summary: Ubuntu is the most widely used Linux for PCs, made by the company Canonical.
+      pros:
+        - The most help online. Most guides and answers are written for it.
+        - Security updates for 5 years, until 2031.
+        - The newest of the three, with Linux 7.0, which helps with recent hardware.
+        - Works with Secure Boot on, including NVIDIA's driver.
+      cons:
+        - It looks different from Windows. The app bar is on the left, and apps open from a grid.
+        - NVIDIA's own driver is a separate step after installing.
+      sources:
+        - title: Ubuntu - Release cycle (5 years of standard security maintenance for LTS)
+          url: https://ubuntu.com/about/release-cycle
     driverTool: Software & Updates, "Additional Drivers" tab
     driverPackageSet: ubuntu-26.04
     fingerprintSet: libfprint-1.95.1
@@ -206,6 +232,19 @@ distros:
     website: https://system76.com/pop
     tieBreakRank: 3
     audience: It offers a separate download with NVIDIA drivers already installed and a keyboard-friendly tiling desktop, which suits gamers and developers.
+    about:
+      summary: Pop!_OS is made by System76, a company that sells Linux PCs. It uses its own new desktop, COSMIC.
+      pros:
+        - A download with NVIDIA's driver already installed.
+        - Windows can arrange themselves side by side automatically, if you turn that on (tiling).
+        - Built on Ubuntu 24.04 LTS.
+      cons:
+        - Secure Boot must be turned off in your PC's startup settings.
+        - Its installer can't set up Linux next to Windows by itself.
+        - COSMIC is new (first stable in December 2025), so expect it to change more often than older desktops.
+      sources:
+        - title: Wikipedia - COSMIC desktop (first stable release with Pop!_OS 24.04, December 2025)
+          url: https://en.wikipedia.org/wiki/COSMIC_desktop
     driverTool: the NVIDIA ISO, or the system76-driver packages
     driverPackageSet: pop-24.04
     fingerprintSet: libfprint-1.94.7

@@ -533,6 +533,9 @@ public sealed partial class RatingEngine(
             KernelVersion = ctx.IsoKernel.Version,
             Score = ScoreCalculator.Calculate(items),
             Notes = notes,
+            About = ctx.Distro.About is { } a
+                ? new DistroAbout(a.Summary, a.Pros, a.Cons, a.Sources.Select(x => new Source(x.Title, x.Url, SourceKind.Reference)).ToList())
+                : null,
         };
     }
 

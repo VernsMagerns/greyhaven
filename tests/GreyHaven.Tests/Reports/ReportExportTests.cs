@@ -88,6 +88,23 @@ public class ReportExportTests
     }
 
     [Fact]
+    public async Task Each_linux_choice_has_sourced_pros_and_cons_and_other_versions_are_mentioned()
+    {
+        var r = await Rate("nvidia-desktop");
+        Assert.All(r.Distros, d =>
+        {
+            Assert.NotNull(d.About);
+            Assert.NotEmpty(d.About!.Pros);
+            Assert.NotEmpty(d.About.Cons);
+            Assert.All(d.About.Sources, s => Assert.StartsWith("https://", s.Url));
+        });
+        var md = ReportExporter.Render(r, ReportFormat.Markdown);
+        Assert.Contains("About Ubuntu: pros and cons", md);
+        Assert.Contains("There are many more versions of Linux", md);
+        Assert.Contains("https://distrowatch.com/", md);
+    }
+
+    [Fact]
     public async Task Chipset_parts_are_one_line_and_not_counted()
     {
         var md = ReportExporter.Render(await Rate("nvidia-desktop"), ReportFormat.Markdown);

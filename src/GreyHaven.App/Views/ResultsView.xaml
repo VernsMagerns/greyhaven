@@ -244,6 +244,8 @@
                                         </ItemsControl>
                                     </StackPanel>
                                 </RadioButton>
+                                <Button Content="{Binding AboutLabel}" Style="{StaticResource LinkButton}" Margin="30,6,0,0" Click="About_Click"
+                                        Visibility="{Binding About, Converter={StaticResource HasValueToVisibility}}" />
                                 <Expander Header="Show more" Style="{StaticResource ShowMore}" Margin="30,6,0,0"
                                           AutomationProperties.Name="{Binding Name, StringFormat=Show more about {0}}">
                                     <StackPanel Margin="0,8,0,0">
@@ -269,6 +271,12 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
+
+            <!-- Other versions of Linux exist. -->
+            <TextBlock Style="{StaticResource Secondary}" TextWrapping="Wrap" Margin="0,4,0,0">
+                <Run Text="{Binding OtherVersionsText, Mode=OneWay}" />
+            </TextBlock>
+            <ContentPresenter Content="{Binding OtherVersionsLink}" ContentTemplate="{StaticResource LinkTemplate}" Margin="0,2,0,0" />
 
             <!-- What's next -->
             <ContentControl Style="{StaticResource Sticker}" Margin="0,16,0,8">

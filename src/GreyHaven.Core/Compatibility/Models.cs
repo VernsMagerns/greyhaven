@@ -147,6 +147,16 @@ public sealed record DistroSummary
     public required ScoreResult Score { get; init; }
     /// <summary>System-level notes, e.g. "Secure Boot must be turned off to install Pop!_OS."</summary>
     public IReadOnlyList<string> Notes { get; init; } = [];
+    /// <summary>"What's the difference?": a plain summary, pros and cons, with sources.</summary>
+    public DistroAbout? About { get; init; }
+}
+
+public sealed record DistroAbout(string Summary, IReadOnlyList<string> Pros, IReadOnlyList<string> Cons, IReadOnlyList<Source> Sources)
+{
+    /// <summary>Other versions of Linux exist; a neutral list to explore later.</summary>
+    public const string OtherVersions = "There are many more versions of Linux, like Fedora, Zorin OS and Kubuntu. Once you're comfortable, you can try any of them from a USB stick the same way.";
+    public const string OtherVersionsTitle = "DistroWatch - a list of versions of Linux";
+    public const string OtherVersionsUrl = "https://distrowatch.com/";
 }
 
 /// <summary>Which way to switch. See <see cref="Recommendation"/>.</summary>

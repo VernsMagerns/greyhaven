@@ -62,6 +62,7 @@ public sealed partial class PathOptionViewModel : ObservableObject
         Paragraph = path.Paragraph;
         SecureBootText = path.SecureBootNotice is null ? null : $"{PlainWords.SecureBoot} {path.SecureBootNotice}";
         YoullGet = ReportBuilder.YoullGet(report, path);
+        About = report.Distros.FirstOrDefault(d => d.DistroId == path.DistroId)?.About is { } about ? ReportBuilder.AboutBlocks(about) : null;
         if (path.SecureBootGuide is { } g)
         {
             // GreyHaven's own guide ships with the app: open that copy, so it works offline
@@ -76,6 +77,9 @@ public sealed partial class PathOptionViewModel : ObservableObject
 
     public PathKind Kind { get; }
     public string Name { get; }
+    /// <summary>"About Ubuntu: pros and cons", shown in a pop-up.</summary>
+    public IReadOnlyList<Block>? About { get; }
+    public string AboutLabel => $"About {Name}: pros and cons";
     public string Tag { get; }
     public IReadOnlyList<string> Lines { get; }
     public bool IsDefault { get; }
@@ -146,6 +150,9 @@ public sealed partial class ResultsViewModel : ObservableObject
     public LinkViewModel? WhySwitchLink { get; }
     public string Footnote { get; }
     public string PathsHeading => HasPathChoice ? "Pick your version of Linux" : "Your version of Linux";
+    public string OtherVersionsText => DistroAbout.OtherVersions;
+    public LinkViewModel OtherVersionsLink => new(DistroAbout.OtherVersionsTitle, DistroAbout.OtherVersionsUrl, _services);
+
     public string? PathsIntro => HasPathChoice ? PlainWords.Distro + " Two fit this PC well." : null;
 
     // ---- Headline: the chosen path's distro --------------------------------------------------

@@ -258,7 +258,9 @@ function showResults(focus) {
     ${paths.length > 1 ? `
       <h2 id="choose">Pick your version of Linux</h2>
       <p class="secondary">There are many versions of Linux. People call them "distros". Two fit this PC well.</p>
-      <div class="paths" role="radiogroup" aria-labelledby="choose">${paths.map(pathCard).join("")}</div>`
+      <div class="paths" role="radiogroup" aria-labelledby="choose">${paths.map(pathCard).join("")}</div>
+      <p class="secondary small">There are many more versions of Linux, like Fedora, Zorin OS and Kubuntu. Once you're comfortable, you can try any of them from a USB stick the same way.
+        <a href="https://distrowatch.com/" target="_blank" rel="noopener">DistroWatch - a list of versions of Linux</a></p>`
     : paths.length === 1 ? `
       <h2>Your version of Linux</h2>
       <div class="paths">${pathCard(paths[0])}</div>` : ""}
@@ -308,6 +310,7 @@ function showResults(focus) {
   }));
   $("#next").addEventListener("click", () => showWalkthrough(0));
   $("#howto")?.addEventListener("click", () => showWalkthrough(0));
+  screen.querySelectorAll("[data-about]").forEach(b => b.addEventListener("click", () => showAbout(b)));
   $("#save").addEventListener("click", saveReport);
   $("#showsaved").addEventListener("click", () => window.open(state.saved.href, "_blank", "noopener"));
   $("#again").addEventListener("click", showStart);
@@ -327,7 +330,9 @@ function pathCard(p) {
     <span class="path-head"><span class="strong">${esc(distroName(p.distroId))}</span><span class="tag">${tag}</span>
       ${p.kind === r.recommendation.defaultPath && !single ? `<span class="secondary">Suggested</span>` : ""}</span>
     ${pathLines(p).map(l => `<span class="path-line">${esc(l)}</span>`).join("")}`;
-  const details = more("Show more", `
+  const about = r.distros.find(d => d.distroId === p.distroId)?.about;
+  const aboutLink = about ? `<button class="linkbutton about-link" data-about="${esc(p.distroId)}">About ${esc(distroName(p.distroId))}: pros and cons</button>` : "";
+  const details = aboutLink + more("Show more", `
     <p>${esc(p.paragraph)}</p>
     ${p.secureBootNotice ? `<p><strong>About Secure Boot.</strong> ${esc(SECURE_BOOT)} ${esc(p.secureBootNotice)}</p>${guide}` : ""}
     <p><strong>You'll get:</strong> ${esc(download(p))}</p>`);
@@ -372,6 +377,22 @@ function renderParts() {
   $("#parts").querySelectorAll("[data-copy]").forEach(b => b.addEventListener("click", () => {
     navigator.clipboard?.writeText(b.dataset.copy).then(() => announce("Copied"), () => {});
   }));
+}
+
+// "About Ubuntu: pros and cons" (same words as the app, from distros.yaml via the report).
+function showAbout(button) {
+  const id = button.dataset.about, a = state.report.distros.find(d => d.distroId === id).about;
+  let d = $("#aboutdialog");
+  if (!d) { d = document.createElement("dialog"); d.id = "aboutdialog"; d.className = "zoom about"; document.body.append(d); }
+  d.innerHTML = `<h2>About ${esc(distroName(id))}: pros and cons</h2><p>${esc(a.summary)}</p>
+    <h3>Good</h3><ul>${a.pros.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    <h3>Not so good</h3><ul>${a.cons.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+    <p class="small secondary">${a.sources.map(s => `Source: <a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.title)}</a>`).join("<br>")}</p>
+    <p><button class="plain" id="aboutclose">Close</button></p>`;
+  $("#aboutclose").addEventListener("click", () => d.close());
+  d.onclose = () => button.focus();
+  d.showModal();
+  $("#aboutclose").focus();
 }
 
 // ---- Your apps (Part C) -------------------------------------------------------------------------

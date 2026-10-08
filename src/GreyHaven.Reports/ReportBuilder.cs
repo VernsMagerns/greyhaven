@@ -94,8 +94,26 @@ public static class ReportBuilder
                     new Text(g.MatchedBy == "motherboard" ? " (from your motherboard's maker)." : ".")));
             more.Add(P(new Strong("You'll get: "), new Text(YoullGet(r, p))));
             b.Add(new Details("Show more", more));
+            if (r.Distros.FirstOrDefault(d => d.DistroId == p.DistroId)?.About is { } about)
+                b.Add(new Details($"About {name}: pros and cons", AboutBlocks(about)));
         }
+        b.Add(OtherVersions());
     }
+
+    /// <summary>The "pros and cons" pop-up for a version of Linux (also in the saved report).</summary>
+    public static IReadOnlyList<Block> AboutBlocks(DistroAbout a) =>
+    [
+        P(a.Summary),
+        new Heading(3, "Good"),
+        new ListBlock(ListKind.Bullets, a.Pros.Select(x => Line(x)).ToList()),
+        new Heading(3, "Not so good"),
+        new ListBlock(ListKind.Bullets, a.Cons.Select(x => Line(x)).ToList()),
+        new ListBlock(ListKind.Bullets, a.Sources.Select(x => (IReadOnlyList<Inline>)[new Text("Source: "), SourceLink(x)]).ToList()),
+    ];
+
+    /// <summary>"There are many more versions of Linux…" with a link, under the choices.</summary>
+    public static Paragraph OtherVersions() =>
+        P(new Text(DistroAbout.OtherVersions + " "), new Link(DistroAbout.OtherVersionsTitle, DistroAbout.OtherVersionsUrl));
 
     /// <summary>One or two short lines per path, as on the app's choice cards.</summary>
     public static IReadOnlyList<string> PathLines(CompatibilityReport r, RecommendationPath p)

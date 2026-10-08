@@ -146,6 +146,10 @@ ol.picture-steps li > p { margin-top: 6px; font-weight: 600; }
 .bigkey { font-family: var(--gh-font-heading); font-size: 40px; font-weight: 800; margin: 0; }
 .sim .progress-fill { height: 12px; border: 2px solid var(--gh-card-border); border-radius: 999px; overflow: hidden; margin: 12px 0 6px; }
 .sim .progress-fill span { display: block; height: 100%; width: 0; background: var(--gh-works); transition: width .15s; }
+dialog.about { width: min(92vw, 560px); padding: 20px 24px; }
+dialog.about h2 { margin-top: 0; }
+.about-link { display: block; margin: 6px 0 0 32px; }
+
 /* ---- Your apps (Part C) ---------------------------------------------------------------------- */
 ul.applist { list-style: none; padding: 0; margin: 0 0 12px; }
 li.app { border-bottom: 1px solid var(--gh-card-border); padding: 10px 0; }

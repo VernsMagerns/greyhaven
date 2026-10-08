@@ -99,6 +99,8 @@ public sealed class DistroInfo
     public string? FingerprintSet { get; set; }
     public SecureBootSupport SecureBoot { get; set; } = new();
     public List<DistroEdition> Editions { get; set; } = [];
+    /// <summary>The "What's the difference?" pop-up: a summary, pros and cons, with sources.</summary>
+    public DistroAboutInfo? About { get; set; }
     public string? UpdatesKernel { get; set; }
     public DistroLiveUsb LiveUsb { get; set; } = new();
     public ReleaseCheck? ReleaseCheck { get; set; }
@@ -161,4 +163,12 @@ public sealed class DownloadInfo
     public string? KeyFingerprint { get; set; }
     /// <summary>Pop!_OS: https://api.pop-os.org/builds/... returns the ISO address and its SHA-256.</summary>
     public string? Api { get; set; }
+}
+
+public sealed class DistroAboutInfo
+{
+    public string Summary { get; set; } = "";
+    public List<string> Pros { get; set; } = [];
+    public List<string> Cons { get; set; } = [];
+    public List<SourceLink> Sources { get; set; } = [];
 }
