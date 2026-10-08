@@ -31,11 +31,13 @@ def anticheat():
         ids = g.get("storeIds") or {}
         keep.append({
             "name": g["name"],
+            "slug": g.get("slug"),
             "status": g["status"],                      # Supported | Running | Planned | Broken | Denied
             "native": bool(g.get("native")),
             "anticheats": g.get("anticheats") or [],
             "steam": ids.get("steam"),
             "epic": (ids.get("epic") or {}).get("slug"),
+            "epicNamespace": (ids.get("epic") or {}).get("namespace"),
             "reference": g.get("reference") or None,
             "changed": (g.get("dateChanged") or "")[:10] or None,
         })

@@ -20,6 +20,8 @@ public sealed class CompatibilityData
     public WindowsLifecycle Windows { get; init; } = new();
     public LiveUsbCatalog LiveUsb { get; init; } = new();
     public MakerCatalog Makers { get; init; } = new();
+    /// <summary>App compatibility (data/apps).</summary>
+    public AppCatalog Apps { get; init; } = new();
     public required IReadOnlyDictionary<string, AliasIndex> KernelIndexes { get; init; }
     public required IReadOnlyDictionary<string, AliasIndex> PackageIndexes { get; init; }
     public required IReadOnlyDictionary<string, AliasIndex> FingerprintIndexes { get; init; }
@@ -55,6 +57,7 @@ public sealed class CompatibilityData
             SecureBootGuides = Yaml.Load<SecureBootGuideCatalog>(Path.Combine(dir, "secure-boot-guides.yaml")),
             Dataset = Yaml.Load<DatasetInfo>(Path.Combine(dir, "dataset.yaml")),
             Windows = Yaml.Load<WindowsLifecycle>(Path.Combine(dir, "windows.yaml")),
+            Apps = AppCatalog.Load(dir),
             LiveUsb = liveUsb,
             Makers = makers,
             KernelIndexes = distros.Kernels.ToDictionary(k => k.Key, k => LoadIndex(k.Value.Index, k.Key, "kernel")),

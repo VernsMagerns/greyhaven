@@ -1,0 +1,361 @@
+# Windows apps GreyHaven recognises, and how each does on Linux. Licensed CC-BY-4.0 (see ../LICENSE).
+# Games with anti-cheat come from anticheat.json and other Steam games from protondb-summary.json.gz;
+# an entry here wins over both.
+#
+#   match.names:      the app's name in Windows' installed-apps list, compared after tidying
+#                     (lower case, no ® or ™, no "(x64)" or version numbers at the end)
+#   match.startsWith: the tidied name starts with one of these
+#   match.store:      Microsoft Store package names (the part before the first "_")
+#   match.steam:      Steam app IDs
+#   rating:           native     - has a Linux version (linux: the Linux app)
+#                     layer      - the Windows version runs with a compatibility layer (layer: proton | wine | lutris | heroic)
+#                     web        - use the website (web: its address)
+#                     wontWork   - no Linux version and it won't run (reason: noLinuxVersion | antiCheat)
+#                     notNeeded  - Linux does this job itself
+#   alternatives:     { app: linux-apps.yaml id | web: { name, url }, closeness: same | close | partial, note }
+#   uses:             hardware it depends on (component categories), e.g. webcam for capture cards
+#   source:           where the claim was checked (2026-10-07). "blocks automated checks": loads in a
+#                     browser but refuses scripts; confirmed through search results.
+
+apps:
+  # ---- Browsers --------------------------------------------------------------------------------
+  - { id: chrome, name: Google Chrome, category: browsers, match: { names: [google chrome] }, rating: native, linux: chrome,
+      source: { title: "Google - Chrome for Linux", url: "https://www.google.com/chrome/?platform=linux" } }
+  - { id: firefox, name: Firefox, category: browsers, match: { startsWith: [mozilla firefox] }, rating: native, linux: firefox,
+      source: { title: "Mozilla - Firefox for Linux", url: "https://www.mozilla.org/firefox/linux/" } }
+  - { id: edge, name: Microsoft Edge, category: browsers, match: { names: [microsoft edge] }, rating: native, linux: edge,
+      source: { title: "Microsoft Learn - Microsoft Edge supported operating systems", url: "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-supported-operating-systems" } }
+  - { id: brave, name: Brave, category: browsers, match: { names: [brave] }, rating: native, linux: brave,
+      source: { title: "Brave for Linux", url: "https://brave.com/linux/" } }
+  - { id: opera, name: Opera, category: browsers, match: { startsWith: [opera stable, opera gx] }, rating: native, linux: opera,
+      source: { title: "Snap Store - Opera (published by Opera)", url: "https://snapcraft.io/opera" } }
+  - { id: vivaldi, name: Vivaldi, category: browsers, match: { names: [vivaldi] }, rating: native, linux: vivaldi,
+      source: { title: "Vivaldi - Download", url: "https://vivaldi.com/download/" } }
+
+  # ---- Communication ---------------------------------------------------------------------------
+  - { id: discord, name: Discord, category: communication, match: { names: [discord] }, rating: native, linux: discord,
+      source: { title: "Discord - Download", url: "https://discord.com/download" } }
+  - { id: slack, name: Slack, category: communication, match: { names: [slack], store: [91750D7E.Slack] }, rating: native, linux: slack,
+      source: { title: "Slack for Linux", url: "https://slack.com/downloads/linux" } }
+  - { id: zoom, name: Zoom, category: communication, match: { startsWith: [zoom workplace, zoom] }, rating: native, linux: zoom,
+      source: { title: "Zoom - Download for Linux", url: "https://zoom.us/download?os=linux" } }
+  - { id: telegram, name: Telegram, category: communication, match: { startsWith: [telegram desktop], store: [TelegramMessengerLLP.TelegramDesktop] }, rating: native, linux: telegram,
+      source: { title: "Telegram Desktop", url: "https://desktop.telegram.org/" } }
+  - { id: signal, name: Signal, category: communication, match: { names: [signal] }, rating: native, linux: signal,
+      source: { title: "Signal for Linux", url: "https://signal.org/download/linux/" } }
+  - { id: thunderbird, name: Thunderbird, category: communication, match: { startsWith: [mozilla thunderbird] }, rating: native, linux: thunderbird,
+      source: { title: "Thunderbird", url: "https://www.thunderbird.net/" } }
+  - id: teams
+    name: Microsoft Teams
+    category: communication
+    match: { names: [microsoft teams, microsoft teams classic], store: [MSTeams] }
+    rating: web
+    web: https://teams.microsoft.com/
+    summary: Microsoft retired the Teams app for Linux in 2022. Use Teams in Chrome or Edge instead.
+    alternatives:
+      - { app: teams-for-linux, closeness: close, note: "Puts the Teams website in its own window, with notifications." }
+    source: { title: "University of Waterloo - Retirement of Teams desktop app on Linux", url: "https://uwaterloo.ca/microsoft-365/blog/teams-linux-retirement-teams-desktop-app-linux-and-new" }
+  - id: whatsapp
+    name: WhatsApp
+    category: communication
+    match: { names: [whatsapp], store: [5319275A.WhatsAppDesktop] }
+    rating: web
+    web: https://web.whatsapp.com/
+    summary: There's no WhatsApp app for Linux. WhatsApp Web works the same way in your browser.
+    source: { title: "WhatsApp - Download (Windows and Mac only) (blocks automated checks)", url: "https://www.whatsapp.com/download/desktop" }
+
+  # ---- Office and notes ------------------------------------------------------------------------
+  - id: microsoft-office
+    name: Microsoft 365 (Word, Excel, PowerPoint)
+    category: office
+    match: { startsWith: [microsoft 365, microsoft office, office 16 click-to-run] }
+    rating: web
+    web: https://www.office.com/
+    summary: Word, Excel and PowerPoint don't have Linux versions. Use them on the web, free with your Microsoft account.
+    alternatives:
+      - { app: libreoffice, closeness: close, note: "Opens and saves Word, Excel and PowerPoint files. Some complex layouts can look a little different." }
+      - { app: onlyoffice, closeness: close, note: "Looks a lot like Microsoft Office, and keeps Office files' layout well." }
+    source: { title: "Microsoft Q&A - Microsoft Office on Linux", url: "https://learn.microsoft.com/en-ca/answers/questions/5891967/microsoft-office-on-linux" }
+  - id: notion
+    name: Notion
+    category: office
+    match: { names: [notion] }
+    rating: web
+    web: https://www.notion.so/
+    summary: Notion has no Linux app, and doesn't plan one. The website has the same features.
+    source: { title: "Notion - Notion for desktop", url: "https://www.notion.com/help/notion-for-desktop" }
+  - { id: obsidian, name: Obsidian, category: office, match: { names: [obsidian] }, rating: native, linux: obsidian,
+      source: { title: "Obsidian - Download", url: "https://obsidian.md/download" } }
+  - { id: libreoffice, name: LibreOffice, category: office, match: { names: [libreoffice] }, rating: native, linux: libreoffice,
+      source: { title: "LibreOffice - Download", url: "https://www.libreoffice.org/download/download-libreoffice/" } }
+  - { id: onlyoffice, name: ONLYOFFICE, category: office, match: { startsWith: [onlyoffice] }, rating: native, linux: onlyoffice,
+      source: { title: "ONLYOFFICE Desktop Editors - Download", url: "https://www.onlyoffice.com/download-desktop.aspx" } }
+
+  # ---- Creative --------------------------------------------------------------------------------
+  - id: photoshop
+    name: Adobe Photoshop
+    category: creative
+    match: { startsWith: [adobe photoshop] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Photoshop is only made for Windows and Mac.
+    alternatives:
+      - { app: gimp, closeness: partial, note: "Full photo editing, but menus and shortcuts are different." }
+      - { app: krita, closeness: partial, note: "Best for painting and drawing." }
+      - { app: photopea, closeness: close, note: "Looks like Photoshop and opens .psd files, in your browser." }
+    source: { title: "Adobe - Photoshop system requirements (blocks automated checks)", url: "https://helpx.adobe.com/photoshop/system-requirements.html" }
+  - id: premiere-pro
+    name: Adobe Premiere Pro
+    category: creative
+    match: { startsWith: [adobe premiere pro] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Premiere Pro is only made for Windows and Mac.
+    alternatives:
+      - { app: davinci-resolve, closeness: close, note: "Professional editing and colour, with a free version." }
+      - { app: kdenlive, closeness: partial, note: "Easier, and fine for most videos." }
+    source: { title: "Adobe - Premiere Pro system requirements (blocks automated checks)", url: "https://helpx.adobe.com/premiere-pro/system-requirements.html" }
+  - id: lightroom
+    name: Adobe Lightroom
+    category: creative
+    match: { startsWith: [adobe lightroom] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Lightroom is only made for Windows and Mac.
+    alternatives:
+      - { app: darktable, closeness: close, note: "Organises and develops RAW photos, like Lightroom Classic." }
+    source: { title: "Adobe - Lightroom Classic system requirements (blocks automated checks)", url: "https://helpx.adobe.com/lightroom-classic/system-requirements.html" }
+  - id: illustrator
+    name: Adobe Illustrator
+    category: creative
+    match: { startsWith: [adobe illustrator] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Illustrator is only made for Windows and Mac.
+    alternatives:
+      - { app: inkscape, closeness: close, note: "Vector drawing. Opens .svg and many .ai files." }
+    source: { title: "Adobe - Illustrator system requirements (blocks automated checks)", url: "https://helpx.adobe.com/illustrator/system-requirements.html" }
+  - { id: davinci-resolve, name: DaVinci Resolve, category: creative, match: { startsWith: [davinci resolve] }, rating: native, linux: davinci-resolve,
+      note: "Officially for Rocky Linux; on Ubuntu and Linux Mint it needs NVIDIA's own graphics driver or extra setup.",
+      source: { title: "Blackmagic Design - DaVinci Resolve", url: "https://www.blackmagicdesign.com/products/davinciresolve" } }
+  - { id: blender, name: Blender, category: creative, match: { names: [blender] }, rating: native, linux: blender,
+      source: { title: "Blender - Download", url: "https://www.blender.org/download/" } }
+  - { id: audacity, name: Audacity, category: creative, match: { names: [audacity] }, rating: native, linux: audacity,
+      source: { title: "Audacity - Download for Linux", url: "https://www.audacityteam.org/download/linux/" } }
+  - { id: gimp, name: GIMP, category: creative, match: { names: [gimp] }, rating: native, linux: gimp,
+      source: { title: "GIMP - Downloads", url: "https://www.gimp.org/downloads/" } }
+  - { id: krita, name: Krita, category: creative, match: { names: [krita] }, rating: native, linux: krita,
+      source: { title: "Krita - Download", url: "https://krita.org/en/download/" } }
+  - { id: inkscape, name: Inkscape, category: creative, match: { names: [inkscape] }, rating: native, linux: inkscape,
+      source: { title: "Inkscape - Download (blocks automated checks)", url: "https://inkscape.org/release/" } }
+
+  # ---- Streaming, capture and dictation --------------------------------------------------------
+  - { id: obs-studio, name: OBS Studio, category: streaming, match: { names: [obs studio] }, rating: native, linux: obs-studio, uses: [webcam],
+      source: { title: "OBS Studio - Download", url: "https://obsproject.com/download" } }
+  - id: stream-deck
+    name: Elgato Stream Deck
+    category: streaming
+    match: { names: [elgato stream deck, stream deck] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Elgato's Stream Deck app is only made for Windows and Mac.
+    alternatives:
+      - { app: streamcontroller, closeness: close, note: "Sets up your Stream Deck's buttons, with plugins for OBS and more." }
+    source: { title: "Elgato - Stream Deck software system requirements (blocks automated checks)", url: "https://help.elgato.com/hc/en-us/articles/34512594204049-Elgato-Stream-Deck-Software-System-Requirements" }
+  - id: eos-utility
+    name: Canon EOS Utility
+    category: streaming
+    match: { startsWith: [eos utility, canon eos utility] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Canon's EOS Utility is only made for Windows and Mac.
+    alternatives:
+      - { app: entangle, closeness: partial, note: "Takes photos from the computer with many Canon cameras over USB." }
+      - { app: obs-studio, closeness: partial, uses: [webcam], note: "To use your camera as a webcam or for recording: connect its HDMI output to a capture card and use OBS." }
+    source: { title: "Canon - Computer environment required (EOS Utility 3.x)", url: "https://sg.canon/en/support/8203404400" }
+  - id: eos-webcam-utility
+    name: Canon EOS Webcam Utility
+    category: streaming
+    match: { startsWith: [eos webcam utility] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Canon's EOS Webcam Utility is only made for Windows and Mac.
+    alternatives:
+      - { app: obs-studio, closeness: close, uses: [webcam], note: "Connect the camera's HDMI output to a capture card. OBS sees it like a webcam." }
+    source: { title: "TechRadar - Canon's webcam software for Windows and Mac", url: "https://www.techradar.com/news/canon-releases-free-software-that-turns-some-of-its-cameras-into-webcams" }
+  - id: fluidvox
+    name: FluidVox
+    category: dictation
+    match: { names: [fluidvox] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: FluidVox is only made for Windows and Mac.
+    alternatives:
+      - { app: openwhispr, closeness: close, note: "Also types what you say into any app, with a hotkey. Can run fully on your PC, free and open source." }
+    source: { title: "FluidVox - The modern alternative to Dragon, for Mac and Windows", url: "https://www.fluidvox.com/fr/alternative-dragon" }
+
+  # ---- Games and launchers ---------------------------------------------------------------------
+  - { id: steam, name: Steam, category: games, match: { names: [steam] }, rating: native, linux: steam,
+      summary: "Steam has a Linux version. It runs most Windows games with Proton, built in.",
+      source: { title: "Steam for Linux", url: "https://store.steampowered.com/linux" } }
+  - id: epic-games
+    name: Epic Games Launcher
+    category: games
+    match: { names: [epic games launcher] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Epic's launcher has no Linux version.
+    alternatives:
+      - { app: heroic, closeness: close, note: "Signs in to your Epic account and installs your Epic games. Games with anti-cheat may not work." }
+    source: { title: "Heroic Games Launcher (Epic, GOG and Amazon on Linux)", url: "https://heroicgameslauncher.com/" }
+  - id: gog-galaxy
+    name: GOG Galaxy
+    category: games
+    match: { startsWith: [gog galaxy] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: GOG Galaxy has no Linux version.
+    alternatives:
+      - { app: heroic, closeness: close, note: "Signs in to your GOG account and installs your GOG games." }
+    source: { title: "Heroic Games Launcher (Epic, GOG and Amazon on Linux)", url: "https://heroicgameslauncher.com/" }
+  - id: battle-net
+    name: Battle.net
+    category: games
+    match: { names: [battle.net] }
+    rating: layer
+    layer: lutris
+    confidence: medium
+    summary: Battle.net has no Linux version, but Lutris can install and run it. Most Blizzard games work this way.
+    alternatives:
+      - { app: lutris, closeness: same, note: "Installs the real Battle.net app for you." }
+    source: { title: "Lutris - Battle.net", url: "https://lutris.net/games/battlenet/" }
+  - id: riot-client
+    name: Riot Client
+    category: games
+    match: { names: [riot client], startsWith: [riot vanguard] }
+    rating: wontWork
+    reason: antiCheat
+    summary: Riot's Vanguard anti-cheat doesn't allow Linux, so VALORANT and League of Legends won't start.
+    source: { title: "Are We Anti-Cheat Yet - Valorant", url: "https://areweanticheatyet.com/game/valorant" }
+  - id: roblox
+    name: Roblox
+    category: games
+    match: { startsWith: [roblox player, roblox studio] }
+    rating: wontWork
+    reason: antiCheat
+    summary: Roblox's anti-cheat blocks Linux, even with Wine.
+    alternatives:
+      - { app: sober, closeness: close, note: "Runs Roblox's Android version on Linux. Most games work; Roblox Studio isn't included." }
+    source: { title: "Are We Anti-Cheat Yet - Roblox", url: "https://areweanticheatyet.com/game/roblox" }
+  - id: minecraft
+    name: Minecraft Launcher
+    category: games
+    match: { names: [minecraft launcher], store: [Microsoft.4297127D64EC6] }
+    rating: native
+    linux: prism-launcher
+    summary: Minecraft Java Edition runs on Linux (Mojang's launcher or Prism Launcher). Bedrock Edition, from the Microsoft Store, doesn't.
+    source: { title: "Minecraft - Download (Linux)", url: "https://www.minecraft.net/en-us/download" }
+  - id: xbox
+    name: Xbox app (PC Game Pass)
+    category: games
+    match: { store: [Microsoft.GamingApp] }
+    rating: web
+    web: https://www.xbox.com/play
+    summary: The Xbox app has no Linux version. With Game Pass Ultimate you can stream many of its games in your browser.
+    source: { title: "Xbox - Cloud gaming in the browser", url: "https://www.xbox.com/play" }
+
+  # ---- Media, cloud and security ---------------------------------------------------------------
+  - { id: spotify, name: Spotify, category: media, match: { names: [spotify], store: [SpotifyAB.SpotifyMusic] }, rating: native, linux: spotify,
+      source: { title: "Spotify for Linux", url: "https://www.spotify.com/us/download/linux/" } }
+  - { id: vlc, name: VLC, category: media, match: { names: [vlc media player] }, rating: native, linux: vlc,
+      source: { title: "VideoLAN - VLC for Ubuntu", url: "https://www.videolan.org/vlc/download-ubuntu.html" } }
+  - { id: handbrake, name: HandBrake, category: media, match: { names: [handbrake] }, rating: native, linux: handbrake,
+      source: { title: "HandBrake - Downloads", url: "https://handbrake.fr/downloads2.php" } }
+  - { id: dropbox, name: Dropbox, category: cloud, match: { names: [dropbox] }, rating: native, linux: dropbox,
+      source: { title: "Dropbox - Install on Linux", url: "https://www.dropbox.com/install-linux" } }
+  - id: onedrive
+    name: OneDrive
+    category: cloud
+    match: { names: [microsoft onedrive] }
+    rating: web
+    web: https://onedrive.live.com/
+    summary: Microsoft doesn't make OneDrive for Linux. Use the website, or sync your files another way.
+    source: { title: "Help Desk Geek - How to access and use OneDrive on Linux", url: "https://helpdeskgeek.com/how-to-access-and-use-onedrive-on-linux/" }
+  - id: google-drive
+    name: Google Drive
+    category: cloud
+    match: { names: [google drive] }
+    rating: web
+    web: https://drive.google.com/
+    summary: Google Drive for desktop is only made for Windows and Mac. Use the website, or add your Google account in Settings to see your files.
+    source: { title: "Google - Drive system requirements", url: "https://support.google.com/drive/answer/2375082" }
+  - { id: bitwarden, name: Bitwarden, category: security, match: { names: [bitwarden] }, rating: native, linux: bitwarden,
+      source: { title: "Bitwarden - Download", url: "https://bitwarden.com/download/" } }
+  - { id: 1password, name: 1Password, category: security, match: { names: [1password] }, rating: native, linux: 1password,
+      source: { title: "1Password for Linux", url: "https://1password.com/downloads/linux" } }
+  - id: keepass
+    name: KeePass
+    category: security
+    match: { startsWith: [keepass password safe] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: KeePass is made for Windows.
+    alternatives:
+      - { app: keepassxc, closeness: same, note: "Opens the same password file (.kdbx), so nothing needs to move." }
+    source: { title: "KeePassXC - Download", url: "https://keepassxc.org/download/" }
+  - { id: protonvpn, name: Proton VPN, category: security, match: { names: [proton vpn] }, rating: native, linux: protonvpn,
+      source: { title: "Proton - Official Linux VPN app", url: "https://protonvpn.com/support/official-linux-vpn-ubuntu" } }
+  - { id: nordvpn, name: NordVPN, category: security, match: { names: [nordvpn] }, rating: native, linux: nordvpn,
+      source: { title: "NordVPN for Linux (blocks automated checks)", url: "https://nordvpn.com/download/linux/" } }
+
+  # ---- Remote access and utilities -------------------------------------------------------------
+  - { id: anydesk, name: AnyDesk, category: utilities, match: { names: [anydesk] }, rating: native, linux: anydesk,
+      source: { title: "AnyDesk for Linux (blocks automated checks)", url: "https://anydesk.com/en/downloads/linux" } }
+  - { id: teamviewer, name: TeamViewer, category: utilities, match: { names: [teamviewer] }, rating: native, linux: teamviewer,
+      source: { title: "TeamViewer for Linux", url: "https://www.teamviewer.com/en/download/linux/" } }
+  - { id: parsec, name: Parsec, category: utilities, match: { names: [parsec] }, rating: native, linux: parsec,
+      source: { title: "Parsec - Downloads", url: "https://parsec.app/downloads" } }
+  - { id: qbittorrent, name: qBittorrent, category: utilities, match: { names: [qbittorrent] }, rating: native, linux: qbittorrent,
+      source: { title: "qBittorrent - Download", url: "https://www.qbittorrent.org/download" } }
+  - { id: vscode, name: Visual Studio Code, category: development, match: { names: [microsoft visual studio code] }, rating: native, linux: vscode,
+      source: { title: "Visual Studio Code - Download (blocks automated checks)", url: "https://code.visualstudio.com/download" } }
+
+  # ---- Hardware settings -----------------------------------------------------------------------
+  - id: logitech-g-hub
+    name: Logitech G HUB
+    category: hardware
+    match: { names: [logitech g hub, lghub] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: G HUB is only made for Windows and Mac. Your Logitech mouse and keyboard still work; these apps change their settings.
+    alternatives:
+      - { app: piper, closeness: partial, note: "Buttons, lights and sensitivity for many Logitech gaming mice." }
+      - { app: solaar, closeness: partial, note: "Pairing, battery level and buttons for Logitech wireless devices." }
+    source: { title: "Logitech - Does G HUB work with Mac and Windows?", url: "https://support.logi.com/hc/en-us/articles/360023368993-Does-G-HUB-work-with-Mac-and-Windows" }
+  - id: razer-synapse
+    name: Razer Synapse
+    category: hardware
+    match: { startsWith: [razer synapse] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Razer Synapse is only made for Windows. Your Razer devices still work; this app changes their settings.
+    alternatives:
+      - { app: polychromatic, closeness: partial, note: "Lights, sensitivity and some buttons for many Razer devices." }
+    source: { title: "Razer - Razer Synapse 4 requirements", url: "https://mysupport.razer.com/app/answers/detail/a_id/1834" }
+  - id: focusrite-control
+    name: Focusrite Control
+    category: hardware
+    match: { startsWith: [focusrite control] }
+    rating: wontWork
+    reason: noLinuxVersion
+    summary: Focusrite Control is only made for Windows and Mac. The interface itself plays and records sound on Linux.
+    alternatives:
+      - { app: alsa-scarlett-gui, closeness: close, uses: [audioController], note: "Direct monitoring, input gain and other settings for Scarlett, Clarett and Vocaster interfaces." }
+    source: { title: "Focusrite - Is my Focusrite product compatible with Linux? (blocks automated checks)", url: "https://support.focusrite.com/hc/en-gb/articles/208530735-Is-my-Focusrite-Product-compatible-with-Linux" }
+  - id: nvidia-app
+    name: NVIDIA App
+    category: hardware
+    match: { names: [nvidia app, nvidia geforce experience] }
+    rating: notNeeded
+    summary: Not needed on Linux. You install NVIDIA's driver with your Linux's own driver tool, and it updates with the rest of your system.
+    source: { title: "Ubuntu Server docs - NVIDIA drivers installation", url: "https://documentation.ubuntu.com/server/how-to/graphics/install-nvidia-drivers/" }

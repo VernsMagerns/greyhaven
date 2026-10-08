@@ -11,13 +11,16 @@ namespace GreyHaven.Core.Scanning;
 /// </summary>
 public sealed record RawSnapshot
 {
-    public int SchemaVersion { get; init; } = 1;
+    /// <summary>1: hardware only. 2: also installed apps.</summary>
+    public int SchemaVersion { get; init; } = 2;
     public DateTimeOffset CapturedAt { get; init; }
     /// <summary>Set on hand-written sample snapshots.</summary>
     public string? Description { get; init; }
     public required RawSystemData System { get; init; }
     public IReadOnlyList<RawProcessor> Processors { get; init; } = [];
     public IReadOnlyList<RawPnpDevice> Devices { get; init; } = [];
+    /// <summary>Installed apps, as listed by Windows, Steam and Epic (schema 2). Names and IDs only.</summary>
+    public IReadOnlyList<Apps.RawApp> Apps { get; init; } = [];
 }
 
 /// <summary>A row from WMI <c>Win32_PnPEntity</c>.</summary>

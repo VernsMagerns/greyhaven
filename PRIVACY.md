@@ -15,6 +15,14 @@ To check your PC, GreyHaven reads:
   encryption on or off, Fast Startup, how the storage is set up, the processor type, and free
   space on the Windows drive.
 - **Who made the PC and its motherboard**, like "Dell" or "MSI", to pick the right instructions.
+- **The names of your installed apps** (and their publishers and store IDs), from Windows' list
+  of installed programs, the Microsoft Store, Steam and Epic Games, to tell you which will work
+  on Linux. Not their folders, files or settings. If an app's name contains your Windows user
+  name, GreyHaven replaces it with "<user>". **Your app list never leaves your PC:** it's checked
+  against GreyHaven's built-in list only, it's left out of saved reports unless you tick
+  "Include my apps", and it's never in the phone guide. If online checks for apps are ever
+  added, they'll be off unless you turn them on, send app names only, and this policy will say
+  so first.
 
 It **never** reads your files, documents or photos, your name or user name, your PC's name,
 passwords, serial numbers, network (MAC) addresses, your location, or the names of Bluetooth
@@ -71,7 +79,7 @@ These are planned and will follow the same rules. This policy will be updated be
 - **Your guide**, in `Documents\GreyHaven`, so you can open it from Linux before installing.
   It's yours to delete.
 - **Reports you save**, only where you choose to save them. A report lists your PC's part IDs and
-  Windows settings, but none of the things GreyHaven never reads (above), so it's safe to share
+  Windows settings (and your apps, only if you tick "Include my apps"), but none of the things GreyHaven never reads (above), so it's safe to share
   when asking for help.
 
 Uninstalling GreyHaven and deleting the `%LOCALAPPDATA%\GreyHaven` folder removes everything.

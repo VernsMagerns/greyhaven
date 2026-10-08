@@ -126,6 +126,7 @@ public sealed partial class RatingEngine(
             Caveats = caveatList,
             LiveUsbGuides = LiveUsbGuides.Build(profile, rated, summaries, caveatList, data),
             DataNotes = dataNotes.Distinct().ToList(),
+            Apps = AppRater.Rate(profile.Apps, data.Apps),
             ContextNotes = WindowsNotes.For(profile.System, data.Windows, today),
             Maker = data.Makers.For(profile.System),
             Data = freshness,

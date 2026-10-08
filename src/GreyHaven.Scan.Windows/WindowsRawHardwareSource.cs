@@ -11,6 +11,8 @@ namespace GreyHaven.Scan.Windows;
 /// Everything here works <b>without administrator rights</b>. Each read is independent: if one
 /// fails, the rest still run and a plain-English warning is recorded.
 ///
+/// Installed apps: names, publishers and store IDs only (see <see cref="WindowsApps"/>).
+///
 /// Privacy: PnP device instance IDs (which can embed serial numbers) are never read, and only
 /// devices on PCI, USB, HD Audio, HID and ACPI buses are kept, which excludes Bluetooth-paired
 /// and software devices that can carry user-chosen names.
@@ -67,6 +69,9 @@ public sealed partial class WindowsRawHardwareSource : IRawHardwareSource
             ReadWarnings = warnings,
         };
 
+        var apps = Try(WindowsApps.Read, [], "Could not list installed apps.", warnings);
+        ct.ThrowIfCancellationRequested();
+
         var (free, total) = Try(ReadSystemDrive, (null, null), "Could not read the free space on the Windows drive.", warnings);
         system = system with { SystemDriveFreeBytes = free, SystemDriveTotalBytes = total };
 
@@ -76,6 +81,7 @@ public sealed partial class WindowsRawHardwareSource : IRawHardwareSource
             System = system,
             Processors = processors,
             Devices = devices,
+            Apps = apps,
         };
     }
 

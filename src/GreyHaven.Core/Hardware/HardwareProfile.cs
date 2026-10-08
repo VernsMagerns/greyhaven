@@ -18,6 +18,12 @@ public sealed record HardwareProfile
     public required SystemInfo System { get; init; }
     public required IReadOnlyList<HardwareComponent> Components { get; init; }
 
+    /// <summary>
+    /// The apps the person installed (names and store IDs only). Private: kept out of saved
+    /// reports unless the person ticks "Include my apps", and never in the phone guide.
+    /// </summary>
+    public IReadOnlyList<Apps.InstalledApp> Apps { get; init; } = [];
+
     /// <summary>Things the scan could not determine, in plain English.</summary>
     public IReadOnlyList<string> Warnings { get; init; } = [];
 }

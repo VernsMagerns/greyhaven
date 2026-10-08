@@ -22,11 +22,17 @@ public static class ReportExporter
         _ => throw new ArgumentOutOfRangeException(nameof(format)),
     };
 
-    public static async Task SaveAsync(CompatibilityReport report, string path, ReportFormat? format = null, string? distroId = null, CancellationToken cancellationToken = default)
+    /// <param name="includeApps">Saved reports leave out the person's app list unless they tick "Include my apps".</param>
+    public static async Task SaveAsync(CompatibilityReport report, string path, ReportFormat? format = null, string? distroId = null, bool includeApps = false, CancellationToken cancellationToken = default)
     {
         var f = format ?? FormatFromPath(path) ?? throw new ArgumentException($"Can't tell the format of '{path}'. Use a name ending in .md, .html or .json.", nameof(path));
+        if (!includeApps) report = WithoutApps(report);
         await File.WriteAllTextAsync(path, Render(report, f, distroId), new System.Text.UTF8Encoding(false), cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>The report with the app list removed (from the ratings and the scan).</summary>
+    public static CompatibilityReport WithoutApps(CompatibilityReport report) =>
+        report with { Apps = [], Profile = report.Profile with { Apps = [] } };
 
     public static ReportFormat? FormatFromPath(string path) => Path.GetExtension(path).ToLowerInvariant() switch
     {

@@ -31,7 +31,8 @@ namespace GreyHaven.Cli
             Options for scan:
               --json              Print the profile as JSON instead of a readable summary
               --out <file>        Also write the profile JSON to a file
-              --dump-raw <file>   (live scan) Save the unprocessed scan data for bug reports
+              --dump-raw <file>   (live scan) Save the unprocessed scan data for bug reports.
+                                  It includes the names of your installed apps.
               --samples-dir <dir> Look for samples in this directory
 
             Options for rate:
@@ -43,6 +44,7 @@ namespace GreyHaven.Cli
               --out <file>        Save the report; the format follows the name: .md (Markdown),
                                   .html (a single web page) or .json. Can be given more than once.
               --data <dir>        Use compatibility data from this directory
+              --include-apps      Keep your app list in files saved with --out (left out by default)
               --install <choice>  Keep Windows too or replace it: keep or replace
               --journey           Print the step-by-step walkthrough as JSON (for the design preview)
               --phone-guide <file> Save the take-along guide (trying, installing, after) as a web page
@@ -145,7 +147,7 @@ namespace GreyHaven.Cli
             foreach (var file in opts.Out)
             {
                 var format = ReportExporter.FormatFromPath(file) ?? throw new CliException($"Can't tell the format of '{file}'. Use a name ending in .md, .html or .json.");
-                try { await ReportExporter.SaveAsync(report, file, format, opts.Distro); }
+                try { await ReportExporter.SaveAsync(report, file, format, opts.Distro, opts.IncludeApps); }
                 catch (ArgumentException ex) { throw new CliException(ex.Message); }
                 if (!opts.Json) Console.Error.WriteLine($"Saved {file}");
             }
@@ -237,7 +239,7 @@ namespace GreyHaven.Cli
     internal sealed class CliException(string message) : Exception(message);
 
     internal sealed record Options(string? Sample, string? Raw, bool Json, IReadOnlyList<string> Out, string? DumpRaw, string? SamplesDir,
-        bool Offline = false, string? Distro = null, string? DataDir = null, string? Path = null, string? Install = null, bool Journey = false, string? PhoneGuide = null)
+        bool Offline = false, string? Distro = null, string? DataDir = null, string? Path = null, string? Install = null, bool Journey = false, string? PhoneGuide = null, bool IncludeApps = false)
     {
         public static Options Parse(string[] args)
         {
@@ -245,6 +247,7 @@ namespace GreyHaven.Cli
             string? sample = null, raw = null, dumpRaw = null, samplesDir = null, distro = null, dataDir = null, path = null, install = null;
             var json = false;
             var journey = false;
+            var includeApps = false;
             string? phoneGuide = null;
             var offline = false;
             for (var i = 0; i < args.Length; i++)
@@ -264,13 +267,14 @@ namespace GreyHaven.Cli
                     case "--path": path = Value(); break;
                     case "--install": install = Value(); break;
                     case "--journey": journey = true; break;
+                    case "--include-apps": includeApps = true; break;
                     case "--phone-guide": phoneGuide = Value(); break;
                     default: throw new CliException($"Unknown option '{args[i]}'.");
                 }
             }
             if (sample is not null && raw is not null) throw new CliException("Use either --sample or --raw, not both.");
             if (dumpRaw is not null && (sample is not null || raw is not null)) throw new CliException("--dump-raw only applies to a live scan.");
-            return new Options(sample, raw, json, @out, dumpRaw, samplesDir, offline, distro, dataDir, path, install, journey, phoneGuide);
+            return new Options(sample, raw, json, @out, dumpRaw, samplesDir, offline, distro, dataDir, path, install, journey, phoneGuide, includeApps);
         }
     }
 }

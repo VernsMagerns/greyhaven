@@ -1,0 +1,376 @@
+# Linux apps GreyHaven suggests: the Linux version of a Windows app, or an alternative.
+# Licensed CC-BY-4.0 (see ../LICENSE).
+#
+#   what:     one plain line about what it does
+#   flathub:  Flathub app ID (Linux Mint's Software Manager and Pop!_OS's COSMIC Store use Flathub);
+#             flathubVerified: Flathub says the listing comes from the app's own developer
+#   snap:     Snap name, only from publishers the Snap Store marks verified or starred (Ubuntu's App Center)
+#   classic:  the snap needs "--classic" to install
+#   apt:      package name in Ubuntu 24.04/26.04's own repositories (so also Mint 22.3 and Pop!_OS 24.04)
+#   website:  the developer's download page, for anything not in an app store
+#   source:   where GreyHaven checked that it runs on Linux
+#
+# Checked 2026-10-07 against the Flathub API (flathub.org/api/v2), the Snap Store API
+# (api.snapcraft.io/v2/snaps/info) and Launchpad. "blocks automated checks": the page loads in a
+# browser but refuses scripts; it was confirmed through search results.
+
+linuxApps:
+  # ---- Browsers --------------------------------------------------------------------------------
+  - id: chrome
+    name: Google Chrome
+    what: Google's web browser.
+    flathub: com.google.Chrome
+    website: https://www.google.com/chrome/?platform=linux
+    source: https://www.google.com/chrome/?platform=linux
+  - id: firefox
+    name: Firefox
+    what: Mozilla's web browser. Already installed on Ubuntu and Linux Mint.
+    flathub: org.mozilla.firefox
+    flathubVerified: true
+    snap: firefox
+    preinstalled: [ubuntu, mint, pop-os]
+    source: https://www.mozilla.org/firefox/linux/
+  - id: edge
+    name: Microsoft Edge
+    what: Microsoft's web browser.
+    flathub: com.microsoft.Edge
+    website: https://www.microsoft.com/edge/download
+    source: https://learn.microsoft.com/en-us/deployedge/microsoft-edge-supported-operating-systems
+  - id: brave
+    name: Brave
+    what: A privacy-focused web browser.
+    flathub: com.brave.Browser
+    flathubVerified: true
+    snap: brave
+    source: https://brave.com/linux/
+  - id: opera
+    name: Opera
+    what: Opera's web browser.
+    flathub: com.opera.Opera
+    snap: opera
+    source: https://snapcraft.io/opera
+  - id: vivaldi
+    name: Vivaldi
+    what: A web browser with lots of settings.
+    flathub: com.vivaldi.Vivaldi
+    snap: vivaldi
+    source: https://vivaldi.com/download/
+
+  # ---- Communication ---------------------------------------------------------------------------
+  - id: discord
+    name: Discord
+    what: Voice, video and text chat.
+    flathub: com.discordapp.Discord
+    flathubVerified: true
+    snap: discord
+    source: https://discord.com/download
+  - id: slack
+    name: Slack
+    what: Team chat.
+    flathub: com.slack.Slack
+    snap: slack
+    source: https://slack.com/downloads/linux
+  - id: zoom
+    name: Zoom
+    what: Video meetings.
+    flathub: us.zoom.Zoom
+    website: https://zoom.us/download?os=linux
+    source: https://zoom.us/download?os=linux
+  - id: telegram
+    name: Telegram
+    what: Messaging.
+    flathub: org.telegram.desktop
+    flathubVerified: true
+    snap: telegram-desktop
+    source: https://desktop.telegram.org/
+  - id: signal
+    name: Signal
+    what: Private messaging.
+    flathub: org.signal.Signal
+    snap: signal-desktop
+    source: https://signal.org/download/linux/
+  - id: thunderbird
+    name: Thunderbird
+    what: Email and calendar.
+    flathub: org.mozilla.thunderbird
+    flathubVerified: true
+    snap: thunderbird
+    preinstalled: [mint]
+    source: https://www.thunderbird.net/
+  - id: teams-for-linux
+    name: Teams for Linux
+    what: An unofficial app for Microsoft Teams, made by volunteers. It shows the Teams website in its own window.
+    flathub: com.github.IsmaelMartinez.teams_for_linux
+    flathubVerified: true
+    source: https://github.com/IsmaelMartinez/teams-for-linux
+
+  # ---- Office and notes ------------------------------------------------------------------------
+  - id: libreoffice
+    name: LibreOffice
+    what: Documents, spreadsheets and presentations. Opens and saves Word, Excel and PowerPoint files.
+    flathub: org.libreoffice.LibreOffice
+    flathubVerified: true
+    snap: libreoffice
+    preinstalled: [mint]
+    source: https://www.libreoffice.org/download/download-libreoffice/
+  - id: onlyoffice
+    name: ONLYOFFICE Desktop Editors
+    what: Documents, spreadsheets and presentations that look a lot like Microsoft Office.
+    flathub: org.onlyoffice.desktopeditors
+    flathubVerified: true
+    snap: onlyoffice-desktopeditors
+    source: https://www.onlyoffice.com/download-desktop.aspx
+  - id: obsidian
+    name: Obsidian
+    what: Notes stored as files on your computer.
+    flathub: md.obsidian.Obsidian
+    flathubVerified: true
+    source: https://obsidian.md/download
+
+  # ---- Creative --------------------------------------------------------------------------------
+  - id: gimp
+    name: GIMP
+    what: Photo editing and retouching.
+    flathub: org.gimp.GIMP
+    flathubVerified: true
+    snap: gimp
+    source: https://www.gimp.org/downloads/
+  - id: krita
+    name: Krita
+    what: Digital painting and drawing.
+    flathub: org.kde.krita
+    flathubVerified: true
+    snap: krita
+    source: https://krita.org/en/download/
+  - id: inkscape
+    name: Inkscape
+    what: Vector drawing for logos, icons and diagrams.
+    flathub: org.inkscape.Inkscape
+    flathubVerified: true
+    snap: inkscape
+    source: https://inkscape.org/release/ # blocks automated checks
+  - id: darktable
+    name: darktable
+    what: Organises and develops camera RAW photos.
+    flathub: org.darktable.Darktable
+    source: https://www.darktable.org/install/
+  - id: kdenlive
+    name: Kdenlive
+    what: Video editing.
+    flathub: org.kde.kdenlive
+    flathubVerified: true
+    snap: kdenlive
+    source: https://kdenlive.org/en/download/
+  - id: davinci-resolve
+    name: DaVinci Resolve
+    what: Professional video editing and colour. Its free version has a Linux download.
+    website: https://www.blackmagicdesign.com/products/davinciresolve
+    note: Blackmagic Design officially supports Rocky Linux, not Ubuntu or Mint. It usually works on them, but needs NVIDIA's own graphics driver (or an AMD card with extra setup).
+    source: https://www.blackmagicdesign.com/products/davinciresolve
+  - id: blender
+    name: Blender
+    what: 3D modelling, animation and rendering.
+    flathub: org.blender.Blender
+    snap: blender
+    classic: true
+    source: https://www.blender.org/download/
+  - id: audacity
+    name: Audacity
+    what: Records and edits audio.
+    flathub: org.audacityteam.Audacity
+    snap: audacity
+    source: https://www.audacityteam.org/download/linux/
+  - id: photopea
+    name: Photopea
+    what: A free photo editor that runs in your web browser and opens Photoshop files.
+    web: https://www.photopea.com/
+    source: https://www.photopea.com/
+
+  # ---- Streaming, capture and dictation --------------------------------------------------------
+  - id: obs-studio
+    name: OBS Studio
+    what: Records and live-streams your screen, cameras and capture cards.
+    flathub: com.obsproject.Studio
+    flathubVerified: true
+    snap: obs-studio
+    source: https://obsproject.com/download
+  - id: streamcontroller
+    name: StreamController
+    what: Sets up the buttons on Elgato Stream Deck controllers.
+    flathub: com.core447.StreamController
+    flathubVerified: true
+    source: https://streamcontroller.core447.com/
+  - id: entangle
+    name: Entangle
+    what: Controls a camera from the computer to take photos (tethered shooting). Works with many Canon and Nikon cameras.
+    flathub: org.entangle_photo.Manager
+    source: https://entangle-photo.org/
+  - id: openwhispr
+    name: OpenWhispr
+    what: Dictation. Speak and it types for you, in any app. Can run fully on your PC.
+    website: https://github.com/OpenWhispr/openwhispr/releases/latest
+    note: Download the .deb file for Ubuntu, Linux Mint and Pop!_OS, or the AppImage.
+    source: https://openwhispr.com/use-cases/linux
+
+  # ---- Games -----------------------------------------------------------------------------------
+  - id: steam
+    name: Steam
+    what: Valve's game store and launcher. Runs most Windows games with Proton, built in.
+    flathub: com.valvesoftware.Steam
+    snap: steam
+    apt: steam-installer
+    source: https://store.steampowered.com/linux
+  - id: heroic
+    name: Heroic Games Launcher
+    what: Plays your Epic Games, GOG and Amazon games on Linux.
+    flathub: com.heroicgameslauncher.hgl
+    flathubVerified: true
+    source: https://heroicgameslauncher.com/
+  - id: lutris
+    name: Lutris
+    what: Installs and runs games from other launchers (like Battle.net) on Linux.
+    flathub: net.lutris.Lutris
+    flathubVerified: true
+    source: https://lutris.net/
+  - id: bottles
+    name: Bottles
+    what: Runs some Windows programs on Linux, each in its own space.
+    flathub: com.usebottles.bottles
+    flathubVerified: true
+    source: https://usebottles.com/
+  - id: prism-launcher
+    name: Prism Launcher
+    what: Plays Minecraft Java Edition, with easy mod support.
+    flathub: org.prismlauncher.PrismLauncher
+    flathubVerified: true
+    source: https://github.com/PrismLauncher/PrismLauncher
+  - id: sober
+    name: Sober
+    what: Plays Roblox on Linux by running Roblox's Android version. Made by volunteers, not Roblox.
+    flathub: org.vinegarhq.Sober
+    flathubVerified: true
+    source: https://sober.vinegarhq.org/
+
+  # ---- Media -----------------------------------------------------------------------------------
+  - id: spotify
+    name: Spotify
+    what: Music and podcasts.
+    flathub: com.spotify.Client
+    snap: spotify
+    source: https://www.spotify.com/us/download/linux/
+  - id: vlc
+    name: VLC
+    what: Plays almost any video or audio file.
+    flathub: org.videolan.VLC
+    snap: vlc
+    source: https://www.videolan.org/vlc/download-ubuntu.html
+  - id: handbrake
+    name: HandBrake
+    what: Converts videos to other formats and sizes.
+    flathub: fr.handbrake.ghb
+    flathubVerified: true
+    source: https://handbrake.fr/downloads2.php
+
+  # ---- Cloud, security and remote access -------------------------------------------------------
+  - id: dropbox
+    name: Dropbox
+    what: Keeps your Dropbox files in sync.
+    flathub: com.dropbox.Client
+    website: https://www.dropbox.com/install-linux
+    source: https://www.dropbox.com/install-linux
+  - id: bitwarden
+    name: Bitwarden
+    what: Password manager.
+    flathub: com.bitwarden.desktop
+    flathubVerified: true
+    snap: bitwarden
+    source: https://bitwarden.com/download/
+  - id: 1password
+    name: 1Password
+    what: Password manager.
+    flathub: com.onepassword.OnePassword
+    flathubVerified: true
+    snap: 1password
+    source: https://1password.com/downloads/linux
+  - id: keepassxc
+    name: KeePassXC
+    what: Password manager that opens the same password files as KeePass.
+    flathub: org.keepassxc.KeePassXC
+    flathubVerified: true
+    apt: keepassxc
+    source: https://keepassxc.org/download/
+  - id: protonvpn
+    name: Proton VPN
+    what: VPN.
+    website: https://protonvpn.com/support/official-linux-vpn-ubuntu
+    source: https://protonvpn.com/support/official-linux-vpn-ubuntu
+  - id: nordvpn
+    name: NordVPN
+    what: VPN. On Linux it's a command-line app.
+    website: https://nordvpn.com/download/linux/
+    source: https://nordvpn.com/download/linux/ # blocks automated checks
+  - id: anydesk
+    name: AnyDesk
+    what: Remote desktop.
+    flathub: com.anydesk.Anydesk
+    website: https://anydesk.com/en/downloads/linux
+    source: https://anydesk.com/en/downloads/linux # blocks automated checks
+  - id: teamviewer
+    name: TeamViewer
+    what: Remote desktop and support.
+    website: https://www.teamviewer.com/en/download/linux/
+    source: https://www.teamviewer.com/en/download/linux/
+  - id: parsec
+    name: Parsec
+    what: Plays games and uses apps on another computer, over the internet.
+    flathub: com.parsecgaming.parsec
+    website: https://parsec.app/downloads
+    source: https://parsec.app/downloads
+  - id: qbittorrent
+    name: qBittorrent
+    what: Downloads torrents.
+    flathub: org.qbittorrent.qBittorrent
+    flathubVerified: true
+    source: https://www.qbittorrent.org/download
+
+  # ---- Development -----------------------------------------------------------------------------
+  - id: vscode
+    name: Visual Studio Code
+    what: Code editor.
+    flathub: com.visualstudio.code
+    snap: code
+    classic: true
+    source: https://code.visualstudio.com/download # blocks automated checks
+
+  # ---- Hardware settings -----------------------------------------------------------------------
+  - id: piper
+    name: Piper
+    what: Sets up gaming mice (buttons, lights, sensitivity), including many Logitech mice.
+    flathub: org.freedesktop.Piper
+    apt: piper
+    source: https://github.com/libratbag/piper
+  - id: solaar
+    name: Solaar
+    what: Manages Logitech wireless receivers and devices (pairing, battery, buttons).
+    flathub: io.github.pwr_solaar.solaar
+    apt: solaar
+    source: https://github.com/pwr-Solaar/Solaar
+  - id: polychromatic
+    name: Polychromatic
+    what: Lights and settings for Razer devices (uses OpenRazer).
+    flathub: app.polychromatic.controller
+    flathubVerified: true
+    source: https://polychromatic.app/
+  - id: openrgb
+    name: OpenRGB
+    what: Controls RGB lights on many brands of PC parts and accessories.
+    flathub: org.openrgb.OpenRGB
+    flathubVerified: true
+    source: https://openrgb.org/
+  - id: alsa-scarlett-gui
+    name: ALSA Scarlett Control Panel
+    what: Settings for Focusrite Scarlett, Clarett and Vocaster audio interfaces (direct monitoring, inputs).
+    apt: alsa-scarlett-gui
+    note: Ubuntu 26.04 has the newest version. Linux Mint and Pop!_OS have an older one; the developer's download page has the latest.
+    website: https://github.com/geoffreybennett/alsa-scarlett-gui/releases/latest
+    source: https://github.com/geoffreybennett/alsa-scarlett-gui

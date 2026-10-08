@@ -30,6 +30,7 @@ public static partial class ProfileBuilder
             Description = raw.Description,
             System = system,
             Components = components,
+            Apps = GreyHaven.Core.Apps.AppInventory.Build(raw.Apps),
             Warnings = warnings,
         };
     }
