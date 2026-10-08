@@ -353,7 +353,7 @@ public static class JourneyBuilder
         var path = r.SelectedRecommendation ?? r.Recommendation.Paths.FirstOrDefault();
         if (path is null || r.SelectedInstall is not { } install) return null;
         if (install == InstallChoice.KeepWindows && !PhoneGuidePages.CanKeepWindows(path.DistroId)) return null;
-        return GreyHavenInfo.PhoneGuideSite + PhoneGuidePages.FileName(path.DistroId, path.EditionId, install) + "#" + PhoneGuideFragment(r);
+        return GreyHavenInfo.PhoneGuideSite + PhoneGuidePages.PageName(path.DistroId, path.EditionId, install) + "#" + PhoneGuideFragment(r);
     }
 
     public static string PhoneGuideFragment(CompatibilityReport r)

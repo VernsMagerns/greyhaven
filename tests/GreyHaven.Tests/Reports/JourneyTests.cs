@@ -138,11 +138,11 @@ public class JourneyTests
     public async Task Phone_guide_link_is_the_hosted_page_plus_choices_after_the_hash()
     {
         var r = (await Rate(RealPc)).WithInstall(InstallChoice.KeepWindows);
-        Assert.Equal("https://greyhaven-guide.pages.dev/ubuntu-desktop-keep.html#v=1&m=MSI&k=F11&f=desktop&g=100&x=nvidia-gpu", JourneyBuilder.PhoneGuideUrl(r));
+        Assert.Equal("https://greyhaven-guide.pages.dev/ubuntu-desktop-keep#v=1&m=MSI&k=F11&f=desktop&g=100&x=nvidia-gpu", JourneyBuilder.PhoneGuideUrl(r));
         Assert.Null(JourneyBuilder.PhoneGuideUrl(r.WithInstall(null)));                                          // nothing chosen yet
         Assert.Null(JourneyBuilder.PhoneGuideUrl(r.WithPath(PathKind.Advanced)));                                 // Pop!_OS can't keep Windows
         // Pop!_OS's NVIDIA download already has the driver, so there's no extra step (no "x").
-        Assert.Equal("https://greyhaven-guide.pages.dev/pop-os-nvidia-replace.html#v=1&m=MSI&k=F11&s=Delete&sb=Settings%20%3E%20Security%20%3E%20Secure%20Boot&f=desktop",
+        Assert.Equal("https://greyhaven-guide.pages.dev/pop-os-nvidia-replace#v=1&m=MSI&k=F11&s=Delete&sb=Settings%20%3E%20Security%20%3E%20Secure%20Boot&f=desktop",
             JourneyBuilder.PhoneGuideUrl(r.WithPath(PathKind.Advanced).WithInstall(InstallChoice.ReplaceWindows)));
     }
 

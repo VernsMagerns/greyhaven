@@ -4,6 +4,10 @@
 guide at **https://greyhaven-guide.pages.dev/** (`GreyHavenInfo.PhoneGuideSite`), a free
 Cloudflare Pages site deployed by `.github/workflows/phone-guide.yml` on every push to `main`.
 
+**Status (8 October 2026):** live. The maintainer set up the account, token and secrets, ran the
+workflow, and scanned the QR code on a phone over mobile data. QR codes use the page address
+without ".html" (Cloudflare Pages redirects "x.html" to "x"), so there's no redirect.
+
 ## Why Cloudflare Pages
 
 - **Free:** static pages are "free and unlimited" on the Free plan; 500 deploys a month
@@ -74,7 +78,7 @@ the prompt; the same for `CLOUDFLARE_ACCOUNT_ID`.)
 **6. Test from your phone on mobile data**
 
 Turn off Wi-Fi on your phone, then open
-https://greyhaven-guide.pages.dev/ubuntu-desktop-keep.html#v=1&m=MSI&k=F11&f=desktop&g=100&x=nvidia-gpu
+https://greyhaven-guide.pages.dev/ubuntu-desktop-keep#v=1&m=MSI&k=F11&f=desktop&g=100&x=nvidia-gpu
 (or scan the QR code in the design preview's "Take your guide" step). Check that "PC didn't start
 from the USB stick?" says **F11**, step 2 says **about 100 GB**, and step 3 shows the NVIDIA
 driver steps.

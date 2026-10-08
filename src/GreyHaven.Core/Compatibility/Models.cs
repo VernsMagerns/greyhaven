@@ -346,7 +346,11 @@ public sealed record PhoneGuideFix(string Id, string Title, Fix Fix);
 public static class PhoneGuidePages
 {
     public static string FileName(string distroId, string editionId, InstallChoice install) =>
-        $"{distroId}-{editionId}-{(install == InstallChoice.KeepWindows ? "keep" : "replace")}.html";
+        PageName(distroId, editionId, install) + ".html";
+
+    /// <summary>The page's address on the site: Cloudflare Pages serves "x.html" at "x" (and redirects to it).</summary>
+    public static string PageName(string distroId, string editionId, InstallChoice install) =>
+        $"{distroId}-{editionId}-{(install == InstallChoice.KeepWindows ? "keep" : "replace")}";
 
     /// <summary>Pop!_OS's installer can't make room next to Windows by itself.</summary>
     public static bool CanKeepWindows(string distroId) => distroId != "pop-os";

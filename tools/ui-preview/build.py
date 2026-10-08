@@ -229,7 +229,7 @@ def main():
                     if not url.startswith(hosted) or not hosted.startswith("https://"):
                         sys.exit(f"QR code must open the hosted guide ({hosted}), not {url}")
                     page, fragment = url.rsplit("/", 1)[1].split("#", 1)
-                    j["phoneGuide"] = f"../site/{page}#{fragment}"
+                    j["phoneGuide"] = f"../site/{page}.html#{fragment}"
                     j["qr"] = {"url": url, "svg": run(cli + ["qr", url], env=env)}
                 journeys.setdefault(s, {}).setdefault(kind, {})[install] = j
     # The same data as a script, so the preview is ready on load (and works from file://).
