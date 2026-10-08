@@ -237,6 +237,9 @@ function restartScreen(s) {
   return `${blocks(s.body, s.id)}
     <h2>Before you restart</h2>
     ${checklist("restart-final", r.finalChecks.map(esc))}
+    <section class="card farewell" aria-labelledby="farewell"><h2 id="farewell">${esc(r.farewellTitle)}</h2>${blocks(r.farewell, "restart-farewell")}
+      <p class="preview-note-inline secondary small">Preview: once GreyHaven for Linux exists (Part E), the middle line becomes
+        "Once Ubuntu is installed, get GreyHaven for Linux. It checks that everything works and suggests apps to set up first…" with a download link.</p></section>
     <button class="accent big" id="restartnow" ${ticked ? "" : "disabled"} aria-describedby="restarthint">${esc(r.buttonLabel)}</button>
     <p id="restarthint" class="secondary small">${ticked ? "GreyHaven restarts your PC to Windows' blue Advanced startup menu. No administrator password needed." : "Tick each item first."}</p>
     ${walk.restarted ? `<div class="note-box" role="status"><p class="strong">Simulated: your PC would restart now.</p><p>This is what you'll see:</p></div>` : `<h2>What you'll see</h2>`}

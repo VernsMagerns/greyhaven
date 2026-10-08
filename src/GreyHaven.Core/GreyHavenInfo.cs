@@ -24,6 +24,12 @@ public static class GreyHavenInfo
     /// </summary>
     public const string PhoneGuideSite = "https://greyhaven-guide.pages.dev/";
 
+    /// <summary>
+    /// Where people get GreyHaven for Linux (Part E: checks the new system, suggests apps), or
+    /// null while it doesn't exist. The Windows walkthrough's goodbye only mentions it once set.
+    /// </summary>
+    public const string? LinuxCompanionUrl = null;
+
     public static bool IsGitHubRepositoryConfigured => !GitHubRepository.StartsWith("OWNER/", StringComparison.Ordinal);
 
     /// <summary>Links to the repository work for everyone: it's configured and public.</summary>

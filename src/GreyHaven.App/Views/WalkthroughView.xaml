@@ -219,6 +219,12 @@
         <StackPanel DataContext="{Binding Restart}" Visibility="{Binding Converter={StaticResource HasValueToVisibility}}">
             <TextBlock Text="Before you restart" Style="{StaticResource Heading2}" />
             <ItemsControl ItemsSource="{Binding Checks}" ItemTemplate="{StaticResource CheckItem}" Focusable="False" />
+            <Border Style="{StaticResource Card}" Margin="0,12,0,0" AutomationProperties.Name="{Binding Plan.FarewellTitle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding Plan.FarewellTitle}" Style="{StaticResource Heading2}" Margin="0,0,0,6" />
+                    <StackPanel infra:BlockView.Blocks="{Binding Plan.Farewell}" />
+                </StackPanel>
+            </Border>
             <Button Content="Restart into your USB stick" Command="{Binding RestartNowCommand}" Style="{StaticResource AccentButton}" HorizontalAlignment="Left"
                     IsEnabled="{Binding CanRestart}" Margin="0,12,0,4" />
             <TextBlock Text="Tick each item first." Style="{StaticResource Secondary}" Visibility="{Binding CanRestart, Converter={StaticResource NoValueToVisibility}}" />

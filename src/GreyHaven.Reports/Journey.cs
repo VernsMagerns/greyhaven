@@ -56,7 +56,12 @@ public sealed record UsbPlan(string DistroName, string EditionName, long? Instal
 /// <param name="AfterRestart">What the person will see, picture by picture.</param>
 /// <param name="Fallback">If "Use a device" doesn't list the stick: the maker's startup menu key.</param>
 /// <param name="Manual">If GreyHaven can't restart the PC: the same thing by hand, in this Windows version's Settings.</param>
-public sealed record RestartPlan(IReadOnlyList<string> FinalChecks, string ButtonLabel, IReadOnlyList<Block> AfterRestart, IReadOnlyList<Block> Fallback, IReadOnlyList<Block> Manual);
+public sealed record RestartPlan(IReadOnlyList<string> FinalChecks, string ButtonLabel, IReadOnlyList<Block> AfterRestart, IReadOnlyList<Block> Fallback, IReadOnlyList<Block> Manual)
+{
+    /// <summary>The goodbye shown just above the restart button: the last thing GreyHaven says on Windows.</summary>
+    public string FarewellTitle { get; init; } = "";
+    public IReadOnlyList<Block> Farewell { get; init; } = [];
+}
 
 /// <param name="PhoneUrl">The public phone guide (only once the repository is public), or null.</param>
 /// <param name="OnWindowsDrive">Where the guide is also saved, if the live session can read it.</param>
@@ -418,8 +423,34 @@ public static class JourneyBuilder
                         new PictureStep("Click your USB stick. Its name often has \"USB\" or the stick's brand in it.", "The \"Use a device\" list with the USB stick", "use-a-device-list"),
                     ]),
                     P($"Your PC then starts from the stick. If a menu with {c.Name} appears, press Enter on the first choice. Then follow your guide."),
-                ], fallback, [WalkthroughBuilder.AdvancedStartup(c.R)]),
+                ], fallback, [WalkthroughBuilder.AdvancedStartup(c.R)])
+                {
+                    FarewellTitle = "Good luck, and so long from Windows!",
+                    Farewell = Farewell(c, GreyHavenInfo.LinuxCompanionUrl),
+                },
             };
+    }
+
+    /// <summary>
+    /// "Good luck, so long": that's all GreyHaven does on Windows, the guide takes over, and
+    /// (once it exists) a reminder to get GreyHaven for Linux for the first steps there.
+    /// </summary>
+    public static IReadOnlyList<Block> Farewell(CompatibilityReport r, string? linuxCompanionUrl) =>
+        (r.SelectedRecommendation ?? r.Recommendation.Paths.FirstOrDefault()) is { } path ? Farewell(new Ctx(r, path), linuxCompanionUrl) : [];
+
+    private static IReadOnlyList<Block> Farewell(Ctx c, string? linuxCompanionUrl)
+    {
+        var blocks = new List<Block>
+        {
+            P($"That's everything on the Windows side. Your USB stick is ready and your guide is with you. From here, your guide takes you through trying {c.Name}{(c.Choice is null ? "" : " and installing it")}."),
+        };
+        blocks.Add(linuxCompanionUrl is not null
+            ? P(new Strong($"Once {c.Name} is installed, get GreyHaven for Linux."),
+                new Text(" It checks that everything works and suggests apps to set up first, like Steam, Discord and a sound tool. "),
+                new Link("Get GreyHaven for Linux", linuxCompanionUrl))
+            : P(new Strong($"Once {c.Name} is installed,"), new Text(" open the last step in your guide, \"After installing\". It has your first steps on Linux and the apps to get.")));
+        blocks.Add(P("Enjoy your new system!"));
+        return blocks;
     }
 
     // ---- Phase 5: On the USB stick (the phone/printed guide) ---------------------------------

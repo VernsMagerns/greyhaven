@@ -183,6 +183,8 @@ ol.stages li { padding: 3px 0; color: var(--gh-text-secondary); }
 ol.stages li.now { color: var(--gh-text); font-weight: 700; }
 ol.stages li.done { color: var(--gh-works); }
 .done-box { text-align: center; }
+.farewell { margin: 16px 0; }
+.farewell h2 { margin-top: 0; }
 .bigdone { font-family: var(--gh-font-heading); font-size: 26px; font-weight: 800; color: var(--gh-works); margin: 4px 0 8px; }
 .guide-handoff { display: grid; grid-template-columns: auto 1fr; gap: 24px; align-items: center; margin: 16px 0; }
 .qr { margin: 0; text-align: center; }

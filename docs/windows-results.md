@@ -170,6 +170,8 @@ How long did it take? Download: ___ min. Writing and checking: ___ min.
 
 Save anything open in other apps first. Keep your phone with the guide open.
 
+- [ ] Under the checks there's a **"Good luck, and so long from Windows!"** card. Does it
+      feel like a good send-off?
 - [ ] **Restart into your USB stick** is greyed out until all the checks are ticked.
 - [ ] Tick them and click it. The PC restarts **without asking for an administrator password**
       and shows Windows' blue **Choose an option** screen.

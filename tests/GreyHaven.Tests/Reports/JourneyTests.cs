@@ -35,6 +35,20 @@ public class JourneyTests
     }
 
     [Fact]
+    public async Task Restart_step_says_goodbye_and_mentions_the_linux_app_only_once_it_exists()
+    {
+        var r = (await Rate(RealPc)).WithInstall(InstallChoice.KeepWindows);
+        var plan = JourneyBuilder.Build(r).Single(s => s.Id == "restart").Restart!;
+        Assert.Equal("Good luck, and so long from Windows!", plan.FarewellTitle);
+        var now = Text(plan.Farewell);
+        Assert.Contains("After installing", now);
+        Assert.DoesNotContain("GreyHaven for Linux", now);          // GreyHavenInfo.LinuxCompanionUrl is still null
+        var later = Text(JourneyBuilder.Farewell(r, "https://example.org/greyhaven-linux"));
+        Assert.Contains("get GreyHaven for Linux", later);
+        Assert.Contains("https://example.org/greyhaven-linux", later);
+    }
+
+    [Fact]
     public async Task Advanced_path_adds_the_makers_secure_boot_instruction()
     {
         var steps = JourneyBuilder.Build((await Rate(RealPc)).WithPath(PathKind.Advanced));
