@@ -12,4 +12,12 @@ public static class QrCode
         using var data = generator.CreateQrCode(text, QRCodeGenerator.ECCLevel.M);
         return new SvgQRCode(data).GetGraphic(8, "#000000", "#FFFFFF", drawQuietZones: true);
     }
+
+    /// <summary>The code's squares (true = dark), including the quiet zone, for drawing in the app.</summary>
+    public static bool[][] Modules(string text)
+    {
+        using var generator = new QRCodeGenerator();
+        using var data = generator.CreateQrCode(text, QRCodeGenerator.ECCLevel.M);
+        return data.ModuleMatrix.Select(row => row.Cast<bool>().ToArray()).ToArray();
+    }
 }

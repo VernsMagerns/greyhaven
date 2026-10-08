@@ -217,11 +217,55 @@ public sealed partial class ResultsViewModel : ObservableObject
 
     public string? ChosenDistroId => Report.SelectedDistroId;
 
+    // ---- Your apps ------------------------------------------------------------------------------
+
+    public bool HasApps => Report.Apps.Count > 0;
+    public string AppsSummary => Core.Apps.AppWords.Summary(Report.Apps);
+    public string AppsHeading => $"Show your {Report.Apps.Count} apps";
+    public string AppsPrivacy => "Your app list stays on your PC. It's checked against GreyHaven's own list, and left out of saved reports unless you choose.";
+
+    private IReadOnlyList<AppGroupViewModel>? _appGroups;
+
+    public IReadOnlyList<AppGroupViewModel> AppGroups => _appGroups ??= BuildAppGroups();
+
+    private IReadOnlyList<AppGroupViewModel> BuildAppGroups()
+    {
+        var distro = Report.SelectedDistroId ?? Report.Distros[0].DistroId;
+        IReadOnlyList<string> Hardware(IEnumerable<Core.Hardware.ComponentCategory> uses) => JourneyJson.HardwareLines(Report, uses, distro);
+        return Report.Apps
+            .Select(a => new AppViewModel(a, distro, Hardware(a.Uses), Hardware, Report.MustHaveApps.Contains(a.Name), MustHaveChanged))
+            .GroupBy(a => Core.Apps.AppWords.Category(a.App.Category))
+            .Select(g => new AppGroupViewModel(g.Key, g.ToList()))
+            .ToList();
+    }
+
+    private void MustHaveChanged(AppViewModel app)
+    {
+        var names = Report.MustHaveApps.Where(n => n != app.Name).ToList();
+        if (app.IsMustHave) names.Add(app.Name);
+        Report = Report with { MustHaveApps = names };
+        OnPropertyChanged(nameof(MustHaveHeadline));
+    }
+
+    /// <summary>"1 app you need won't work on Linux. Keep Windows too…", next to the headline.</summary>
+    public string? MustHaveHeadline => Report.MustHaveProblems.Count is var n and > 0
+        ? $"{n} {(n == 1 ? "app you need" : "apps you need")} won't work on Linux. Keep Windows too, so you can still use {(n == 1 ? "it" : "them")}."
+        : null;
+
+    /// <summary>Ticked: the saved report includes the app list.</summary>
+    [ObservableProperty]
+    public partial bool IncludeApps { get; set; }
+
+    /// <summary>The walkthrough's install choice, carried into the report (for saving).</summary>
+    public void UseReport(CompatibilityReport report) => Report = report;
+
     /// <summary>Called when a path is selected: carries the choice into the report (steps, ISO, export).</summary>
     public void ChoosePath(PathKind kind)
     {
         foreach (var p in Paths) if (p.Kind != kind) p.IsSelected = false;
         Report = Report.WithPath(kind);
+        _appGroups = null;
+        OnPropertyChanged(nameof(AppGroups));
         AttentionParts = [];
         OnPropertyChanged(nameof(ChosenDistroId));
         foreach (var d in Distros) d.IsChosen = d.DistroId == Report.SelectedDistroId;
@@ -279,7 +323,7 @@ public sealed partial class ResultsViewModel : ObservableObject
         if (path is null) return;
         try
         {
-            await ReportExporter.SaveAsync(Report, path, ReportExporter.FormatFromPath(path) ?? ReportFormat.Html);
+            await ReportExporter.SaveAsync(Report, path, ReportExporter.FormatFromPath(path) ?? ReportFormat.Html, includeApps: IncludeApps);
             SavedPath = path;
             SaveStatus = $"Report saved: {Path.GetFileName(path)}";
         }

@@ -32,9 +32,10 @@ public partial class App : Application
             ? () => new LiveScanner(new WindowsRawHardwareSource())
             : () => SampleProfiles.Open(sample);
 
+        var data = new Lazy<CompatibilityData>(() => CompatibilityData.Load());
         var services = new AppServices(
             scanner,
-            new Lazy<CompatibilityData>(() => CompatibilityData.Load()),
+            data,
             _http,
             new JsonSettingsStore(JsonSettingsStore.DefaultPath),
             Open,
@@ -46,7 +47,8 @@ public partial class App : Application
         Infrastructure.BlockView.Open = Open;
         Infrastructure.BlockView.Copy = CopyToClipboard;
 
-        var vm = new MainViewModel(services);
+        // Demo mode (--sample) always uses DemoSwitchServices inside MainViewModel: nothing is ever written.
+        var vm = new MainViewModel(services, new Infrastructure.WindowsSwitchServices(data));
         _themes = new ThemeManager(this);
         _themes.Apply(vm.Theme);
         vm.ThemeChanged += (_, theme) => _themes.Apply(theme);

@@ -75,6 +75,10 @@ public static class PlainWords
         return string.Join(" ", s);
     }
 
+    /// <summary>"A", "A and B", "A, B and C".</summary>
+    public static string JoinAnd(IReadOnlyList<string> items) =>
+        items.Count < 2 ? string.Join("", items) : $"{string.Join(", ", items.Take(items.Count - 1))} and {items[^1]}";
+
     public const string SecureBoot = "Secure Boot is a safety setting. It decides what software is allowed to start your PC.";
     public const string BitLocker = "BitLocker locks your files so only you can read them.";
     public const string Distro = "There are many versions of Linux. People call them \"distros\".";

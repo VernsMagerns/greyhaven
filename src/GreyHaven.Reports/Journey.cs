@@ -167,6 +167,15 @@ public static class JourneyBuilder
         };
         if (c.Encrypted) replaceChecks.Add(new(CheckState.Ok, "Your drive is encrypted. That's fine: you'll save the recovery key, just in case."));
 
+        // Apps the person needs that won't work on Linux: keeping Windows keeps them.
+        var problems = c.R.MustHaveProblems.Select(a => a.Name).ToList();
+        if (problems.Count > 0)
+        {
+            var names = PlainWords.JoinAnd(problems);
+            if (keepBlocker is null) keepChecks.Add(new(CheckState.Ok, $"You can still use {names} on Windows."));
+            replaceChecks.Add(new(CheckState.Attention, $"{names} won't work on Linux, and replacing Windows removes {(problems.Count == 1 ? "it" : "them")}."));
+        }
+
         var keepLines = new List<string> { $"Each time your PC starts, you pick Windows or {c.Name}." };
         var options = new List<InstallChoiceOption>
         {

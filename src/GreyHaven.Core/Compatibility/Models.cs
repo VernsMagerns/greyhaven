@@ -314,6 +314,13 @@ public sealed record CompatibilityReport
     /// <summary>Keep Windows too, or replace it. Chosen at the start of "Get ready"; null until then.</summary>
     public InstallChoice? SelectedInstall { get; init; }
 
+    /// <summary>Apps the person marked "I need this" (by name). Private, like the app list.</summary>
+    public IReadOnlyList<string> MustHaveApps { get; init; } = [];
+
+    /// <summary>Must-have apps that won't (or might not) work on Linux.</summary>
+    public IReadOnlyList<Apps.RatedApp> MustHaveProblems =>
+        Apps.Where(a => MustHaveApps.Contains(a.Name) && GreyHaven.Core.Apps.AppWords.MustHaveWarning(a) is not null).ToList();
+
     /// <summary>Returns a copy with an install choice.</summary>
     public CompatibilityReport WithInstall(InstallChoice? choice) => this with { SelectedInstall = choice };
 

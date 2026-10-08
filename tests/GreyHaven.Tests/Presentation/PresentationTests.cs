@@ -436,79 +436,54 @@ public class WalkthroughViewModelTests
     private static async Task<(MainViewModel Main, FakeServices Services)> AtResults(string sample)
     {
         var services = FakeServices.ForSample(sample);
-        var main = new MainViewModel(services);
+        var main = new MainViewModel(services, new FakeSwitch());
         await main.ScanCommand.ExecuteAsync(null);
         return (main, services);
     }
 
     [Fact]
-    public async Task Whats_next_opens_step_1_of_9_and_back_returns_to_results()
+    public async Task Whats_next_opens_the_journey_and_back_returns_to_results()
     {
         var (main, _) = await AtResults("nvidia-desktop");
         main.ShowWalkthroughCommand.Execute(null);
 
         Assert.Equal(Screen.Walkthrough, main.Screen);
         var w = main.Walkthrough!;
-        Assert.Equal("Step 1 of 9", w.StepCountText);
-        Assert.Equal("Back up your files", w.Title);
-        Assert.Equal("Next: Get a USB stick →", w.NextLabel);
+        Assert.Equal("How do you want to install Linux?", w.Title);
+        Assert.Equal("Next: Back up your files →", w.NextLabel);
         Assert.False(w.CanGoBack);
-        Assert.Equal(["now", "next", "next", "next", "next", "next", "next", "next", "next"], w.Progress);
+        Assert.Equal(["now", "next", "next", "next", "next"], w.Phases.Select(p => p.State));
 
         w.NextCommand.Execute(null);
-        Assert.Equal("Step 2 of 9", w.StepCountText);
-        Assert.Equal(["done", "now", "next", "next", "next", "next", "next", "next", "next"], w.Progress);
-        Assert.Equal("Step 2 of 9: Get a USB stick", w.Announcement);
+        Assert.Equal("Back up your files", w.Title);
+        Assert.Equal("Get ready: Back up your files", w.Announcement);
 
         w.BackToResultsCommand.Execute(null);
         Assert.Equal(Screen.Results, main.Screen);
     }
 
     [Fact]
-    public async Task Walkthrough_follows_the_chosen_path()
+    public async Task Journey_follows_the_chosen_path()
     {
         var (main, _) = await AtResults("nvidia-desktop");
         main.Results!.Paths.Single(p => p.Kind == PathKind.Advanced).IsSelected = true;
         main.ShowWalkthroughCommand.Execute(null);
         var w = main.Walkthrough!;
-        w.Go(2);
-        Assert.Contains(w.Body, b => b is GreyHaven.Reports.ListBlock l && l.Items.Any(i => i.OfType<GreyHaven.Reports.Strong>().Any(s => s.Value.StartsWith("Turn off Secure Boot"))));
+        Assert.Null(w.Report.SelectedInstall);                                     // Pop!_OS can't keep Windows: nothing pre-picked
+        Assert.False(w.CanGoOn);
+        w.Choices.Single(c => c.Choice == InstallChoice.ReplaceWindows).IsSelected = true;
+        w.Go(3);
+        Assert.Equal("Change a startup setting", w.Title);
+        Assert.Contains(w.Tasks, t => t.Title == "Turn off Secure Boot");
     }
 
     [Fact]
-    public async Task Replacing_windows_shows_steps_only_after_the_confirmation()
+    public async Task The_install_choice_is_carried_into_the_saved_report()
     {
-        var (main, _) = await AtResults("nvidia-desktop");
+        var (main, services) = await AtResults("nvidia-desktop");
         main.ShowWalkthroughCommand.Execute(null);
-        var w = main.Walkthrough!;
-        w.Go(7);
-        Assert.Equal("Choose how to install", w.Title);
-        var replace = w.InstallOptions.Single(o => o.Id == "replace");
-        var alongside = w.InstallOptions.Single(o => o.Id == "alongside");
-
-        replace.IsSelected = true;
-        Assert.True(replace.NeedsConfirmation);
-        Assert.False(replace.ShowSteps);
-        replace.Confirmed = true;
-        Assert.True(replace.ShowSteps);
-
-        alongside.IsSelected = true;
-        Assert.False(replace.IsSelected);
-        Assert.False(replace.Confirmed); // choosing again later needs a fresh tick
-        Assert.True(alongside.ShowSteps);
-    }
-
-    [Fact]
-    public async Task Last_step_finishes_back_at_results()
-    {
-        var (main, _) = await AtResults("nvidia-desktop");
-        main.ShowWalkthroughCommand.Execute(null);
-        var w = main.Walkthrough!;
-        w.Go(8);
-        Assert.True(w.IsLast);
-        Assert.Equal("Finish", w.NextLabel);
-        w.NextCommand.Execute(null);
-        Assert.Equal(Screen.Results, main.Screen);
+        main.Walkthrough!.Choices.Single(c => c.Choice == InstallChoice.ReplaceWindows).IsSelected = true;
+        Assert.Equal(InstallChoice.ReplaceWindows, main.Results!.Report.SelectedInstall);
     }
 }
 
@@ -600,7 +575,7 @@ public partial class XamlLintTests
     [GeneratedRegex(@"(?:Text|Content|Header)=""([^""{]+)""")]
     private static partial Regex TextLiteralRegex();
 
-    [GeneratedRegex(@"<Button\b[^>]*>", RegexOptions.Singleline)]
+    [GeneratedRegex(@"<Button(?![.\w])[^>]*>", RegexOptions.Singleline)] // <Button ...>, not <Button.Style>
     private static partial Regex ButtonRegex();
 
     [GeneratedRegex(@"<ContentPresenter\b[^>]*>", RegexOptions.Singleline)]

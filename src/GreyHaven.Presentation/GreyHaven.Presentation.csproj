@@ -7,6 +7,7 @@
     <ProjectReference Include="..\GreyHaven.Compat\GreyHaven.Compat.csproj" />
     <ProjectReference Include="..\GreyHaven.Ratings\GreyHaven.Ratings.csproj" />
     <ProjectReference Include="..\GreyHaven.Reports\GreyHaven.Reports.csproj" />
+    <ProjectReference Include="..\GreyHaven.Media\GreyHaven.Media.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.2" />

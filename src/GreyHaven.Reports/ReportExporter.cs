@@ -32,7 +32,7 @@ public static class ReportExporter
 
     /// <summary>The report with the app list removed (from the ratings and the scan).</summary>
     public static CompatibilityReport WithoutApps(CompatibilityReport report) =>
-        report with { Apps = [], Profile = report.Profile with { Apps = [] } };
+        report with { Apps = [], MustHaveApps = [], Profile = report.Profile with { Apps = [] } };
 
     public static ReportFormat? FormatFromPath(string path) => Path.GetExtension(path).ToLowerInvariant() switch
     {

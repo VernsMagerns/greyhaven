@@ -13,10 +13,13 @@ public sealed record ThemeOption(ThemeChoice Value, string Label);
 public sealed partial class MainViewModel : ObservableObject
 {
     private readonly IAppServices _services;
+    private readonly ISwitchServices _switch;
 
-    public MainViewModel(IAppServices services)
+    /// <param name="switchServices">The real Windows actions; demo mode always uses <see cref="DemoSwitchServices"/>, which never writes anything.</param>
+    public MainViewModel(IAppServices services, ISwitchServices? switchServices = null)
     {
         _services = services;
+        _switch = services.DemoSample is not null || switchServices is null ? new DemoSwitchServices() : switchServices;
         var settings = services.Settings.Load();
         Theme = settings.Theme;
         UseOnlineLookups = settings.UseOnlineLookups;
@@ -57,7 +60,7 @@ public sealed partial class MainViewModel : ObservableObject
     public partial ResultsViewModel? Results { get; private set; }
 
     [ObservableProperty]
-    public partial WalkthroughViewModel? Walkthrough { get; private set; }
+    public partial JourneyViewModel? Walkthrough { get; private set; }
 
     [ObservableProperty]
     public partial string? ErrorMessage { get; private set; }
@@ -134,7 +137,8 @@ public sealed partial class MainViewModel : ObservableObject
     private void ShowWalkthrough()
     {
         if (Results?.HasRecommendation != true) return;
-        Walkthrough = new WalkthroughViewModel(Results.Report, () => Screen = Screen.Results);
+        var results = Results;
+        Walkthrough = new JourneyViewModel(results.Report, _services, _switch, () => Screen = Screen.Results, results.UseReport);
         Screen = Screen.Walkthrough;
     }
 
