@@ -74,6 +74,10 @@ internal sealed class ThemeManager : IDisposable
             palette[$"GH.Ill.{name}"] = brush;
         }
 
+        // "Go" buttons (Next): the green, with OnAccent text; Windows' link colour in High Contrast.
+        palette["GH.Go"] = palette["GH.Works"];
+        if (highContrast) palette["GH.Go"] = SystemColors.HotTrackBrush;
+
         // Decorative pictures use brand colours, so they're hidden in High Contrast.
         palette["GH.DecorVisibility"] = highContrast ? Visibility.Collapsed : Visibility.Visible;
 

@@ -143,6 +143,11 @@
         <Setter Property="HorizontalAlignment" Value="Left" />
     </Style>
 
+    <!-- "Go" buttons (the walkthrough's Next): green, so moving on reads as safe. -->
+    <Style x:Key="GoButton" TargetType="Button" BasedOn="{StaticResource AccentButton}">
+        <Setter Property="Background" Value="{DynamicResource GH.Go}" />
+    </Style>
+
     <!-- A link that is a real, focusable button (keyboard + screen reader friendly). -->
     <Style x:Key="LinkButton" TargetType="Button">
         <Setter Property="Foreground" Value="{DynamicResource GH.Accent}" />

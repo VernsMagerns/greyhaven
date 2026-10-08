@@ -108,7 +108,7 @@ public static class BlockView
         panel.Children.Add(Text(scope, c.Content, "Body", new Thickness(0, 4, 0, 0)));
         var border = new Border
         {
-            Style = Style(scope, c.Kind is CalloutKind.Danger ? "DangerBox" : c.Kind is CalloutKind.Warning ? "WarningBox" : "InfoBox"),
+            Style = Style(scope, c.Kind is CalloutKind.Danger ? "DangerBox" : c.Kind is CalloutKind.Warning or CalloutKind.Tip ? "WarningBox" : "InfoBox"),
             Child = panel,
         };
         AutomationProperties.SetName(border, $"{c.Title}. {string.Concat(c.Content.Select(Plain))}");

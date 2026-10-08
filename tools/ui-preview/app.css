@@ -127,7 +127,7 @@ ol.steps { padding-left: 22px; }
 .step-body { font-size: 17px; }
 .step-body h3 { margin-top: 22px; }
 .walk-nav { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin: 28px 0 18px; flex-wrap: wrap; }
-.tip { background: var(--gh-notice-info); border: var(--border-width) solid var(--gh-card-border); border-radius: var(--radius); padding: 12px 16px; margin: 18px 0; font-size: 15px; }
+.tip { background: var(--gh-notice-warning); border: var(--border-width) solid var(--gh-card-border); border-radius: var(--radius); padding: 12px 16px; margin: 18px 0; font-size: 15px; }
 .tip p:last-child { margin: 0; }
 .warn-box { background: var(--gh-notice-warning); border: var(--border-width) solid var(--gh-card-border); border-radius: var(--radius); padding: 12px 16px; margin: 12px 0; }
 .big-warn { border-width: 4px; font-size: 18px; }
@@ -154,6 +154,9 @@ ul.alts { margin: 4px 0 6px; padding-left: 20px; }
 ul.alts li { margin: 4px 0; }
 li.app .check { margin: 6px 0 0; }
 li.app code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 13px; overflow-wrap: anywhere; }
+
+button.go { background: var(--gh-works); border-color: var(--gh-works); color: var(--gh-on-accent); }
+:root[data-theme="hc"] button.go { background: ButtonText; color: ButtonFace; }
 
 /* ---- Part B walkthrough ----------------------------------------------------------------------- */
 ol.phases { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; list-style: none; padding: 0; margin: 0 0 18px; }

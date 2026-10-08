@@ -290,8 +290,8 @@ function showWalkthrough(index, focus = true) {
     ${s.tip ? block({ type: "callout", kind: "tip", title: "What could go wrong?", content: [{ type: "text", value: s.tip }] }) : ""}
     <div class="walk-nav">
       ${walk.i > 0 ? `<button class="plain" id="prev">← Back</button>` : "<span></span>"}
-      ${next ? `<button class="accent big" id="nextstep" ${ok ? "" : "disabled"} aria-describedby="nexthint">Next: ${esc(next.title)} →</button>`
-             : `<button class="accent big" id="finish">Done</button>`}
+      ${next ? `<button class="accent big go" id="nextstep" ${ok ? "" : "disabled"} aria-describedby="nexthint">Next: ${esc(next.title)} →</button>`
+             : `<button class="accent big go" id="finish">Done</button>`}
     </div>
     <p id="nexthint" class="secondary small walk-hint">${ok ? "" : esc(blockedHint(s))}</p>`;
 

@@ -232,8 +232,8 @@ public static class HtmlReportWriter
             .score{display:grid;place-items:center;text-align:center;width:7rem;height:7rem;border-radius:50%;background:var(--accent);color:var(--on-accent);border:2.5px solid var(--border);font-size:.85rem;line-height:1.1}
             .score .num{font-family:Rubik,sans-serif;font-size:2.6rem;font-weight:700;align-self:end}
             .callout{border:2.5px solid var(--border);border-radius:12px;padding:.4rem 1rem;margin:1rem 0;box-shadow:4px 4px 0 var(--shadow)}
-            .callout.info,.callout.tip{background:var(--notice-info)}
-            .callout.warning{background:var(--notice-warning)}
+            .callout.info{background:var(--notice-info)}
+            .callout.warning,.callout.tip{background:var(--notice-warning)}
             .callout.danger{background:var(--notice-warning);border-width:4px}
             .rating{font-weight:600;white-space:nowrap}
             .rating.works{color:var(--works)}.rating.extra{color:var(--extra)}.rating.partial{color:var(--partial)}

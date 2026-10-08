@@ -34,6 +34,7 @@ public class PaletteTests
     {
         var p = Get(theme);
         Assert.True(Rgb.Contrast(p.OnAccent, p.Accent) >= 4.5);
+        Assert.True(Rgb.Contrast(p.OnAccent, p.Works) >= 4.5); // "Go" buttons: OnAccent text on green
         // Non-text UI parts (card borders) need 3:1 against what they sit on.
         Assert.True(Rgb.Contrast(p.CardBorder, p.Card) >= 3);
         Assert.True(Rgb.Contrast(p.CardBorder, p.Page) >= 3);

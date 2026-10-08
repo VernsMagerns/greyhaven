@@ -255,8 +255,8 @@
             </ItemsControl>
         </StackPanel>
 
-        <!-- What could go wrong? -->
-        <Border Style="{StaticResource InfoBox}" Visibility="{Binding Tip, Converter={StaticResource HasValueToVisibility}}">
+        <!-- What could go wrong? (caution yellow) -->
+        <Border Style="{StaticResource WarningBox}" Visibility="{Binding Tip, Converter={StaticResource HasValueToVisibility}}">
             <StackPanel>
                 <TextBlock Text="What could go wrong?" Style="{StaticResource Strong}" />
                 <TextBlock Text="{Binding Tip}" Style="{StaticResource Body}" Margin="0,4,0,0" />
@@ -270,7 +270,7 @@
             </Grid.ColumnDefinitions>
             <Button Content="← _Back" Command="{Binding BackCommand}" Padding="20,6" VerticalAlignment="Center"
                     Visibility="{Binding CanGoBack, Converter={StaticResource HasValueToVisibility}}" />
-            <Button Grid.Column="1" Content="{Binding NextLabel}" Command="{Binding NextCommand}" Style="{StaticResource AccentButton}"
+            <Button Grid.Column="1" Content="{Binding NextLabel}" Command="{Binding NextCommand}" Style="{StaticResource GoButton}"
                     IsEnabled="{Binding CanGoOn}" HorizontalAlignment="Right" AutomationProperties.Name="{Binding NextLabel}"
                     AutomationProperties.HelpText="{Binding NextHint}" />
         </Grid>
