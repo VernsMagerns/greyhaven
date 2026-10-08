@@ -172,7 +172,7 @@ public static class Recommender
                 : $"install the {fix.Driver} (the details below show the exact commands).";
             sentences.Add($"Your {what} needs one extra step after installing: {LowerFirst(steps)}");
         }
-        if (extra.Any(c => c.For(easy.DistroId).Fix!.SecureBoot != SecureBootImpact.None))
+        if (extra.Any(c => c.For(easy.DistroId).Fix! is { SecureBoot: not SecureBootImpact.None, SignedDriver: false }))
             sentences.Add("Because Secure Boot stays on, you may be asked to create a one-time password while the driver installs. After restarting, a blue \"Enroll MOK\" screen appears: choose \"Enroll MOK\", then \"Continue\", and type that password. This is normal.");
 
         if (easy.Score.UnknownCount > 0)

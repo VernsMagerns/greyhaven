@@ -245,13 +245,15 @@ public class RealDataTests
         // Pre-switch checklist: nothing to change in the firmware
         Assert.DoesNotContain(PreSwitchRequirement.TurnOffSecureBoot, easy.Requirements);
         Assert.Null(easy.SecureBootNotice);
-        // Fixes follow the chosen distro: the NVIDIA driver step, in plain words, with MOK advice
+        // Fixes follow the chosen distro: the NVIDIA driver step, in plain words. Ubuntu's driver
+        // is pre-built and signed, so no MOK warning up front, just a "usually no extra step" note.
         Assert.Contains("Additional Drivers", easy.Paragraph);
-        Assert.Contains("Enroll MOK", easy.Paragraph);
+        Assert.DoesNotContain("Enroll MOK", easy.Paragraph);
         var gpu = Rating(r, ComponentCategory.Gpu, r.SelectedDistroId!);
         Assert.Equal(Core.Compatibility.Rating.WorksWithExtraDriver, gpu.Rating);
         Assert.Equal(["sudo ubuntu-drivers install"], gpu.Fix!.Commands);
-        Assert.NotNull(gpu.Fix.SecureBootAdvice);
+        Assert.True(gpu.Fix.SignedDriver);
+        Assert.Contains("already signed for Secure Boot", gpu.Fix.SecureBootAdvice);
     }
 
     [Fact]

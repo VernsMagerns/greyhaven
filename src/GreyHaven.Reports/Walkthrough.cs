@@ -111,18 +111,18 @@ public static class WalkthroughBuilder
                 S($"Choose Install {name}, then click Next.", $"Install {name} chosen", "try-install"),
                 S("Choose Interactive installation, then click Next.", "Interactive installation chosen", "interactive"),
                 S("Keep Default selection, then click Next.", "Default selection chosen", "apps"),
-                S("Tick both boxes for extra software, then click Next.", "Both boxes ticked on Optimise your computer", "third-party"),
+                S("Tick both boxes (graphics and Wi-Fi drivers, and media formats), then click Next.", "Both boxes ticked on Optimise your computer", "third-party"),
                 .. alongside
                     ? new[]
                     {
                         S($"Choose Install {name} alongside Windows Boot Manager, then click Next.", "Disk setup with the alongside option chosen", "alongside"),
-                        S($"Drag the slider to give {name} {give}, then click Next.", "The slider between Windows and Ubuntu", "divider"),
+                        S($"Drag the divider to give {name} {give}, then click Next.", "The divider between Windows and Ubuntu", "divider"),
                     }
                     : new[] { S($"Choose Erase disk and install {name}, then click Next.", "Disk setup with Erase disk chosen", "erase") },
                 S("Type your name and a password, then click Next.", "The Create your account screen", "account"),
                 S("Pick your time zone, then click Next.", "The time zone map", "timezone"),
                 S(alongside ? "Check your choices, then click Install." : "Check it says Erase disk, then click Install.", "Review your choices with the Install button", "review"),
-                S("When it's done, click Restart now, then take out the USB stick.", "The Restart now button", "restart"),
+                S("When it's done, click Restart now. When the screen says to remove the installation medium, take out the USB stick and press Enter.", "The Restart now button", "restart"),
             ],
         };
     }
@@ -171,7 +171,7 @@ public static class WalkthroughBuilder
             body.Add(P($"{c.DisplayName} needs one extra step. Follow the pictures. Don't download drivers from websites: that can break your setup."));
             if (fix.Steps.Count > 0)
                 body.Add(new PictureGuide(fix.Steps.Select((st, i) => new PictureStep(st, st, $"{id}-{c.Component.Category.ToString().ToLowerInvariant()}-{i + 1}")).ToList()));
-            if (fix.SecureBootAdvice is not null) body.Add(new Callout(CalloutKind.Info, "A blue screen after restarting is normal", Line(fix.SecureBootAdvice)));
+            if (fix.SecureBootAdvice is not null) body.Add(new Callout(CalloutKind.Info, "If a blue screen appears after restarting", Line(fix.SecureBootAdvice)));
         }
         body.Add(new Heading(3, "Where to get help"));
         if (Help.TryGetValue(id, out var help))

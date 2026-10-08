@@ -279,6 +279,8 @@ public class JourneyTests
                 Assert.DoesNotContain("MSI", html);              // no maker names written into the page
                 Assert.DoesNotContain("Install your apps</h3>\n<ul", html); // never an app list
                 Assert.Contains("data-fill=\"k\"", html);
+                // Keeping Windows: the clock and boot-menu tips; never on the replace pages.
+                Assert.Equal(p.FileName.EndsWith("-keep.html", StringComparison.Ordinal), html.Contains("click Sync now", StringComparison.Ordinal));
             }
             Assert.DoesNotContain("innerHTML", script);
             Assert.Contains("textContent", script);

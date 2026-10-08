@@ -194,7 +194,7 @@ distros:
     fingerprintSet: libfprint-1.95.1
     secureBoot:
       supported: true
-      note: Ubuntu installs with Secure Boot on. If you tick "Install third-party software", the installer may ask for a Secure Boot (MOK) password that you confirm on the blue "Enroll MOK" screen after restarting.
+      note: Ubuntu installs with Secure Boot on. Its NVIDIA and other third-party drivers come pre-built and signed, so the 26.04 installer doesn't ask for a Secure Boot (MOK) password.
     editions:
       - id: desktop
         name: Desktop

@@ -58,7 +58,7 @@ public class ReportExportTests
         Assert.Contains("(1 of 2)", text);
         Assert.Contains("(2 of 2)", text);
         // Details are for Ubuntu (the default Easy path) and cite only Ubuntu's sources.
-        Assert.Contains("Ubuntu Server docs - NVIDIA drivers installation", text);
+        Assert.Contains("Ubuntu Desktop docs - Install NVIDIA drivers", text);
         Assert.DoesNotContain("Linux Mint 22.3 release notes", text);
         Assert.DoesNotContain("System76 - Install the System76 driver", text);
         // Motherboard maker's Secure Boot guide, and the Windows 10 note with Microsoft's page.

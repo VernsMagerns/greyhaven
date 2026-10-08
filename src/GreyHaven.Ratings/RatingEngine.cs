@@ -447,6 +447,7 @@ public sealed partial class RatingEngine(
     internal static Fix BuildFix(RuleFix f, DistroInfo distro, SecureBootState secureBoot)
     {
         var impact = RuleSet.ParseSecureBoot(f.SecureBoot);
+        var signed = f.SignedFor.Contains(distro.Id);
         return new Fix
         {
             Driver = f.Driver,
@@ -455,7 +456,8 @@ public sealed partial class RatingEngine(
             Note = f.Note,
             NeedsInternet = f.NeedsInternet,
             SecureBoot = impact,
-            SecureBootAdvice = SecureBootAdvice(impact, distro, secureBoot),
+            SignedDriver = signed,
+            SecureBootAdvice = SecureBootAdvice(impact, distro, secureBoot, signed),
         };
     }
 
@@ -463,7 +465,7 @@ public sealed partial class RatingEngine(
         SecureBootAdvice(impact, ctx.Distro, ctx.SecureBoot);
 
     /// <summary>Also used for the public phone guide, where the PC's Secure Boot state is unknown.</summary>
-    internal static string? SecureBootAdvice(SecureBootImpact impact, DistroInfo distro, SecureBootState secureBoot)
+    internal static string? SecureBootAdvice(SecureBootImpact impact, DistroInfo distro, SecureBootState secureBoot, bool signedDriver = false)
     {
         if (impact == SecureBootImpact.None || secureBoot is SecureBootState.Disabled or SecureBootState.NotSupported) return null;
         if (!distro.SecureBoot.Supported)
@@ -471,6 +473,8 @@ public sealed partial class RatingEngine(
 
         // Plain words: the blue "Enroll MOK" screen scares people who aren't expecting it.
         var start = secureBoot == SecureBootState.Unknown ? "If Secure Boot is on, " : "Secure Boot is on, so ";
+        if (signedDriver && impact == SecureBootImpact.MokMayBeRequired)
+            return $"{distro.Name} installs this driver already signed for Secure Boot, so there's usually no extra step. If a blue \"Enroll MOK\" screen does appear after restarting, choose \"Enroll MOK\", then \"Continue\", and type the password you were asked to make up.";
         return impact == SecureBootImpact.MokRequired
             ? start + "this driver needs your OK before it can run. While it installs, make up a password. After you restart, a blue screen appears. Choose \"Enroll MOK\", then \"Continue\", and type that password. This is normal."
             : start + "you may be asked to make up a password while the driver installs. After you restart, a blue screen appears. Choose \"Enroll MOK\", then \"Continue\", and type that password. This is normal.";

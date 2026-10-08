@@ -23,6 +23,9 @@ rules:
     fix:
       driver: NVIDIA proprietary driver
       secureBoot: mokMayBeRequired
+      # Ubuntu's Additional Drivers and ubuntu-drivers install only pre-built, signed drivers
+      # that work with Secure Boot (Ubuntu Desktop docs, "Install NVIDIA drivers", Aug 2026).
+      signedFor: [ubuntu]
       needsInternet: true
       steps:
         mint:
@@ -32,7 +35,8 @@ rules:
         ubuntu:
           - Open "Software & Updates" and go to the "Additional Drivers" tab.
           # Ubuntu labels it "(proprietary, tested)"; Mint's Driver Manager says "(recommended)".
-          - Select the NVIDIA driver marked "proprietary, tested" and click "Apply Changes".
+          # Ticking the drivers box while installing (online) installs it already.
+          - If an NVIDIA driver is already selected, you're done. Otherwise select the newest NVIDIA driver marked "proprietary, tested" and click "Apply Changes".
           - Restart when it finishes.
         pop-os:
           - Easiest option - install from Pop!_OS's NVIDIA ISO, which already includes the driver.
@@ -43,8 +47,8 @@ rules:
         pop-os: [sudo apt install system76-driver-nvidia]
     sources:
       # Mint uses the same "ubuntu-drivers" tool, so Ubuntu's guide applies to it too.
-      - title: Ubuntu Server docs - NVIDIA drivers installation
-        url: https://documentation.ubuntu.com/server/how-to/graphics/install-nvidia-drivers/
+      - title: Ubuntu Desktop docs - Install NVIDIA drivers
+        url: https://ubuntu.com/desktop/docs/en/latest/how-to/graphics/install-nvidia-drivers/
         distros: [ubuntu, mint]
       - title: Linux Mint 22.3 release notes
         url: https://www.linuxmint.com/rel_zena_cinnamon.php

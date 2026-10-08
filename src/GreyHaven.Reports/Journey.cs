@@ -511,8 +511,22 @@ public static class JourneyBuilder
         var body = old.Body.ToList();
         var help = body.FindIndex(b => b is Heading { Text: "Where to get help" });
         body.InsertRange(help < 0 ? body.Count : help, InstallYourApps(c.R, c.Path.DistroId));
+        if (c.Keep) body.InsertRange(help < 0 ? body.Count : body.FindIndex(b => b is Heading { Text: "Where to get help" }), KeepingWindows(c));
         return Step("after", JourneyPhase.OnTheStick, "After installing", $"A few last things to make {c.Name} yours.", body, old.Tip);
     }
+
+    /// <summary>Two things that surprise people who keep Windows too, and how to fix them.</summary>
+    private static IReadOnlyList<Block> KeepingWindows(Ctx c) =>
+        KeepingWindows(c.Name, new Text(c.R.Maker?.BootMenuKey is { Length: <= 12 } k ? k : "your PC's startup menu key"));
+
+    /// <summary>Also on the public phone guide, where the startup menu key comes from the "#" part.</summary>
+    internal static IReadOnlyList<Block> KeepingWindows(string name, Inline bootKey) =>
+    [
+        new Heading(3, "Using Windows and Linux on one PC"),
+        P(new Strong("Windows' clock is a few hours wrong?"), new Text($" That's normal after using {name}: the two keep time differently. In Windows, open Settings > Time & language > Date & time and click Sync now.")),
+        P(new Strong("The PC starts Windows without showing the menu?"), new Text(" A Windows update sometimes does that. Restart, press "), bootKey,
+            new Text($" as the PC starts, and pick {name} (it may be called \"ubuntu\"). To fix it for good, put it first in the startup order in your PC's startup settings.")),
+    ];
 
     /// <summary>
     /// The person's own list of Linux apps to install, with where to get each on their distro, and

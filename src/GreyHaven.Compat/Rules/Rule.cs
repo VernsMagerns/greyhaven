@@ -96,4 +96,9 @@ public sealed class RuleFix
     public bool NeedsInternet { get; set; }
     /// <summary>none | mokMayBeRequired | mokRequired.</summary>
     public string SecureBoot { get; set; } = "none";
+    /// <summary>
+    /// Distros whose driver tool installs a pre-built driver already signed for Secure Boot, so
+    /// there's normally no "Enroll MOK" step (e.g. Ubuntu's NVIDIA packages).
+    /// </summary>
+    public List<string> SignedFor { get; set; } = [];
 }

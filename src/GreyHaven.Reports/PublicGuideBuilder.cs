@@ -83,11 +83,12 @@ public static class PublicGuideBuilder
                 more.Add(P(f.Fix.Steps.Count > 0 ? "Or type this in a terminal:" : "Type this in a terminal:"));
                 more.Add(new CommandBlock(f.Fix.Commands));
             }
-            if (f.Fix.SecureBootAdvice is not null) more.Add(new Callout(CalloutKind.Info, "A blue screen after restarting is normal", Line(f.Fix.SecureBootAdvice)));
+            if (f.Fix.SecureBootAdvice is not null) more.Add(new Callout(CalloutKind.Info, "If a blue screen appears after restarting", Line(f.Fix.SecureBootAdvice)));
             b.Add(new OnlyIf($"x:{f.Id}", more));
         }
         b.Add(new Heading(3, "Install your apps"));
         b.Add(P("Your list of apps, with where to get each one, is in the printed or saved copy of your guide from GreyHaven. It isn't on this page, to keep it private."));
+        if (keep) b.AddRange(JourneyBuilder.KeepingWindows(name, new Fill("k", "your PC's startup menu key")));
         b.Add(new Heading(3, "Where to get help"));
         if (WalkthroughBuilder.Help.TryGetValue(page.DistroId, out var help))
             b.Add(new ListBlock(ListKind.Bullets, help.Select(h => (IReadOnlyList<Inline>)[new Link(h.Title, h.Url)]).ToList()));

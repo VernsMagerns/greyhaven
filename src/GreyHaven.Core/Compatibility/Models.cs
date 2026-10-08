@@ -59,6 +59,8 @@ public sealed record Fix
     public string? Note { get; init; }
     public bool NeedsInternet { get; init; }
     public SecureBootImpact SecureBoot { get; init; }
+    /// <summary>The distro installs this driver pre-built and signed, so a MOK step is unlikely.</summary>
+    public bool SignedDriver { get; init; }
     /// <summary>Set when Secure Boot is on and affects this fix on this distro.</summary>
     public string? SecureBootAdvice { get; init; }
 }
