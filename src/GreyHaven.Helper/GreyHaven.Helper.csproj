@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- The elevated helper: Windows asks permission (UAC) each time the app starts it, for exactly
+       one action (see GreyHaven.Media.HelperAction). Shipped next to GreyHaven.exe. -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>GreyHaven.Helper</AssemblyName>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GreyHaven.Media\GreyHaven.Media.csproj" />
+    <ProjectReference Include="..\GreyHaven.Scan.Windows\GreyHaven.Scan.Windows.csproj" />
+  </ItemGroup>
+</Project>

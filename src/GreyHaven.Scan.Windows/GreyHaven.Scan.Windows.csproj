@@ -4,6 +4,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\GreyHaven.Core\GreyHaven.Core.csproj" />
+    <ProjectReference Include="..\GreyHaven.Media\GreyHaven.Media.csproj" />
     <PackageReference Include="System.Management" Version="10.0.12" />
   </ItemGroup>
 </Project>
