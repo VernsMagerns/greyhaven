@@ -165,8 +165,8 @@ linuxApps:
     name: DaVinci Resolve
     what: Professional video editing and colour. Its free version has a Linux download.
     website: https://www.blackmagicdesign.com/products/davinciresolve
-    note: Blackmagic Design officially supports Rocky Linux, not Ubuntu or Mint. It usually works on them, but needs NVIDIA's own graphics driver (or an AMD card with extra setup).
-    source: https://www.blackmagicdesign.com/products/davinciresolve
+    note: The free Linux version can't open H.264/H.265 video (most phone and camera videos) or AAC audio; the paid Studio version can. Blackmagic Design officially supports Rocky Linux, not Ubuntu or Mint. It usually works on them, but needs NVIDIA's own graphics driver (or an AMD card with extra setup).
+    source: https://www.provideocoalition.com/aac-audio-kdenlive-beats-davinci-resolve-studio-on-linux/
   - id: blender
     name: Blender
     what: 3D modelling, animation and rendering.
