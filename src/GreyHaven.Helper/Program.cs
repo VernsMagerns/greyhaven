@@ -99,6 +99,8 @@ internal static class Program
         if (!image.Exists) throw new InvalidOperationException("The Linux installer file is missing. Download it again.");
         var check = UsbSafety.Check(disk.Info, image.Length);
         if (!check.CanUse) return new HelperMessage(HelperMessage.Refused, Text: check.Problem);
+        if (check.IsLargeDrive && !r.LargeDrive)
+            return new HelperMessage(HelperMessage.Refused, Text: "This is an external drive, not a USB stick. Confirm in GreyHaven that it doesn't hold your backup, then try again.");
 
         // 2. The file must still be the checked one.
         await using (var f = new FileStream(image.FullName, FileMode.Open, FileAccess.Read, FileShare.Read, 1 << 20, useAsync: true))

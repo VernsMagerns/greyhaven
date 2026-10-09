@@ -164,13 +164,13 @@ public sealed partial class UsbViewModel : ObservableObject
     [ObservableProperty] public partial IReadOnlyList<StickViewModel> Sticks { get; private set; } = [];
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(EraseText), nameof(CanStart))]
+    [NotifyPropertyChangedFor(nameof(EraseText), nameof(CanStart), nameof(IsLargeDrive), nameof(LargeText))]
     public partial StickViewModel? Selected { get; set; }
 
     partial void OnSelectedChanged(StickViewModel? oldValue, StickViewModel? newValue)
     {
         // A different stick needs a fresh "erase" tick.
-        if (oldValue?.Disk != newValue?.Disk) Confirmed = false;
+        if (oldValue?.Disk != newValue?.Disk) { Confirmed = false; LargeConfirmed = false; }
         foreach (var s in Sticks) s.IsSelected = s == newValue;
     }
 
@@ -178,8 +178,16 @@ public sealed partial class UsbViewModel : ObservableObject
     [NotifyPropertyChangedFor(nameof(CanStart))]
     public partial bool Confirmed { get; set; }
 
-    public string? EraseText => Selected is null ? null : $"I understand everything on the {Selected.Name} stick will be erased.";
-    public bool CanStart => State == "choose" && Selected is { Check.CanUse: true } && Confirmed;
+    /// <summary>External SSDs and hard drives: a second tick, because the backup step suggests copying files to one.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(CanStart))]
+    public partial bool LargeConfirmed { get; set; }
+
+    public bool IsLargeDrive => Selected?.Check.IsLargeDrive == true;
+    public string? LargeText => IsLargeDrive ? $"This {Selected!.Name} drive doesn't hold my backup or anything else I need." : null;
+
+    public string? EraseText => Selected is null ? null : $"I understand everything on the {Selected.Name} {(IsLargeDrive ? "drive" : "stick")} will be erased.";
+    public bool CanStart => State == "choose" && Selected is { Check.CanUse: true } && Confirmed && (!IsLargeDrive || LargeConfirmed);
     public bool IsDone => State == "done";
     public bool IsWorking => State == "working";
 
@@ -231,7 +239,7 @@ public sealed partial class UsbViewModel : ObservableObject
             var path = await _owner.Switch.DownloadAsync(installer, new Progress<MediaProgress>(Report), _cts.Token);
             PermissionNote = HelperReasons.Why(HelperAction.WriteUsb);
             var result = await _owner.Switch.RunElevatedAsync(HelperAction.WriteUsb,
-                r => r with { Disk = stick.Disk.Number, Model = stick.Disk.Model, Size = stick.Disk.SizeBytes, Image = path, Sha256 = installer.Sha256 },
+                r => r with { Disk = stick.Disk.Number, Model = stick.Disk.Model, Size = stick.Disk.SizeBytes, Image = path, Sha256 = installer.Sha256, LargeDrive = stick.Check.IsLargeDrive && LargeConfirmed },
                 new Progress<HelperMessage>(m => Report(new MediaProgress(m.Stage ?? "", m.Done, m.Total))), _cts.Token);
             PermissionNote = null;
             Message = result.Kind == HelperMessage.Ok ? null : result.Text; // "ready" is already the big heading

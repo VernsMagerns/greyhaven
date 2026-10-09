@@ -151,6 +151,26 @@ public class JourneyViewModelTests
     }
 
     [Fact]
+    public async Task External_ssds_need_a_second_tick_and_the_helper_is_told()
+    {
+        var (vm, sw) = await Start();
+        sw.Sticks.Clear();
+        sw.Sticks.Add(new DiskInfo(5, "Samsung T7", 1_000_204_886_016, true, false, false, false, false, "E:", 300_000_000_000));
+        GoTo(vm, JourneyScreen.Usb);
+        var usb = vm.Usb!;
+        await usb.RefreshSticksAsync();
+        Assert.True(usb.IsLargeDrive);
+        Assert.Contains("including any backup", usb.Selected!.Warning);
+        usb.Confirmed = true;
+        Assert.False(usb.CanStart);                                   // the backup tick too
+        Assert.Equal("This Samsung T7, 1000 GB drive doesn't hold my backup or anything else I need.", usb.LargeText);
+        usb.LargeConfirmed = true;
+        Assert.True(usb.CanStart);
+        await usb.StartCommand.ExecuteAsync(null);
+        Assert.True(sw.Elevated.Single().Request!.LargeDrive);
+    }
+
+    [Fact]
     public async Task Too_small_sticks_cant_be_used_and_internal_drives_are_never_listed()
     {
         var (vm, sw) = await Start();

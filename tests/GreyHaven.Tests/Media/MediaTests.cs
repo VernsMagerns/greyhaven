@@ -158,7 +158,10 @@ public class MediaTests
         Assert.False(UsbSafety.Check(Stick(readOnly: true), 1).CanUse);
         Assert.Contains("too small", UsbSafety.Check(Stick(gb: 4), 1).Problem);
         Assert.Contains("too small", UsbSafety.Check(Stick(gb: 8), 9_000_000_000).Problem);
-        Assert.Contains("external drive", UsbSafety.Check(Stick(gb: 1000), 1).Problem);
+        var ssd = UsbSafety.Check(Stick(gb: 1000), 1);                       // an external SSD: allowed, but flagged for a second tick
+        Assert.True(ssd is { CanUse: true, IsLargeDrive: true });
+        Assert.Contains("including any backup", ssd.Warning);
+        Assert.False(UsbSafety.Check(Stick(), 1).IsLargeDrive);
         Assert.Contains("hard drive", UsbSafety.Check(Stick(removable: false), 1).Warning);
         Assert.False(UsbSafety.IsListed(Stick(usb: false)));
         Assert.False(UsbSafety.IsListed(Stick(windows: true)));

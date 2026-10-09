@@ -18,6 +18,10 @@ public class HelperProtocolTests
         Assert.Equal(write, HelperRequest.Parse(write.ToArgs()));
         var fast = new HelperRequest { Action = HelperAction.FastStartupOff, Pipe = HelperRequest.NewPipeName(), Token = HelperRequest.NewToken() };
         Assert.Equal(fast, HelperRequest.Parse(fast.ToArgs()));
+        var large = write with { LargeDrive = true };
+        Assert.Equal(large, HelperRequest.Parse(large.ToArgs()));
+        Assert.DoesNotContain("--large-drive", write.ToArgs());
+        Assert.Throws<ArgumentException>(() => HelperRequest.Parse([.. write.ToArgs(), "--large-drive", "maybe"]));
     }
 
     [Theory]

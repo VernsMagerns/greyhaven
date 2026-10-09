@@ -171,9 +171,15 @@
                         </ItemsControl.ItemTemplate>
                     </ItemsControl>
                     <Border Style="{StaticResource DangerBox}" Visibility="{Binding EraseText, Converter={StaticResource HasValueToVisibility}}">
-                        <CheckBox IsChecked="{Binding Confirmed}" AutomationProperties.Name="{Binding EraseText}">
-                            <TextBlock Text="{Binding EraseText}" Style="{StaticResource Strong}" TextWrapping="Wrap" />
-                        </CheckBox>
+                        <StackPanel>
+                            <CheckBox IsChecked="{Binding Confirmed}" AutomationProperties.Name="{Binding EraseText}">
+                                <TextBlock Text="{Binding EraseText}" Style="{StaticResource Strong}" TextWrapping="Wrap" />
+                            </CheckBox>
+                            <CheckBox IsChecked="{Binding LargeConfirmed}" AutomationProperties.Name="{Binding LargeText}" Margin="0,8,0,0"
+                                      Visibility="{Binding IsLargeDrive, Converter={StaticResource HasValueToVisibility}}">
+                                <TextBlock Text="{Binding LargeText}" Style="{StaticResource Strong}" TextWrapping="Wrap" />
+                            </CheckBox>
+                        </StackPanel>
                     </Border>
                     <Button Content="Make my USB stick" Command="{Binding StartCommand}" Style="{StaticResource AccentButton}" HorizontalAlignment="Left"
                             IsEnabled="{Binding CanStart}" Margin="0,8,0,0" />

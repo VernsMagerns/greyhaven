@@ -11,7 +11,8 @@ public sealed record DiskInfo(int Number, string Model, long SizeBytes, bool IsU
     string? Drives = null, long? UsedBytes = null);
 
 /// <summary>Whether a disk may be written, and what to tell the person if not.</summary>
-public sealed record StickCheck(bool CanUse, string? Problem, string? Warning);
+/// <param name="IsLargeDrive">Bigger than a USB stick (an external SSD or hard drive): it may hold their backup, so erasing it needs a second, explicit confirmation, checked again by the helper.</param>
+public sealed record StickCheck(bool CanUse, string? Problem, string? Warning, bool IsLargeDrive = false);
 
 /// <summary>
 /// The rules for which disks GreyHaven will ever write. Checked in the app (to list sticks) and
@@ -20,7 +21,7 @@ public sealed record StickCheck(bool CanUse, string? Problem, string? Warning);
 public static class UsbSafety
 {
     public const long MinimumBytes = 8L * 1000 * 1000 * 1000 * 95 / 100;   // "8 GB" sticks hold a little less
-    /// <summary>Bigger than this is almost certainly an external drive, not a stick.</summary>
+    /// <summary>Bigger than this is almost certainly an external drive, not a stick: allowed, but only with a second confirmation.</summary>
     public const long MaximumBytes = 256L * 1000 * 1000 * 1000;
 
     /// <summary>Only USB disks are shown at all; the rest are never listed.</summary>
@@ -32,7 +33,8 @@ public static class UsbSafety
         if (d.HoldsWindows) return new(false, "Windows is on this drive.", null);
         if (d.IsReadOnly) return new(false, "This stick is write-protected. Some sticks have a small lock switch on the side.", null);
         if (d.IsOffline) return new(false, "Windows has this drive switched off (offline).", null);
-        if (d.SizeBytes > MaximumBytes) return new(false, $"This drive holds {Gb(d.SizeBytes)}. That's an external drive, not a USB stick, so GreyHaven won't erase it.", null);
+        if (d.SizeBytes > MaximumBytes)
+            return new(true, null, $"This drive holds {Gb(d.SizeBytes)}, so it's an external drive (like an SSD), not a USB stick. It works, but everything on it is erased, including any backup you made on it.", IsLargeDrive: true);
         if (d.SizeBytes < Math.Max(MinimumBytes, imageBytes))
             return new(false, $"This stick is too small: {Gb(d.SizeBytes)}. You need one that holds at least {Gb(Math.Max(8_000_000_000, imageBytes))}.", null);
         return new(true, null, d.IsRemovableMedia ? null : "Windows calls this a hard drive rather than a stick. Make sure it's the one you want to erase.");

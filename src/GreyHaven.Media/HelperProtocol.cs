@@ -23,6 +23,8 @@ public sealed partial record HelperRequest
     public long? Size { get; init; }
     public string? Image { get; init; }
     public string? Sha256 { get; init; }
+    /// <summary>The person confirmed erasing a drive bigger than a USB stick (see <see cref="StickCheck.IsLargeDrive"/>).</summary>
+    public bool LargeDrive { get; init; }
 
     private static readonly Dictionary<string, HelperAction> Verbs = new(StringComparer.Ordinal)
     {
@@ -38,6 +40,7 @@ public sealed partial record HelperRequest
         if (Action == HelperAction.WriteUsb)
             args.AddRange(["--disk", Disk!.Value.ToString(System.Globalization.CultureInfo.InvariantCulture), "--model", Model!, "--size",
                 Size!.Value.ToString(System.Globalization.CultureInfo.InvariantCulture), "--image", Image!, "--sha256", Sha256!]);
+        if (Action == HelperAction.WriteUsb && LargeDrive) args.AddRange(["--large-drive", "yes"]);
         return args;
     }
 
@@ -53,7 +56,7 @@ public sealed partial record HelperRequest
         }
         string Need(string key) => values.TryGetValue(key, out var v) ? v : throw new ArgumentException($"Missing --{key}.");
 
-        var allowed = action == HelperAction.WriteUsb ? new[] { "pipe", "token", "disk", "model", "size", "image", "sha256" } : ["pipe", "token"];
+        var allowed = action == HelperAction.WriteUsb ? new[] { "pipe", "token", "disk", "model", "size", "image", "sha256", "large-drive" } : ["pipe", "token"];
         if (values.Keys.FirstOrDefault(k => !allowed.Contains(k)) is { } extra) throw new ArgumentException($"Unexpected --{extra}.");
 
         var pipe = Need("pipe");
@@ -71,7 +74,8 @@ public sealed partial record HelperRequest
         if (!Path.IsPathFullyQualified(image) || !image.EndsWith(".iso", StringComparison.OrdinalIgnoreCase)) throw new ArgumentException("The image must be a full path to an .iso file.");
         var sha = Need("sha256");
         if (sha.Length != 64 || !sha.All(Uri.IsHexDigit)) throw new ArgumentException("Bad SHA-256.");
-        return request with { Disk = disk, Model = Need("model"), Size = size, Image = image, Sha256 = sha.ToLowerInvariant() };
+        var large = values.TryGetValue("large-drive", out var l) ? l == "yes" ? true : throw new ArgumentException("Bad --large-drive.") : false;
+        return request with { Disk = disk, Model = Need("model"), Size = size, Image = image, Sha256 = sha.ToLowerInvariant(), LargeDrive = large };
     }
 
     [GeneratedRegex(@"^GreyHaven-[0-9a-f]{32}$")] private static partial Regex PipeName();
