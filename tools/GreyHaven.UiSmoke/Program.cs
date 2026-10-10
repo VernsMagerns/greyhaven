@@ -60,17 +60,17 @@ try
 
     // Scrolls the page down a line at a time until the element sits near the top of the window,
     // so what follows it is in the screenshot.
-    void ScrollNearTop(AutomationElement e)
+    void ScrollNearTop(AutomationElement e, int below = 140)
     {
         var scroller = window.FindAllDescendants().FirstOrDefault(x => { try { return x.Patterns.Scroll.IsSupported && x.Patterns.Scroll.Pattern.VerticallyScrollable; } catch { return false; } });
         if (scroller is null) return;
         var scroll = scroller.Patterns.Scroll.Pattern;
-        for (var i = 0; i < 400 && e.BoundingRectangle.Top > window.BoundingRectangle.Top + 140; i++)
+        for (var i = 0; i < 400 && e.BoundingRectangle.Top > window.BoundingRectangle.Top + below; i++)
         {
             if (scroll.VerticalScrollPercent >= 100) break;
             scroll.Scroll(ScrollAmount.NoAmount, ScrollAmount.SmallIncrement);
         }
-        for (var i = 0; i < 400 && e.BoundingRectangle.Top < window.BoundingRectangle.Top + 100; i++)
+        for (var i = 0; i < 400 && e.BoundingRectangle.Top < window.BoundingRectangle.Top + below - 40; i++)
         {
             if (scroll.VerticalScrollPercent <= 0) break;
             scroll.Scroll(ScrollAmount.NoAmount, ScrollAmount.SmallDecrement);
@@ -106,6 +106,9 @@ try
 
     // Start screen: turn online lookups off so CI never depends on the network.
     Find("Will Linux work on your PC?");
+    // Start in light mode, whatever an earlier run saved.
+    if (window.FindFirstDescendant(cf => cf.ByControlType(ControlType.Button).And(cf.ByName("Switch to light mode"))) is { } toLight)
+        toLight.AsButton().Invoke();
     var online = window.FindFirstDescendant(cf => cf.ByControlType(ControlType.CheckBox))?.AsCheckBox();
     if (online?.IsChecked == true) online.Toggle();
     CheckNames("start");
@@ -130,7 +133,7 @@ try
     appsGroup.Patterns.ExpandCollapse.Pattern.Expand();
     var valorant = FindStarting(ControlType.CheckBox, "I need VALORANT").AsCheckBox();
     valorant.IsChecked = true;
-    ScrollNearTop(FindStarting(ControlType.Group, "Show your"));
+    ScrollNearTop(FindStarting(ControlType.Group, "Show your"), below: 230);
     CheckNames("results with apps");
     Shot("04b-results-apps-light.png");
 
@@ -140,7 +143,7 @@ try
     gameBox.Text = "elden ring";
     var elden = Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByControlType(ControlType.Text).And(cf.ByName("ELDEN RING"))), timeout).Result
                 ?? throw new InvalidOperationException("Check a game found nothing for 'elden ring'.");
-    ScrollNearTop(gameBox);
+    ScrollNearTop(gameBox, below: 230);      // the "Check a game" heading and line above the box too
     CheckNames("results: check a game");
     Shot("04c-results-check-a-game-light.png");
     appsGroup.Patterns.ExpandCollapse.Pattern.Collapse();
