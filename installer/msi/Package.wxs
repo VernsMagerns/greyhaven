@@ -1,0 +1,37 @@
+<!-- GreyHaven.msi. The UpgradeCode never changes: it's how a new version replaces the old one. -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="GreyHaven" Manufacturer="GreyHaven" Version="$(var.Version)" Scope="perMachine"
+           UpgradeCode="{68644B5B-DACC-44C9-9458-77AF17CDF359}" Compressed="yes">
+    <SummaryInformation Description="GreyHaven: will Linux work on your PC?" />
+    <MajorUpgrade DowngradeErrorMessage="A newer version of GreyHaven is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Icon Id="GreyHaven.ico" SourceFile="..\..\assets\brand\greyhaven.ico" />
+    <Property Id="ARPPRODUCTICON" Value="GreyHaven.ico" />
+    <Property Id="ARPURLINFOABOUT" Value="https://github.com/VernsMagerns/greyhaven" />
+    <Property Id="ARPHELPLINK" Value="https://github.com/VernsMagerns/greyhaven#readme" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="GreyHaven" />
+    </StandardDirectory>
+
+    <!-- Everything tools/publish-windows.sh produced for the app: GreyHaven.exe, GreyHaven.Helper.exe,
+         the .NET runtime (self-contained, so nothing else to install) and data/. -->
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Files Include="$(var.AppDir)\**" />
+    </ComponentGroup>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="StartMenuShortcut">
+        <Shortcut Id="GreyHavenShortcut" Name="GreyHaven" Description="Will Linux work on your PC?"
+                  Target="[INSTALLFOLDER]GreyHaven.exe" WorkingDirectory="INSTALLFOLDER" Icon="GreyHaven.ico" />
+        <RegistryValue Root="HKLM" Key="Software\GreyHaven" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="GreyHaven">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+  </Package>
+</Wix>

@@ -126,13 +126,70 @@ jobs:
           retention-days: 14
           path: ui-screenshots
 
+  # GreyHaven.msi and GreyHaven-Setup.exe (WiX, Windows only), built from the same app as the zip,
+  # then really installed, checked and uninstalled on the runner, both ways.
+  installer:
+    needs: windows-build
+    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: greyhaven-windows
+          path: artifacts/windows
+      - name: Build the MSI and Setup.exe
+        run: dotnet build installer/bundle/GreyHaven.Bundle.wixproj -c Release -o installer-out
+      - name: Install, check and uninstall the MSI
+        shell: pwsh
+        run: |
+          $msi = (Resolve-Path installer-out/GreyHaven.msi).Path
+          $p = Start-Process msiexec -ArgumentList "/i `"$msi`" /qn /l*v msi-install.log" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content msi-install.log -Tail 60; throw "MSI install failed: $($p.ExitCode)" }
+          foreach ($f in "GreyHaven.exe", "GreyHaven.Helper.exe", "data\distros.yaml") {
+            if (-not (Test-Path "$env:ProgramFiles\GreyHaven\$f")) { throw "Missing after install: $f" }
+          }
+          if (-not (Test-Path "$env:ProgramData\Microsoft\Windows\Start Menu\Programs\GreyHaven.lnk")) { throw "No Start menu entry" }
+          $p = Start-Process msiexec -ArgumentList "/x `"$msi`" /qn /l*v msi-uninstall.log" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "MSI uninstall failed: $($p.ExitCode)" }
+          if (Test-Path "$env:ProgramFiles\GreyHaven\GreyHaven.exe") { throw "Files left after uninstall" }
+          "MSI: install, check and uninstall OK"
+      - name: Install and uninstall with Setup.exe
+        shell: pwsh
+        run: |
+          $setup = (Resolve-Path installer-out/GreyHaven-Setup.exe).Path
+          $p = Start-Process $setup -ArgumentList "/quiet /log setup-install.log" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { Get-Content setup-install.log -Tail 60; throw "Setup install failed: $($p.ExitCode)" }
+          if (-not (Test-Path "$env:ProgramFiles\GreyHaven\GreyHaven.exe")) { throw "Setup didn't install the app" }
+          $p = Start-Process $setup -ArgumentList "/uninstall /quiet /log setup-uninstall.log" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Setup uninstall failed: $($p.ExitCode)" }
+          if (Test-Path "$env:ProgramFiles\GreyHaven\GreyHaven.exe") { throw "Files left after Setup uninstall" }
+          "Setup.exe: install and uninstall OK"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: greyhaven-installer
+          retention-days: 2
+          path: |
+            installer-out/GreyHaven.msi
+            installer-out/GreyHaven-Setup.exe
+          if-no-files-found: error
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: installer-logs
+          retention-days: 7
+          path: "*.log"
+
   # Every fully green push to main replaces the "latest-test" pre-release, so testers always have
   # one download link that never expires:
   #   https://github.com/<owner>/<repo>/releases/download/latest-test/greyhaven-windows.zip
   # Release files don't count against Actions storage. The release is updated in place (file
   # replaced, tag moved) rather than deleted, so the link keeps working between builds.
   release-test-build:
-    needs: [test, windows-build, windows-live-scan, ui-smoke]
+    needs: [test, windows-build, windows-live-scan, ui-smoke, installer]
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     runs-on: ubuntu-latest
     permissions:
@@ -145,6 +202,10 @@ jobs:
         with:
           name: greyhaven-windows
           path: greyhaven-windows
+      - uses: actions/download-artifact@v4
+        with:
+          name: greyhaven-installer
+          path: installer
       - name: Zip the build
         run: cd greyhaven-windows && zip -qr ../greyhaven-windows.zip .
       - name: Update the latest-test pre-release
@@ -153,14 +214,14 @@ jobs:
           when=$(TZ=America/Los_Angeles date '+%Y-%m-%d %H:%M %Z')
           notes="Test build of commit $short, built $when. Not for general use: unsigned, and only for testing.
 
-          Download greyhaven-windows.zip below, then follow docs/windows-results.md.
+          GreyHaven-Setup.exe installs it like any app. greyhaven-windows.zip runs without installing.
           This pre-release is replaced automatically by every passing build on main."
           if gh release view latest-test >/dev/null 2>&1; then
             # Move the tag to this commit, then replace the file and notes.
             gh api -X PATCH "repos/$GH_REPO/git/refs/tags/latest-test" -f sha="$GITHUB_SHA" -F force=true
-            gh release upload latest-test greyhaven-windows.zip --clobber
+            gh release upload latest-test greyhaven-windows.zip installer/GreyHaven-Setup.exe installer/GreyHaven.msi --clobber
             gh release edit latest-test --title "Latest test build ($short)" --notes "$notes" --prerelease
           else
-            gh release create latest-test greyhaven-windows.zip --target "$GITHUB_SHA" --prerelease --latest=false \
+            gh release create latest-test greyhaven-windows.zip installer/GreyHaven-Setup.exe installer/GreyHaven.msi --target "$GITHUB_SHA" --prerelease --latest=false \
               --title "Latest test build ($short)" --notes "$notes"
           fi

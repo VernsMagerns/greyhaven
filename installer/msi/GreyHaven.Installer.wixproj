@@ -1,0 +1,9 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <!-- GreyHaven.msi: per-machine install to Program Files, a Start menu entry and a working uninstall.
+       Built on Windows only (WiX needs Windows Installer); see .github/workflows/ci.yml. -->
+  <PropertyGroup>
+    <OutputName>GreyHaven</OutputName>
+    <InstallerPlatform>x64</InstallerPlatform>
+    <DefineConstants>Version=$(Version);AppDir=$(AppDir)</DefineConstants>
+  </PropertyGroup>
+</Project>

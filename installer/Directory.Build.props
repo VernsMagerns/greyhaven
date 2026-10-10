@@ -1,0 +1,10 @@
+<Project>
+  <!-- The installer projects take the version from the repository's Directory.Build.props, but not
+       its C# settings. WiX warnings aren't errors here, so ICE validation notes don't block a build. -->
+  <Import Project="..\Directory.Build.props" />
+  <PropertyGroup>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- Where tools/publish-windows.sh put the app (GreyHaven.exe, the helper and data). -->
+    <AppDir Condition="'$(AppDir)' == ''">$(MSBuildThisFileDirectory)..\artifacts\windows\app</AppDir>
+  </PropertyGroup>
+</Project>

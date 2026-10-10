@@ -1,0 +1,16 @@
+<!-- GreyHaven-Setup.exe. Its UpgradeCode never changes either. -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+  <Bundle Name="GreyHaven" Manufacturer="GreyHaven" Version="$(var.Version)" UpgradeCode="{534BF0A0-CA86-4C82-8EA1-5508BD552E84}"
+          IconSourceFile="..\..\assets\brand\greyhaven.ico"
+          AboutUrl="https://github.com/VernsMagerns/greyhaven" HelpUrl="https://github.com/VernsMagerns/greyhaven#readme">
+    <BootstrapperApplication>
+      <bal:WixStandardBootstrapperApplication Theme="hyperlinkLicense"
+          LicenseUrl="https://github.com/VernsMagerns/greyhaven/blob/main/LICENSE"
+          LogoFile="..\..\assets\brand\icon-64.png"
+          LaunchTarget="[ProgramFiles64Folder]GreyHaven\GreyHaven.exe" />
+    </BootstrapperApplication>
+    <Chain>
+      <MsiPackage SourceFile="$(var.GreyHaven.Installer.TargetPath)" />
+    </Chain>
+  </Bundle>
+</Wix>
