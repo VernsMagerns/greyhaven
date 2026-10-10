@@ -54,7 +54,7 @@ the USB stick and puts the next steps on your phone. It won't change anything wi
 2. Open **GreyHaven** from the Start menu and click **Scan my PC**.
 3. If you like what you see, click **Show me how to switch** and follow along.
 
-**You'll need:** a Windows 10 or 11 PC (64-bit) and an internet connection. To switch, you'll
+**You'll need:** a Windows 10 or 11 PC (64-bit Intel or AMD; Windows on Arm isn't tested yet) and an internet connection. To switch, you'll
 also need a USB stick of 8 GB or more that can be erased, and your phone. Allow an hour or two.
 
 > **"Windows protected your PC"?** GreyHaven is new, and Windows warns about apps that not many

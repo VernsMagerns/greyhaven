@@ -48,11 +48,11 @@ Secure Boot.
 
 | | Item | Status |
 |---|---|---|
-| 2.1 | **Windows 10 22H2 VM:** scan, results, walkthrough to the restart screen, saved report. Icons fall back correctly. Fast Startup's one-click fix and undo. | 🧪 |
-| 2.2 | **Windows 11 Pro VM with BitLocker on** (`manage-bde -on C:` or Control Panel), **required**: (a) the scan says the drive is encrypted; (b) Keep Windows is blocked until encryption is off, with the reason shown; (c) the one-click **Turn off encryption** works through the permission prompt and the screen updates when it finishes; (d) Replace Windows says clearly what happens to the encrypted drive. | 🧪 |
-| 2.3 | Windows 11 **Home** "Device encryption" can't usually be switched on in a VM (it needs specific hardware). The scan reads the same Windows setting as BitLocker, so 2.2 covers the detection. The Home wording (Settings > Device encryption) is checked by eye only. | 🧪 (by eye) |
-| 2.4 | **Standard (non-admin) account:** the helper's connection now also accepts administrators (fixed 10 Oct; CI checks the normal handshake on every push). Confirm with a real standard account. | 🧪 (final-session.md B3) |
-| 2.5 | Display scaling at 150% and Narrator on the new screens (game search, pros and cons pop-up, sound toggle) | 🧪 |
+| 2.1 | Windows 10 VM | ⏭ Skipped by your choice (10 Oct). Fix if reports come in. |
+| 2.2 | Windows 11 with BitLocker on | ⏭ Skipped by your choice (10 Oct). The detection and one-click "turn off encryption" haven't met a real encrypted drive yet: watch for reports. |
+| 2.3 | Windows 11 Home "Device encryption" wording | ⏭ Skipped (10 Oct) |
+| 2.4 | Standard (non-admin) account: fixed in code 10 Oct (helper connection accepts administrators) | ⏭ Real-account test skipped by your choice. CI checks the normal handshake on every push. |
+| 2.5 | 150% scaling and Narrator on the newest screens | ⏭ Skipped (10 Oct) |
 
 ## 3. Installer, update check and releases
 
@@ -63,13 +63,13 @@ None of this is built yet (plan: [PLAN.md](PLAN.md) section 6).
 | 3.1 | MSI (WiX): Program Files, Start menu entry, uninstall entry, upgrades replace old versions. The helper ships next to the app. | ✅ 9 Oct. Built in CI, then installed, checked and uninstalled on a Windows runner on every push to main. |
 | 3.2 | `GreyHaven-Setup.exe` (WiX Burn wrapper around the MSI), with a "Launch GreyHaven" finish | ✅ 9 Oct. Quiet install and uninstall tested in CI; it's on the latest-test release. The screens themselves still need a look by eye (3.4). |
 | 3.3 | Uninstall leaves `%LOCALAPPDATA%\GreyHaven` (settings, plus a half-finished download if one was cancelled). Clean it up, or document it. It leaves your saved guide in Documents. | 🔨 (small) |
-| 3.4 | Install, upgrade (0.9 → 1.0) and uninstall on Windows 10 and 11 (in the step 4 VM session) | 🧪 |
+| 3.4 | Install, upgrade and uninstall on real Windows 10/11 | ⏭ Skipped by eye. CI installs and uninstalls both installers on every push, and you installed via the zip on your own PC. |
 | 3.5 | Update check: notify-only, reads the latest release from GitHub, never downloads by itself, can be turned off. Only works once the repository is public. | ✅ built 9 Oct; 🧪 after the first two public releases |
 | 3.6 | Release workflow: a `v*` tag builds, tests, installs and uninstalls once more, then creates a **draft** release with Setup.exe, the MSI, a portable zip and `SHA256SUMS.txt`, under fixed file names | ✅ 9 Oct (not run yet) |
 | 3.7 | Build attestations (proof a file came from this repository's CI). Free once the repository is public. | ✅ in the release workflow; switches on by itself when public |
-| 3.8 | Dry run: tag `v0.9.0`. That creates a draft release, which only you can see. Download it and install it in a VM, then delete the draft and the tag. | 🧪 (I push the tag when you say) |
+| 3.8 | Dry run of the release workflow | ✅ 10 Oct: `v0.9.0` produced a correct draft (Setup.exe, MSI, zip, checksums); then deleted |
 | 3.9 | What SmartScreen and Defender do with the unsigned Setup.exe, written down with screenshots for the download page | 🧪 |
-| 3.10 | Version 1.0.0 and release notes | 🔨 (you approve the notes) |
+| 3.10 | Version 1.0.0 and release notes | ✅ 10 Oct (you read the notes before publishing) |
 
 ## 4. Website and documents
 
@@ -83,7 +83,7 @@ None of this is built yet (plan: [PLAN.md](PLAN.md) section 6).
 | 4.7 | Brand: the lighthouse mark, app icon, banners, social preview, [brand.md](brand.md) | ✅ 9 Oct |
 | 4.8 | Repository description and topics | ✅ 9 Oct |
 | 4.9 | Social preview image: upload `assets/brand/social-preview.png` in Settings → General → Social preview. The setting only appears once the repository is public. | 👤 at going public |
-| 4.6 | Windows on Arm: the x64 build runs under emulation there, but USB writing hasn't been tested. Either say "not tested yet" on the download page, or test on an Arm laptop. | 👤 decide |
+| 4.6 | Windows on Arm | ✅ Decided 10 Oct: README and download page say "not tested yet" |
 
 ## 5. "Contribute unknown devices": wait until after v1
 
@@ -98,8 +98,7 @@ None of this is built yet (plan: [PLAN.md](PLAN.md) section 6).
   launch.
 
 If you want something small in v1, one "Report a part GreyHaven didn't know" link (a
-pre-filled issue you review in the browser) is about a day's work. **Status: 👤 decide**
-(recommended: wait).
+pre-filled issue you review in the browser) is about a day's work. **Status: ✅ waits until after v1** (not built; launching without it, 10 Oct).
 
 ## 6. Going public ([going-public.md](going-public.md))
 
@@ -114,7 +113,7 @@ pre-filled issue you review in the browser) is about a day's work. **Status: �
 | 6.7 | Make the repository public | 👤 |
 | 6.8 | Right after going public: Pages (Source: GitHub Actions), social preview, private vulnerability reporting, and check the `main` branch rule shows as active | 👤 |
 | 6.9 | First public release, unsigned (v1.0.0) | 🔨 (you approve) |
-| 6.10 | CI: Windows jobs on every pull request again (free minutes for public repositories) | 🔨 |
+| 6.10 | CI: Windows jobs on every pull request again (free minutes for public repositories) | ✅ 10 Oct |
 
 ## 7. Code signing (after going public)
 

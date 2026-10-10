@@ -5,9 +5,9 @@ on:
   pull_request:
   workflow_dispatch: # "Run workflow" button on the Actions tab
 
-# Saving Actions minutes while the repo is private (Windows runners count double): the jobs
-# that run ON Windows only run for pushes to main and manual runs. Other branches and pull
-# requests get the Linux tests and the greyhaven-windows build (cross-built on Linux).
+# The jobs that run ON Windows (live scan, helper handshake, UI smoke test, installer) run for
+# pull requests, pushes to main and manual runs (free for public repositories). Pushes to other
+# branches get the Linux tests and the greyhaven-windows build; their pull request runs the rest.
 
 permissions:
   contents: read
@@ -62,7 +62,7 @@ jobs:
   # real-device accuracy. It does prove the scanner runs end to end on Windows, and the
   # output is downloadable from the workflow run for inspection.
   windows-live-scan:
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    if: ${{ github.event_name != 'push' || github.ref == 'refs/heads/main' }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -106,7 +106,7 @@ jobs:
   # lacks Windows 11's "Segoe Fluent Icons" font, so the icon-font fallback Windows 10 relies on
   # gets exercised too. GitHub has no Windows 10 or 11 client images; see docs/windows-versions.md.
   ui-smoke:
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    if: ${{ github.event_name != 'push' || github.ref == 'refs/heads/main' }}
     strategy:
       fail-fast: false
       matrix:
@@ -148,7 +148,7 @@ jobs:
   # then really installed, checked and uninstalled on the runner, both ways.
   installer:
     needs: windows-build
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
+    if: ${{ github.event_name != 'push' || github.ref == 'refs/heads/main' }}
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
