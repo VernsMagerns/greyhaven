@@ -8,6 +8,8 @@ can do it.
 
 ## Shortest path to launch
 
+**Step-by-step for everything left: [final-session.md](final-session.md).**
+
 1. ~~👤 Windows session 2, then your own switch~~: done 9 October. It worked.
 2. ~~🔨 Build what's left that doesn't need Windows~~: done 9 October. That's the installer
    (built and install-tested in CI), the update check, the release workflow, the download page,
@@ -49,7 +51,7 @@ Secure Boot.
 | 2.1 | **Windows 10 22H2 VM:** scan, results, walkthrough to the restart screen, saved report. Icons fall back correctly. Fast Startup's one-click fix and undo. | 🧪 |
 | 2.2 | **Windows 11 Pro VM with BitLocker on** (`manage-bde -on C:` or Control Panel), **required**: (a) the scan says the drive is encrypted; (b) Keep Windows is blocked until encryption is off, with the reason shown; (c) the one-click **Turn off encryption** works through the permission prompt and the screen updates when it finishes; (d) Replace Windows says clearly what happens to the encrypted drive. | 🧪 |
 | 2.3 | Windows 11 **Home** "Device encryption" can't usually be switched on in a VM (it needs specific hardware). The scan reads the same Windows setting as BitLocker, so 2.2 covers the detection. The Home wording (Settings > Device encryption) is checked by eye only. | 🧪 (by eye) |
-| 2.4 | **Standard (non-admin) account** in either VM. When Windows asks for an administrator's password, the helper runs as a different user. Its private connection is limited to the same user, so it would likely fail with "didn't answer". Test it; if it fails, I change how the helper connects. | 🧪 then 🔨 |
+| 2.4 | **Standard (non-admin) account:** the helper's connection now also accepts administrators (fixed 10 Oct; CI checks the normal handshake on every push). Confirm with a real standard account. | 🧪 (final-session.md B3) |
 | 2.5 | Display scaling at 150% and Narrator on the new screens (game search, pros and cons pop-up, sound toggle) | 🧪 |
 
 ## 3. Installer, update check and releases
