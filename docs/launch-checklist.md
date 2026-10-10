@@ -1,7 +1,7 @@
 # Launch checklist: GreyHaven v1 for Windows
 
 Everything left before GreyHaven goes public, kept up to date as we go. Last updated
-8 October 2026 (Pacific).
+9 October 2026 (Pacific).
 
 **Status:** ✅ done · 🔨 needs building (Claude) · 🧪 needs testing (on Windows) · 👤 only you
 can do it.
@@ -35,9 +35,9 @@ session 2 and the BitLocker VM: both test code that only runs on real Windows.
 
 | | Item | Status |
 |---|---|---|
-| 1.1 | Windows session 2 ([windows-results.md](windows-results.md)): real USB stick, permission prompts, restart into the stick, Try Ubuntu | 👤 |
-| 1.2 | Your real switch: install Ubuntu with Keep Windows too, following the phone guide | 👤 |
-| 1.3 | Fix what 1.1 and 1.2 find | 🔨 after you report |
+| 1.1 | Windows session 2: real USB writing (on an external SSD), permission prompts, restart into the stick, Try Ubuntu | ✅ 9 Oct, done as part of your switch. The form itself wasn't filled in. |
+| 1.2 | Your real switch: install Ubuntu with Keep Windows too, following the phone guide | ✅ 9 Oct: "It worked perfectly." |
+| 1.3 | Fix what 1.1 and 1.2 find: external SSDs over 256 GB were refused; now allowed with a second "not my backup" tick | ✅ 9 Oct |
 | 1.4 | Replay your fresh `greyhaven-raw.json` (with apps); fill gaps in the app list from sources. Your real app list never goes into git | 🔨 after you report |
 | 1.5 | Guide checked against Ubuntu 26.04's installer (tutorial and the installer's own text, 26.04.1); fixes for the divider wording, the "remove the installation medium" prompt, and NVIDIA plus Secure Boot | ✅ 8 Oct |
 | 1.6 | Real-flow hardening: wipe the end of the stick before writing; check free space before the 6 GB download; delete the download after the stick is checked | ✅ 8 Oct |
