@@ -12,8 +12,9 @@ Guidance for Claude Code when working in this repository.
   uncommitted for long.
 - **Git identity:** commits are authored as
   `Kyler Verney <280451244+VernsMagerns@users.noreply.github.com>` (GitHub's no-reply address,
-  so no personal email is public). Do not use any other email address anywhere in the project
-  (docs, README, license, package metadata, CI config).
+  so no personal email is public). The only other address allowed in the project is the
+  public contact for conduct reports, `greyhaven.linux@gmail.com` (in `CODE_OF_CONDUCT.md`).
+  Never put a personal address anywhere (docs, README, license, package metadata, CI config).
 - **Dates:** write dates in docs and data in the maintainer's local time, US Pacific
   (America/Los_Angeles), not UTC. Tool timestamps are often UTC; convert them first.
 

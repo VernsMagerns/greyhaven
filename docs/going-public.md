@@ -7,7 +7,7 @@ Nothing here has been done yet. The repository stays private until step 7.
 
 ## Before
 
-- [ ] **1. You: pick a contact address for conduct reports.** It goes into
+- [x] **1. You: pick a contact address for conduct reports.** (10 Oct: greyhaven.linux@gmail.com) It goes into
       `CODE_OF_CONDUCT.md` and becomes public. A separate address (for example a new free
       email account just for GreyHaven) is better than your personal one. Tell me what it is.
       (Security reports don't need one: they use GitHub's private reporting.)
@@ -26,10 +26,10 @@ Nothing here has been done yet. The repository stays private until step 7.
 - [x] **3. You: turn on two-factor authentication (MFA) on GitHub.** (Done 10 Oct.) Settings → Password and
       authentication → Enable two-factor authentication. An authenticator app is best. Save the
       recovery codes somewhere safe.
-- [ ] **4. Claude: build the installer and release workflow** (milestone 8): `GreyHaven-Setup.exe`,
+- [x] **4. Claude: build the installer and release workflow** (milestone 8): `GreyHaven-Setup.exe`,
       the MSI, checksums, attestations, and the GitHub Pages download page. You test install and
       uninstall on Windows 10 and 11 (Session 2).
-- [ ] **5. Claude: switch on public links.** Set `GreyHavenInfo.IsRepositoryPublic = true`, put
+- [x] **5. Claude: switch on public links.** Set `GreyHavenInfo.IsRepositoryPublic = true`, put
       the contact address in place, and run `tools/release-check.sh` (it refuses to pass while
       any placeholder is left).
 - [x] **6. You: repository settings.** Settings → Branches → a rule for `main` requiring passing
@@ -50,7 +50,7 @@ Nothing here has been done yet. The repository stays private until step 7.
       - Settings → Rules / Branches: check the `main` rule now shows as active.
 - [ ] **9. Claude: publish the first pre-release, unsigned** (for example `v0.1.0-preview.1`),
       so SignPath can see a released build. You approve the release notes first.
-- [ ] **10. Claude: adjust CI for a public repository.** Public repositories get free Actions
+- [x] **10. Claude: adjust CI for a public repository.** Public repositories get free Actions
       minutes, so the Windows jobs can run on every pull request again.
 
 ## Signing

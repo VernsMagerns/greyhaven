@@ -16,7 +16,7 @@ public static class GreyHavenInfo
     /// GreyHaven links its bundled copies of its own guides instead of github.com, which
     /// would show everyone else a "not found" page. Set to true when the repository goes public.
     /// </summary>
-    public const bool IsRepositoryPublic = false;
+    public const bool IsRepositoryPublic = true;
 
     /// <summary>
     /// The public phone guide that the QR code opens: the Cloudflare Pages project deployed by
