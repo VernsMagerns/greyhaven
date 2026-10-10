@@ -11,10 +11,11 @@ Nothing here has been done yet. The repository stays private until step 7.
       `CODE_OF_CONDUCT.md` and becomes public. A separate address (for example a new free
       email account just for GreyHaven) is better than your personal one. Tell me what it is.
       (Security reports don't need one: they use GitHub's private reporting.)
-- [ ] **2. You, then Claude: switch your commit email to GitHub's no-reply address.**
+- [x] **2. You, then Claude: switch your commit email to GitHub's no-reply address.**
       Every commit so far shows your personal address, and anyone can read it once the
-      repository is public. *10 Oct: you sent the no-reply address; new commits use it. The
-      history rewrite is waiting for your OK.*
+      repository is public. *Done 10 Oct: every commit now uses
+      `280451244+VernsMagerns@users.noreply.github.com`, and test.wav was dropped from history.
+      A backup of the old history is in `~/Documents/claude/greyhaven-backup-2026-10-10/`.*
       1. *You:* on GitHub, open **Settings → Emails**. Tick **Keep my email addresses private**
          and **Block command line pushes that expose my email**. Copy the address shown, like
          `12345678+VernsMagerns@users.noreply.github.com`, and send it to me.

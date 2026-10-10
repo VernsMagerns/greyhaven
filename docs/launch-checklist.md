@@ -104,7 +104,7 @@ pre-filled issue you review in the browser) is about a day's work. **Status: �
 | | Step | Status |
 |---|---|---|
 | 6.1 | Pick a contact address for conduct reports | 👤 |
-| 6.2 | Switch commit email to GitHub's no-reply address. You copy it; I rewrite history and force-push, only after you confirm. `test.wav` (committed by accident, now untracked) can be dropped from history in the same rewrite. | 👤 then 🔨 |
+| 6.2 | Commit email switched to GitHub's no-reply address in all history; test.wav dropped from history | ✅ 10 Oct |
 | 6.3 | Two-factor authentication on GitHub | ✅ 10 Oct |
 | 6.4 | Installer and release workflow (section 3) | 🔨 |
 | 6.5 | `IsRepositoryPublic = true`, contact address in place, `release-check.sh` passes | 🔨 |
