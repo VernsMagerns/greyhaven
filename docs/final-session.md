@@ -178,7 +178,8 @@ Only once Part B is done and anything it found is fixed.
 ### C2. My part
 
 I'll switch on public links (`IsRepositoryPublic`), put your contact address in place, run the
-release check, set the version to 1.0.0, and make a **draft** `v1.0.0` release for you to read.
+release check, set the version to 1.0.0, delete the `v0.9.0` test draft, and make a **draft** `v1.0.0`
+release for you to read.
 
 ### C3. Make it public (you, 10 minutes)
 
