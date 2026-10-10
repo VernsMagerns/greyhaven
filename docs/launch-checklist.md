@@ -1,7 +1,6 @@
 # Launch checklist: GreyHaven v1 for Windows
 
-Everything left before GreyHaven goes public, kept up to date as we go. Last updated
-9 October 2026 (Pacific), evening.
+**GreyHaven v1.0.0 went public on 10 October 2026 (Pacific).** What's left is signing (section 7).
 
 **Status:** ✅ done · 🔨 needs building (Claude) · 🧪 needs testing (on Windows) · 👤 only you
 can do it.
@@ -75,14 +74,14 @@ None of this is built yet (plan: [PLAN.md](PLAN.md) section 6).
 
 | | Item | Status |
 |---|---|---|
-| 4.1 | Download page (`site/`): what it does, one Download button, how it works, is it safe, questions, in the brand style | ✅ built 9 Oct; goes live when public (Settings > Pages > GitHub Actions) |
+| 4.1 | Download page | ✅ Live 10 Oct: https://vernsmagerns.github.io/greyhaven/ |
 | 4.2 | README for users, with real screenshots from CI, safety and questions sections; developer notes in [developing.md](developing.md) | ✅ 9 Oct |
 | 4.3 | PRIVACY.md: up to date (phone guide, apps, game search) | ✅ (update check line added with 3.5) |
 | 4.4 | Phone guide site (Cloudflare Pages) | ✅ live |
 | 4.5 | Fresh data just before release: ProtonDB dump, anti-cheat list, distro versions | 🔨 |
 | 4.7 | Brand: the lighthouse mark, app icon, banners, social preview, [brand.md](brand.md) | ✅ 9 Oct |
 | 4.8 | Repository description and topics | ✅ 9 Oct |
-| 4.9 | Social preview image: upload `assets/brand/social-preview.png` in Settings → General → Social preview. The setting only appears once the repository is public. | 👤 at going public |
+| 4.9 | Social preview image | ⏭ Skipped by your choice (10 Oct). `assets/brand/social-preview.png` is there if you change your mind. |
 | 4.6 | Windows on Arm | ✅ Decided 10 Oct: README and download page say "not tested yet" |
 
 ## 5. "Contribute unknown devices": wait until after v1
@@ -109,10 +108,10 @@ pre-filled issue you review in the browser) is about a day's work. **Status: ✅
 | 6.3 | Two-factor authentication on GitHub | ✅ 10 Oct |
 | 6.4 | Installer and release workflow (section 3) | 🔨 |
 | 6.5 | `IsRepositoryPublic = true`, contact address in place, `release-check.sh` passes | 🔨 |
-| 6.6 | Branch rule for `main`: set up 10 Oct, but GitHub Free only enforces it on public repositories. Private vulnerability reporting is public-only too. Check both with 6.8. | 👤 at going public |
-| 6.7 | Make the repository public | 👤 |
-| 6.8 | Right after going public: Pages (Source: GitHub Actions), social preview, private vulnerability reporting, and check the `main` branch rule shows as active | 👤 |
-| 6.9 | First public release, unsigned (v1.0.0) | 🔨 (you approve) |
+| 6.6 | Branch rule for `main`: requires the Linux and Windows tests and the Windows build; no force-pushes or deletion; admins can still push | ✅ 10 Oct |
+| 6.7 | Make the repository public | ✅ 10 Oct |
+| 6.8 | Pages, private vulnerability reporting | ✅ 10 Oct |
+| 6.9 | First public release, v1.0.0 (unsigned) | ✅ 10 Oct. Checked signed out: the download works and matches SHA256SUMS.txt. |
 | 6.10 | CI: Windows jobs on every pull request again (free minutes for public repositories) | ✅ 10 Oct |
 
 ## 7. Code signing (after going public)

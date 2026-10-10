@@ -3,7 +3,7 @@
 Follow these in order. **You** marks steps only you can do (your accounts, your decisions,
 or things that can't be undone). **Claude** marks steps I can do once you say go.
 
-Nothing here has been done yet. The repository stays private until step 7.
+Steps 1 to 10 are done: GreyHaven went public on 10 October 2026. Signing (11 to 14) is next.
 
 ## Before
 
@@ -39,16 +39,16 @@ Nothing here has been done yet. The repository stays private until step 7.
 
 ## Going public
 
-- [ ] **7. You: make the repository public.** Settings → General → Danger Zone → **Change
+- [x] **7. You: make the repository public.** Settings → General → Danger Zone → **Change
       repository visibility** → Public. Only you can do this, and the history can't be made
       private again in the eyes of anyone who copied it.
-- [ ] **8. You: settings that only exist once the repository is public.**
+- [x] **8. You: settings that only exist once the repository is public.**
       - Settings → Pages → Source: **GitHub Actions**. Claude's workflow then publishes the
         download page.
       - Settings → General → **Social preview** → upload `assets/brand/social-preview.png`.
       - Settings → Code security → turn on **Private vulnerability reporting**.
       - Settings → Rules / Branches: check the `main` rule now shows as active.
-- [ ] **9. Claude: publish the first pre-release, unsigned** (for example `v0.1.0-preview.1`),
+- [x] **9. Claude: publish the first pre-release, unsigned** (for example `v0.1.0-preview.1`),
       so SignPath can see a released build. You approve the release notes first.
 - [x] **10. Claude: adjust CI for a public repository.** Public repositories get free Actions
       minutes, so the Windows jobs can run on every pull request again.
