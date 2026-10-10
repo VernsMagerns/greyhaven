@@ -1,6 +1,7 @@
 using System.Text.Json;
 using GreyHaven.Compat;
 using GreyHaven.Compat.Online;
+using GreyHaven.Core;
 using GreyHaven.Core.Compatibility;
 using GreyHaven.Core.Hardware;
 using GreyHaven.Core.Scanning;
@@ -15,6 +16,8 @@ public sealed record AppSettings
     public ThemeChoice Theme { get; init; } = ThemeChoice.System;
     /// <summary>Allow online lookups (device IDs to linux-hardware.org, distro release feeds).</summary>
     public bool UseOnlineLookups { get; init; } = true;
+    /// <summary>Notify-only check for a newer GreyHaven when the app starts (GitHub releases).</summary>
+    public bool CheckForUpdates { get; init; } = true;
     /// <summary>Quiet sound effects (ticks, start, done, problem). On unless turned off.</summary>
     public bool Sounds { get; init; } = true;
 }
@@ -82,6 +85,8 @@ public interface IAppServices
     IReadOnlyList<GameMatch> SearchGames(string query);
     /// <summary>Plays a sound effect, if sounds are on.</summary>
     void Play(SoundCue cue);
+    /// <summary>A newer GreyHaven release, or null (up to date, offline, or not public yet). Never downloads anything.</summary>
+    Task<AvailableUpdate?> CheckForUpdateAsync(CancellationToken ct);
 }
 
 /// <summary>Real implementation; the WPF app supplies the scanner and the Windows-specific bits.</summary>
@@ -102,6 +107,7 @@ public sealed class AppServices(
     private readonly Lazy<GameSearch> _games = new(() => new GameSearch(data.Value.Apps));
     public IReadOnlyList<GameMatch> SearchGames(string query) => _games.Value.Search(query);
     public void Play(SoundCue cue) => play?.Invoke(cue);
+    public Task<AvailableUpdate?> CheckForUpdateAsync(CancellationToken ct) => new UpdateChecker(http).CheckAsync(GreyHavenInfo.Version, ct);
 
     public Task<HardwareProfile> ScanAsync(CancellationToken cancellationToken) =>
         Task.Run(() => scannerFactory().ScanAsync(cancellationToken), cancellationToken);

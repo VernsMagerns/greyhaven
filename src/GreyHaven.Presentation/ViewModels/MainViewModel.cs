@@ -22,8 +22,37 @@ public sealed partial class MainViewModel : ObservableObject
         Theme = settings.Theme;
         UseOnlineLookups = settings.UseOnlineLookups;
         SoundsOn = settings.Sounds;
+        CheckForUpdates = settings.CheckForUpdates;
         CancelScanCommand = ScanCommand.CreateCancelCommand();
+        if (CheckForUpdates && services.DemoSample is null) _ = LookForUpdateAsync();
     }
+
+    /// <summary>"GreyHaven 1.1.0 is out." Set when a newer release exists; nothing is downloaded.</summary>
+    [ObservableProperty] public partial string? UpdateText { get; private set; }
+    private string? _updatePage;
+
+    /// <summary>Notify-only update check, at most once per start. Failures are silent: it's a convenience.</summary>
+    [ObservableProperty]
+    public partial bool CheckForUpdates { get; set; }
+    partial void OnCheckForUpdatesChanged(bool value) => SaveSettings();
+
+    public string CheckForUpdatesText => "Tell me when a new version of GreyHaven is out";
+
+    internal async Task LookForUpdateAsync()
+    {
+        try
+        {
+            if (await _services.CheckForUpdateAsync(CancellationToken.None) is { } update)
+            {
+                UpdateText = $"GreyHaven {update.Version} is out. You have {Core.GreyHavenInfo.Version}.";
+                _updatePage = update.PageUrl;
+            }
+        }
+        catch (Exception) { /* never let a convenience check break the app */ }
+    }
+
+    [RelayCommand]
+    private void OpenUpdate() { if (_updatePage is not null) _services.Open(_updatePage); }
 
     public string WindowTitle => _services.DemoSample is { } s ? $"GreyHaven - demo ({s})" : "GreyHaven";
 
@@ -109,7 +138,7 @@ public sealed partial class MainViewModel : ObservableObject
     }
 
     private void SaveSettings() =>
-        _services.Settings.Save(new AppSettings { Theme = Theme, UseOnlineLookups = UseOnlineLookups, Sounds = SoundsOn });
+        _services.Settings.Save(new AppSettings { Theme = Theme, UseOnlineLookups = UseOnlineLookups, Sounds = SoundsOn, CheckForUpdates = CheckForUpdates });
 
     public System.Windows.Input.ICommand CancelScanCommand { get; }
 

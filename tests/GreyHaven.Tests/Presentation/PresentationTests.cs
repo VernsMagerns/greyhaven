@@ -100,6 +100,9 @@ internal sealed class FakeServices : IAppServices
     public IReadOnlyList<GameMatch> SearchGames(string query) => Games.Value.Search(query);
     public List<SoundCue> Played { get; } = [];
     public void Play(SoundCue cue) => Played.Add(cue);
+    public GreyHaven.Compat.Online.AvailableUpdate? Update { get; set; }
+    public int UpdateChecks { get; private set; }
+    public Task<GreyHaven.Compat.Online.AvailableUpdate?> CheckForUpdateAsync(CancellationToken ct) { UpdateChecks++; return Task.FromResult(Update); }
 
     public sealed class MemorySettings : ISettingsStore
     {
@@ -137,6 +140,46 @@ public class MainViewModelTests
         Assert.NotNull(vm.Results);
         Assert.True(services.LastOnline); // default setting
         Assert.Equal([SoundCue.Start, SoundCue.Done], services.Played);
+    }
+
+    [Fact]
+    public async Task A_newer_release_is_announced_with_a_link_and_nothing_is_downloaded()
+    {
+        var demo = FakeServices.ForSample("nvidia-desktop", demo: "nvidia-desktop");
+        _ = new MainViewModel(demo);
+        Assert.Equal(0, demo.UpdateChecks);                        // demo mode never checks
+
+        var services = FakeServices.ForSample("nvidia-desktop");
+        services.Update = new GreyHaven.Compat.Online.AvailableUpdate("9.0.0", "https://github.com/VernsMagerns/greyhaven/releases/tag/v9.0.0");
+        var vm = new MainViewModel(services);
+        Assert.Equal(1, services.UpdateChecks);                    // once, when the app starts
+        await vm.LookForUpdateAsync();
+        Assert.StartsWith("GreyHaven 9.0.0 is out.", vm.UpdateText);
+        vm.OpenUpdateCommand.Execute(null);
+        Assert.Equal("https://github.com/VernsMagerns/greyhaven/releases/tag/v9.0.0", services.Opened.Single());
+        vm.CheckForUpdates = false;
+        Assert.False(services.Store.Saved.CheckForUpdates);
+    }
+
+    [Theory]
+    [InlineData("v1.2.0", "1.1.9", "1.2.0")]
+    [InlineData("v1.2.0", "1.2.0", null)]
+    [InlineData("1.10.0", "1.9.0", "1.10.0")]
+    [InlineData("v2.0.0-rc.1", "1.0.0", "2.0.0")]
+    public void Release_versions_are_compared_as_numbers(string tag, string current, string? expected)
+    {
+        var json = $$"""{"tag_name":"{{tag}}","html_url":"https://github.com/VernsMagerns/greyhaven/releases/tag/{{tag}}","draft":false,"prerelease":false}""";
+        using var doc = System.Text.Json.JsonDocument.Parse(json);
+        Assert.Equal(expected, GreyHaven.Compat.Online.UpdateChecker.Newer(doc.RootElement, current)?.Version);
+    }
+
+    [Fact]
+    public void Pre_releases_and_links_elsewhere_are_ignored()
+    {
+        using var pre = System.Text.Json.JsonDocument.Parse("""{"tag_name":"v9.0.0","html_url":"https://github.com/VernsMagerns/greyhaven/releases/tag/v9.0.0","prerelease":true}""");
+        Assert.Null(GreyHaven.Compat.Online.UpdateChecker.Newer(pre.RootElement, "1.0.0"));
+        using var odd = System.Text.Json.JsonDocument.Parse("""{"tag_name":"v9.0.0","html_url":"https://example.com/evil"}""");
+        Assert.Null(GreyHaven.Compat.Online.UpdateChecker.Newer(odd.RootElement, "1.0.0"));
     }
 
     [Fact]

@@ -36,6 +36,7 @@ online check turned off.
 | When | Sent to | What's sent |
 |---|---|---|
 | **Online check** (the "Also check online for parts we don't know" box on the first screen, on by default; you can untick it) | linux-hardware.org | The ID number of each part GreyHaven doesn't recognise, one at a time, like `pci:8086-2723`. Nothing else about your PC. |
+| **Update check** (when GreyHaven starts; untick "Tell me when a new version of GreyHaven is out" on the first screen to stop it) | api.github.com | Nothing about you or your PC: GreyHaven asks GitHub which version is the newest. It never downloads or installs anything by itself. |
 | Online check | Linux Mint's download mirror (mirrors.edge.kernel.org), Ubuntu (changelogs.ubuntu.com) and System76 (api.pop-os.org) | Nothing about you or your PC: GreyHaven just reads their lists of new versions, so it can tell you if its information is out of date. |
 
 **"Check a game"** sends nothing: the game names you type are searched in data that ships with
