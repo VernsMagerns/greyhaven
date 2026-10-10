@@ -80,6 +80,15 @@ namespace GreyHaven.Cli
                     return 0;
                 }
 
+                if (args[0] == "helper-check")
+                {
+                    // CI only: starts the real helper through Windows' permission prompt and checks
+                    // the handshake works, by turning Fast Startup off and back on.
+                    if (args.Length != 2) throw new CliException("Usage: greyhaven helper-check <path to GreyHaven.Helper.exe>");
+                    if (!OperatingSystem.IsWindows()) throw new CliException("helper-check runs on Windows only.");
+                    return await HelperCheckAsync(args[1]);
+                }
+
                 if (args[0] == "qr")
                 {
                     if (args.Length != 2) throw new CliException("Usage: greyhaven qr <text>");
@@ -175,6 +184,19 @@ namespace GreyHaven.Cli
             var data = CompatibilityData.Load(opts.DataDir);
             var files = PhoneGuideSiteWriter.Write(opts.Out[0], Ratings.PhoneGuideSite.Pages(data));
             Console.WriteLine($"Wrote {files.Count} files to {opts.Out[0]}: {string.Join(", ", files)}");
+            return 0;
+        }
+
+        [System.Runtime.Versioning.SupportedOSPlatform("windows")]
+        private static async Task<int> HelperCheckAsync(string helperPath)
+        {
+            var client = new WindowsHelperClient(Path.GetFullPath(helperPath));
+            foreach (var action in new[] { Media.HelperAction.FastStartupOff, Media.HelperAction.FastStartupOn })
+            {
+                var result = await client.RunAsync(action, null, null, CancellationToken.None);
+                Console.WriteLine($"{action}: {result.Kind} {result.Text}");
+                if (result.Kind != Media.HelperMessage.Ok) return 1;
+            }
             return 0;
         }
 

@@ -82,6 +82,13 @@ jobs:
           # Rate the VM's hardware with the bundled data (offline, so CI never hits linux-hardware.org).
           & $exe rate --raw ci-raw.json --offline --out ci-report.json --out ci-report.html
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Helper handshake (permission prompt, pipe, token)
+        shell: pwsh
+        run: |
+          dotnet build src/GreyHaven.Helper -c Release
+          $helper = (Resolve-Path "src/GreyHaven.Helper/bin/Release/net10.0/GreyHaven.Helper.exe").Path
+          & "src/GreyHaven.Cli/bin/Release/net10.0/greyhaven.exe" helper-check $helper
+          if ($LASTEXITCODE -ne 0) { throw "The helper handshake failed." }
       - uses: actions/upload-artifact@v4
         with:
           name: windows-vm-scan
