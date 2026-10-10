@@ -7,6 +7,8 @@
     <AssemblyName>GreyHaven</AssemblyName>
     <RootNamespace>GreyHaven.App</RootNamespace>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <!-- The lighthouse mark (tools/brand/build.py): Start menu, taskbar, Explorer. -->
+    <ApplicationIcon>..\..\assets\brand\greyhaven.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\GreyHaven.Presentation\GreyHaven.Presentation.csproj" />
@@ -19,6 +21,8 @@
     <!-- Brand fonts: Rubik (headings) and Lexend (text), SIL Open Font License 1.1. -->
     <Resource Include="..\..\assets\fonts\*.ttf" Link="Fonts\%(Filename)%(Extension)" />
     <Resource Include="..\..\assets\sounds\*.wav" Link="Sounds\%(Filename)%(Extension)" />
+    <Resource Include="..\..\assets\brand\greyhaven.ico" Link="Brand\greyhaven.ico" />
+    <Resource Include="..\..\assets\brand\icon-64.png" Link="Brand\icon-64.png" />
     <None Include="..\..\assets\fonts\*.txt" Link="Fonts\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

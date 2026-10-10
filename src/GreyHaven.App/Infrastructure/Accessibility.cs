@@ -81,6 +81,18 @@ public sealed class DecorativeText : TextBlock
     }
 }
 
+/// <summary>A picture that screen readers skip, because the words next to it say the same (e.g. the logo by "GreyHaven").</summary>
+public sealed class DecorativeImage : System.Windows.Controls.Image
+{
+    protected override AutomationPeer OnCreateAutomationPeer() => new DecorativeImagePeer(this);
+
+    private sealed class DecorativeImagePeer(System.Windows.Controls.Image owner) : ImageAutomationPeer(owner)
+    {
+        protected override bool IsControlElementCore() => false;
+        protected override bool IsContentElementCore() => false;
+    }
+}
+
 /// <summary>
 /// An ItemsControl that screen readers skip (e.g. the walkthrough's progress segments, which
 /// "Step 3 of 9" already says in words). Its items aren't exposed either.

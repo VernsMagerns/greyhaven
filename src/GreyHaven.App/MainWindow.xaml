@@ -4,6 +4,7 @@
         xmlns:infra="clr-namespace:GreyHaven.App.Infrastructure"
         xmlns:views="clr-namespace:GreyHaven.App.Views"
         Title="{Binding WindowTitle}"
+        Icon="pack://application:,,,/Brand/greyhaven.ico"
         Width="1000" Height="840" MinWidth="560" MinHeight="480"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource GH.Page}"
@@ -13,8 +14,12 @@
     <DockPanel>
         <!-- Top bar: app name and appearance setting -->
         <Grid DockPanel.Dock="Top" Margin="24,12,24,4">
-            <TextBlock Text="GreyHaven" FontFamily="{StaticResource HeadingFont}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"
-                       Foreground="{DynamicResource GH.Text}" />
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <infra:DecorativeImage Source="pack://application:,,,/Brand/icon-64.png" Width="28" Height="28" Margin="0,0,10,0"
+                                       RenderOptions.BitmapScalingMode="HighQuality" />
+                <TextBlock Text="GreyHaven" FontFamily="{StaticResource HeadingFont}" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"
+                           Foreground="{DynamicResource GH.Text}" />
+            </StackPanel>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                 <!-- Sounds on/off. -->
                 <Button Command="{Binding ToggleSoundsCommand}" Padding="10,6" MinWidth="40" MinHeight="36" Margin="0,0,8,0"

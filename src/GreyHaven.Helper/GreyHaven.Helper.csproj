@@ -5,6 +5,8 @@
     <OutputType>Exe</OutputType>
     <AssemblyName>GreyHaven.Helper</AssemblyName>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <!-- Same icon as the app, so Windows' permission prompt shows the lighthouse. -->
+    <ApplicationIcon>..\..\assets\brand\greyhaven.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\GreyHaven.Media\GreyHaven.Media.csproj" />
