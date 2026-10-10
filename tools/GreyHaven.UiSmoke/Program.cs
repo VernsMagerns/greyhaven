@@ -8,7 +8,9 @@ using FlaUI.UIA3;
 // UI smoke test for CI (Windows only). Launches GreyHaven in demo mode, walks the main flow,
 // saves screenshots, and fails if any interactive control has no accessible name.
 //
-//   greyhaven-ui-smoke <path-to-GreyHaven.exe> <output-dir> [sample]
+//   greyhaven-ui-smoke <path-to-GreyHaven.exe> <output-dir> [sample] [--screenshots]
+//
+// --screenshots: hides the demo badge and sizes the window for the README's screenshots.
 
 if (args.Length < 2)
 {
@@ -18,16 +20,26 @@ if (args.Length < 2)
 
 var exe = Path.GetFullPath(args[0]);
 var outDir = Directory.CreateDirectory(args[1]).FullName;
-var sample = args.Length > 2 ? args[2] : "nvidia-desktop";
+var sample = args.Length > 2 && !args[2].StartsWith("--", StringComparison.Ordinal) ? args[2] : "nvidia-desktop";
+var screenshots = args.Contains("--screenshots");
 var problems = new List<string>();
 var timeout = TimeSpan.FromSeconds(60);
 
-using var app = Application.Launch(exe, $"--sample {sample}");
+using var app = Application.Launch(exe, $"--sample {sample}" + (screenshots ? " --screenshots" : ""));
 using var automation = new UIA3Automation();
 try
 {
     var window = app.GetMainWindow(automation, timeout) ?? throw new InvalidOperationException("Main window didn't appear.");
     window.SetForeground();
+    // Fit the window on the screen (CI screens can be small), top left, so captures are whole.
+    var desk = automation.GetDesktop().BoundingRectangle;
+    if (window.Patterns.Transform.IsSupported)
+    {
+        var t = window.Patterns.Transform.Pattern;
+        t.Move(desk.Left, desk.Top);
+        t.Resize(Math.Min(screenshots ? 1180 : 1000, desk.Width), Math.Min(screenshots ? 860 : 840, desk.Height - 40));
+    }
+    Console.WriteLine($"screen {desk.Width}x{desk.Height}, window {window.BoundingRectangle.Width}x{window.BoundingRectangle.Height}");
 
     AutomationElement Find(string name) =>
         Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByName(name)), timeout).Result
@@ -38,6 +50,12 @@ try
         Thread.Sleep(500); // let layout and animations settle
         Capture.Element(window).ToFile(Path.Combine(outDir, file));
         Console.WriteLine($"saved {file}");
+    }
+
+    static void ScrollTo(AutomationElement e)
+    {
+        try { if (e.Patterns.ScrollItem.IsSupported) e.Patterns.ScrollItem.Pattern.ScrollIntoView(); }
+        catch { /* best effort: only affects what the screenshot shows */ }
     }
 
     static bool IsScrollBarPart(AutomationElement e)
@@ -89,10 +107,24 @@ try
     Shot("04-part-show-more-light.png");
 
     // Your apps (the demo sample's made-up list), with VALORANT marked as needed.
-    FindStarting(ControlType.Group, "Show your").Patterns.ExpandCollapse.Pattern.Expand();
-    FindStarting(ControlType.CheckBox, "I need VALORANT").AsCheckBox().IsChecked = true;
+    var appsGroup = FindStarting(ControlType.Group, "Show your");
+    appsGroup.Patterns.ExpandCollapse.Pattern.Expand();
+    var valorant = FindStarting(ControlType.CheckBox, "I need VALORANT").AsCheckBox();
+    valorant.IsChecked = true;
+    ScrollTo(valorant);
     CheckNames("results with apps");
     Shot("04b-results-apps-light.png");
+
+    // Check a game: type a name, results appear as you type.
+    var gameBox = Find("Game name").AsTextBox();
+    ScrollTo(gameBox);
+    gameBox.Text = "elden ring";
+    var elden = Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByControlType(ControlType.Text).And(cf.ByName("ELDEN RING"))), timeout).Result
+                ?? throw new InvalidOperationException("Check a game found nothing for 'elden ring'.");
+    ScrollTo(elden);
+    CheckNames("results: check a game");
+    Shot("04c-results-check-a-game-light.png");
+    appsGroup.Patterns.ExpandCollapse.Pattern.Collapse();
 
     // The walkthrough, from the button under the headline. Demo mode: nothing is written or restarted.
     FindStarting(ControlType.Button, "Show me how to switch").AsButton().Invoke();

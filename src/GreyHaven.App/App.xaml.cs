@@ -27,6 +27,7 @@ public partial class App : Application
         base.OnStartup(e);
 
         var sample = SampleArgument(e.Args);
+        ScreenshotMode.HideDemoBadge = sample is not null && e.Args.Contains("--screenshots");
         _http = GreyHavenHttp.Create(TimeSpan.FromSeconds(30));
         Func<IHardwareScanner> scanner = sample is null
             ? () => new LiveScanner(new WindowsRawHardwareSource())

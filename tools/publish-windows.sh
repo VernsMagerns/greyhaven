@@ -5,10 +5,12 @@
 set -eu
 cd "$(dirname "$0")/.."
 out=artifacts/windows
-dotnet publish src/GreyHaven.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=false -o "$out/app"
+# VERSION=1.2.0 sets the version shown in the app and on the files (releases do this from the tag).
+ver=${VERSION:+-p:Version=$VERSION}
+dotnet publish src/GreyHaven.App -c Release -r win-x64 --self-contained -p:PublishSingleFile=false $ver -o "$out/app"
 # The elevated helper sits next to the app, which starts it (with Windows' permission prompt) for one action at a time.
-dotnet publish src/GreyHaven.Helper -c Release -r win-x64 --self-contained -p:PublishSingleFile=false -o "$out/app"
-dotnet publish src/GreyHaven.Cli -c Release -r win-x64 --self-contained -o "$out/cli"
+dotnet publish src/GreyHaven.Helper -c Release -r win-x64 --self-contained -p:PublishSingleFile=false $ver -o "$out/app"
+dotnet publish src/GreyHaven.Cli -c Release -r win-x64 --self-contained $ver -o "$out/cli"
 commit=$(git rev-parse --short HEAD 2>/dev/null || echo unknown)
 cat > "$out/START-HERE.txt" <<TXT
 GreyHaven test build ($commit, built $(TZ=America/Los_Angeles date +%Y-%m-%d))

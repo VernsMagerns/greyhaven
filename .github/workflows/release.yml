@@ -1,0 +1,129 @@
+name: Release
+
+# Push a tag like v1.0.0 to build, test and package a release. It ends as a DRAFT release: nothing
+# is public until the maintainer reads the notes and clicks "Publish release" on GitHub.
+#   git tag v1.0.0 && git push origin v1.0.0
+# Files keep the same names every release, so .../releases/latest/download/GreyHaven-Setup.exe
+# always points at the newest installer.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - run: dotnet test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - id: v
+        name: Version from the tag
+        run: |
+          v=${GITHUB_REF_NAME#v}
+          echo "$v" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || { echo "Tag must look like v1.2.3, got $GITHUB_REF_NAME"; exit 1; }
+          echo "version=$v" >> "$GITHUB_OUTPUT"
+      - name: Build Windows app and CLI
+        run: VERSION=${{ steps.v.outputs.version }} ./tools/publish-windows.sh
+      - name: Release check (no placeholders)
+        run: ./tools/release-check.sh artifacts/windows
+      - uses: actions/upload-artifact@v4
+        with:
+          name: greyhaven-windows
+          path: artifacts/windows
+          retention-days: 3
+
+  installer:
+    needs: build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - uses: actions/download-artifact@v4
+        with:
+          name: greyhaven-windows
+          path: artifacts/windows
+      - name: Build the MSI and Setup.exe
+        run: dotnet build installer/bundle/GreyHaven.Bundle.wixproj -c Release -o installer-out -p:Version=${{ needs.build.outputs.version }}
+      - name: Install and uninstall once more before shipping
+        shell: pwsh
+        run: |
+          $setup = (Resolve-Path installer-out/GreyHaven-Setup.exe).Path
+          $p = Start-Process $setup -ArgumentList "/quiet" -Wait -PassThru
+          if ($p.ExitCode -ne 0 -or -not (Test-Path "$env:ProgramFiles\GreyHaven\GreyHaven.exe")) { throw "Install failed: $($p.ExitCode)" }
+          $p = Start-Process $setup -ArgumentList "/uninstall /quiet" -Wait -PassThru
+          if ($p.ExitCode -ne 0) { throw "Uninstall failed: $($p.ExitCode)" }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: greyhaven-installer
+          retention-days: 3
+          path: |
+            installer-out/GreyHaven.msi
+            installer-out/GreyHaven-Setup.exe
+
+  draft-release:
+    needs: [build, installer]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write      # build attestations
+      attestations: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: greyhaven-windows
+          path: greyhaven-windows
+      - uses: actions/download-artifact@v4
+        with:
+          name: greyhaven-installer
+          path: dist
+      - name: Package and checksum
+        run: |
+          (cd greyhaven-windows && zip -qr ../dist/GreyHaven-portable.zip .)
+          cd dist && sha256sum GreyHaven-Setup.exe GreyHaven.msi GreyHaven-portable.zip > SHA256SUMS.txt && cat SHA256SUMS.txt
+      # Proof that each file was built by this repository's workflow. Free for public repositories.
+      - uses: actions/attest-build-provenance@v2
+        if: ${{ !github.event.repository.private }}
+        with:
+          subject-path: |
+            dist/GreyHaven-Setup.exe
+            dist/GreyHaven.msi
+            dist/GreyHaven-portable.zip
+      - name: Create the draft release
+        run: |
+          v=${{ needs.build.outputs.version }}
+          cat > notes.md <<NOTES
+          ## Install
+
+          Download **GreyHaven-Setup.exe** and double-click it. Windows 10 and 11, 64-bit.
+
+          - **GreyHaven.msi**: the same, for IT admins (\`msiexec /i GreyHaven.msi /qn\`).
+          - **GreyHaven-portable.zip**: runs without installing.
+          - **SHA256SUMS.txt**: fingerprints to check the downloads.
+
+          ## What's new
+
+          _(Write the highlights here before publishing.)_
+          NOTES
+          gh release create "$GITHUB_REF_NAME" dist/* --draft --verify-tag --title "GreyHaven $v" --notes-file notes.md

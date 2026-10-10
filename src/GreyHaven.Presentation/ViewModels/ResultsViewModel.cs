@@ -117,7 +117,7 @@ public sealed partial class ResultsViewModel : ObservableObject
         Distros = report.Distros.Select(d => new DistroCardViewModel(d, ReportBuilder.ShortName(report, d.DistroId), this)).ToList();
         Caveats = report.Caveats.Select(c => new CaveatViewModel(c.Title, c.Why, c.WhatToTest)).ToList();
         CaveatsHeading = report.Caveats.Count == 0 ? null : $"{report.Caveats.Count} {(report.Caveats.Count == 1 ? "thing" : "things")} to test before you install";
-        DemoText = services.DemoSample is null ? null : "Demo: this is a sample PC, not yours.";
+        DemoText = services.DemoSample is null || ScreenshotMode.HideDemoBadge ? null : "Demo: this is a sample PC, not yours.";
         Notices = BuildNotices(report);
         if (report.ContextNotes.FirstOrDefault() is { } why)
         {

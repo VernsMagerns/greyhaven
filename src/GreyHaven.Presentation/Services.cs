@@ -22,6 +22,16 @@ public sealed record AppSettings
     public bool Sounds { get; init; } = true;
 }
 
+/// <summary>
+/// "--sample X --screenshots": demo mode without the "sample PC" badge, for the README's screenshots
+/// (taken by the UI smoke test). Only ever set together with a sample, so a real scan always says
+/// what it is.
+/// </summary>
+public static class ScreenshotMode
+{
+    public static bool HideDemoBadge { get; set; }
+}
+
 /// <summary>GreyHaven's sound effects (assets/sounds, made by tools/sounds/build.py).</summary>
 public enum SoundCue { Tick, Start, Done, Problem }
 

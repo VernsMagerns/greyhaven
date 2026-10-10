@@ -115,16 +115,27 @@ jobs:
         run: |
           "Windows 11 icon font (Segoe Fluent Icons, SegoeIcons.ttf): $(Test-Path "$env:WINDIR\Fonts\SegoeIcons.ttf")"
           "Windows 10 icon font (Segoe MDL2 Assets, segmdl2.ttf): $(Test-Path "$env:WINDIR\Fonts\segmdl2.ttf")"
+      - name: Bigger screen for whole-window screenshots
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          Set-DisplayResolution -Width 1920 -Height 1080 -Force
+          Get-CimInstance Win32_VideoController | Select-Object CurrentHorizontalResolution, CurrentVerticalResolution
       - name: Build app
         run: dotnet build src/GreyHaven.App -c Release
       - name: Run UI smoke test
         run: dotnet run --project tools/GreyHaven.UiSmoke -c Release -- src/GreyHaven.App/bin/Release/net10.0-windows/GreyHaven.exe ui-screenshots nvidia-desktop
+      - name: README screenshots (no demo badge, bigger window)
+        if: matrix.image == 'windows-2025'
+        run: dotnet run --project tools/GreyHaven.UiSmoke -c Release --no-build -- src/GreyHaven.App/bin/Release/net10.0-windows/GreyHaven.exe readme-screenshots nvidia-desktop --screenshots
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: ui-screenshots-${{ matrix.image }}
           retention-days: 14
-          path: ui-screenshots
+          path: |
+            ui-screenshots
+            readme-screenshots
 
   # GreyHaven.msi and GreyHaven-Setup.exe (WiX, Windows only), built from the same app as the zip,
   # then really installed, checked and uninstalled on the runner, both ways.

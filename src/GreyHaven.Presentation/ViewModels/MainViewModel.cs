@@ -54,9 +54,9 @@ public sealed partial class MainViewModel : ObservableObject
     [RelayCommand]
     private void OpenUpdate() { if (_updatePage is not null) _services.Open(_updatePage); }
 
-    public string WindowTitle => _services.DemoSample is { } s ? $"GreyHaven - demo ({s})" : "GreyHaven";
+    public string WindowTitle => _services.DemoSample is { } s && !ScreenshotMode.HideDemoBadge ? $"GreyHaven - demo ({s})" : "GreyHaven";
 
-    public string? DemoText => _services.DemoSample is null ? null : "Demo: this is a sample PC, not yours.";
+    public string? DemoText => _services.DemoSample is null || ScreenshotMode.HideDemoBadge ? null : "Demo: this is a sample PC, not yours.";
 
     public string IntroText =>
         "GreyHaven checks the parts inside your PC. Then it tells you which version of Linux fits best. It won't change anything.";

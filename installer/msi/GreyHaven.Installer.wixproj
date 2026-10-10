@@ -5,5 +5,9 @@
     <OutputName>GreyHaven</OutputName>
     <InstallerPlatform>x64</InstallerPlatform>
     <DefineConstants>Version=$(Version);AppDir=$(AppDir)</DefineConstants>
+    <!-- ICE38/43/57 assume the Start menu folder is per-user. This package is per-machine
+         (Scope="perMachine"), where an all-users shortcut with an HKLM key path is the standard
+         pattern; CI's install test checks the shortcut really lands in the all-users Start menu. -->
+    <SuppressIces>ICE38;ICE43;ICE57</SuppressIces>
   </PropertyGroup>
 </Project>
