@@ -80,7 +80,7 @@ None of this is built yet (plan: [PLAN.md](PLAN.md) section 6).
 | 4.5 | Fresh data just before release: ProtonDB dump, anti-cheat list, distro versions | 🔨 |
 | 4.7 | Brand: the lighthouse mark, app icon, banners, social preview, [brand.md](brand.md) | ✅ 9 Oct |
 | 4.8 | Repository description and topics | ✅ 9 Oct |
-| 4.9 | Social preview image: upload `assets/brand/social-preview.png` in Settings → General → Social preview (GitHub has no API for it) | 👤 |
+| 4.9 | Social preview image: upload `assets/brand/social-preview.png` in Settings → General → Social preview. The setting only appears once the repository is public. | 👤 at going public |
 | 4.6 | Windows on Arm: the x64 build runs under emulation there, but USB writing hasn't been tested. Either say "not tested yet" on the download page, or test on an Arm laptop. | 👤 decide |
 
 ## 5. "Contribute unknown devices": wait until after v1
@@ -105,12 +105,12 @@ pre-filled issue you review in the browser) is about a day's work. **Status: �
 |---|---|---|
 | 6.1 | Pick a contact address for conduct reports | 👤 |
 | 6.2 | Switch commit email to GitHub's no-reply address. You copy it; I rewrite history and force-push, only after you confirm. `test.wav` (committed by accident, now untracked) can be dropped from history in the same rewrite. | 👤 then 🔨 |
-| 6.3 | Two-factor authentication on GitHub | 👤 |
+| 6.3 | Two-factor authentication on GitHub | ✅ 10 Oct |
 | 6.4 | Installer and release workflow (section 3) | 🔨 |
 | 6.5 | `IsRepositoryPublic = true`, contact address in place, `release-check.sh` passes | 🔨 |
-| 6.6 | Private vulnerability reporting on; branch rule for `main` | 👤 |
+| 6.6 | Branch rule for `main`: set up 10 Oct, but GitHub Free only enforces it on public repositories. Private vulnerability reporting is public-only too. Check both with 6.8. | 👤 at going public |
 | 6.7 | Make the repository public | 👤 |
-| 6.8 | Turn on GitHub Pages (Source: GitHub Actions) | 👤 |
+| 6.8 | Right after going public: Pages (Source: GitHub Actions), social preview, private vulnerability reporting, and check the `main` branch rule shows as active | 👤 |
 | 6.9 | First public release, unsigned (v1.0.0) | 🔨 (you approve) |
 | 6.10 | CI: Windows jobs on every pull request again (free minutes for public repositories) | 🔨 |
 

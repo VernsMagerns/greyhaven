@@ -10,9 +10,10 @@ Guidance for Claude Code when working in this repository.
   explain exactly what it will delete and wait for approval.
 - **Commit after each verified step** (build passes, tests pass), so work is never left
   uncommitted for long.
-- **Git identity:** commits are authored as `Kyler Verney <280451244+VernsMagerns@users.noreply.github.com>`. Do not
-  use any other email address anywhere in the project (docs, README, license, package
-  metadata, CI config).
+- **Git identity:** commits are authored as
+  `Kyler Verney <280451244+VernsMagerns@users.noreply.github.com>` (GitHub's no-reply address,
+  so no personal email is public). Do not use any other email address anywhere in the project
+  (docs, README, license, package metadata, CI config).
 - **Dates:** write dates in docs and data in the maintainer's local time, US Pacific
   (America/Los_Angeles), not UTC. Tool timestamps are often UTC; convert them first.
 
