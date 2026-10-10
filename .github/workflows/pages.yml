@@ -1,0 +1,37 @@
+name: Download page
+
+# Publishes site/ (the download page) to GitHub Pages. Pages needs a public repository on GitHub
+# Free, so this does nothing while the repository is private. To switch it on after going
+# public: Settings > Pages > Source: GitHub Actions.
+
+on:
+  push:
+    branches: [main]
+    paths: ["site/**", "assets/brand/**", "docs/images/**", "tools/site/**", ".github/workflows/pages.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./tools/site/build.sh _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      - id: deployment
+        uses: actions/deploy-pages@v4

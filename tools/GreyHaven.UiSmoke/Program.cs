@@ -58,6 +58,25 @@ try
         catch { /* best effort: only affects what the screenshot shows */ }
     }
 
+    // Scrolls the page down a line at a time until the element sits near the top of the window,
+    // so what follows it is in the screenshot.
+    void ScrollNearTop(AutomationElement e)
+    {
+        var scroller = window.FindAllDescendants().FirstOrDefault(x => { try { return x.Patterns.Scroll.IsSupported && x.Patterns.Scroll.Pattern.VerticallyScrollable; } catch { return false; } });
+        if (scroller is null) return;
+        var scroll = scroller.Patterns.Scroll.Pattern;
+        for (var i = 0; i < 400 && e.BoundingRectangle.Top > window.BoundingRectangle.Top + 140; i++)
+        {
+            if (scroll.VerticalScrollPercent >= 100) break;
+            scroll.Scroll(ScrollAmount.NoAmount, ScrollAmount.SmallIncrement);
+        }
+        for (var i = 0; i < 400 && e.BoundingRectangle.Top < window.BoundingRectangle.Top + 100; i++)
+        {
+            if (scroll.VerticalScrollPercent <= 0) break;
+            scroll.Scroll(ScrollAmount.NoAmount, ScrollAmount.SmallDecrement);
+        }
+    }
+
     static bool IsScrollBarPart(AutomationElement e)
     {
         try { return e.Parent?.ControlType == ControlType.ScrollBar; }
@@ -111,7 +130,7 @@ try
     appsGroup.Patterns.ExpandCollapse.Pattern.Expand();
     var valorant = FindStarting(ControlType.CheckBox, "I need VALORANT").AsCheckBox();
     valorant.IsChecked = true;
-    ScrollTo(valorant);
+    ScrollNearTop(FindStarting(ControlType.Group, "Show your"));
     CheckNames("results with apps");
     Shot("04b-results-apps-light.png");
 
@@ -121,7 +140,7 @@ try
     gameBox.Text = "elden ring";
     var elden = Retry.WhileNull(() => window.FindFirstDescendant(cf => cf.ByControlType(ControlType.Text).And(cf.ByName("ELDEN RING"))), timeout).Result
                 ?? throw new InvalidOperationException("Check a game found nothing for 'elden ring'.");
-    ScrollTo(elden);
+    ScrollNearTop(gameBox);
     CheckNames("results: check a game");
     Shot("04c-results-check-a-game-light.png");
     appsGroup.Patterns.ExpandCollapse.Pattern.Collapse();

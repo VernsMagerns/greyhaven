@@ -631,6 +631,20 @@ public partial class XamlLintTests
     }
 
     [Fact]
+    public void Buttons_showing_text_from_data_escape_underscores()
+    {
+        // WPF reads "_" in a button's text as a keyboard-shortcut marker, so "Pop!_OS" from data
+        // would show as "Pop!OS". Text bound from data goes through the NoAccessKey converter.
+        var offenders = Views()
+            .SelectMany(v => System.Text.RegularExpressions.Regex.Matches(v.Xaml, @"<(Button|RadioButton|CheckBox)\s[^>]*Content=""\{Binding[^""]*""")
+                .Select(m => (v.File, Tag: m.Value)))
+            .Where(x => !x.Tag.Contains("NoAccessKey", StringComparison.Ordinal))
+            .Select(x => $"{x.File}: {x.Tag}")
+            .ToList();
+        Assert.Empty(offenders);
+    }
+
+    [Fact]
     public void Content_presenters_dont_bind_their_own_visibility()
     {
         // A ContentPresenter's DataContext is its Content, so Visibility="{Binding X}" next to

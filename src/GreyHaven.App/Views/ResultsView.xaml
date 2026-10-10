@@ -7,7 +7,7 @@
         <!-- One link (or plain text for sources without a URL). -->
         <DataTemplate x:Key="LinkTemplate">
             <Grid>
-                <Button Content="{Binding Title}" Command="{Binding OpenCommand}" Style="{StaticResource LinkButton}"
+                <Button Content="{Binding Title, Converter={StaticResource NoAccessKey}}" Command="{Binding OpenCommand}" Style="{StaticResource LinkButton}"
                         Visibility="{Binding IsLink, Converter={StaticResource HasValueToVisibility}}"
                         AutomationProperties.Name="{Binding Title}" AutomationProperties.HelpText="Opens in your web browser" />
                 <TextBlock Text="{Binding Title}" Style="{StaticResource Body}"
@@ -244,7 +244,7 @@
                                         </ItemsControl>
                                     </StackPanel>
                                 </RadioButton>
-                                <Button Content="{Binding AboutLabel}" Style="{StaticResource LinkButton}" Margin="30,6,0,0" Click="About_Click"
+                                <Button Content="{Binding AboutLabel, Converter={StaticResource NoAccessKey}}" Style="{StaticResource LinkButton}" Margin="30,6,0,0" Click="About_Click"
                                         Visibility="{Binding About, Converter={StaticResource HasValueToVisibility}}" />
                                 <Expander Header="Show more" Style="{StaticResource ShowMore}" Margin="30,6,0,0"
                                           AutomationProperties.Name="{Binding Name, StringFormat=Show more about {0}}">
@@ -422,7 +422,7 @@
                                     </StackPanel>
                                 </Grid>
                                 <TextBlock Text="{Binding Summary}" Style="{StaticResource Body}" />
-                                <Button Content="{Binding Link.Title}" Command="{Binding Link.OpenCommand}" Style="{StaticResource LinkButton}" HorizontalAlignment="Left"
+                                <Button Content="{Binding Link.Title, Converter={StaticResource NoAccessKey}}" Command="{Binding Link.OpenCommand}" Style="{StaticResource LinkButton}" HorizontalAlignment="Left"
                                         Visibility="{Binding Link, Converter={StaticResource HasValueToVisibility}}" />
                             </StackPanel>
                         </Border>

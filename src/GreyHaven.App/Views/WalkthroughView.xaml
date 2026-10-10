@@ -115,7 +115,7 @@
                                        Visibility="{Binding State, Converter={StaticResource EqualsToVisibility}, ConverterParameter=done}" />
                             <TextBlock Text="{Binding Message}" Style="{StaticResource Body}" infra:Accessibility.Announce="True"
                                        Visibility="{Binding Message, Converter={StaticResource HasValueToVisibility}}" />
-                            <Button Content="{Binding ButtonLabel}" Command="{Binding AskCommand}" Style="{StaticResource AccentButton}" HorizontalAlignment="Left"
+                            <Button Content="{Binding ButtonLabel, Converter={StaticResource NoAccessKey}}" Command="{Binding AskCommand}" Style="{StaticResource AccentButton}" HorizontalAlignment="Left"
                                     Visibility="{Binding ShowButton, Converter={StaticResource HasValueToVisibility}}" />
                             <!-- Asks first: what will change, then the permission prompt is explained. -->
                             <Border Style="{StaticResource WarningBox}" Visibility="{Binding ShowConfirm, Converter={StaticResource HasValueToVisibility}}">
@@ -158,7 +158,7 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <StackPanel Margin="0,0,0,8">
-                                    <RadioButton GroupName="Stick" Content="{Binding Name}" FontWeight="SemiBold" IsEnabled="{Binding Check.CanUse}"
+                                    <RadioButton GroupName="Stick" Content="{Binding Name, Converter={StaticResource NoAccessKey}}" FontWeight="SemiBold" IsEnabled="{Binding Check.CanUse}"
                                                  IsChecked="{Binding IsSelected}" AutomationProperties.Name="{Binding Name}"
                                                  AutomationProperties.HelpText="{Binding Contents}" />
                                     <TextBlock Text="{Binding Contents}" Style="{StaticResource Secondary}" Margin="28,2,0,0" />
@@ -277,7 +277,7 @@
             </Grid.ColumnDefinitions>
             <Button Content="← _Back" Command="{Binding BackCommand}" Padding="20,6" VerticalAlignment="Center"
                     Visibility="{Binding CanGoBack, Converter={StaticResource HasValueToVisibility}}" />
-            <Button Grid.Column="1" Content="{Binding NextLabel}" Command="{Binding NextCommand}" Style="{StaticResource GoButton}"
+            <Button Grid.Column="1" Content="{Binding NextLabel, Converter={StaticResource NoAccessKey}}" Command="{Binding NextCommand}" Style="{StaticResource GoButton}"
                     IsEnabled="{Binding CanGoOn}" HorizontalAlignment="Right" AutomationProperties.Name="{Binding NextLabel}"
                     AutomationProperties.HelpText="{Binding NextHint}" />
         </Grid>

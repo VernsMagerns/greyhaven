@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>GreyHaven: will Linux work on your PC?</title>
+<meta name="description" content="A free Windows app that checks whether Linux will work on your PC, then guides you through switching, step by step. Open source.">
+<meta property="og:title" content="GreyHaven: will Linux work on your PC?">
+<meta property="og:description" content="Check your PC, make the USB stick, switch. Free and open source.">
+<meta property="og:image" content="https://vernsmagerns.github.io/greyhaven/social-preview.png">
+<link rel="icon" href="icon-32.png" sizes="32x32">
+<link rel="icon" href="mark-flat.svg" type="image/svg+xml">
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to the download</a>
+<header class="top">
+  <a class="brand" href="./"><img src="mark.svg" alt="" width="40" height="40"><span>GreyHaven</span></a>
+  <nav aria-label="Page"><a href="#how">How it works</a><a href="#safe">Is it safe?</a><a href="#faq">Questions</a><a href="https://github.com/VernsMagerns/greyhaven">Source code</a></nav>
+</header>
+
+<main id="main">
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Will Linux work on your PC?</h1>
+      <p class="lead">GreyHaven checks the parts inside your PC, tells you which version of Linux fits best, then walks you through switching, one step at a time. It won't change anything without asking.</p>
+      <p><a class="download" href="https://github.com/VernsMagerns/greyhaven/releases/latest/download/GreyHaven-Setup.exe">Download for Windows</a></p>
+      <p class="small">Free and open source · Windows 10 and 11, 64-bit · No account, no ads</p>
+    </div>
+    <figure class="shot hero-shot">
+      <img src="images/results.png" alt="GreyHaven's results: Your PC is ready for Linux, 98 out of 100, with Ubuntu suggested." width="1180" height="860">
+    </figure>
+  </section>
+
+  <section id="how">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li class="card"><h3><span class="num" aria-hidden="true">1</span>Check</h3>
+        <p>Scan your PC in under a minute. Every part is checked against Linux's own driver lists, so you see what works, what needs one extra step, and which apps and games come with you.</p></li>
+      <li class="card"><h3><span class="num" aria-hidden="true">2</span>Choose</h3>
+        <p>Pick Ubuntu, Linux Mint or Pop!_OS, with plain pros and cons. Keep Windows too, so you can pick at every start, or replace it.</p></li>
+      <li class="card"><h3><span class="num" aria-hidden="true">3</span>Switch</h3>
+        <p>GreyHaven downloads Linux, checks it's the official file, makes your USB stick, and puts the next steps on your phone with a QR code. Then it restarts your PC into the stick.</p></li>
+    </ol>
+    <div class="gallery">
+      <figure class="shot"><img src="images/check-a-game.png" alt="Check a game: Elden Ring works with Proton, with a link to its ProtonDB page." loading="lazy" width="1180" height="860"><figcaption>See which of your apps and games work, and search any game.</figcaption></figure>
+      <figure class="shot"><img src="images/walkthrough.png" alt="How do you want to install Linux? Keep Windows too (suggested) or Replace Windows." loading="lazy" width="1180" height="860"><figcaption>A guided walkthrough that checks each step for you.</figcaption></figure>
+      <figure class="shot"><img src="images/usb.png" alt="Make your USB stick: Your USB stick is ready." loading="lazy" width="1180" height="860"><figcaption>The USB stick, made and checked for you.</figcaption></figure>
+      <figure class="shot"><img src="images/guide.png" alt="Take your guide: a QR code that opens the next steps on your phone." loading="lazy" width="1180" height="860"><figcaption>Your guide goes with you on your phone.</figcaption></figure>
+    </div>
+    <p class="small center">Screenshots show a sample PC.</p>
+  </section>
+
+  <section id="safe">
+    <h2>Is it safe?</h2>
+    <div class="trust">
+      <div class="card"><h3>It asks before it changes anything</h3>
+        <p>Scanning needs no administrator rights and changes nothing. Before GreyHaven changes a Windows setting or writes your USB stick, it says exactly what will happen, then Windows asks your permission, for that one thing only.</p></div>
+      <div class="card"><h3>It only erases what you choose</h3>
+        <p>Only USB drives are ever listed, never the drive Windows is on. You tick a box naming the stick before anything is erased, and big external drives need a second tick so your backup is safe.</p></div>
+      <div class="card"><h3>It checks every download</h3>
+        <p>Linux comes from the official source over a secure connection. GreyHaven checks the file's fingerprint and, for Ubuntu and Linux Mint, their digital signature, then reads the stick back to make sure it was written right.</p></div>
+      <div class="card"><h3>Your details stay on your PC</h3>
+        <p>GreyHaven never reads your files, and your app list never leaves your PC. Online checks send part ID numbers only, and you can turn them off. <a href="https://github.com/VernsMagerns/greyhaven/blob/main/PRIVACY.md">Privacy policy</a></p></div>
+      <div class="card"><h3>Keep Windows, and you can go back</h3>
+        <p>You try Linux from the USB stick first, without installing anything. Not happy? Take the stick out and Windows starts as before.</p></div>
+      <div class="card"><h3>Open source</h3>
+        <p>Every line of code is on <a href="https://github.com/VernsMagerns/greyhaven">GitHub</a> under the MIT licence, and every download has published fingerprints so you can check it came from there.</p></div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2>Questions</h2>
+    <details><summary>Will I lose my files?</summary>
+      <p>Not if you choose <strong>Keep Windows too</strong>: Windows, your apps and your files stay as they are, and Linux gets space next to them. GreyHaven still asks you to back up first, because changing the drive's layout is the one step that can go wrong. <strong>Replace Windows</strong> erases the drive, and GreyHaven won't let you go on until your backup checklist is done.</p></details>
+    <details><summary>What do I need?</summary>
+      <p>A Windows 10 or 11 PC (64-bit), a USB stick of 8 GB or more that can be erased, an internet connection for the download (about 6 GB), and your phone for the guide. Allow an hour or two.</p></details>
+    <details><summary>Which versions of Linux?</summary>
+      <p>Ubuntu 26.04 LTS, Linux Mint 22.3 and Pop!_OS 24.04: three of the most popular, all free and well supported. GreyHaven suggests the one that fits your PC and explains why.</p></details>
+    <details><summary>Windows says "Windows protected your PC". Is that normal?</summary>
+      <p>For now, yes. GreyHaven is new, and Windows warns about apps it hasn't seen many people download yet. Click <strong>More info</strong>, then <strong>Run anyway</strong>. You can check the file is the real one with the fingerprints in <code>SHA256SUMS.txt</code> on the release page.</p></details>
+    <details><summary>Does it send anything about me?</summary>
+      <p>Only if you leave online checks on: the ID numbers of parts GreyHaven doesn't recognise go to linux-hardware.org, and it asks GitHub whether there's a newer version. No names, no files, no app list. See the <a href="https://github.com/VernsMagerns/greyhaven/blob/main/PRIVACY.md">privacy policy</a>.</p></details>
+    <details><summary>Is it really free?</summary>
+      <p>Yes. No ads, no account, no paid version. It's an open-source project.</p></details>
+    <details><summary>I'm an IT admin.</summary>
+      <p>Each release also has <code>GreyHaven.msi</code> for silent installs (<code>msiexec /i GreyHaven.msi /qn</code>) and a portable zip.</p></details>
+  </section>
+</main>
+
+<footer>
+  <img src="mark-flat.svg" alt="" width="28" height="28">
+  <p>GreyHaven is free and open source (MIT). Linux, Ubuntu, Linux Mint and Pop!_OS are trademarks of their owners; GreyHaven isn't affiliated with them.
+  <br><a href="https://github.com/VernsMagerns/greyhaven">Source code</a> · <a href="https://github.com/VernsMagerns/greyhaven/blob/main/PRIVACY.md">Privacy</a> · <a href="https://github.com/VernsMagerns/greyhaven/releases">All releases</a></p>
+</footer>
+</body>
+</html>

@@ -61,3 +61,13 @@ public sealed class ItemNumberConverter : IValueConverter
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();
 }
+
+/// <summary>
+/// Text from data shown in a button or option: doubles "_" so WPF shows it instead of treating it
+/// as a keyboard-shortcut marker ("Pop!_OS" would show as "Pop!OS" with the O underlined).
+/// </summary>
+public sealed class NoAccessKeyConverter : IValueConverter
+{
+    public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value is string s ? s.Replace("_", "__", StringComparison.Ordinal) : value;
+    public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();
+}

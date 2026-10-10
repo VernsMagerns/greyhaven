@@ -5,6 +5,7 @@
     <!-- Converters -->
     <infra:EqualsToVisibilityConverter x:Key="EqualsToVisibility" />
     <infra:HasValueToVisibilityConverter x:Key="HasValueToVisibility" />
+    <infra:NoAccessKeyConverter x:Key="NoAccessKey" />
     <infra:HasValueToVisibilityConverter x:Key="NoValueToVisibility" Invert="True" />
     <infra:PaletteBrushConverter x:Key="PaletteBrush" />
     <infra:NoticeBrushConverter x:Key="NoticeBrush" />

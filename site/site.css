@@ -1,0 +1,75 @@
+/* GreyHaven download page: the app's Market Day look (docs/brand.md). */
+@font-face { font-family: "Rubik"; font-weight: 700; font-display: swap; src: url(fonts/Rubik-Bold.ttf) format("truetype"); }
+@font-face { font-family: "Lexend"; font-weight: 400; font-display: swap; src: url(fonts/Lexend-Regular.ttf) format("truetype"); }
+@font-face { font-family: "Lexend"; font-weight: 600; font-display: swap; src: url(fonts/Lexend-SemiBold.ttf) format("truetype"); }
+
+:root {
+  --page: #F3EDE0; --card: #FFFFFF; --ink: #1F1B16; --line: #1F1B16; --text2: #52473B;
+  --accent: #B2361A; --on-accent: #FFFFFF; --go: #2B6630; --shadow: #1F1B16; --butter: #FFC93C;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page: #0D1218; --card: #18212B; --ink: #F3EFE7; --line: #8C9BAB; --text2: #B8C3CE;
+    --accent: #FF9065; --on-accent: #0D1218; --go: #8FD69B; --shadow: #05080B;
+  }
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 400 18px/1.6 "Lexend", system-ui, sans-serif; }
+h1, h2, h3 { font-family: "Rubik", system-ui, sans-serif; font-weight: 700; line-height: 1.15; margin: 0 0 .5em; }
+h1 { font-size: clamp(2.3rem, 5vw, 3.6rem); }
+h2 { font-size: clamp(1.8rem, 3.5vw, 2.4rem); margin-top: 0; }
+h3 { font-size: 1.25rem; }
+a { color: var(--accent); text-underline-offset: 3px; }
+a:focus-visible, summary:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; border-radius: 4px; }
+.small { font-size: .9rem; color: var(--text2); }
+.center { text-align: center; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 16px; top: 16px; background: var(--card); padding: 8px 12px; border: 2px solid var(--line); z-index: 2; }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  max-width: 1160px; margin: 0 auto; padding: 18px 24px; }
+.brand { display: inline-flex; align-items: center; gap: 12px; text-decoration: none; color: var(--ink);
+  font: 700 1.5rem "Rubik", system-ui, sans-serif; }
+.top nav { display: flex; gap: 20px; flex-wrap: wrap; }
+.top nav a { color: var(--ink); text-decoration: none; font-weight: 600; }
+.top nav a:hover { text-decoration: underline; }
+
+main { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+section { padding: 56px 0; }
+.hero { display: grid; grid-template-columns: 1fr 1.15fr; gap: 48px; align-items: center; padding-top: 32px; }
+.lead { font-size: 1.2rem; color: var(--text2); max-width: 34em; }
+.download { display: inline-block; background: var(--accent); color: var(--on-accent); text-decoration: none;
+  font: 700 1.3rem "Rubik", system-ui, sans-serif; padding: 16px 30px; border: 3px solid var(--line); border-radius: 12px;
+  box-shadow: 5px 5px 0 var(--shadow); transition: transform .08s, box-shadow .08s; }
+.download:hover { transform: translate(-1px, -1px); box-shadow: 6px 6px 0 var(--shadow); }
+.download:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--shadow); }
+.download:focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+
+.card { background: var(--card); border: 3px solid var(--line); border-radius: 16px; box-shadow: 6px 6px 0 var(--shadow); padding: 22px 24px; }
+.card p { margin: 0; }
+.shot { margin: 0; }
+.shot img { display: block; width: 100%; height: auto; border: 3px solid var(--line); border-radius: 14px; box-shadow: 8px 8px 0 var(--shadow); background: var(--card); }
+.shot figcaption { margin-top: 14px; font-weight: 600; }
+
+.steps { list-style: none; padding: 0; margin: 0 0 48px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.num { display: inline-grid; place-items: center; width: 34px; height: 34px; margin-right: 10px; border-radius: 50%;
+  background: var(--butter); color: #1F1B16; border: 3px solid var(--line); font-size: 1rem; vertical-align: 2px; }
+.gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px 32px; }
+.trust { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+details { background: var(--card); border: 3px solid var(--line); border-radius: 14px; margin: 0 0 14px; padding: 4px 20px; }
+summary { cursor: pointer; font-weight: 600; padding: 12px 0; }
+details p { margin: 0 0 16px; }
+code { background: color-mix(in srgb, var(--page) 70%, var(--card)); padding: 1px 6px; border-radius: 6px; font-size: .9em; }
+
+footer { max-width: 1160px; margin: 0 auto; padding: 32px 24px 56px; display: flex; gap: 16px; align-items: flex-start;
+  color: var(--text2); font-size: .9rem; border-top: 2px solid var(--line); }
+footer p { margin: 0; }
+
+@media (max-width: 900px) {
+  .hero, .steps, .trust, .gallery { grid-template-columns: 1fr; }
+  .hero { gap: 32px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .download { transition: none; } }
+@media (forced-colors: active) { .card, .shot img, .download, details { border-color: CanvasText; box-shadow: none; } }
