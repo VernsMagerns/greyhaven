@@ -10,3 +10,6 @@ artifacts/
 
 # Raw scans dropped into the project folder for replaying (samples/ holds the checked-in copies)
 /greyhaven-raw*.json
+
+# Local scratch audio (not part of the project)
+/test.wav
