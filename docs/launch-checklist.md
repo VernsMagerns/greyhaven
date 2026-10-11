@@ -74,7 +74,7 @@ None of this is built yet (plan: [PLAN.md](PLAN.md) section 6).
 
 | | Item | Status |
 |---|---|---|
-| 4.1 | Download page | ✅ Live 10 Oct: https://vernsmagerns.github.io/greyhaven/ |
+| 4.1 | Website: https://greyhaven.pages.dev (Cloudflare Pages, `.github/workflows/site.yml`); the old GitHub Pages address forwards there | ✅ 10 Oct |
 | 4.2 | README for users, with real screenshots from CI, safety and questions sections; developer notes in [developing.md](developing.md) | ✅ 9 Oct |
 | 4.3 | PRIVACY.md: up to date (phone guide, apps, game search) | ✅ (update check line added with 3.5) |
 | 4.4 | Phone guide site (Cloudflare Pages) | ✅ live |
