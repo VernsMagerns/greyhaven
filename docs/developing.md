@@ -49,7 +49,7 @@ unprocessed scan data; it can be replayed anywhere with `greyhaven scan --raw <f
 | `tools/ui-preview` | Throwaway browser mock-up of the app's flow for design review; never shipped |
 | `tools/release-check.sh` | Fails if a placeholder (e.g. the GitHub repo name) would ship |
 | `installer/` | WiX projects for `GreyHaven.msi` and `GreyHaven-Setup.exe` (built and install-tested in CI on Windows) |
-| `site/`, `tools/site` | The download page, deployed to GitHub Pages by `.github/workflows/pages.yml` |
+| `site/`, `tools/site` | The website (https://greyhaven.pages.dev): `tools/site/build.sh` assembles it with the game list, `tools/site/test.cjs` tests it in jsdom, `.github/workflows/site.yml` deploys it to Cloudflare Pages. `site-forward/` is the old GitHub Pages address, which now forwards there. |
 | `assets/brand`, `tools/brand` | The mark, icons, banners and social preview, drawn by `tools/brand/build.py` ([docs/brand.md](brand.md)) |
 | `assets/sounds`, `tools/sounds` | The app's sound effects, made from scratch by `tools/sounds/build.py` |
 

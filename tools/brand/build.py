@@ -104,6 +104,41 @@ def social():
     return svg(w, h, body, PAPER)
 
 
+def og_image():
+    """The landing page's link preview (1200x630): the sunset harbour scene from the page."""
+    w, h = 1200, 630
+    sea_y = 430
+    body = ('<defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">'
+            '<stop offset="0" stop-color="#FBE7C2"/><stop offset="1" stop-color="#F6B989"/></linearGradient></defs>')
+    body += f'<rect width="{w}" height="{h}" fill="url(#sky)"/>'
+    body += f'<circle cx="930" cy="{sea_y}" r="120" fill="{BUTTER}" stroke="{INK}" stroke-width="6"/>'
+    body += f'<rect x="0" y="{sea_y}" width="{w}" height="{h - sea_y}" fill="#0D5986"/>'
+    body += f'<line x1="0" y1="{sea_y}" x2="{w}" y2="{sea_y}" stroke="{INK}" stroke-width="6"/>'
+    for x, y in ((640, 480), (820, 520), (1010, 470), (700, 580), (960, 590)):
+        body += f'<path d="M{x} {y}q20-10 40 0t40 0" stroke="#8DCBF5" stroke-width="5" fill="none" stroke-linecap="round"/>'
+    # boat
+    body += (f'<g transform="translate(800 {sea_y + 12})"><path d="M-40 0h80l-12 16h-56Z" fill="{INK}"/>'
+             f'<path d="M0 -6V-74L34 -12Z" fill="#FFFFFF" stroke="{INK}" stroke-width="4" stroke-linejoin="round"/>'
+             f'<path d="M-5 -6V-54L-31 -12Z" fill="#FFE08A" stroke="{INK}" stroke-width="4" stroke-linejoin="round"/></g>')
+    # lighthouse on its rock
+    body += (f'<g transform="translate(1110 150)"><path d="M0 52 L-160 18 L-160 86 Z" fill="{BUTTER}" opacity=".55"/>'
+             f'<path d="M-80 300 Q-66 250 -12 246 L44 246 Q86 250 96 300 Z" fill="#52473B" stroke="{INK}" stroke-width="6"/>'
+             f'<path d="M-32 250 L-19 76 L19 76 L32 250 Z" fill="{PAPER}" stroke="{INK}" stroke-width="7" stroke-linejoin="round"/>'
+             f'<path d="M-27 184 L-24.5 146 L24.5 146 L27 184 Z" fill="{TOMATO}" stroke="{INK}" stroke-width="6" stroke-linejoin="round"/>'
+             f'<rect x="-24" y="36" width="48" height="40" rx="4" fill="{BUTTER}" stroke="{INK}" stroke-width="7"/>'
+             f'<path d="M-35 38 L0 6 L35 38 Z" fill="{INK}"/></g>')
+    # words, on a sticker card
+    body += f'<rect x="68" y="78" width="600" height="380" rx="28" fill="{INK}"/>'
+    body += f'<rect x="56" y="66" width="600" height="380" rx="28" fill="{CARD}" stroke="{INK}" stroke-width="6"/>'
+    body += mark(x=92, y=100, scale=0.34)
+    body += text(192, 168, "GreyHaven", 48, 700)
+    body += text(96, 258, "Close the window,", 52, 700)
+    body += text(96, 322, "and open the door", 52, 700)
+    body += text(96, 386, "to Linux.", 52, 700, fill=TOMATO)
+    body += text(96, 428, "Free for Windows 10 and 11", 24, 400, "Lexend", "#52473B")
+    return svg(w, h, body)
+
+
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     (OUT / "mark.svg").write_text(svg(256, 256, mark()) + "\n")
@@ -118,6 +153,7 @@ def main():
     render(banner(False), OUT / "banner-light.png", 1280)
     render(banner(True), OUT / "banner-dark.png", 1280)
     render(social(), OUT / "social-preview.png", 1280)
+    render(og_image(), OUT / "og-image.png", 1200)
     print("Wrote", ", ".join(sorted(p.name for p in OUT.iterdir())))
 
 

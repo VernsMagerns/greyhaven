@@ -7,6 +7,7 @@
 
 <p align="center">
   <a href="https://github.com/VernsMagerns/greyhaven/releases/latest/download/GreyHaven-Setup.exe"><b>Download for Windows</b></a>
+  &nbsp;·&nbsp; <a href="https://greyhaven.pages.dev">Website</a>
   &nbsp;·&nbsp; <a href="#how-it-works">How it works</a>
   &nbsp;·&nbsp; <a href="#is-it-safe">Is it safe?</a>
   &nbsp;·&nbsp; <a href="#questions">Questions</a>

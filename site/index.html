@@ -5,94 +5,309 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
 <title>GreyHaven: will Linux work on your PC?</title>
-<meta name="description" content="A free Windows app that checks whether Linux will work on your PC, then guides you through switching, step by step. Open source.">
-<meta property="og:title" content="GreyHaven: will Linux work on your PC?">
-<meta property="og:description" content="Check your PC, make the USB stick, switch. Free and open source.">
-<meta property="og:image" content="https://vernsmagerns.github.io/greyhaven/social-preview.png">
+<meta name="description" content="A free Windows app that checks whether Linux will work on your PC, then walks you through the switch, one step at a time. Open source.">
+<link rel="canonical" href="https://greyhaven.pages.dev/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://greyhaven.pages.dev/">
+<meta property="og:title" content="GreyHaven: close the window, and open the door to Linux">
+<meta property="og:description" content="A free Windows app that checks your PC for Linux, then walks you through the switch.">
+<meta property="og:image" content="https://greyhaven.pages.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="GreyHaven: a lighthouse by the sea at sunset, with the words Close the window, and open the door to Linux.">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="icon-32.png" sizes="32x32">
 <link rel="icon" href="mark-flat.svg" type="image/svg+xml">
-<link rel="stylesheet" href="site.css">
+<link rel="apple-touch-icon" href="icon-256.png">
+<link rel="preload" href="fonts/Rubik-Bold.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/Lexend-Regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add("js")</script>
+<script src="app.js" defer></script>
 </head>
 <body>
-<a class="skip" href="#main">Skip to the download</a>
+<a class="skip" href="#main">Skip to content</a>
+
 <header class="top">
-  <a class="brand" href="./"><img src="mark.svg" alt="" width="40" height="40"><span>GreyHaven</span></a>
-  <nav aria-label="Page"><a href="#how">How it works</a><a href="#safe">Is it safe?</a><a href="#faq">Questions</a><a href="https://github.com/VernsMagerns/greyhaven">Source code</a></nav>
+  <a class="brand" href="./" aria-label="GreyHaven, home"><img src="mark.svg" alt="" width="40" height="40"><span>GreyHaven</span></a>
+  <nav aria-label="Page">
+    <a href="#benefits">Why Linux</a>
+    <a href="#how">How it works</a>
+    <a href="#faq">Questions</a>
+    <a href="https://github.com/VernsMagerns/greyhaven">GitHub</a>
+  </nav>
 </header>
 
 <main id="main">
-  <section class="hero">
-    <div class="hero-text">
-      <h1>Will Linux work on your PC?</h1>
-      <p class="lead">GreyHaven checks the parts inside your PC, tells you which version of Linux fits best, then walks you through switching, one step at a time. It won't change anything without asking.</p>
-      <p><a class="download" href="https://github.com/VernsMagerns/greyhaven/releases/latest/download/GreyHaven-Setup.exe">Download for Windows</a></p>
-      <p class="small">Free and open source · Windows 10 and 11, 64-bit · No account, no ads</p>
+
+<!-- ====================== Hero ====================== -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <h1 id="hero-title">Close the window, and open the door to Linux.</h1>
+    <p class="lead">Software that makes the switch to Linux easier than ever.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary download-link" href="https://github.com/VernsMagerns/greyhaven/releases/latest/download/GreyHaven-Setup.exe">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Download for Windows
+      </a>
+      <a class="btn btn-secondary" href="https://github.com/VernsMagerns/greyhaven">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 .5a11.5 11.5 0 0 0-3.64 22.4c.58.11.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.53-1.33-1.28-1.69-1.28-1.69-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.56-.29-5.25-1.28-5.25-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.7 5.38-5.26 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.68.8.56A11.5 11.5 0 0 0 12 .5Z"/></svg>
+        View on GitHub
+      </a>
     </div>
-    <figure class="shot hero-shot">
-      <img src="images/results.png" alt="GreyHaven's results: Your PC is ready for Linux, 98 out of 100, with Ubuntu suggested." width="1180" height="860">
+    <p class="release-meta small" id="release-meta">Free and open source · Windows 10 and 11, 64-bit</p>
+    <p class="os-note" id="os-note" hidden>GreyHaven runs on Windows, for people who are still on Windows. Open this page on the PC you'd like to switch, or <button type="button" class="linkish" data-share>send yourself the link</button>.</p>
+  </div>
+
+  <!-- The scene: a lighthouse by the sea, a small boat sailing toward the sunset. Decorative. -->
+  <div class="scene" aria-hidden="true">
+    <svg class="scene-svg" viewBox="0 0 640 480" preserveAspectRatio="xMidYMax slice">
+      <defs>
+        <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" class="sky-top"/><stop offset="1" class="sky-low"/>
+        </linearGradient>
+        <pattern id="dots" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.4" class="dot"/></pattern>
+      </defs>
+      <rect width="640" height="480" fill="url(#sky)"/>
+      <rect width="640" height="300" fill="url(#dots)" opacity=".35"/>
+      <g class="sun"><circle cx="300" cy="300" r="92" class="sun-disc"/><circle cx="300" cy="300" r="92" class="ink-stroke" fill="none" stroke-width="5"/></g>
+      <rect x="0" y="300" width="640" height="180" class="sea"/>
+      <path class="ink-stroke" d="M0 300H640" stroke-width="5"/>
+      <path class="wave" d="M40 345q20-10 40 0t40 0M200 372q20-10 40 0t40 0M380 340q20-10 40 0t40 0M90 410q20-10 40 0t40 0M300 430q20-10 40 0t40 0M480 400q20-10 40 0t40 0"/>
+      <g class="boat">
+        <path d="M-34 0h68l-10 14h-48Z" class="hull"/>
+        <path d="M0 -6V-62L28 -10Z" class="sail"/>
+        <path d="M-4 -6V-46L-26 -10Z" class="sail sail-2"/>
+      </g>
+      <!-- Lighthouse, drawn like the GreyHaven mark -->
+      <g class="lighthouse" transform="translate(520 112)">
+        <path class="beam" d="M0 52 L-150 22 L-150 82 Z M0 52 L120 22 L120 82 Z"/>
+        <path class="rock" d="M-70 330 Q-60 280 -10 276 L40 276 Q78 280 90 330 Z"/>
+        <path class="tower" d="M-30 280 L-18 76 L18 76 L30 280 Z"/>
+        <path class="band" d="M-25.5 200 L-23 158 L23 158 L25.5 200 Z"/>
+        <rect class="lamp" x="-22" y="38" width="44" height="38" rx="4"/>
+        <path class="roof" d="M-32 40 L0 10 L32 40 Z"/>
+      </g>
+    </svg>
+  </div>
+</section>
+
+<!-- ====================== Benefits ====================== -->
+<section id="benefits" class="section" aria-labelledby="benefits-title">
+  <h2 id="benefits-title">What you get with Linux</h2>
+  <div class="bento">
+
+    <article class="card reveal b-free">
+      <div class="icon" aria-hidden="true">$0</div>
+      <h3>Free, for good</h3>
+      <p>Linux and GreyHaven cost nothing. No licence to buy, no subscription, no trial that runs out.</p>
+      <form class="calc" id="calc" aria-labelledby="calc-title" onsubmit="return false">
+        <h4 id="calc-title">What could you keep?</h4>
+        <div class="calc-row">
+          <label for="calc-pcs">PCs that can't run Windows 11</label>
+          <div class="stepper"><button type="button" data-step="-1" aria-label="One fewer PC">−</button><input id="calc-pcs" type="number" inputmode="numeric" min="1" max="50" value="1"><button type="button" data-step="1" aria-label="One more PC">+</button></div>
+        </div>
+        <div class="calc-row">
+          <label for="calc-price">What a new PC would cost you <span class="small">(your estimate)</span></label>
+          <div class="money"><span aria-hidden="true">$</span><input id="calc-price" type="number" inputmode="numeric" min="0" step="50" value="500"></div>
+        </div>
+        <output class="calc-out" for="calc-pcs calc-price" id="calc-out" aria-live="polite">Keep your PC and switch to Linux, and you keep <strong>$500</strong> you'd have spent on a new one.</output>
+        <p class="small source">Other costs, from Microsoft: <a href="https://www.microsoft.com/en-us/windows/extended-security-updates">one more year of Windows 10 security updates</a> is $30 a PC (until 12 October 2027), and a <a href="https://www.microsoft.com/en-us/d/windows-11-home/dg7gmgf0krt0">Windows 11 Home licence</a> is $139 if you build a PC yourself. Upgrading a PC that qualifies for Windows 11 is free.</p>
+      </form>
+    </article>
+
+    <article class="card reveal b-updates">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.6M20 4v4h-4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <h3>No surprise restarts</h3>
+      <p>Security updates install quietly, and Linux doesn't restart your PC in the middle of your work. You restart when it suits you.</p>
+    </article>
+
+    <article class="card reveal b-private">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 3.4 8.3 8 9 4.6-.7 8-4 8-9V6Z" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round"/></svg></div>
+      <h3>No ads, no account</h3>
+      <p>No ads in your menus and no online account needed to sign in. Sharing data with the makers is something you opt into, not out of.</p>
+    </article>
+
+    <article class="card reveal b-old">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M8 20h8M12 16v4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></div>
+      <h3>New life for older PCs</h3>
+      <p>Linux runs on most PCs that Windows 11 turns away, including ones without the newer security chip (TPM 2.0) or a recent processor.</p>
+    </article>
+
+    <article class="card reveal b-yours">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="8" cy="15" r="4" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="m11 12 8-8m-3 3 2 2m-4 0 2 2" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></div>
+      <h3>Your PC, your rules</h3>
+      <p>Nothing gets installed that you didn't ask for. Thousands of free apps are a click away in the app store, and you can change anything.</p>
+    </article>
+
+    <article class="card reveal b-games" id="games">
+      <div class="icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 8h12a4 4 0 0 1 4 4v2a3 3 0 0 1-5.3 1.9L15 14H9l-1.7 1.9A3 3 0 0 1 2 14v-2a4 4 0 0 1 4-4Z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/><path d="M7 11v3M5.5 12.5h3" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></div>
+      <h3>Will your games work?</h3>
+      <p>Thousands of Windows games run on Linux through Proton, which comes built into Steam. Check yours:</p>
+      <div class="game-check" id="game-check">
+        <label for="game-q" class="visually-hidden">Game name</label>
+        <input id="game-q" type="search" placeholder="Type a game, like Elden Ring" autocomplete="off" spellcheck="false" aria-describedby="game-msg">
+        <div class="chips" aria-label="Popular games">
+          <button type="button" data-game="Cyberpunk 2077">Cyberpunk 2077</button>
+          <button type="button" data-game="ELDEN RING">Elden Ring</button>
+          <button type="button" data-game="Baldur's Gate 3">Baldur's Gate 3</button>
+          <button type="button" data-game="Red Dead Redemption 2">Red Dead Redemption 2</button>
+          <button type="button" data-game="Counter-Strike 2">Counter-Strike 2</button>
+          <button type="button" data-game="HELLDIVERS 2">Helldivers 2</button>
+          <button type="button" data-game="Fortnite">Fortnite</button>
+          <button type="button" data-game="VALORANT">Valorant</button>
+        </div>
+        <p id="game-msg" class="small game-msg" aria-live="polite"></p>
+        <ul class="game-results" id="game-results"></ul>
+        <noscript><p class="small">Search any game on <a href="https://www.protondb.com/">ProtonDB</a>.</p></noscript>
+        <p class="small source">From <a href="https://www.protondb.com/">ProtonDB</a> player reports (their published data, Open Database License) and <a href="https://areweanticheatyet.com/">Are We Anti-Cheat Yet</a>. Online games whose anti-cheat blocks Linux are the main exception. Searches stay in your browser; cover pictures come from Steam.</p>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ====================== Why people switch ====================== -->
+<section id="why" class="section" aria-labelledby="why-title">
+  <h2 id="why-title">Why people make the switch</h2>
+
+  <div class="why-grid">
+    <article class="card reveal w10" id="w10">
+      <h3>Windows 10 support has ended</h3>
+      <p class="w10-big"><span id="w10-days">Over a year</span> <span id="w10-label">since support ended</span></p>
+      <p id="w10-text">Microsoft stopped updating Windows 10 on 14 October 2025. Security updates now only come through Extended Security Updates, which end on 12 October 2027.</p>
+      <p class="small source">Source: <a href="https://www.microsoft.com/en-us/windows/extended-security-updates">Microsoft, Windows 10 Extended Security Updates</a></p>
+    </article>
+
+    <ul class="reasons reveal">
+      <li class="card"><strong>"This PC can't run Windows 11."</strong> Plenty of good PCs don't meet its requirements.</li>
+      <li class="card"><strong>Ads and nags.</strong> Suggestions in the Start menu, prompts to sign in, offers to try things.</li>
+      <li class="card"><strong>Updates on someone else's schedule.</strong> Restarts when you least expect them.</li>
+      <li class="card"><strong>Privacy.</strong> More of what you do sent online than people are comfortable with.</li>
+      <li class="card"><strong>A PC that's getting slower</strong> with every year of updates.</li>
+    </ul>
+  </div>
+
+  <figure class="compare card reveal" id="compare">
+    <div class="compare-stage">
+      <!-- "Windows": an original, stylised mock-up (no real screenshots or logos) -->
+      <div class="desk desk-win" role="img" aria-label="A busy desktop: a menu full of ads, an 'Updates are ready, restart now' message, a 'Sign in with your Microsoft account' box and a loading cursor.">
+        <div class="win-wall"></div>
+        <div class="win-start">
+          <p class="win-h">Recommended</p>
+          <div class="win-tiles"><span>Ad: Try Premium free</span><span>Ad: Game Pass</span><span>Suggested for you</span><span>Ad: Shopping deals</span></div>
+        </div>
+        <div class="win-toast"><strong>Updates are ready</strong><span>Your PC will restart in 15 minutes.</span><span class="win-btns"><i>Restart now</i><i>Later</i></span></div>
+        <div class="win-modal"><strong>Sign in with your Microsoft account</strong><span>to keep using this feature.</span><i>Sign in</i></div>
+        <div class="win-spinner"></div>
+        <div class="win-bar"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+      <!-- "Linux": a calm desktop -->
+      <div class="desk desk-linux" role="img" aria-label="A calm Linux desktop: a sunset over the sea, a small dock on the left, one tidy window and nothing asking for attention.">
+        <div class="lx-wall"><div class="lx-sun"></div><div class="lx-sea"></div></div>
+        <div class="lx-top"><span>Activities</span><span>Fri 18:42</span></div>
+        <div class="lx-dock"><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="lx-win"><div class="lx-title">Files</div><div class="lx-files"><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+      </div>
+      <div class="compare-handle" aria-hidden="true"><span></span></div>
+      <label class="visually-hidden" for="compare-range">Compare a Windows desktop with a Linux desktop</label>
+      <input class="compare-range" id="compare-range" type="range" min="0" max="100" value="50">
+    </div>
+    <figcaption><span>Windows</span><span class="small">Drag to compare. Illustrations, not screenshots.</span><span>Linux</span></figcaption>
+  </figure>
+
+  <div class="turn reveal">
+    <p class="turn-text">So why doesn't everyone switch? Mostly, it's not knowing whether their PC will work with Linux. <strong>That's the first thing GreyHaven checks.</strong></p>
+  </div>
+</section>
+
+<!-- ====================== How it works ====================== -->
+<section id="how" class="section" aria-labelledby="how-title">
+  <h2 id="how-title">How it works</h2>
+  <ol class="steps">
+    <li class="card reveal"><span class="num" aria-hidden="true">1</span><h3>Download</h3><p>Install GreyHaven like any app. It's free.</p></li>
+    <li class="card reveal"><span class="num" aria-hidden="true">2</span><h3>Scan your PC</h3><p>It checks every part against Linux's own driver lists, in about a minute. Nothing on your PC changes.</p></li>
+    <li class="card reveal"><span class="num" aria-hidden="true">3</span><h3>Pick your Linux</h3><p>Ubuntu, Linux Mint or Pop!_OS: it suggests the one that fits your PC, with plain pros and cons.</p></li>
+    <li class="card reveal"><span class="num" aria-hidden="true">4</span><h3>Switch, step by step</h3><p>It makes your USB stick, puts the next steps on your phone, and restarts your PC into Linux to try it first.</p></li>
+  </ol>
+
+  <div class="demo-grid">
+    <figure class="demo card reveal" id="scan-demo" aria-labelledby="demo-cap">
+      <div class="app-window" aria-hidden="true">
+        <div class="app-bar"><img src="icon-32.png" alt="" width="18" height="18"><span>GreyHaven</span></div>
+        <div class="app-body">
+          <div class="scan-progress"><p class="scan-status">Looking at the parts inside your PC…</p><div class="bar"><span></span></div></div>
+          <ul class="parts">
+            <li class="ok"><span class="part">Processor</span><span class="model">Intel Core i5-3210M</span><span class="tag">✓ Works</span></li>
+            <li class="ok"><span class="part">Graphics</span><span class="model">Intel HD Graphics 4000</span><span class="tag">✓ Works</span></li>
+            <li class="warn"><span class="part">Wi-Fi</span><span class="model">Broadcom 802.11n</span><span class="tag">⚙ One extra step</span><span class="note">Works after you add a driver. You'll need a cable or your phone to get online first.</span></li>
+            <li class="ok"><span class="part">Sound</span><span class="model">Realtek High Definition Audio</span><span class="tag">✓ Works</span></li>
+            <li class="ok"><span class="part">Webcam</span><span class="model">USB2.0 HD UVC WebCam</span><span class="tag">✓ Works</span></li>
+            <li class="info"><span class="part">Secure Boot</span><span class="model">Not used on this PC</span><span class="tag">Nothing to change</span></li>
+          </ul>
+          <div class="verdict"><div><strong>Your PC is ready for Linux</strong><span>We suggest Linux Mint.</span></div><div class="score">98<small>out of 100</small></div></div>
+        </div>
+      </div>
+      <figcaption id="demo-cap">A real result from GreyHaven, for a sample 2012 laptop. <button type="button" class="linkish" id="demo-replay">Replay the scan</button></figcaption>
     </figure>
-  </section>
 
-  <section id="how">
-    <h2>How it works</h2>
-    <ol class="steps">
-      <li class="card"><h3><span class="num" aria-hidden="true">1</span>Check</h3>
-        <p>Scan your PC in under a minute. Every part is checked against Linux's own driver lists, so you see what works, what needs one extra step, and which apps and games come with you.</p></li>
-      <li class="card"><h3><span class="num" aria-hidden="true">2</span>Choose</h3>
-        <p>Pick Ubuntu, Linux Mint or <span class="nowrap">Pop!_OS</span>, with plain pros and cons. Keep Windows too, so you can pick at every start, or replace it.</p></li>
-      <li class="card"><h3><span class="num" aria-hidden="true">3</span>Switch</h3>
-        <p>GreyHaven downloads Linux, checks it's the official file, makes your USB stick, and puts the next steps on your phone with a QR code. Then it restarts your PC into the stick.</p></li>
-    </ol>
-    <div class="gallery">
-      <figure class="shot"><img src="images/check-a-game.png" alt="Check a game: Elden Ring works with Proton, with a link to its ProtonDB page." width="1180" height="860"><figcaption>See which of your apps and games work, and search any game.</figcaption></figure>
-      <figure class="shot"><img src="images/walkthrough.png" alt="How do you want to install Linux? Keep Windows too (suggested) or Replace Windows." width="1180" height="860"><figcaption>A guided walkthrough that checks each step for you.</figcaption></figure>
-      <figure class="shot"><img src="images/usb.png" alt="Make your USB stick: Your USB stick is ready." width="1180" height="860"><figcaption>The USB stick, made and checked for you.</figcaption></figure>
-      <figure class="shot"><img src="images/guide.png" alt="Take your guide: a QR code that opens the next steps on your phone." width="1180" height="860"><figcaption>Your guide goes with you on your phone.</figcaption></figure>
+    <div class="paths card reveal" id="paths">
+      <h3>Sometimes there are two good paths</h3>
+      <p>When the best fit for your PC needs a setting changed, GreyHaven offers an easy path and an advanced one, and you choose. Here's a sample PC with an NVIDIA graphics card:</p>
+      <div class="seg" role="tablist" aria-label="Path">
+        <button type="button" role="tab" id="tab-easy" aria-selected="true" aria-controls="panel-easy">Easy</button>
+        <button type="button" role="tab" id="tab-adv" aria-selected="false" aria-controls="panel-adv" tabindex="-1">Advanced</button>
+      </div>
+      <div class="path-panel" role="tabpanel" id="panel-easy" aria-labelledby="tab-easy">
+        <h4>Ubuntu <span class="pill">98 out of 100</span></h4>
+        <p>Ubuntu keeps Secure Boot on, so you don't need to change any settings on your PC first. Your graphics card needs one extra step after you install: a few clicks.</p>
+      </div>
+      <div class="path-panel" role="tabpanel" id="panel-adv" aria-labelledby="tab-adv" hidden>
+        <h4>Pop!_OS <span class="pill">100 out of 100</span></h4>
+        <p>Pop!_OS handles this graphics card best, because its NVIDIA download comes with the driver already in it.</p>
+        <p class="notice"><strong>First, you turn off Secure Boot</strong> in your PC's startup settings. GreyHaven shows you how for your PC's maker. <a href="https://github.com/VernsMagerns/greyhaven/blob/main/docs/secure-boot.md">How to turn off Secure Boot</a></p>
+      </div>
     </div>
-    <p class="small center">Screenshots show a sample PC.</p>
-  </section>
+  </div>
+</section>
 
-  <section id="safe">
-    <h2>Is it safe?</h2>
-    <div class="trust">
-      <div class="card"><h3>It asks before it changes anything</h3>
-        <p>Scanning needs no administrator rights and changes nothing. Before GreyHaven changes a Windows setting or writes your USB stick, it says exactly what will happen, then Windows asks your permission, for that one thing only.</p></div>
-      <div class="card"><h3>It only erases what you choose</h3>
-        <p>Only USB drives are ever listed, never the drive Windows is on. You tick a box naming the stick before anything is erased, and big external drives need a second tick so your backup is safe.</p></div>
-      <div class="card"><h3>It checks every download</h3>
-        <p>Linux comes from the official source over a secure connection. GreyHaven checks the file's fingerprint and, for Ubuntu and Linux Mint, their digital signature, then reads the stick back to make sure it was written right.</p></div>
-      <div class="card"><h3>Your details stay on your PC</h3>
-        <p>GreyHaven never reads your files, and your app list never leaves your PC. Online checks send part ID numbers only, and you can turn them off. <a href="https://github.com/VernsMagerns/greyhaven/blob/main/PRIVACY.md">Privacy policy</a></p></div>
-      <div class="card"><h3>Keep Windows, and you can go back</h3>
-        <p>You try Linux from the USB stick first, without installing anything. Not happy? Take the stick out and Windows starts as before.</p></div>
-      <div class="card"><h3>Open source</h3>
-        <p>Every line of code is on <a href="https://github.com/VernsMagerns/greyhaven">GitHub</a> under the MIT licence, and every download has published fingerprints so you can check it came from there.</p></div>
-    </div>
-  </section>
+<!-- ====================== Questions ====================== -->
+<section id="faq" class="section narrow" aria-labelledby="faq-title">
+  <h2 id="faq-title">Questions</h2>
+  <details class="reveal"><summary>Will this delete my files?</summary>
+    <p>Not if you choose <strong>Keep Windows too</strong>: Windows, your apps and your files stay as they are, and Linux gets space next to them. GreyHaven still asks you to back up first, because changing the drive's layout is the one step that can go wrong. <strong>Replace Windows</strong> erases the drive, and GreyHaven won't let you go on until your backup checklist is done. Scanning never changes anything.</p></details>
+  <details class="reveal"><summary>Can I go back to Windows?</summary>
+    <p>Yes. You try Linux from the USB stick before installing anything; take the stick out and Windows starts as before. With Keep Windows too, you choose Windows or Linux every time your PC starts.</p></details>
+  <details class="reveal"><summary>Will my games work?</summary>
+    <p>Most single-player games do, through Proton in Steam. Some online games block Linux with their anti-cheat. GreyHaven checks the games on your PC, and you can try any game in the checker above.</p></details>
+  <details class="reveal"><summary>Is it really free?</summary>
+    <p>Yes. GreyHaven is free and open source, with no ads, no account and no paid version. Ubuntu, Linux Mint and Pop!_OS are free too.</p></details>
+  <details class="reveal"><summary>Do I need to be technical?</summary>
+    <p>No. GreyHaven is written for people who've only ever used Windows. Every step is explained in plain words with pictures, it checks your PC before each step, and your guide goes with you on your phone when your PC restarts.</p></details>
+</section>
 
-  <section id="faq">
-    <h2>Questions</h2>
-    <details><summary>Will I lose my files?</summary>
-      <p>Not if you choose <strong>Keep Windows too</strong>: Windows, your apps and your files stay as they are, and Linux gets space next to them. GreyHaven still asks you to back up first, because changing the drive's layout is the one step that can go wrong. <strong>Replace Windows</strong> erases the drive, and GreyHaven won't let you go on until your backup checklist is done.</p></details>
-    <details><summary>What do I need?</summary>
-      <p>A Windows 10 or 11 PC (64-bit Intel or AMD; Windows on Arm isn't tested yet), a USB stick of 8 GB or more that can be erased, an internet connection for the download (about 6 GB), and your phone for the guide. Allow an hour or two.</p></details>
-    <details><summary>Which versions of Linux?</summary>
-      <p>Ubuntu 26.04 LTS, Linux Mint 22.3 and <span class="nowrap">Pop!_OS</span> 24.04: three of the most popular, all free and well supported. GreyHaven suggests the one that fits your PC and explains why.</p></details>
-    <details><summary>Windows says "Windows protected your PC". Is that normal?</summary>
-      <p>For now, yes. GreyHaven is new, and Windows warns about apps it hasn't seen many people download yet. Click <strong>More info</strong>, then <strong>Run anyway</strong>. You can check the file is the real one with the fingerprints in <code>SHA256SUMS.txt</code> on the release page.</p></details>
-    <details><summary>Does it send anything about me?</summary>
-      <p>Only if you leave online checks on: the ID numbers of parts GreyHaven doesn't recognise go to linux-hardware.org, and it asks GitHub whether there's a newer version. No names, no files, no app list. See the <a href="https://github.com/VernsMagerns/greyhaven/blob/main/PRIVACY.md">privacy policy</a>.</p></details>
-    <details><summary>Is it really free?</summary>
-      <p>Yes. No ads, no account, no paid version. It's an open-source project.</p></details>
-    <details><summary>I'm an IT admin.</summary>
-      <p>Each release also has <code>GreyHaven.msi</code> for silent installs (<code>msiexec /i GreyHaven.msi /qn</code>) and a portable zip.</p></details>
-  </section>
+<!-- ====================== Support ====================== -->
+<section id="support" class="section" aria-labelledby="support-title">
+  <h2 id="support-title">Want to support the project?</h2>
+  <div class="support-grid">
+    <div class="card reveal"><h3>Share with your friends</h3><p>Know someone stuck on Windows 10?</p>
+      <button type="button" class="btn btn-secondary" data-share>Share GreyHaven</button></div>
+    <div class="card reveal"><h3>Make the switch</h3><p>Check your PC in a minute. Nothing changes until you say so.</p>
+      <a class="btn btn-primary download-link" href="https://github.com/VernsMagerns/greyhaven/releases/latest/download/GreyHaven-Setup.exe">Download for Windows</a></div>
+    <div class="card reveal"><h3>Share your feedback</h3><p>Tell us what worked and what didn't, to make it better in future updates.</p>
+      <a class="btn btn-secondary" href="https://github.com/VernsMagerns/greyhaven/issues">Give feedback</a></div>
+  </div>
+  <p class="forever reveal">Free forever.</p>
+</section>
+
 </main>
 
-<footer>
-  <img src="mark-flat.svg" alt="" width="28" height="28">
-  <p>GreyHaven is free and open source (MIT). Linux, Ubuntu, Linux Mint and Pop!_OS are trademarks of their owners; GreyHaven isn't affiliated with them.
-  <br><a href="https://github.com/VernsMagerns/greyhaven">Source code</a> · <a href="https://github.com/VernsMagerns/greyhaven/blob/main/PRIVACY.md">Privacy</a> · <a href="https://github.com/VernsMagerns/greyhaven/releases">All releases</a></p>
+<footer class="foot">
+  <img src="mark-flat.svg" alt="" width="32" height="32">
+  <p>GreyHaven is an independent, open-source project (<a href="https://github.com/VernsMagerns/greyhaven/blob/main/LICENSE">MIT licence</a>) on <a href="https://github.com/VernsMagerns/greyhaven">GitHub</a>. It isn't affiliated with Microsoft, Canonical, Linux Mint, System76 or Valve; their names are trademarks of their owners.
+  <br><a href="https://github.com/VernsMagerns/greyhaven/blob/main/PRIVACY.md">Privacy</a> · <a href="https://github.com/VernsMagerns/greyhaven/releases">All releases</a> · <a href="https://github.com/VernsMagerns/greyhaven/blob/main/SECURITY.md">Security</a></p>
 </footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 </body>
 </html>

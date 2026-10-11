@@ -1,13 +1,13 @@
 name: Download page
 
-# Publishes site/ (the download page) to GitHub Pages. Pages needs a public repository on GitHub
-# Free, so this does nothing while the repository is private. To switch it on after going
-# public: Settings > Pages > Source: GitHub Actions.
+# The website moved to Cloudflare Pages (https://greyhaven.pages.dev, .github/workflows/site.yml).
+# The old GitHub Pages address (https://vernsmagerns.github.io/greyhaven/) now only forwards
+# there, for anyone with an old link: site-forward/.
 
 on:
   push:
     branches: [main]
-    paths: ["site/**", "assets/brand/**", "docs/images/**", "tools/site/**", ".github/workflows/pages.yml"]
+    paths: ["site-forward/**", ".github/workflows/pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -29,9 +29,8 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-      - run: ./tools/site/build.sh _site
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: site-forward
       - id: deployment
         uses: actions/deploy-pages@v4
